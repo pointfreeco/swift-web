@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "HTML",
+  name: "swift-web",
   products: [
     .library(name: "HTML", targets: ["HTML"]),
     .library(name: "CSS", targets: ["CSS"]),
