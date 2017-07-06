@@ -20,6 +20,15 @@ public func autofocus(_ autofocus: Bool) -> Attribute {
   return Attribute("autofocus", autofocus)
 }
 
+public enum Charset: String {
+  case utf8 = "utf-8"
+  // TODO: add rest from here http://www.iana.org/assignments/character-sets/character-sets.xhtml
+}
+
+public func charset(_ charset: Charset) -> Attribute {
+  return .init("charset", charset.rawValue)
+}
+
 public func checked(_ checked: Bool) -> Attribute {
   return Attribute("checked", checked)
 }
@@ -30,6 +39,10 @@ public func `class`(_ `class`: String) -> Attribute {
 
 public func cols(_ cols: Int) -> Attribute {
   return Attribute("cols", cols)
+}
+
+public func content(_ content: String) -> Attribute {
+  return Attribute("content", content)
 }
 
 public func disabled(_ disabled: Bool) -> Attribute {

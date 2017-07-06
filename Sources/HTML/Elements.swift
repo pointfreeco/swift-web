@@ -162,6 +162,10 @@ public func main(_ content: [Node]) -> Node {
   return main([], content)
 }
 
+public func meta(_ attribs: [Attribute]) -> Node {
+  return node("meta", attribs, nil)
+}
+
 public func nav(_ attribs: [Attribute], _ content: [Node]) -> Node {
   return node("nav", attribs, content)
 }
