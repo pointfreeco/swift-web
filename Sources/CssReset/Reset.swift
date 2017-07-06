@@ -1,3 +1,4 @@
+import Css
 import Prelude
 
 private let allReset: Stylesheet = (
@@ -64,14 +65,14 @@ private let allReset: Stylesheet = (
     | u
     | ul
     | video
-) % (
-  margin(all: 0)
-    <> padding(all: 0)
-    <> fontSize(pct(100))
-    <> fontFamily(.inherit)
-    <> fontStyle(.inherit)
-    <> fontWeight(.inherit)
-    <> verticalAlign(.baseline)
+  ) % (
+    margin(all: 0)
+      <> padding(all: 0)
+      <> fontSize(pct(100))
+      <> fontFamily(.inherit)
+      <> fontStyle(.inherit)
+      <> fontWeight(.inherit)
+      <> verticalAlign(.baseline)
 )
 
 private let blockResets = (
@@ -124,3 +125,4 @@ public let reset: Stylesheet =
     <> listReset
     <> quoteReset
     <> tableResets
+
