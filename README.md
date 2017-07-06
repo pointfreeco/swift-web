@@ -20,10 +20,10 @@ let package = Package(
 
 ## Table of Contents
 
-* [`HTML`](#HTML)
-* [`CSS`](#CSS)
-* [`HTTPPipeline`](#HTTPPipeline)
-* [`ApplicativeRouter`](#ApplicativeRouter)
+* [`HTML`](#html)
+* [`CSS`](#css)
+* [`HTTPPipeline`](#httppipeline)
+* [`ApplicativeRouter`](#applicativerouter)
 
 ## `HTML`
 
