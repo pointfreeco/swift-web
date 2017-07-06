@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Prelude",
+        "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
+        "state": {
+          "branch": "d242e07",
+          "revision": "d242e075fd6a07abb9bcefa70187ead2302c277d",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

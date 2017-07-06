@@ -1,0 +1,31 @@
+public enum ResponseHeader {
+  case allow([Method])
+  case contentType(Format)
+  case location(String)
+  case setCookie([String: String])
+
+  case custom(String, String)
+
+  public var pair: (String, String) {
+    switch self {
+    case let .allow(methods):
+      return ("Allow", methods.map { $0.description }.joined(separator: ", "))
+    case let .contentType(mediaType):
+      return ("Content-Type", mediaType.description)
+    case let .location(uri):
+      return ("Location", uri)
+    case let .setCookie(cookies):
+      let str = cookies.map { (pair: (key: String, value: String)) in
+        pair.key + "=" + pair.value // todo: escape
+      }.joined(separator: "; ")
+      return ("Set-Cookie", str)
+    case let .custom(header, value):
+      return (header, value)
+    }
+  }
+
+  public var description: String {
+    let (key, value) = self.pair
+    return key + ": " + value
+  }
+}
