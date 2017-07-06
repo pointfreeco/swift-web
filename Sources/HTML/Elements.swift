@@ -199,7 +199,7 @@ public func script(_ attribs: [Attribute]) -> Node {
 }
 
 public func script(_ script: String) -> Node {
-  return HTML.script([], script)
+  return Html.script([], script)
 }
 
 public func span(_ attribs: [Attribute], _ content: [Node]) -> Node {

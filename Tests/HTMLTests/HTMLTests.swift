@@ -1,7 +1,8 @@
-import XCTest
+import Css
+import Html
+import HtmlCssSupport
 import Prelude
-import HTML
-import CSS
+import XCTest
 
 class HTMLTests: XCTestCase {
   func testImgTag() {
@@ -21,7 +22,7 @@ class HTMLTests: XCTestCase {
 
   func testHtml3() {
     let html = p(
-      [ HTML.`class` <| "main" ],
+      [ Html.`class` <| "main" ],
       [
         img(
           [ src <| "cat.jpg",
@@ -99,7 +100,7 @@ class HTMLTests: XCTestCase {
 
   func testHtmlInput() {
     let html = input(
-      [ disabled <| true, HTML.value <| "Hello, world!" ]
+      [ disabled <| true, Html.value <| "Hello, world!" ]
     )
 
     XCTAssertEqual("<input disabled value=\"Hello, world!\" />", render(html))
@@ -154,7 +155,7 @@ class HTMLTests: XCTestCase {
 </html>
 
 """,
-      HTML.render(htmlNode, config: pretty)
+      Html.render(htmlNode, config: pretty)
     )
   }
 
@@ -167,6 +168,6 @@ class HTMLTests: XCTestCase {
       ])
     ])
 
-    XCTAssertEqual("<!DOCTYPE html><html><head><title>Title</title></head></html>", HTML.render(doc))
+    XCTAssertEqual("<!DOCTYPE html><html><head><title>Title</title></head></html>", Html.render(doc))
   }
 }

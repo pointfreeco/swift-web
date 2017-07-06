@@ -1,7 +1,8 @@
-import XCTest
+import Css
 import Prelude
-import HTML
-import CSS
+import Html
+import HtmlCssSupport
+import XCTest
 
 class ViewTests: XCTestCase {
   func testSemigroupAssociativity() {
@@ -26,7 +27,7 @@ class ViewTests: XCTestCase {
       .contramap { _ in () }
       .map { nodes in
         [
-          HTML.header(
+          Html.header(
             [ style <| color(red) ],
             nodes
           )
@@ -39,7 +40,7 @@ class ViewTests: XCTestCase {
         .contramap { _ in () }
         .map { nodes in
           [
-            HTML.footer(
+            Html.footer(
               [ style <| color(blue) ],
               nodes
             )

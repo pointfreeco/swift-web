@@ -1,6 +1,5 @@
 import Foundation
 import Prelude
-import HTML
 
 public struct Conn<Step, Data> {
   public private(set) var data: Data
