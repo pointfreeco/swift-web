@@ -11,7 +11,7 @@ let package = Package(
     .library(name: "HTTPPipeline", targets: ["HTTPPipeline"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .branch("monorepo")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("d242e07")),
   ],
   targets: [
     .target(name: "HTML", dependencies: ["CSS", "Prelude"]),
