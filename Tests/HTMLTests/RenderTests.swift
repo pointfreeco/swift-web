@@ -1,7 +1,7 @@
 import XCTest
 import Prelude
-import HTML
-import CSS
+import Html
+import Css
 
 class RenderTests: XCTestCase {
   func renderMonoidMorphism() {

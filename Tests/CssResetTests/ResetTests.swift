@@ -1,6 +1,7 @@
-import XCTest
+import Css
+import CssReset
 import Prelude
-import CSS
+import XCTest
 
 class ResetTests: XCTestCase {
   func testResetPretty() {
@@ -62,3 +63,4 @@ table {
     )
   }
 }
+

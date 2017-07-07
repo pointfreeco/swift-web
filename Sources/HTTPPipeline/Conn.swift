@@ -1,6 +1,5 @@
 import Foundation
 import Prelude
-import HTML
 
 public enum StatusLineOpen {}
 public enum HeadersOpen {}

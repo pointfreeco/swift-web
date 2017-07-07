@@ -1,6 +1,5 @@
 import Foundation
 import Prelude
-import HTML
 
 public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> Conn<J, B>
 
@@ -77,15 +76,6 @@ public func basicAuth<Data>(user: String, password: String)
         )
       }
     }
-}
-
-public func respond<Data>(_ view: View<Data>) -> Middleware<HeadersOpen, ResponseEnded, Data, String> {
-  return { conn in
-    conn.map(view.rendered(with:))
-      |> writeHeader(.contentType(.html))
-      |> closeHeaders()
-      |> end
-  }
 }
 
 public func respond<Data>(text: String) -> Middleware<HeadersOpen, ResponseEnded, Data, String> {

@@ -1,6 +1,6 @@
 # swift-web [![CircleCI](https://circleci.com/gh/pointfreeco/swift-web.svg?style=svg)](https://circleci.com/gh/pointfreeco/swift-web)
 
-A collection of frameworks for solving various problems in building a Swift web framework. Each framework focuses on a single problem, like HTML rendering, CSS preprocessing, routing, middleware, and more. They also do not depend on any other framework in the collection. You can choose which pieces you want and don’t want, for example you can use `HTML` without `CSS`.
+A collection of frameworks for solving various problems in building a Swift web framework. Each framework focuses on a single problem, like HTML rendering, CSS preprocessing, routing, middleware, and more. They also do not depend on any other framework in the collection. You can choose which pieces you want and don’t want, for example you can use `Html` without `Css`.
 
 ## Stability
 
@@ -20,12 +20,20 @@ let package = Package(
 
 ## Table of Contents
 
-* [`HTML`](#html)
-* [`CSS`](#css)
-* [`HTTPPipeline`](#httppipeline)
+#### Primary modules
+
+* [`Html`](#html)
+* [`Css`](#css)
+* [`HttpPipeline`](#httppipeline)
 * [`ApplicativeRouter`](#applicativerouter)
 
-## `HTML`
+#### Supporting modules
+
+* [`HttpPipelineHtmlSupport`](#httppipelinehtmlsupport)
+* [`HtmlCssSupport`](#htmlcsssupport)
+* [`CssReset`](#cssreset)
+
+## `Html`
 
 An embedded domain specific language (EDSL) in Swift for modeling HTML documents. A few simple value types and functions allow you to model most of HTML, and they compose easily.
 
@@ -63,7 +71,7 @@ The design of this library has been covered by the following articles:
 * [Composable HTML Views in Swift](http://www.fewbutripe.com/swift/html/dsl/2017/06/29/composable-html-views-in-swift.html)
 
 
-## `CSS`
+## `Css`
 
 An EDSL for a CSS preprocessor like [Sass](http://sass-lang.com). A few simple value types and functions allow you to model most of CSS, and allow you express new things not possible in standard CSS.
 
@@ -85,12 +93,12 @@ body {
 }
 ```
 
-## `HTTPPipeline`
+## `HttpPipeline`
 
 A few types and functions for modeling server middleware as a simple function that transforms a request to a response.
 
 ```swift
-let pipeline = writeStatus(.ok)
+let middleware = writeStatus(.ok)
   >>> writeHeader(.contentType(.text))
   >>> closeHeaders()
   >>> end
@@ -98,7 +106,7 @@ let pipeline = writeStatus(.ok)
 let request = URLRequest(url: URL(string: "/")!)
 let conn = connection(from: request).map(const("Hello, world"))
 
-pipeline(conn).response.description
+middleware(conn).response.description
 ```
 ```text
 Status 200
@@ -134,6 +142,80 @@ let router =
 let request = URLRequest(url: URL(string: "http://localhost:8000/episode/001-hello-world")!)
 let route = router.match(request) // => Route.episode("001-hello-world")
 ```
+
+##  `HttpPipelineHtmlSupport`
+
+Adds middleware for rendering an `Html` view:
+
+```swift
+import Foundation
+import Html
+import HttpPipeline
+import HttpPipelineHtmlSupport
+import Prelude
+
+let view = View<Prelude.Unit> { _ in p(["Hello world!"]) }
+
+let middleware = writeStatus(.ok)
+  >>> respond(view)
+
+let conn = connection(from: URLRequest(url: URL(string: "/")!))
+middleware(conn).response.description
+```
+```text
+Status 200
+Content-Type: text/html
+
+<p>Hello world!</p>
+```
+
+## `HtmlCssSupport`
+
+Adds an element and attribute function to `Html` for render `Css` values into an internal stylesheet or inline styles. The element function `style` allows you to provide a `Stylesheet` value that will be rendered to an internal stylesheet:
+
+```swift
+import Css
+import Html
+import HtmlCssSupport
+
+let css = body % background(red)
+let document = html([head([style(css)])])
+render(document)
+```
+```html
+<html>
+  <head>
+    <style>body{background:#ff0000}</style>
+  </head>
+</html>
+```
+
+The attribute function `style` allows you to render a stylesheet inline directly on an element:
+
+```swift
+import Css
+import Html
+import HtmlCssSupport
+
+let document = p(
+  [ style(color(blue)) ],
+  [
+    "Go back ",
+    a([style(color(red))], ["Home"])
+  ]
+)
+render(document)
+```
+```html
+<p style="color:#0000ff">
+  Go back
+  <a style="color:#ff0000">Home</a>
+</p>
+```
+
+## `CssReset`
+
+Contains a single value `reset` of type `Stylesheet` that resets all of the defaults for a webpage. It can be combined with another stylesheet via `reset <> otherStyles`, or can be directly rendered to a stylesheet string via `render(reset)`.
 
 ## License
 

@@ -1,7 +1,8 @@
-import XCTest
+import Css
+import Html
+import HtmlCssSupport
 import Prelude
-import HTML
-import CSS
+import XCTest
 
 class FullDocumentTests: XCTestCase {
 
@@ -20,16 +21,16 @@ class FullDocumentTests: XCTestCase {
           ]
         ),
         body(
-          [ HTML.class <| "home",
+          [ Html.class <| "home",
             id <| "home"
           ],
           [
             header(
-              [ HTML.class <| "site-header" ],
+              [ Html.class <| "site-header" ],
               [
                 a([ href <| "/home" ], [ "Home" ]),
                 nav(
-                  [ HTML.class <| "site-nav" ],
+                  [ Html.class <| "site-nav" ],
                   [
                     div(
                       [
@@ -43,18 +44,18 @@ class FullDocumentTests: XCTestCase {
             ),
 
             main(
-              [ HTML.class <| "page-content" ],
+              [ Html.class <| "page-content" ],
               [
                 h1(
-                  [ HTML.class <| "page-heading" ],
+                  [ Html.class <| "page-heading" ],
                   [
                     ul(
-                      [ HTML.class <| "episode-list" ],
+                      [ Html.class <| "episode-list" ],
                       [
                         li(
                           [
                             span(
-                              [ HTML.class <| "episode-metadata" ],
+                              [ Html.class <| "episode-metadata" ],
                               [ "April 27, 2017" ]
                             ),
                             h2(
@@ -65,7 +66,7 @@ class FullDocumentTests: XCTestCase {
                         li(
                           [
                             span(
-                              [ HTML.class <| "episode-metadata" ],
+                              [ Html.class <| "episode-metadata" ],
                               [ "April 20, 2017" ]
                             ),
                             h2(
@@ -78,7 +79,7 @@ class FullDocumentTests: XCTestCase {
                   ]
                 ),
                 p(
-                  [ HTML.class <| "rss-subscribe" ],
+                  [ Html.class <| "rss-subscribe" ],
                   [
                     "subscribe ",
                     a(
@@ -91,7 +92,7 @@ class FullDocumentTests: XCTestCase {
             ),
 
             footer(
-              [ HTML.class <| "site-footer" ],
+              [ Html.class <| "site-footer" ],
               [
                 h2(["The Site"]),
                 ul(
@@ -102,12 +103,12 @@ class FullDocumentTests: XCTestCase {
                   ]
                 ),
                 form(
-                  [ id <| "newsletter-form", action <| "#", HTML.method <| .post ],
+                  [ id <| "newsletter-form", action <| "#", Html.method <| .post ],
                   [
                     h4(["Sign up for our newsletter!"]),
-                    label([HTML.for <| "email"], ["Email: "]),
-                    input([type <| "text", HTML.name <| "email", id <| "email", HTML.value <| ""]),
-                    input([type <| "submit", HTML.value <| "Submit"])
+                    label([Html.for <| "email"], ["Email: "]),
+                    input([type <| "text", Html.name <| "email", id <| "email", Html.value <| ""]),
+                    input([type <| "submit", Html.value <| "Submit"])
                   ]
                 )
               ]

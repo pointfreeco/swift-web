@@ -1,6 +1,6 @@
 import ApplicativeRouter
-import CSS
-import HTML
-import HTTPPipeline
+import Css
+import Html
+import HttpPipeline
 
 1

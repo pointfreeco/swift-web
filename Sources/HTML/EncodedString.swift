@@ -8,7 +8,7 @@ public struct EncodedString {
   }
 }
 
-internal func + (lhs: EncodedString, rhs: EncodedString) -> EncodedString {
+public func + (lhs: EncodedString, rhs: EncodedString) -> EncodedString {
   return .init(lhs.string + rhs.string)
 }
 
@@ -20,7 +20,7 @@ extension EncodedString: Monoid {
   }
 }
 
-internal func quote(_ string: EncodedString) -> EncodedString {
+public func quote(_ string: EncodedString) -> EncodedString {
   return .init("\"" + string.string + "\"")
 }
 

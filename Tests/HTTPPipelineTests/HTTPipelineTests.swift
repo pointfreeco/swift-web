@@ -1,6 +1,6 @@
 import XCTest
 import Prelude
-@testable import HTTPPipeline
+@testable import HttpPipeline
 
 class HTTPPipelineTests: XCTestCase {
   func testPipeline() {

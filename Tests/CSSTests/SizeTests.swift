@@ -1,6 +1,6 @@
 import XCTest
 import Prelude
-import CSS
+import Css
 
 class SizeTests: XCTestCase {
 

@@ -51,18 +51,18 @@ public func text(_ text: String) -> Node {
 
 extension String: Value {
   public func render(with key: String) -> EncodedString? {
-    return HTML.encode("\(key)=") + quote(HTML.encode(self))
+    return Html.encode("\(key)=") + quote(Html.encode(self))
   }
 }
 
 extension Int: Value {
   public func render(with key: String) -> EncodedString? {
-    return HTML.encode("\(key)=") + quote(HTML.encode(String(self)))
+    return Html.encode("\(key)=") + quote(Html.encode(String(self)))
   }
 }
 
 extension Bool: Value {
   public func render(with key: String) -> EncodedString? {
-    return self ? HTML.encode(key) : nil
+    return self ? Html.encode(key) : nil
   }
 }
