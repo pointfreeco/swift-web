@@ -12,9 +12,9 @@ This library should be considered alpha, and not stable. Breaking changes will h
 import PackageDescription
 
 let package = Package(
-    dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-web.git", .branch("master")),
-    ]
+  dependencies: [
+    .package(url: "https://github.com/pointfreeco/swift-web.git", .branch("master")),
+  ]
 )
 ```
 
@@ -109,7 +109,7 @@ Hello, world
 
 ## `ApplicativeRouter`
 
-A router built on the principles of “applicative parsing” that is robust, composable and type-safe. It’s job is to take the incoming, unstructured `URLRequest` from the browser and turn it into a structured value so that your app can do what it needs to do to produce a response.
+A router built on the principles of “applicative parsing” that is robust, composable and type-safe. Its job is to take the incoming, unstructured `URLRequest` from the browser and turn it into a structured value so that your app can do what it needs to do to produce a response.
 
 ```swift
 import ApplicativeRouter
