@@ -1,6 +1,11 @@
 import Foundation
 import Prelude
 
+public enum StatusLineOpen {}
+public enum HeadersOpen {}
+public enum BodyOpen {}
+public enum ResponseEnded {}
+
 public struct Conn<Step, Data> {
   public private(set) var data: Data
   public private(set) var request: URLRequest
@@ -38,8 +43,3 @@ public func connection(from request: URLRequest) -> Conn<StatusLineOpen, Prelude
     response: Response(status: .ok, headers: [], body: "")
   )
 }
-
-public enum StatusLineOpen {}
-public enum HeadersOpen {}
-public enum BodyOpen {}
-public enum ResponseEnded {}
