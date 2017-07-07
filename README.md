@@ -127,7 +127,7 @@ let router =
         // Matches: /episode/:str
     <|> Route.episode <¢> (lit("episode") *> str) <* end
         // Matches: /episodes
-    <|> Route.episodes <¢ (lit("episodes")) <* end
+    <|> Route.episodes <¢ lit("episodes") <* end
         // Matches: search?query=
     <|> Route.search <¢> (lit("search") *> opt(param("query"))) <* end
 
