@@ -62,7 +62,7 @@ private func prettyPrint(attributes attribs: [Attribute]) -> Doc {
   return (attribs.count == 0 ? .text("") : .text(" "))
     <%%> attribs
       .map(prettyPrint(attribute:))
-      .fillSep()
+      .sep()
       .hang(0)
 }
 

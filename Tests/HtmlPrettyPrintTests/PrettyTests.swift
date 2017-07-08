@@ -10,19 +10,25 @@ class PrettyTests: XCTestCase {
       [
         body(
           [
-            .comment("This is gonna be a long comment. I wonder what is going to happen!"),
+            .comment("This is gonna be a long comment. Let's see what happens!"),
             div(
               [
                 div(
                   [
                     id("some-long-id"),
                     Html.`class`("foo bar baz"),
-                    style("color: red;")
+                    style("color: red;"),
                   ],
                   ["hello world"]
                 ),
                 p(["goodbye world"]),
-                img([src("cat.jpg")])
+                img(
+                  [
+                    id("cat"),
+                    Html.`class`("cat"),
+                    src("cat.jpg")
+                  ]
+                )
               ]
             )
           ]
@@ -34,9 +40,8 @@ class PrettyTests: XCTestCase {
       """
 <!DOCTYPE html>
 <body>
-  <!-- This is gonna be a long
-       comment. I wonder what
-       is going to happen! -->
+  <!-- This is gonna be a long comment.
+       Let's see what happens! -->
   <div>
     <div id="some-long-id"
          class="foo bar baz"
@@ -46,10 +51,12 @@ class PrettyTests: XCTestCase {
     <p>
       goodbye world
     </p>
-    <img src="cat.jpg" />
+    <img id="cat"
+         class="cat"
+         src="cat.jpg" />
   </div>
 </body>
 """,
-      prettyPrint(node: doc, pageWidth: 30))
+      prettyPrint(node: doc, pageWidth: 40))
   }
 }
