@@ -1,6 +1,6 @@
 import DoctorPretty
-import Operadics
 import Html
+import Operadics
 
 public func prettyPrint(node: Node, pageWidth: Int = 110) -> String {
 
