@@ -31,6 +31,7 @@ let package = Package(
 
 * [`HttpPipelineHtmlSupport`](#httppipelinehtmlsupport)
 * [`HtmlCssSupport`](#htmlcsssupport)
+* [`HtmlPrettyPrint`](#htmlprettyprint)
 * [`CssReset`](#cssreset)
 
 ## `Html`
@@ -211,6 +212,58 @@ render(document)
   Go back
   <a style="color:#ff0000">Home</a>
 </p>
+```
+
+## `HtmlPrettyPrint`
+
+Contains functions for pretty printing an `Html` node (or nodes) using [DoctorPretty](https://github.com/bkase/DoctorPretty.git), a wonderful little pretty printer library. It not only takes care of adding newlines for tags so that the DOM structure is easy to read, but will also insert newlines when text goes past a column width, and even align smartly:
+
+```swift
+let doc: Node = .document(
+  [
+    body(
+      [
+        .comment("This is gonna be a long comment. Let's see what happens!"),
+        div(
+          [
+            div(
+              [
+                id("some-long-id"),
+                Html.`class`("foo bar baz"),
+              ],
+              ["hello world"]
+            ),
+            img(
+              [
+                id("cat"),
+                Html.`class`("cat"),
+                src("cat.jpg")
+              ]
+            )
+          ]
+        )
+      ]
+    )
+  ]
+)
+
+prettyPrint(node: doc, pageWidth: 40))
+```
+```html
+<!DOCTYPE html>
+<body>
+  <!-- This is gonna be a long comment.
+       Let's see what happens! -->
+  <div>
+    <div id="some-long-id"
+         class="foo bar baz">
+      hello world
+    </div>
+    <img id="cat"
+         class="cat"
+         src="cat.jpg" />
+  </div>
+</body>
 ```
 
 ## `CssReset`
