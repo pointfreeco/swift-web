@@ -32,7 +32,7 @@ let package = Package(
     .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
-    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport"]),
+    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint"]),
 
     .target(name: "HtmlPrettyPrint", dependencies: ["DoctorPretty", "Html"]),
     .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["HtmlPrettyPrint"]),
