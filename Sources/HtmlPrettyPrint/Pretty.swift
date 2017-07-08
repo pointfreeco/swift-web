@@ -71,18 +71,18 @@ private func prettyPrint(attribute: Attribute) -> Doc {
 }
 
 private func prettyPrint(comment: String) -> Doc {
-  return Doc.text("<!--")
+  return .text("<!--")
     <%> comment
       .split(separator: " ")
       .map(String.init)
       .map(Doc.text)
       .fillSep()
       .hang(0)
-    <%> Doc.text("-->")
+    <%> .text("-->")
 }
 
 private func prettyPrint(document nodes: [Node]) -> Doc {
-  return Doc.text("<!DOCTYPE html>")
+  return .text("<!DOCTYPE html>")
     <> .hardline
     <> nodes.map(prettyPrint(node:)).vcat()
 }
