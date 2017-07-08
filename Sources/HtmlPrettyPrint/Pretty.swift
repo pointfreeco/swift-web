@@ -2,10 +2,7 @@ import DoctorPretty
 import Operadics
 import Html
 
-public func prettyPrint(
-  node: Node,
-  pageWidth: Int = 110
-  ) -> String {
+public func prettyPrint(node: Node, pageWidth: Int = 110) -> String {
 
   return (prettyPrint(node: node) as Doc)
     .renderPretty(ribbonFrac: 1, pageWidth: pageWidth)
