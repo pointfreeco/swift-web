@@ -226,20 +226,8 @@ let doc: Node = .document(
         .comment("This is gonna be a long comment. Let's see what happens!"),
         div(
           [
-            div(
-              [
-                id("some-long-id"),
-                Html.`class`("foo bar baz"),
-              ],
-              ["hello world"]
-            ),
-            img(
-              [
-                id("cat"),
-                Html.`class`("cat"),
-                src("cat.jpg")
-              ]
-            )
+            div([ id("some-long-id"), Html.`class`("foo bar baz"), ], ["hello world"]),
+            img([ id("cat"), Html.`class`("cat"), src("cat.jpg") ])
           ]
         )
       ]
