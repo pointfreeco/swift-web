@@ -2,6 +2,7 @@ import Css
 import Prelude
 import Html
 import HtmlCssSupport
+import HtmlPrettyPrint
 import XCTest
 
 class ViewTests: XCTestCase {
@@ -47,7 +48,8 @@ class ViewTests: XCTestCase {
           ]
     }
 
-    XCTAssertEqual("""
+    XCTAssertEqual(
+      """
 <header style="color:#ff0000">
   <h1>
     Point Free
@@ -61,8 +63,9 @@ class ViewTests: XCTestCase {
     © Point Free LLC, 2017
   </p>
 </footer>
-
-""", main.rendered(with: 12, config: pretty))
+""",
+      prettyPrint(nodes: main.view(12))
+    )
   }
 
   func testProfunctor() {
@@ -86,9 +89,8 @@ class ViewTests: XCTestCase {
 <span style="color:#0000ff">
   {color:#0000ff}
 </span>
-
 """,
-      blueSpan.rendered(with: .empty, config: pretty)
+      prettyPrint(nodes: blueSpan.view(.empty))
     )
   }
 }

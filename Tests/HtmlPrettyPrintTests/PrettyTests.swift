@@ -22,6 +22,7 @@ class PrettyTests: XCTestCase {
                   ["hello world"]
                 ),
                 p(["goodbye world"]),
+                img([src("cat.jpg")])
               ]
             )
           ]
@@ -45,6 +46,7 @@ class PrettyTests: XCTestCase {
     <p>
       goodbye world
     </p>
+    <img src="cat.jpg" />
   </div>
 </body>
 """,

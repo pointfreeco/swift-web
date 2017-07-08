@@ -1,6 +1,7 @@
 import Css
 import Html
 import HtmlCssSupport
+import HtmlPrettyPrint
 import XCTest
 
 class SupportTests: XCTestCase {
@@ -29,9 +30,8 @@ class SupportTests: XCTestCase {
     </style>
   </head>
 </html>
-
 """,
-      render(document, config: pretty)
+      prettyPrint(node: document)
     )
   }
 }

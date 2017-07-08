@@ -1,6 +1,7 @@
 import Css
 import Html
 import HtmlCssSupport
+import HtmlPrettyPrint
 import Prelude
 import XCTest
 
@@ -153,9 +154,8 @@ class HTMLTests: XCTestCase {
     </p>
   </body>
 </html>
-
 """,
-      Html.render(htmlNode, config: pretty)
+      prettyPrint(node: htmlNode)
     )
   }
 

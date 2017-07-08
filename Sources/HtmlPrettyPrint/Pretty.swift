@@ -9,6 +9,13 @@ public func prettyPrint(node: Node, pageWidth: Int = 110) -> String {
     .displayString()
 }
 
+public func prettyPrint(nodes: [Node], pageWidth: Int = 110) -> String {
+
+  return nodes.map(prettyPrint(node:)).vcat()
+    .renderPretty(ribbonFrac: 1, pageWidth: pageWidth)
+    .displayString()
+}
+
 private func prettyPrint(node: Node) -> Doc {
   switch node {
   case let .element(element):
@@ -25,11 +32,13 @@ private func prettyPrint(node: Node) -> Doc {
 private func prettyPrint(element: Element) -> Doc {
 
   return prettyPrintOpenTag(element: element)
-    <> (element.content ?? [])
-      .map(prettyPrint(node:))
-      .vcat()
-      .indent(2)
-    <> .hardline
+    <> (
+      element.content.map {
+        $0.map(prettyPrint(node:))
+          .vcat()
+          .indent(2)
+        } ?? .zero
+    )
     <> prettyPrintCloseTag(element: element)
 }
 
@@ -38,14 +47,13 @@ private func prettyPrintOpenTag(element: Element) -> Doc {
   return .text("<")
     <> .text(element.name)
     <> prettyPrint(attributes: element.attribs)
-    <> .text(">")
-    <> .hardline
+    <> (element.content == nil ? .zero : .text(">") <> .hardline)
 }
 
 private func prettyPrintCloseTag(element: Element) -> Doc {
-  return .text("</")
-    <> .text(element.name)
-    <> .text(">")
+  return element.content == nil
+    ? .text(" />")
+    : .hardline <> .text("</") <> .text(element.name) <> .text(">")
 }
 
 private func prettyPrint(attributes attribs: [Attribute]) -> Doc {
