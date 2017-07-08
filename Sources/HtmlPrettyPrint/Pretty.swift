@@ -11,7 +11,8 @@ public func prettyPrint(node: Node, pageWidth: Int = 110) -> String {
 
 public func prettyPrint(nodes: [Node], pageWidth: Int = 110) -> String {
 
-  return nodes.map(prettyPrint(node:)).vcat()
+  return nodes.map(prettyPrint(node:))
+    .vcat()
     .renderPretty(ribbonFrac: 1, pageWidth: pageWidth)
     .displayString()
 }
