@@ -10,11 +10,13 @@ let package = Package(
     .library(name: "CssReset", targets: ["CssReset"]),
     .library(name: "Html", targets: ["Html"]),
     .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
+    .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("d242e07")),
+    .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Prelude"]),
@@ -27,10 +29,13 @@ let package = Package(
     .testTarget(name: "CssResetTests", dependencies: ["CssReset"]),
 
     .target(name: "Html", dependencies: ["Prelude"]),
-    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport"]),
+    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
-    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport"]),
+    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint"]),
+
+    .target(name: "HtmlPrettyPrint", dependencies: ["DoctorPretty", "Html"]),
+    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["HtmlPrettyPrint"]),
 
     .target(name: "HttpPipeline", dependencies: ["Prelude"]),
     .testTarget(name: "HttpPipelineTests", dependencies: ["HttpPipeline"]),

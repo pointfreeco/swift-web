@@ -14,14 +14,14 @@ extension Node: ExpressibleByStringLiteral {
 }
 
 public struct Element {
-  let name: String
-  let attribs: [Attribute]
-  let content: [Node]?
+  public let name: String
+  public let attribs: [Attribute]
+  public let content: [Node]?
 }
 
 public struct Attribute {
-  let key: String
-  let value: Value
+  public let key: String
+  public let value: Value
 
   public init(_ key: String, _ value: Value) {
     self.key = key

@@ -1,6 +1,7 @@
 import Css
 import Html
 import HtmlCssSupport
+import HtmlPrettyPrint
 import Prelude
 import XCTest
 
@@ -118,8 +119,6 @@ class FullDocumentTests: XCTestCase {
       ]
     )
 
-    let htmlString = render(htmlNode, config: pretty)
-
     XCTAssertEqual(
       """
 <html>
@@ -207,9 +206,8 @@ class FullDocumentTests: XCTestCase {
     </footer>
   </body>
 </html>
-
 """,
-      htmlString
+      prettyPrint(node: htmlNode)
     )
   }
 }

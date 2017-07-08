@@ -2,7 +2,7 @@ import Foundation
 import Prelude
 
 public struct EncodedString {
-  internal let string: String
+  public let string: String
   internal init(_ string: String) {
     self.string = string
   }
