@@ -2,12 +2,48 @@
   "object": {
     "pins": [
       {
+        "package": "Algebra",
+        "repositoryURL": "https://github.com/typelift/Algebra.git",
+        "state": {
+          "branch": null,
+          "revision": "e81a20aa543dd0847897b57073a3f939c2124375",
+          "version": "0.2.0"
+        }
+      },
+      {
+        "package": "DoctorPretty",
+        "repositoryURL": "https://github.com/bkase/DoctorPretty.git",
+        "state": {
+          "branch": null,
+          "revision": "2d0370ade8098dd1e24c08460edc1606eb81a54f",
+          "version": "0.3.0"
+        }
+      },
+      {
+        "package": "Operadics",
+        "repositoryURL": "https://github.com/typelift/Operadics.git",
+        "state": {
+          "branch": null,
+          "revision": "bc8cdd83868c395b7075d0db5e930842172012ec",
+          "version": "0.2.3"
+        }
+      },
+      {
         "package": "Prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
           "branch": "d242e07",
           "revision": "d242e075fd6a07abb9bcefa70187ead2302c277d",
           "version": null
+        }
+      },
+      {
+        "package": "Swiftx",
+        "repositoryURL": "https://github.com/typelift/Swiftx.git",
+        "state": {
+          "branch": null,
+          "revision": "32cb9a833cbc69b1ee2ebad2392eca3090b7211c",
+          "version": "0.5.3"
         }
       }
     ]
