@@ -14,21 +14,11 @@ class PrettyTests: XCTestCase {
             div(
               [
                 div(
-                  [
-                    id("some-long-id"),
-                    Html.`class`("foo bar baz"),
-                    style("color: red;"),
-                  ],
+                  [ id("some-long-id"), Html.`class`("foo bar baz"), style("color: red;") ],
                   ["hello world"]
                 ),
                 p(["goodbye world"]),
-                img(
-                  [
-                    id("cat"),
-                    Html.`class`("cat"),
-                    src("cat.jpg")
-                  ]
-                )
+                img([ id("cat"), Html.`class`("cat"), src("cat.jpg") ])
               ]
             )
           ]
