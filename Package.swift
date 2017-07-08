@@ -29,7 +29,7 @@ let package = Package(
     .testTarget(name: "CssResetTests", dependencies: ["CssReset"]),
 
     .target(name: "Html", dependencies: ["Prelude"]),
-    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport"]),
+    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint"]),
