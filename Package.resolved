@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "SnapshotAssertion",
+        "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-assertion.git",
+        "state": {
+          "branch": "55f227a",
+          "revision": "55f227a0ae4c27536d72ef961473dfc61fa7237b",
+          "version": null
+        }
+      },
+      {
         "package": "Swiftx",
         "repositoryURL": "https://github.com/typelift/Swiftx.git",
         "state": {

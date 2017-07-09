@@ -1,6 +1,6 @@
 import XCTest
 import Prelude
-@testable import Css
+import Css
 
 class MediaTests: XCTestCase {
 

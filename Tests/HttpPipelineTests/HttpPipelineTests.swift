@@ -1,8 +1,8 @@
 import XCTest
 import Prelude
-@testable import HttpPipeline
+import HttpPipeline
 
-class HTTPPipelineTests: XCTestCase {
+class HttpPipelineTests: XCTestCase {
   func testPipeline() {
 //    let pipeline =
 //      writeStatus(.ok)
@@ -21,8 +21,4 @@ class HTTPPipelineTests: XCTestCase {
 //""",
 //                   pipeline(conn).response.description)
   }
-
-  static var allTests = [
-    ("testPipeline", testPipeline),
-  ]
 }

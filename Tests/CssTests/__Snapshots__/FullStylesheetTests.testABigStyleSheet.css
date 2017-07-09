@@ -1,0 +1,17 @@
+
+body {
+  background : #ff0000;
+}
+
+body a:first-child {
+  color : #0000ff;
+}
+
+ul li {
+  color : #ff0000;
+}
+
+ul li:first-child {
+  color : #0000ff;
+}
+
