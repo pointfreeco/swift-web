@@ -26,18 +26,18 @@ let package = Package(
     .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter"]),
 
     .target(name: "Css", dependencies: ["Prelude", "Either"]),
-    .testTarget(name: "CssTests", dependencies: ["Css", "SnapshotAssertion"]),
+    .testTarget(name: "CssTests", dependencies: ["Css", "CssTestSupport"]),
 
     .target(name: "CssReset", dependencies: ["Css"]),
-    .testTarget(name: "CssResetTests", dependencies: ["CssReset", "SnapshotAssertion"]),
+    .testTarget(name: "CssResetTests", dependencies: ["CssReset", "CssTestSupport"]),
 
     .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotAssertion"]),
 
     .target(name: "Html", dependencies: ["Prelude"]),
-    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotAssertion"]),
+    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
-    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "SnapshotAssertion"]),
+    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
 
     .target(name: "HtmlPrettyPrint", dependencies: ["DoctorPretty", "Html"]),
     .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["HtmlPrettyPrint", "SnapshotAssertion"]),
