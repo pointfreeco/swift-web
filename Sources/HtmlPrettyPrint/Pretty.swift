@@ -67,7 +67,33 @@ private func prettyPrint(attributes attribs: [Attribute]) -> Doc {
 }
 
 private func prettyPrint(attribute: Attribute) -> Doc {
-  return .text(attribute.value.render(with: attribute.key)?.string ?? "")
+
+  // class attributes get special rendering logic so to make them line up
+  // when they flow past the page width.
+  if attribute.key == "class" {
+    return Doc.text("\(attribute.key)=\"")
+      <> (attribute.value.renderedValue()?.string ?? "")
+        .split(separator: " ")
+        .map(String.init)
+        .map(Doc.text)
+        .sep()
+        .hang(0)
+      <> .text("\"")
+  }
+
+  // style attributes also get special rendering, but aligning after the semicolon
+  // that separates multiple styles
+  if attribute.key == "style" {
+    return Doc.text("\(attribute.key)=\"")
+      <> (attribute.value.renderedValue()?.string ?? "")
+        .split(separator: ";")
+        .map { Doc.text(String($0) + ";") }
+        .sep()
+        .hang(0)
+      <> .text("\"")
+  }
+
+  return (attribute.value.render(with: attribute.key)?.string).map(Doc.text) ?? .zero
 }
 
 private func prettyPrint(comment: String) -> Doc {

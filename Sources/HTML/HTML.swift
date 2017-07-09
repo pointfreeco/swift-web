@@ -30,6 +30,7 @@ public struct Attribute {
 }
 
 public protocol Value {
+  func renderedValue() -> EncodedString?
   func render(with key: String) -> EncodedString?
 }
 
@@ -53,16 +54,28 @@ extension String: Value {
   public func render(with key: String) -> EncodedString? {
     return Html.encode("\(key)=") + quote(Html.encode(self))
   }
+
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self)
+  }
 }
 
 extension Int: Value {
   public func render(with key: String) -> EncodedString? {
     return Html.encode("\(key)=") + quote(Html.encode(String(self)))
   }
+
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(String(self))
+  }
 }
 
 extension Bool: Value {
   public func render(with key: String) -> EncodedString? {
     return self ? Html.encode(key) : nil
+  }
+
+  public func renderedValue() -> EncodedString? {
+    return nil
   }
 }

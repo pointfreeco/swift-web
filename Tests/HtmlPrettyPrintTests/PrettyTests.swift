@@ -14,7 +14,11 @@ class PrettyTests: XCTestCase {
             div(
               [
                 div(
-                  [ id("some-long-id"), Html.`class`("foo bar baz"), style("color: red;") ],
+                  [
+                    id("some-long-id"),
+                    Html.`class`("foo bar baz class1 class2 class3"),
+                    style("color: red;background: blue;padding: rem(2)")
+                  ],
                   ["hello world"]
                 ),
                 p(["goodbye world"]),
@@ -34,8 +38,15 @@ class PrettyTests: XCTestCase {
        Let's see what happens! -->
   <div>
     <div id="some-long-id"
-         class="foo bar baz"
-         style="color: red;">
+         class="foo
+                bar
+                baz
+                class1
+                class2
+                class3"
+         style="color: red;
+                background: blue;
+                padding: rem(2);">
       hello world
     </div>
     <p>
