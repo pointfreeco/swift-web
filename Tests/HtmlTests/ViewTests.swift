@@ -50,7 +50,7 @@ class ViewTests: XCTestCase {
 
     XCTAssertEqual(
       """
-<header style="color:#ff0000">
+<header style="color:#ff0000;">
   <h1>
     Point Free
   </h1>
@@ -58,7 +58,7 @@ class ViewTests: XCTestCase {
 <p>
   Welcome to Point Free! We have 12 episodes for you to watch!
 </p>
-<footer style="color:#0000ff">
+<footer style="color:#0000ff;">
   <p>
     © Point Free LLC, 2017
   </p>
@@ -86,7 +86,7 @@ class ViewTests: XCTestCase {
 
     XCTAssertEqual(
       """
-<span style="color:#0000ff">
+<span style="color:#0000ff;">
   {color:#0000ff}
 </span>
 """,

@@ -13,4 +13,8 @@ extension Stylesheet: Html.Value {
   public func render(with key: String) -> EncodedString? {
     return encode("\(key)=") + quote(encode(Css.render(config: inline, css: self)))
   }
+
+  public func renderedValue() -> EncodedString? {
+    return encode(Css.render(config: inline, css: self))
+  }
 }

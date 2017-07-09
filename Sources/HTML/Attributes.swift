@@ -10,6 +10,15 @@ public enum Method: Value {
       return encode("method=") + quote(encode("POST"))
     }
   }
+
+  public func renderedValue() -> EncodedString? {
+    switch self {
+    case .get:
+      return encode("GET")
+    case .post:
+      return encode("POST")
+    }
+  }
 }
 
 public func action(_ action: String) -> Attribute {

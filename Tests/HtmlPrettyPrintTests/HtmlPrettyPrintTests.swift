@@ -1,6 +1,7 @@
 import DoctorPretty
 import Html
 import HtmlPrettyPrint
+import SnapshotAssertion
 import XCTest
 
 class PrettyTests: XCTestCase {
@@ -14,7 +15,11 @@ class PrettyTests: XCTestCase {
             div(
               [
                 div(
-                  [ id("some-long-id"), Html.`class`("foo bar baz"), style("color: red;") ],
+                  [
+                    id("some-long-id"),
+                    Html.`class`("foo bar baz class1 class2 class3"),
+                    style("color: red;background: blue;padding: rem(2);")
+                  ],
                   ["hello world"]
                 ),
                 p(["goodbye world"]),
@@ -26,27 +31,6 @@ class PrettyTests: XCTestCase {
       ]
     )
 
-    XCTAssertEqual(
-      """
-<!DOCTYPE html>
-<body>
-  <!-- This is gonna be a long comment.
-       Let's see what happens! -->
-  <div>
-    <div id="some-long-id"
-         class="foo bar baz"
-         style="color: red;">
-      hello world
-    </div>
-    <p>
-      goodbye world
-    </p>
-    <img id="cat"
-         class="cat"
-         src="cat.jpg" />
-  </div>
-</body>
-""",
-      prettyPrint(node: doc, pageWidth: 40))
+    assertSnapshot(matching: prettyPrint(node: doc, pageWidth: 40))
   }
 }
