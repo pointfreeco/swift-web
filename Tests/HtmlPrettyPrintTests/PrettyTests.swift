@@ -17,7 +17,7 @@ class PrettyTests: XCTestCase {
                   [
                     id("some-long-id"),
                     Html.`class`("foo bar baz class1 class2 class3"),
-                    style("color: red;background: blue;padding: rem(2)")
+                    style("color: red;background: blue;padding: rem(2);")
                   ],
                   ["hello world"]
                 ),
