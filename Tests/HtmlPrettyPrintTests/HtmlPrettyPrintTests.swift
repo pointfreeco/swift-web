@@ -1,7 +1,6 @@
 import DoctorPretty
 import Html
 import HtmlPrettyPrint
-import HtmlTestSupport
 import SnapshotAssertion
 import XCTest
 
