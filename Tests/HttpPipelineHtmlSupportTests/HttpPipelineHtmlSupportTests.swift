@@ -4,7 +4,7 @@ import HttpPipelineHtmlSupport
 import Prelude
 import XCTest
 
-class SupportTests: XCTestCase {
+class HttpPipelineHtmlSupportTests: XCTestCase {
   func testResponse() {
     let view = View<Prelude.Unit> { _ in p(["Hello world!"]) }
     let pipeline = writeStatus(.ok)

@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:swift-web.xcodeproj">
+      location = "group:Web.playground">
    </FileRef>
    <FileRef
-      location = "group:swift-web.playground">
+      location = "group:Web.xcodeproj">
    </FileRef>
 </Workspace>
