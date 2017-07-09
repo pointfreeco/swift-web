@@ -1,6 +1,8 @@
 import XCTest
 import Prelude
 import Css
+import CssTestSupport
+import SnapshotAssertion
 
 class FullStylesheetTests: XCTestCase {
 
@@ -19,28 +21,6 @@ class FullStylesheetTests: XCTestCase {
       )
     )
 
-    XCTAssertEqual(
-      """
-
-body {
-  background : #ff0000;
-}
-
-body a:first-child {
-  color : #0000ff;
-}
-
-ul li {
-  color : #ff0000;
-}
-
-ul li:first-child {
-  color : #0000ff;
-}
-
-
-""",
-      render(config: pretty, css: css)
-    )
+    assertSnapshot(matching: css)
   }
 }
