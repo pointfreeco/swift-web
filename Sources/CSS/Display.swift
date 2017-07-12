@@ -19,7 +19,6 @@ public func visibility(_ v: Visibility) -> Stylesheet {
 public let collapse: Visibility = "collapse"
 public let separate: Visibility = "separate"
 
-
 public struct FloatStyle: Val, None, Inherit {
   let style: Value
 
