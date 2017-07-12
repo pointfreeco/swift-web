@@ -1,7 +1,7 @@
 import DoctorPretty
 import Html
 import HtmlPrettyPrint
-import SnapshotAssertion
+import SnapshotTesting
 import XCTest
 
 class PrettyTests: XCTestCase {

@@ -2,7 +2,7 @@ import XCTest
 import Prelude
 import Css
 import CssTestSupport
-import SnapshotAssertion
+import SnapshotTesting
 
 class FullStylesheetTests: XCTestCase {
 
