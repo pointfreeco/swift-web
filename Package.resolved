@@ -32,17 +32,17 @@
         "package": "Prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
-          "branch": "d242e07",
-          "revision": "d242e075fd6a07abb9bcefa70187ead2302c277d",
+          "branch": "5bb9f1a",
+          "revision": "5bb9f1a5f909ca2d7cad463cebecbf97eb1c648b",
           "version": null
         }
       },
       {
-        "package": "SnapshotAssertion",
-        "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-assertion.git",
+        "package": "SnapshotTesting",
+        "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
         "state": {
-          "branch": "55f227a",
-          "revision": "55f227a0ae4c27536d72ef961473dfc61fa7237b",
+          "branch": "b06511e",
+          "revision": "b06511e3b013b6e0c97e5bd581fa9e85e3c6c3cb",
           "version": null
         }
       },

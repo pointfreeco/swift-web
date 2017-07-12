@@ -1,6 +1,6 @@
 import Html
 import HtmlPrettyPrint
-import SnapshotAssertion
+import SnapshotTesting
 
 extension Node: Snapshot {
   public static var snapshotFileExtension: String? {

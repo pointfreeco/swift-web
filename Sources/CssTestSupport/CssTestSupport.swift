@@ -1,5 +1,5 @@
 import Css
-import SnapshotAssertion
+import SnapshotTesting
 
 extension Stylesheet: Snapshot {
   public static var snapshotFileExtension: String? {

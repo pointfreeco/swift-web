@@ -3,7 +3,7 @@ import CssReset
 import CssTestSupport
 import Prelude
 import XCTest
-import SnapshotAssertion
+import SnapshotTesting
 
 class ResetTests: XCTestCase {
   func testResetPretty() {

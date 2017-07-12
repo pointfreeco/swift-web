@@ -3,7 +3,7 @@ import Html
 import HtmlCssSupport
 import HtmlTestSupport
 import Prelude
-import SnapshotAssertion
+import SnapshotTesting
 import XCTest
 
 class FullDocumentTests: XCTestCase {

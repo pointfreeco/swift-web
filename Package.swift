@@ -17,8 +17,8 @@ let package = Package(
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("d242e07")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-assertion.git", .revision("55f227a")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("5bb9f1a")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("b06511e")),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
   ],
   targets: [
@@ -31,7 +31,7 @@ let package = Package(
     .target(name: "CssReset", dependencies: ["Css"]),
     .testTarget(name: "CssResetTests", dependencies: ["CssReset", "CssTestSupport"]),
 
-    .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotAssertion"]),
+    .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotTesting"]),
 
     .target(name: "Html", dependencies: ["Prelude"]),
     .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
@@ -40,14 +40,14 @@ let package = Package(
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
 
     .target(name: "HtmlPrettyPrint", dependencies: ["DoctorPretty", "Html"]),
-    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["HtmlPrettyPrint", "SnapshotAssertion"]),
+    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
-    .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotAssertion"]),
+    .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HttpPipeline", dependencies: ["Prelude"]),
     .testTarget(name: "HttpPipelineTests", dependencies: ["HttpPipeline"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
-    .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotAssertion"]),
+    .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
   ]
 )
