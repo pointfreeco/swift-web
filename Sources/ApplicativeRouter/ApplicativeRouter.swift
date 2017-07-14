@@ -129,7 +129,7 @@ public func method(_ method: Method) -> Parser<()> {
   }
 }
 
-public let get = method(.get)
+public let get = method(.get) <|> head
 public let post = method(.post)
 public let put = method(.put)
 public let patch = method(.patch)

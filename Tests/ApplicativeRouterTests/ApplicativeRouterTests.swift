@@ -1,6 +1,6 @@
-import XCTest
+import ApplicativeRouter
 import Prelude
-@testable import ApplicativeRouter
+import XCTest
 
 enum Route {
   case home
@@ -26,24 +26,27 @@ extension Route: Equatable {
   }
 }
 
-let req = { loc in URLRequest(url: URL(string: loc)!) }
+let req = { (method: ApplicativeRouter.Method, location: String) in
+  URLRequest(url: URL(string: location)!)
+    |> (set(\URLRequest.httpMethod) <| method.rawValue.uppercased())
+}
 
 class ApplicativeRouterTests: XCTestCase {
   func testRouter() {
     let router =
-      Route.home <¢ end
-        <|> Route.episode <¢> (lit("episode") *> str) <* end
-        <|> Route.episodes <¢ (lit("episodes")) <* end
-        <|> Route.search <¢> (lit("search") *> opt(param("query"))) <* end
+      Route.home <¢ get <* end
+        <|> Route.episode <¢> (get <* lit("episode") *> str) <* end
+        <|> Route.episodes <¢ (get <* lit("episodes")) <* end
+        <|> Route.search <¢> (get <* lit("search") *> opt(param("query"))) <* end
 
-    XCTAssertEqual(router.match(req("/")), .home)
-    XCTAssertEqual(router.match(req("/episodes")), .episodes)
-    XCTAssertEqual(router.match(req("/episodes/")), .episodes)
-    XCTAssertEqual(router.match(req("/episodes//")), .episodes)
-    XCTAssertEqual(router.match(req("/episode/hello-world")), .episode("hello-world"))
-    XCTAssertEqual(router.match(req("/search")), .search(nil))
-    XCTAssertEqual(router.match(req("/search?query=what")), .search("what"))
-    XCTAssertNil(router.match(req("/not-found")))
+    XCTAssertEqual(router.match(req(.get, "/")), .home)
+    XCTAssertEqual(router.match(req(.get, "/episodes")), .episodes)
+    XCTAssertEqual(router.match(req(.get, "/episodes/")), .episodes)
+    XCTAssertEqual(router.match(req(.get, "/episodes//")), .episodes)
+    XCTAssertEqual(router.match(req(.get, "/episode/hello-world")), .episode("hello-world"))
+    XCTAssertEqual(router.match(req(.get, "/search")), .search(nil))
+    XCTAssertEqual(router.match(req(.get, "/search?query=what")), .search("what"))
+    XCTAssertNil(router.match(req(.get, "/not-found")))
   }
 
   static var allTests = [

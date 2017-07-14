@@ -1,26 +1,3 @@
-public enum Method: Value {
-  case get
-  case post
-
-  public func render(with key: String) -> EncodedString? {
-    switch self {
-    case .get:
-      return encode("method=") + quote(encode("GET"))
-    case .post:
-      return encode("method=") + quote(encode("POST"))
-    }
-  }
-
-  public func renderedValue() -> EncodedString? {
-    switch self {
-    case .get:
-      return encode("GET")
-    case .post:
-      return encode("POST")
-    }
-  }
-}
-
 public func action(_ action: String) -> Attribute {
   return Attribute("action", action)
 }
@@ -82,6 +59,27 @@ public func maxlength(_ maxlength: Int) -> Attribute {
   return Attribute("maxlength", maxlength)
 }
 
+public enum Method: Value {
+  case get
+  case post
+
+  public func render(with key: String) -> EncodedString? {
+    return self.renderedValue().map { encode("method=") + quote($0) }
+  }
+
+  public func renderedValue() -> EncodedString? {
+    return encode(self.description)
+  }
+
+  public var description: String {
+    switch self {
+    case .get:
+      return "GET"
+    case .post:
+      return "POST"
+    }
+  }
+}
 public func method(_ method: Method) -> Attribute {
   return Attribute("method", method)
 }
@@ -142,6 +140,40 @@ public func style(_ style: String) -> Attribute {
   return Attribute("style", style)
 }
 
+public enum Target: Value {
+  case blank
+  case `self`
+  case parent
+  case top
+  case frame(named: String)
+
+  public func render(with key: String) -> EncodedString? {
+    return self.renderedValue().map { encode("target=") + quote($0) }
+  }
+
+  public func renderedValue() -> EncodedString? {
+    return encode(self.description)
+  }
+
+  public var description: String {
+    switch self {
+    case .blank:
+      return "_blank"
+    case .self:
+      return "_self"
+    case .parent:
+      return "_parent"
+    case .top:
+      return "_top"
+    case .frame(let name):
+      return name
+    }
+  }
+}
+public func target(_ target: Target) -> Attribute {
+  return Attribute("target", target)
+}
+
 public func type(_ type: String) -> Attribute {
   return Attribute("type", type)
 }
@@ -152,4 +184,29 @@ public func value(_ value: String) -> Attribute {
 
 public func width(_ width: Int) -> Attribute {
   return Attribute("width", width)
+}
+
+public enum Wrap: Value {
+  case hard
+  case soft
+
+  public func render(with key: String) -> EncodedString? {
+    return self.renderedValue().map { encode("wrap=") + quote($0) }
+  }
+
+  public func renderedValue() -> EncodedString? {
+    return encode(self.description)
+  }
+
+  public var description: String {
+    switch self {
+    case .hard:
+      return "hard"
+    case .soft:
+      return "soft"
+    }
+  }
+}
+public func wrap(_ wrap: Wrap) -> Attribute {
+  return Attribute("wrap", wrap)
 }
