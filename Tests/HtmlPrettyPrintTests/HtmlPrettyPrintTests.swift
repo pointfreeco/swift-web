@@ -22,7 +22,11 @@ class PrettyTests: XCTestCase {
                   ],
                   ["hello world"]
                 ),
-                p(["goodbye world"]),
+                p([
+                  """
+Tacit programming, also called point-free style, is a programming paradigm in which function definitions do not identify the arguments (or "points") on which they operate.
+"""
+]),
                 img([ id("cat"), Html.`class`("cat"), src("cat.jpg") ])
               ]
             )

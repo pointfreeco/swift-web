@@ -22,7 +22,7 @@ private func prettyPrint(node: Node) -> Doc {
   case let .element(element):
     return prettyPrint(element: element)
   case let .text(text):
-    return .text(text.string)
+    return prettyPrint(text: text)
   case let .comment(comment):
     return prettyPrint(comment: comment)
   case let .document(nodes):
@@ -96,6 +96,14 @@ private func prettyPrint(attribute: Attribute) -> Doc {
   return (attribute.value.render(with: attribute.key)?.string).map(Doc.text) ?? .zero
 }
 
+private func prettyPrint(text: EncodedString) -> Doc {
+  return text.string
+    .split(separator: " ")
+    .map(String.init)
+    .map(Doc.text)
+    .fillSep()
+}
+
 private func prettyPrint(comment: String) -> Doc {
   return .text("<!--")
     <%> comment
@@ -112,4 +120,3 @@ private func prettyPrint(document nodes: [Node]) -> Doc {
     <> .hardline
     <> nodes.map(prettyPrint(node:)).vcat()
 }
-

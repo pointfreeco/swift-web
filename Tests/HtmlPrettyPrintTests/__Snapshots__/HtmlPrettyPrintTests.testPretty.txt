@@ -16,7 +16,12 @@
       hello world
     </div>
     <p>
-      goodbye world
+      Tacit programming, also called
+      point-free style, is a programming
+      paradigm in which function
+      definitions do not identify the
+      arguments (or &quot;points&quot;)
+      on which they operate.
     </p>
     <img id="cat"
          class="cat"
