@@ -2,9 +2,7 @@ import Css
 import Html
 import HtmlCssSupport
 import HtmlPrettyPrint
-import HtmlTestSupport
 import Prelude
-import SnapshotTesting
 import XCTest
 
 class HTMLTests: XCTestCase {
@@ -15,7 +13,12 @@ class HTMLTests: XCTestCase {
         height <| 100 ]
     )
 
-    assertSnapshot(matching: html)
+    let rendered = render(html)
+
+    XCTAssertEqual(
+      "<img src=\"cat.jpg\" width=\"100\" height=\"100\" />",
+      rendered
+    )
   }
 
   func testHtml3() {
@@ -32,7 +35,10 @@ class HTMLTests: XCTestCase {
       ]
     )
 
-    assertSnapshot(matching: html)
+    XCTAssertEqual(
+      "<p class=\"main\"><img src=\"cat.jpg\" width=\"100\" height=\"100\" />A cat!</p>",
+      render(html)
+    )
   }
 
   func testHtmlTag() {
@@ -48,7 +54,10 @@ class HTMLTests: XCTestCase {
       ]
     )
 
-    assertSnapshot(matching: testHtml)
+    XCTAssertEqual(
+      "<html id=\"home\"><p>Welcome to point free!</p></html>",
+      render(testHtml)
+    )
   }
 
   func testATag() {
@@ -66,7 +75,10 @@ class HTMLTests: XCTestCase {
       ]
     )
 
-    assertSnapshot(matching: testHtml)
+    XCTAssertEqual(
+      "<html id=\"home\"><a href=\"/\">Go home!</a></html>",
+      render(testHtml)
+    )
   }
 
   func testHtmlWithInlineStyles() {
@@ -82,7 +94,9 @@ class HTMLTests: XCTestCase {
       ]
     )
 
-    assertSnapshot(matching: html)
+    XCTAssertEqual(
+      "<p style=\"color:#ff0000\">Welcome to <a style=\"background:#0000ff\">Point Free</a>!</p>",
+      render(html))
   }
 
   func testHtmlInput() {
@@ -90,7 +104,7 @@ class HTMLTests: XCTestCase {
       [ disabled <| true, Html.value <| "Hello, world!" ]
     )
 
-    assertSnapshot(matching: html)
+    XCTAssertEqual("<input disabled value=\"Hello, world!\" />", render(html))
   }
 
   func testScriptTag() {
@@ -99,7 +113,7 @@ class HTMLTests: XCTestCase {
       script("alert(\"Hello!\")")
     ])
 
-    assertSnapshot(matching: html)
+    XCTAssertEqual("<div><script src=\"app.js\"></script><script>alert(\"Hello!\")</script></div>", render(html))
   }
 
   func testPrettyRender() {
@@ -123,7 +137,26 @@ class HTMLTests: XCTestCase {
       ]
     )
 
-    assertSnapshot(matching: htmlNode)
+    XCTAssertEqual(
+      """
+<html>
+  <body>
+    <!-- Welcome to our app! -->
+    <h1>
+      Title
+    </h1>
+    <p>
+      Some text
+      <a>
+        A link
+      </a>
+      Some more text...
+    </p>
+  </body>
+</html>
+""",
+      prettyPrint(node: htmlNode)
+    )
   }
 
   func testDocument() {
@@ -135,6 +168,6 @@ class HTMLTests: XCTestCase {
       ])
     ])
 
-    assertSnapshot(matching: doc)
+    XCTAssertEqual("<!DOCTYPE html><html><head><title>Title</title></head></html>", Html.render(doc))
   }
 }
