@@ -57,7 +57,7 @@ public func render(_ node: Node, config: Config = compact) -> String {
             + indentation + "</\(element.name)>"
             + config.newline
         }
-        ?? "\(indentation)<\(element.name)\(attribs) />\(config.newline)"
+        ?? "\(indentation)<\(element.name)\(attribs)>\(config.newline)"
 
     case let .text(string):
       return indentation + string.string + config.newline

@@ -16,7 +16,7 @@ class HTMLTests: XCTestCase {
     let rendered = render(html)
 
     XCTAssertEqual(
-      "<img src=\"cat.jpg\" width=\"100\" height=\"100\" />",
+      "<img src=\"cat.jpg\" width=\"100\" height=\"100\">",
       rendered
     )
   }
@@ -36,7 +36,7 @@ class HTMLTests: XCTestCase {
     )
 
     XCTAssertEqual(
-      "<p class=\"main\"><img src=\"cat.jpg\" width=\"100\" height=\"100\" />A cat!</p>",
+      "<p class=\"main\"><img src=\"cat.jpg\" width=\"100\" height=\"100\">A cat!</p>",
       render(html)
     )
   }
@@ -104,7 +104,7 @@ class HTMLTests: XCTestCase {
       [ disabled <| true, Html.value <| "Hello, world!" ]
     )
 
-    XCTAssertEqual("<input disabled value=\"Hello, world!\" />", render(html))
+    XCTAssertEqual("<input disabled value=\"Hello, world!\">", render(html))
   }
 
   func testScriptTag() {

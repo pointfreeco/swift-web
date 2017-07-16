@@ -25,6 +25,6 @@
     </p>
     <img id="cat"
          class="cat"
-         src="cat.jpg" />
+         src="cat.jpg">
   </div>
 </body>
