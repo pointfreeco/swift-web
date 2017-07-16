@@ -106,51 +106,28 @@ enum Rule {
   }
 }
 
-struct StyleM<A> {
-  let writer: Writer<[Rule], A>
-}
-
-func >>- <A, B> (x: StyleM<A>, f: (A) -> StyleM<B>) -> StyleM<B> {
-  return StyleM.init(writer: x.writer >>- { a in
-    f(a).writer
-  })
-}
-
 public struct Stylesheet {
-  let unStyleM: StyleM<Unit>
+  let rules: [Rule]
 
-  init(_ styleM: StyleM<Unit>) {
-    self.unStyleM = styleM
+  init(_ rules: [Rule]) {
+    self.rules = rules
   }
 }
 
-func >>- (x: Stylesheet, f: (Unit) -> Stylesheet) -> Stylesheet {
-  return Stylesheet.init(x.unStyleM >>- { a in
-    f(a).unStyleM
-  })
-}
-
 func runS(_ css: Stylesheet) -> [Rule] {
-  return css.unStyleM.writer.exec()
+  return css.rules
 }
 
 func rule(_ r: Rule) -> Stylesheet {
-  return Stylesheet(StyleM(writer: .tell([r])))
+  return Stylesheet([r])
 }
 
 extension Stylesheet: Monoid {
 
-  public static var empty: Stylesheet = Stylesheet.init(StyleM<Unit>.init(writer: .pure(unit)))
+  public static var empty: Stylesheet = Stylesheet([])
 
   public static func <>(lhs: Stylesheet, rhs: Stylesheet) -> Stylesheet {
-    return Stylesheet(
-      StyleM<Unit>(
-        writer: Writer<[Rule], Unit>(
-          m: lhs.unStyleM.writer.exec() <> rhs.unStyleM.writer.exec(),
-          a: unit
-        )
-      )
-    )
+    return .init(lhs.rules <> rhs.rules)
   }
 }
 
@@ -167,16 +144,16 @@ func prefixed<A: Val>(_ prefixed: Prefixed, _ a: A) -> Stylesheet {
 }
 
 public func % (sel: CssSelector, rs: Stylesheet) -> Stylesheet {
-  return rule(.nested(.sub(sel), rs.unStyleM.writer.exec()))
+  return rule(.nested(.sub(sel), rs.rules))
 }
 
 public func & (sel: CssSelector, rs: Stylesheet) -> Stylesheet {
-  return rule(.nested(.`self`(sel), rs.unStyleM.writer.exec()))
+  return rule(.nested(.`self`(sel), rs.rules))
 }
 
-public func query(_ mediaType: MediaType, _ features: [Feature], rs: () -> Stylesheet) -> Stylesheet {
+public func query(_ mediaType: MediaType, _ features: [Feature], rs: Stylesheet) -> Stylesheet {
 
-  return rule(Rule.query(MediaQuery.init(notOrOnly: nil, mediaType: mediaType, features: features), rs().unStyleM.writer.exec()))
+  return rule(Rule.query(MediaQuery.init(notOrOnly: nil, mediaType: mediaType, features: features), rs.rules))
 
 }
 
@@ -185,7 +162,7 @@ public func queryNot(_ mediaType: MediaType, _ features: [Feature], rs: () -> St
   return rule(
     .query(
       .init(notOrOnly: .some(.not), mediaType: mediaType, features: features),
-      rs().unStyleM.writer.exec()
+      rs().rules
     )
   )
 }
@@ -195,7 +172,7 @@ public func queryOnly(_ mediaType: MediaType, _ features: [Feature], rs: () -> S
   return rule(
     .query(
       .init(notOrOnly: .some(.only), mediaType: mediaType, features: features),
-      rs().unStyleM.writer.exec()
+      rs().rules
     )
   )
 }

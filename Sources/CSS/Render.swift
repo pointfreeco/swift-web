@@ -248,8 +248,6 @@ func render(element: CssSelector.Element) -> String {
     return "u"
   case .video:
     return "video"
-
-
   case .abbr:
     return "abbr"
   case .acronym:
