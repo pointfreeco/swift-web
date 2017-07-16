@@ -116,6 +116,10 @@ public func readonly(_ readonly: Bool) -> Attribute {
   return Attribute("readonly", readonly)
 }
 
+public func rel(_ rel: String) -> Attribute {
+  return Attribute("rel", rel)
+}
+
 public func required(_ required: Bool) -> Attribute {
   return Attribute("required", required)
 }

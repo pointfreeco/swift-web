@@ -4,12 +4,12 @@ public enum CssSelector {
 
   public enum Attribute {
     public enum Modifier {
-      case val
       case begins
-      case ends
       case contains
-      case space
+      case ends
       case hyphen
+      case space
+      case val
     }
 
     case exists(String)
@@ -40,13 +40,12 @@ public enum CssSelector {
     case lastChild
     case lastOfType
     case link
-    indirect case not(CssSelector)
     case nthChild(Int)
     case nthLastChild(Int)
     case nthLastOfType(Int)
     case nthOfType(Int)
-    case onlyOfType
     case onlyChild
+    case onlyOfType
     case optional
     case outOfRange
     case readOnly
@@ -56,6 +55,7 @@ public enum CssSelector {
     case target
     case valid
     case visited
+    indirect case not(CssSelector)
   }
 
   public enum Element {
@@ -73,6 +73,7 @@ public enum CssSelector {
     case caption
     case cite
     case code
+    case custom(String)
     case dd
     case details
     case div
@@ -81,8 +82,8 @@ public enum CssSelector {
     case em
     case embed
     case fieldset
-    case figure
     case figcaption
+    case figure
     case footer
     case form
     case h1
@@ -94,8 +95,8 @@ public enum CssSelector {
     case header
     case hgroup
     case html
-    case iframe
     case i
+    case iframe
     case img
     case input
     case label
@@ -104,6 +105,9 @@ public enum CssSelector {
     case menu
     case nav
     case ol
+    case p
+    case pre
+    case q
     case section
     case span
     case strong
@@ -113,16 +117,12 @@ public enum CssSelector {
     case td
     case tfoot
     case th
-    case time
     case thead
+    case time
     case tr
-    case p
-    case pre
-    case q
     case u
     case ul
     case video
-    case custom(String)
   }
 
   /// i.e.: *

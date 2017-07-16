@@ -33,14 +33,17 @@ private func prettyPrint(node: Node) -> Doc {
 private func prettyPrint(element: Element) -> Doc {
 
   return prettyPrintOpenTag(element: element)
-    <> (
-      element.content.map {
-        $0.map(prettyPrint(node:))
-          .vcat()
-          .indent(2)
-        } ?? .zero
-    )
+    <> prettyPrintChildren(nodes: element.content)
     <> prettyPrintCloseTag(element: element)
+}
+
+
+private func prettyPrintChildren(nodes: [Node]?) -> Doc {
+  guard let nodes = nodes else { return .empty }
+
+  return nodes.map(prettyPrint(node:))
+    .vcat()
+    .indent(2)
 }
 
 private func prettyPrintOpenTag(element: Element) -> Doc {
@@ -48,19 +51,19 @@ private func prettyPrintOpenTag(element: Element) -> Doc {
   return .text("<")
     <> .text(element.name)
     <> prettyPrint(attributes: element.attribs)
-    <> (element.content == nil ? .zero : .text(">") <> .hardline)
+    <> .text(">") <> (element.content == nil ? .empty : .hardline)
 }
 
 private func prettyPrintCloseTag(element: Element) -> Doc {
   return element.content == nil
-    ? .text(" />")
+    ? .empty
     : .hardline <> .text("</") <> .text(element.name) <> .text(">")
 }
 
 private func prettyPrint(attributes attribs: [Attribute]) -> Doc {
 
-  return (attribs.count == 0 ? .text("") : .text(" "))
-    <%%> attribs
+  return .text(attribs.count == 0 ? "" : " ")
+    <> attribs
       .map(prettyPrint(attribute:))
       .sep()
       .hang(0)
@@ -77,6 +80,17 @@ private func prettyPrint(attribute: Attribute) -> Doc {
         .map(String.init)
         .map(Doc.text)
         .sep()
+        .hang(0)
+      <> .text("\"")
+  }
+
+  if attribute.key == "content" {
+    return .text("\(attribute.key)=\"")
+      <> (attribute.value.renderedValue()?.string ?? "")
+        .split(separator: " ")
+        .map(String.init)
+        .map(Doc.text)
+        .fillSep()
         .hang(0)
       <> .text("\"")
   }
