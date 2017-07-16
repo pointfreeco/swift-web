@@ -42,7 +42,7 @@ public struct Feature {
   let value: Value?
 }
 
-enum App {
+public enum App {
   case `self`(CssSelector)
   case root(CssSelector)
   case pop(Int)
@@ -50,12 +50,12 @@ enum App {
   case sub(CssSelector)
 }
 
-struct Keyframes {
+public struct Keyframes {
   let key: String
   let frames: [(Double, [Rule])]
 }
 
-enum Rule {
+public enum Rule {
   case property(Key<Unit>, Value)
   case nested(App, [Rule])
   case query(MediaQuery, [Rule])
@@ -107,7 +107,7 @@ enum Rule {
 }
 
 public struct Stylesheet {
-  let rules: [Rule]
+  public let rules: [Rule]
 
   init(_ rules: [Rule]) {
     self.rules = rules

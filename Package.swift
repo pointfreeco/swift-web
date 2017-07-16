@@ -7,6 +7,7 @@ let package = Package(
   products: [
     .library(name: "ApplicativeRouter", targets: ["ApplicativeRouter"]),
     .library(name: "Css", targets: ["Css"]),
+    .library(name: "CssPrettyPrint", targets: ["CssPrettyPrint"]),
     .library(name: "CssReset", targets: ["CssReset"]),
     .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
     .library(name: "Html", targets: ["Html"]),
@@ -27,6 +28,9 @@ let package = Package(
 
     .target(name: "Css", dependencies: ["Prelude", "Either"]),
     .testTarget(name: "CssTests", dependencies: ["Css", "CssTestSupport"]),
+
+    .target(name: "CssPrettyPrint", dependencies: ["DoctorPretty", "Css"]),
+    .testTarget(name: "CssPrettyPrintTests", dependencies: ["CssPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "CssReset", dependencies: ["Css"]),
     .testTarget(name: "CssResetTests", dependencies: ["CssReset", "CssTestSupport"]),
