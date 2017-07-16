@@ -210,6 +210,10 @@ public func script(_ script: String) -> Node {
   return Html.script([], script)
 }
 
+public func source(_ attribs: [Attribute]) -> Node {
+  return node("source", attribs, [])
+}
+
 public func span(_ attribs: [Attribute], _ content: [Node]) -> Node {
   return node("span", attribs, content)
 }
