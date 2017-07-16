@@ -35,6 +35,6 @@ Tacit programming, also called point-free style, is a programming paradigm in wh
       ]
     )
 
-    assertSnapshot(matching: prettyPrint(node: doc, pageWidth: 40))
+    assertSnapshot(matching: prettyPrint(node: doc, pageWidth: 40), pathExtension: "html")
   }
 }
