@@ -146,7 +146,7 @@ class HTMLTests: XCTestCase {
       Title
     </h1>
     <p>
-      Some text\u{20}
+      Some text
       <a>
         A link
       </a>
