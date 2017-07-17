@@ -112,7 +112,7 @@ extension Color: Val {
     let (r, g, b) = (toUInt8(self.red), toUInt8(self.green), toUInt8(self.blue))
     let formatted = self.alpha == 1
       ? "#" + phex(r) + phex(g) + phex(b)
-      : "rgba(\(r)),\(g),\(b),\(self.alpha))"
+      : "rgba(\(r),\(g),\(b),\(self.alpha))"
     return .init(.plain(formatted))
   }
 }
