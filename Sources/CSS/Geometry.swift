@@ -61,8 +61,14 @@ public func margin(all: Size) -> Stylesheet {
   return margin(top: all, right: all, bottom: all, left: all)
 }
 
+public let size: (Size) -> Stylesheet = key("size")
+public func top(_ s: Size) -> Stylesheet { return key("top") <| s }
+public let left: (Size) -> Stylesheet = key("left")
+public func bottom(_ s: Size) -> Stylesheet { return key("bottom") <| s }
+public let right: (Size) -> Stylesheet = key("right")
 public let width: (Size) -> Stylesheet = key("width")
-public func maxWidth(_ s: Size) -> Stylesheet {
-  return s |> key("max-width")
-}
+public let height: (Size) -> Stylesheet = key("height")
+public let maxWidth: (Size) -> Stylesheet = key("max-width")
+public let minWidth: (Size) -> Stylesheet = key("min-width")
 public let minHeight: (Size) -> Stylesheet = key("min-height")
+public let maxHeight: (Size) -> Stylesheet = key("max-height")
