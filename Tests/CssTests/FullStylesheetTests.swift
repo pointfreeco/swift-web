@@ -20,6 +20,10 @@ class FullStylesheetTests: XCTestCase {
           color(blue)
       )
     )
+    <> input % (
+      outlineStyle(all: .none)
+        <> outlineWidth(all: .none)
+    )
 
     assertSnapshot(matching: css)
   }

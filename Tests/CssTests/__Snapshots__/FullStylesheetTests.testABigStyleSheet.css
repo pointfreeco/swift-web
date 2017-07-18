@@ -15,3 +15,8 @@ ul li:first-child {
   color : #0000ff;
 }
 
+input {
+  outline-style : none;
+  outline-width : none;
+}
+
