@@ -226,6 +226,10 @@ public func style(_ css: String) -> Node {
   return node("style", [], [.text(EncodedString(css))])
 }
 
+public func svg(_ attribs: [Attribute], _ svg: String) -> Node {
+    return node("svg", attribs, [.text(EncodedString(svg))])
+}
+
 public func title(_ string: String) -> Node {
   return node("title", [], [.text(encode(.init(string)))])
 }
