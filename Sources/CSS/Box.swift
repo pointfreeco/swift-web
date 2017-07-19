@@ -7,9 +7,7 @@ public struct BoxType: Val, Inherit {
     return self.boxType
   }
 
-  public static var inherit: BoxType {
-    return .init(boxType: inheritValue)
-  }
+  public static let inherit = BoxType(boxType: .inherit)
 }
 
 extension BoxType: ExpressibleByStringLiteral {

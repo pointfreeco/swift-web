@@ -13,17 +13,9 @@ public struct BorderStyle: Val, Other, Inherit, Auto, None {
     return .init(stroke: other)
   }
 
-  public static var inherit: BorderStyle {
-    return .init(stroke: inheritValue)
-  }
-
-  public static var auto: BorderStyle {
-    return .init(stroke: autoValue)
-  }
-
-  public static var none: BorderStyle {
-    return .init(stroke: noneValue)
-  }
+  public static let auto = BorderStyle(stroke: .auto)
+  public static let inherit = BorderStyle(stroke: .inherit)
+  public static let none = BorderStyle(stroke: .none)
 }
 
 extension BorderStyle: ExpressibleByStringLiteral {

@@ -7,92 +7,81 @@ func eq<A: Equatable>(lhsTuples xs: [(A, A)], rhsTuples ys: [(A, A)]) -> Bool {
     && zip(xs, ys).reduce(true) { accum, tuple in accum && tuple.0 == tuple.1 }
 }
 
-public let inheritValue: Value = "inherit"
 public protocol Inherit {
   static var inherit: Self { get }
 }
 extension Value: Inherit {
-  public static var inherit: Value { return inheritValue }
+  public static let inherit: Value = "inherit"
 }
 
-public let noneValue: Value = "none"
 public protocol None {
   static var none: Self { get }
 }
 extension Value: None {
-  public static var none: Value { return noneValue }
+  public static let none: Value = "none"
 }
 
-public let normalValue: Value = "normal"
 public protocol Normal {
   static var normal: Self { get }
 }
 extension Value: Normal {
-  public static var normal: Value { return normalValue }
+  public static let normal: Value = "normal"
 }
 
-public let centerValue: Value = "center"
 public protocol Center {
   static var center: Self { get }
 }
 extension Value: Center {
-  public static var center: Value { return centerValue }
+  public static let center: Value = "center"
 }
 
-public let hiddenValue: Value = "hidden"
 public protocol Hidden {
   static var hidden: Self { get }
 }
 extension Value: Hidden {
-  public static var hidden: Value { return hiddenValue }
+  public static let hidden: Value = "hidden"
 }
 
-public let visibleValue: Value = "visible"
 public protocol Visible {
   static var visible: Self { get }
 }
 extension Value: Visible {
-  public static var visible: Value { return visibleValue }
+  public static let visible: Value = "visible"
 }
 
-public let baselineValue: Value = "baseline"
 public protocol Baseline {
   static var baseline: Self { get }
 }
 extension Value: Baseline {
-  public static var baseline: Value { return baselineValue }
+  public static let baseline: Value = "baseline"
 }
 
-public let autoValue: Value = "auto"
 public protocol Auto {
   static var auto: Self { get }
 }
 extension Value: Auto {
-  public static var auto: Value { return autoValue }
+  public static let auto: Value = "auto"
 }
 
-public let allValue: Value = "all"
 public protocol All {
   static var all: Self { get }
 }
 extension Value: All {
-  public static var all: Value { return allValue }
+  public static let all: Value = "all"
 }
 
-public let initialValue: Value = "initial"
 public protocol Initial {
   static var initial: Self { get }
 }
 extension Value: Initial {
-  public static var initial: Value { return initialValue }
+  public static let initial: Value = "initial"
 }
 
-public let unsetValue: Value = "unset"
 public protocol Unset {
   static var unset: Self { get }
 }
 extension Value: Unset {
-  public static var unset: Value { return unsetValue }
+  public static let unset: Value = "unset"
 }
 
 public let browsers = Prefixed.prefixed(
