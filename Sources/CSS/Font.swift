@@ -6,10 +6,6 @@ extension Font {
   public func font() -> Stylesheet {
     return key("font", self)
   }
-
-  public static var inherit: Value {
-    return inheritValue
-  }
 }
 
 public func color(_ c: Color) -> Stylesheet {
@@ -43,9 +39,7 @@ public struct GenericFontFamily: Val, Inherit {
     return self.family
   }
 
-  public static var inherit: GenericFontFamily {
-    return .init(family: inheritValue)
-  }
+  public static let inherit = GenericFontFamily(family: .inherit)
 }
 
 public func fontFamily(_ families: [String]) -> Stylesheet {
@@ -66,9 +60,7 @@ public struct FontStyle: Val, Inherit {
     return self.style
   }
 
-  public static var inherit: FontStyle {
-    return .init(style: inheritValue)
-  }
+  public static let inherit = FontStyle(style: .inherit)
 }
 
 public func fontStyle(_ style: FontStyle) -> Stylesheet {
@@ -82,9 +74,7 @@ public struct FontWeight: Val, Inherit {
     return self.weight
   }
 
-  public static var inherit: FontWeight {
-    return .init(weight: inheritValue)
-  }
+  public static let inherit = FontWeight(weight: .inherit)
 }
 
 public let bold = FontWeight(weight: .init(.plain("bold")))

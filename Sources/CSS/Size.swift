@@ -20,25 +20,14 @@ indirect public enum Size: Val, Auto, Normal, Inherit, None, Other {
     }
   }
 
-  public static var auto: Size {
-    return .otherSize(autoValue)
-  }
-
-  public static var normal: Size {
-    return .otherSize(normalValue)
-  }
-
-  public static var inherit: Size {
-    return .otherSize(inheritValue)
-  }
-
-  public static var none: Size {
-    return .otherSize(noneValue)
-  }
-
   public static func other(_ other: Value) -> Size {
     return .otherSize(other)
   }
+
+  public static let auto = Size.otherSize(.auto)
+  public static let inherit = Size.otherSize(.inherit)
+  public static let none = Size.otherSize(.none)
+  public static let normal = Size.otherSize(.normal)
 }
 
 private func renderExpression(size: Size) -> String {

@@ -26,13 +26,8 @@ public struct FloatStyle: Val, None, Inherit {
     return self.style
   }
 
-  public static var none: FloatStyle {
-    return .init(style: noneValue)
-  }
-
-  public static var inherit: FloatStyle {
-    return .init(style: inheritValue)
-  }
+  public static let none = FloatStyle(style: .none)
+  public static let inherit = FloatStyle(style: .inherit)
 }
 
 extension FloatStyle: ExpressibleByStringLiteral {
@@ -57,13 +52,8 @@ public struct Clear: Val, Other, None, Inherit {
     return .init(clear: other)
   }
 
-  public static var none: Clear {
-    return .init(clear: noneValue)
-  }
-
-  public static var inherit: Clear {
-    return .init(clear: inheritValue)
-  }
+  public static let none = Clear(clear: .none)
+  public static let inherit = Clear(clear: .inherit)
 }
 
 extension Clear: ExpressibleByStringLiteral {
@@ -89,9 +79,7 @@ public struct Position: Val, Other, Inherit {
     return .init(position: other)
   }
 
-  public static var inherit: Position {
-    return .init(position: inheritValue)
-  }
+  public static let inherit = Position(position: .inherit)
 }
 
 extension Position: ExpressibleByStringLiteral {
@@ -118,13 +106,8 @@ public struct Display: Val, Other, None, Inherit {
     return .init(display: other)
   }
 
-  public static var none: Display {
-    return .init(display: noneValue)
-  }
-
-  public static var inherit: Display {
-    return .init(display: inheritValue)
-  }
+  public static let none = Display(display: .none)
+  public static let inherit = Display(display: .inherit)
 }
 
 extension Display: ExpressibleByStringLiteral {
@@ -138,8 +121,6 @@ public let inlineBlock: Display = "inline-block"
 public let displayTable: Display = "table"
 
 public let display: (Display) -> Stylesheet = key("display")
-
-
 
 public protocol VerticalAlign: Val {
   func verticalAlign() -> Stylesheet
@@ -156,13 +137,8 @@ public struct VerticalAlignValue: Val, Baseline, Center {
     return self.verticalAlign
   }
 
-  public static var baseline: VerticalAlignValue {
-    return .init(baselineValue)
-  }
-
-  public static var center: VerticalAlignValue {
-    return .init(centerValue)
-  }
+  public static let baseline = VerticalAlignValue(.baseline)
+  public static let center = VerticalAlignValue(.center)
 }
 
 extension VerticalAlignValue: ExpressibleByStringLiteral {
