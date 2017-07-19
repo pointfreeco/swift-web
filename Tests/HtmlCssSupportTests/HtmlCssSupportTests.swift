@@ -7,7 +7,7 @@ import XCTest
 class SupportTests: XCTestCase {
   func testStyleAttribute() {
     let document = body(
-      [ style(color(red)) ],
+      [ style(.color(red)) ],
       [ "Hello world!" ]
     )
 
@@ -18,7 +18,7 @@ class SupportTests: XCTestCase {
   }
 
   func testStyleElement() {
-    let css = body % color(red)
+    let css = body % .color(red)
     let document = html([head([style(css)])])
 
     XCTAssertEqual(

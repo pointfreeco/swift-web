@@ -6,8 +6,8 @@ class SizeTests: XCTestCase {
 
   func testCalc() {
     let css: Stylesheet = img % (
-      width(pct(25) - px(20))
-        <> margin(all: px(10))
+      .width(.pct(25) - .px(20))
+        <> .margin(all: .px(10))
     )
 
     XCTAssertEqual(

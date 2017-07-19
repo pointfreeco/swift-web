@@ -1,5 +1,23 @@
 import Prelude
 
+public enum ColorVal: Val, Auto, Inherit, None {
+  public static let auto: ColorVal = .other(.auto)
+  public static let inherit: ColorVal = .other(.inherit)
+  public static let none: ColorVal = .other(.none)
+
+  case rgba(Color)
+  case other(Value)
+
+  public func value() -> Value {
+    switch self {
+    case let .rgba(color):
+      return color.value()
+    case let .other(value):
+      return value
+    }
+  }
+}
+
 public struct Color {
   private(set) var red: Float {
     didSet {

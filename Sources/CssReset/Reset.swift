@@ -66,13 +66,13 @@ private let allReset: Stylesheet = (
     | ul
     | video
   ) % (
-    margin(all: 0)
-      <> padding(all: 0)
-      <> fontSize(pct(100))
-      <> fontFamily(.inherit)
-      <> fontStyle(.inherit)
-      <> fontWeight(.inherit)
-      <> verticalAlign(.baseline)
+    .margin(all: 0)
+      <> .padding(all: 0)
+      <> .fontSize(.pct(100))
+      <> .fontFamily(.inherit)
+      <> .fontStyle(.inherit)
+      <> .fontWeight(.inherit)
+      <> .verticalAlign(.baseline)
 )
 
 private let blockResets = (
@@ -83,12 +83,12 @@ private let blockResets = (
     | nav
     | section
   ) % (
-    display(block)
+    .display(.block)
 )
 
 private let bodyReset: Stylesheet
   = body % (
-    lineHeight(1)
+    .lineHeight(1)
 )
 
 private let quoteReset: Stylesheet
@@ -100,22 +100,22 @@ private let quoteReset: Stylesheet
       | q & .pseudoElem(.after)
 
     ) % (
-      content(stringContent(""))
-        <> content(.none)
+      .content(stringContent(""))
+        <> .content(.none)
     )
     <>
     (blockquote | q) % (
-      quotes(.none)
+      .quotes(.none)
 )
 
 private let listReset = (ol | ul) % (
-  listStyleType(.none)
+  .listStyleType(.none)
 )
 
 private let tableResets =
   table % (
-    borderCollapse(collapse)
-      <> borderSpacing(0)
+    .borderCollapse(.collapse)
+      <> .borderSpacing(0)
 )
 
 public let reset: Stylesheet =

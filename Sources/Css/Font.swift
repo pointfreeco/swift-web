@@ -8,28 +8,12 @@ extension Font {
   }
 }
 
-public func color(_ c: Color) -> Stylesheet {
-  return key("color", c)
-}
-
-public func lineHeight(_ size: Size) -> Stylesheet {
-  return key("line-height", size)
-}
-
 public struct FontSize: Val {
   let size: Value
 
   public func value() -> Value {
     return self.size
   }
-}
-
-public func fontSize(_ size: Size) -> Stylesheet {
-  return key("font-size", size)
-}
-
-public func font<F: Font>(_ f: F) -> Stylesheet {
-  return key("font", f)
 }
 
 public struct GenericFontFamily: Val, Inherit {
@@ -42,17 +26,6 @@ public struct GenericFontFamily: Val, Inherit {
   public static let inherit = GenericFontFamily(family: .inherit)
 }
 
-public func fontFamily(_ families: [String]) -> Stylesheet {
-  return key(
-    "font-family",
-    Value(.plain(families.joined(separator: ",")))
-  )
-}
-
-public func fontFamily(_ family: GenericFontFamily) -> Stylesheet {
-  return key("font-family", family)
-}
-
 public struct FontStyle: Val, Inherit {
   public let style: Value
 
@@ -63,10 +36,6 @@ public struct FontStyle: Val, Inherit {
   public static let inherit = FontStyle(style: .inherit)
 }
 
-public func fontStyle(_ style: FontStyle) -> Stylesheet {
-  return key("font-style", style)
-}
-
 public struct FontWeight: Val, Inherit {
   let weight: Value
 
@@ -75,14 +44,28 @@ public struct FontWeight: Val, Inherit {
   }
 
   public static let inherit = FontWeight(weight: .inherit)
+
+  public static let bold = FontWeight(weight: .init(.plain("bold")))
+
+  public static func weight(_ weight: Int) -> FontWeight {
+    return .init(weight: .init(.plain(String(weight))))
+  }
 }
 
-public let bold = FontWeight(weight: .init(.plain("bold")))
+extension Stylesheet {
+  public static let color: (Color) -> Stylesheet = key("color")
+  public static let font: (Color) -> Stylesheet = key("font")
+  public static let fontFamily: (GenericFontFamily) -> Stylesheet = key("font-family")
 
-public func weight(_ w: Int) -> FontWeight {
-  return .init(weight: .init(.plain(String(w))))
-}
+  public func fontFamily(_ families: [String]) -> Stylesheet {
+    return key(
+      "font-family",
+      Value(.plain(families.joined(separator: ",")))
+    )
+  }
 
-public func fontWeight(_ weight: FontWeight) -> Stylesheet {
-  return key("font-weight", weight)
+  public static let fontSize: (Size) -> Stylesheet = key("font-size")
+  public static let fontStyle: (FontStyle) -> Stylesheet = key("font-style")
+  public static let fontWeight: (FontWeight) -> Stylesheet = key("font-weight")
+  public static let lineHeight: (Size) -> Stylesheet = key("line-height")
 }
