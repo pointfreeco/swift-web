@@ -5,11 +5,11 @@ import Css
 class BorderTests: XCTestCase {
   func testBorders() {
     let css = p % (
-      borderRadius(topLeft: 1, topRight: 2, bottomRight: 3, bottomLeft: 4)
-        <> borderColor(top: red, right: blue, bottom: green, left: red)
-        <> borderStyle(top: solid, right: dotted, bottom: dashed, left: groove)
-        <> borderCollapse(separate)
-        <> borderWidth(top: 4, right: 3, bottom: 2, left: 1)
+      .borderRadius(topLeft: 1, topRight: 2, bottomRight: 3, bottomLeft: 4)
+        <> .borderColor(top: red, right: blue, bottom: green, left: red)
+        <> .borderStyle(top: .solid, right: .dotted, bottom: .dashed, left: .groove)
+        <> .borderCollapse(.separate)
+        <> .borderWidth(top: 4, right: 3, bottom: 2, left: 1)
     )
 
     XCTAssertEqual(

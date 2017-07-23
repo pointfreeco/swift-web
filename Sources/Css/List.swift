@@ -9,4 +9,6 @@ public struct ListStyleType: Val, Inherit, None {
   public static let none = ListStyleType(type: .none)
 }
 
-public let listStyleType: (ListStyleType) -> Stylesheet = key("list-style-type")
+extension Stylesheet {
+  public static let listStyleType: (ListStyleType) -> Stylesheet = key("list-style-type")
+}

@@ -8,8 +8,10 @@ extension Background {
   }
 }
 
-public func background<B: Background>(_ b: B) -> Stylesheet {
-  return b.background()
+extension Stylesheet {
+  public static func background<B: Background>(_ b: B) -> Stylesheet {
+    return b.background()
+  }
 }
 
 extension Color: Background {}

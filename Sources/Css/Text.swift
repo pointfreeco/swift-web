@@ -8,8 +8,8 @@ public struct Content: Val, None {
   public static let none = Content(content: .none)
 }
 
-public func content(_ c: Content) -> Stylesheet {
-  return key("content", c)
+extension Stylesheet {
+  public static let content: (Content) -> Stylesheet = key("content")
 }
 
 public func stringContent(_ s: String) -> Content {
@@ -26,8 +26,8 @@ public struct Quotes: Val, None {
   public static let none = Quotes(quote: .none)
 }
 
-public func quotes(_ q: Quotes) -> Stylesheet {
-  return key("quotes", q)
+extension Stylesheet {
+  public static let quotes: (Quotes) -> Stylesheet = key("quotes")
 }
 
 public struct TextAlign: Val, Normal, Inherit, Other, Center {
@@ -48,6 +48,11 @@ public struct TextAlign: Val, Normal, Inherit, Other, Center {
   public static let center = TextAlign(.center)
   public static let normal = TextAlign(.normal)
   public static let inherit = TextAlign(.inherit)
+
+  public static let justify: TextAlign = "justify"
+  public static let matchParent: TextAlign = "match-parent"
+  public static let start: TextAlign = "start"
+  public static let end: TextAlign = "end"
 }
 
 extension TextAlign: ExpressibleByStringLiteral {
@@ -56,9 +61,6 @@ extension TextAlign: ExpressibleByStringLiteral {
   }
 }
 
-public let justify: TextAlign = "justify"
-public let matchParent: TextAlign = "match-parent"
-public let start: TextAlign = "start"
-public let end: TextAlign = "end"
-
-public let textAlign: (TextAlign) -> Stylesheet = key("text-align")
+extension Stylesheet {
+  public static let textAlign: (TextAlign) -> Stylesheet = key("text-align")
+}
