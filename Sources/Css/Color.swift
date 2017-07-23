@@ -298,15 +298,6 @@ public func desaturate(_ by: Float) -> (Color) -> Color {
   return over(\Color.saturation) <| { $0.map { $0 * (1 - by) } }
 }
 
-//extension Color: Equatable {
-//  public static func ==(lhs: Color, rhs: Color) -> Bool {
-//    return toUInt8(lhs.red) == toUInt8(rhs.red)
-//      && toUInt8(lhs.blue) == toUInt8(rhs.blue)
-//      && toUInt8(lhs.green) == toUInt8(rhs.green)
-//      && toUInt8(lhs.alpha) == toUInt8(rhs.alpha)
-//  }
-//}
-
 private func rgb2hsl(_ r: UInt8, _ g: UInt8, _ b: UInt8) -> (hue: Int, saturation: Float, lightness: Float) {
   let (r, g, b) = (toFloat(r), toFloat(g), toFloat(b))
 
