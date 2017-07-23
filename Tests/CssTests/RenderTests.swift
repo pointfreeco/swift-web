@@ -305,7 +305,7 @@ class RenderTests: XCTestCase {
     let css = (body & .id("hello")) % (
       .background(Color.red)
         <> (p & .pseudo(.firstChild)) % (
-          .background(Color.green)
+          .background(Color.lime)
             <> (a & .`class`("blue")) % (
               .background(Color.blue)
           )
