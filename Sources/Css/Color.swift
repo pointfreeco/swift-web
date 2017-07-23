@@ -1,157 +1,168 @@
 import Prelude
 
-public enum ColorVal: Val, Auto, Inherit, None {
-  public static let auto: ColorVal = .other(.auto)
-  public static let inherit: ColorVal = .other(.inherit)
-  public static let none: ColorVal = .other(.none)
-
-  case rgba(Color)
+public enum Color: Val, Auto, Inherit, None {
+  case rgba(UInt8, UInt8, UInt8, Float)
   case other(Value)
 
   public func value() -> Value {
     switch self {
-    case let .rgba(color):
-      return color.value()
+    case let .rgba(red, green, blue, alpha):
+      let formatted = alpha == 1.0
+        ? "#" + phex(red) + phex(green) + phex(blue)
+        : "rgba(\(red),\(green),\(blue),\(alpha))"
+      return .init(.plain(formatted))
     case let .other(value):
       return value
     }
   }
-}
 
-public struct Color {
-  private(set) var red: Float {
-    didSet {
-      self.red = (clamped(0..<1) <| self.red)
-    }
+  public static let auto: Color = .other(.auto)
+  public static let inherit: Color = .other(.inherit)
+  public static let none: Color = .other(.none)
+
+  public static func rgb(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> Color {
+    return .rgba(red, green, blue, 1.0)
   }
 
-  private(set) var blue: Float {
-    didSet {
-      self.blue = (clamped(0..<1) <| self.blue)
-    }
+  public static func hsla(_ hue: Int, _ saturation: Float, _ lightness: Float, _ alpha: Float)
+    -> Color {
+      let (r, g, b) = hsl2rgb(hue, saturation, lightness)
+      return .rgba(r, g, b, alpha)
   }
 
-  private(set) var green: Float {
-    didSet {
-      self.green = (clamped(0..<1) <| self.green)
-    }
+  public static func hsl(_ h: Int, _ s: Float, _ l: Float) -> Color {
+    return hsla(h, s, l, 1)
   }
 
-  private(set) var alpha: Float {
-    didSet {
-      self.alpha = (clamped(0..<1) <| self.alpha)
-    }
+  public static func white(_ white: Float, _ alpha: Float = 1.0) -> Color {
+    let w = toUInt8(white)
+    return .rgba(w, w, w, alpha)
   }
 
-  public private(set) var hue: Int {
-    get {
-      return rgb2hsl(self.red, self.green, self.blue).hue
-    }
-    set(h) {
-      let (_, s, l) = rgb2hsl(self.red, self.green, self.blue)
-      (self.red, self.green, self.blue) = hsl2rgb(h, s, l)
-    }
-  }
-
-  public private(set) var saturation: Float {
-    get {
-      return rgb2hsl(self.red, self.green, self.blue).saturation
-    }
-    set(s) {
-      let (h, _, l) = rgb2hsl(self.red, self.green, self.blue)
-      (self.red, self.green, self.blue) = hsl2rgb(h, s, l)
-    }
-  }
-
-  public private(set) var lightness: Float {
-    get {
-      return rgb2hsl(self.red, self.green, self.blue).lightness
-    }
-    set(l) {
-      let (h, s, _) = rgb2hsl(self.red, self.green, self.blue)
-      (self.red, self.green, self.blue) = hsl2rgb(h, s, l)
-    }
-  }
-
-  public init(red: Float, green: Float, blue: Float, alpha: Float = 1.0) {
-    self.red = Float(clamped(0..<1) <| red)
-    self.blue = Float(clamped(0..<1) <| blue)
-    self.green = Float(clamped(0..<1) <| green)
-    self.alpha = Float(clamped(0..<1) <| alpha)
-  }
-
-  public init(hue: Int, saturation: Float, lightness: Float, alpha: Float = 1.0) {
-    let (r, g, b) = hsl2rgb(hue, saturation, lightness)
-    self.init(red: r, green: g, blue: b, alpha: alpha)
-  }
+  public static let red = rgba(255, 0, 0, 1)
+  public static let green = rgba(0, 255, 0, 1)
+  public static let blue = rgba(0, 0, 255, 1)
 }
 
 extension Color: _ExpressibleByColorLiteral {
   public init(colorLiteralRed red: Float, green: Float, blue: Float, alpha: Float) {
-    self.init(red: red, green: green, blue: blue, alpha: alpha)
+    self = .rgba(toUInt8(red), toUInt8(green), toUInt8(blue), alpha)
   }
 }
 
-extension Color: Equatable {
-  public static func ==(lhs: Color, rhs: Color) -> Bool {
-    return toUInt8(lhs.red) == toUInt8(rhs.red)
-      && toUInt8(lhs.blue) == toUInt8(rhs.blue)
-      && toUInt8(lhs.green) == toUInt8(rhs.green)
-      && toUInt8(lhs.alpha) == toUInt8(rhs.alpha)
+public extension Color {
+  public private(set) var red: UInt8? {
+    get {
+      guard case let .rgba(r, _, _, _) = self else { return nil }
+      return r
+    }
+    set(r) {
+      guard let r = r, case let .rgba(_, g, b, a) = self else { return }
+      self = .rgba(r, g, b, a)
+    }
   }
-}
 
-public func rgba(_ r: UInt8, _ g: UInt8, _ b: UInt8, _ a: Float) -> Color {
-  return Color(red: Float(r) / 255, green: Float(g) / 255, blue: Float(b) / 255, alpha: a)
-}
+  public private(set) var green: UInt8? {
+    get {
+      guard case let .rgba(r, _, _, _) = self else { return nil }
+      return r
+    }
+    set(r) {
+      guard let r = r, case let .rgba(_, g, b, a) = self else { return }
+      self = .rgba(r, g, b, a)
+    }
+  }
 
-public func rgb(_ r: UInt8, _ g: UInt8, _ b: UInt8) -> Color {
-  return rgba(r, g, b, 1)
-}
+  public private(set) var blue: UInt8? {
+    get {
+      guard case let .rgba(r, _, _, _) = self else { return nil }
+      return r
+    }
+    set(r) {
+      guard let r = r, case let .rgba(_, g, b, a) = self else { return }
+      self = .rgba(r, g, b, a)
+    }
+  }
 
-public func hsla(_ h: Int, _ s: Float, _ l: Float, _ a: Float) -> Color {
-  return Color(hue: h, saturation: s, lightness: l, alpha: a)
-}
+  public private(set) var alpha: Float? {
+    get {
+      guard case let .rgba(_, _, _, a) = self else { return nil }
+      return a
+    }
+    set(a) {
+      guard let a = a, case let .rgba(r, g, b, _) = self else { return }
+      self = .rgba(r, g, b, a)
+    }
+  }
 
-public func hsl(_ h: Int, _ s: Float, _ l: Float) -> Color {
-  return hsla(h, s, l, 1)
-}
+  public private(set) var hue: Int? {
+    get {
+      guard case let .rgba(r, g, b, _) = self else { return nil }
+      return rgb2hsl(r, g, b).hue
+    }
+    set(h) {
+      guard let h = h, case let .rgba(r, g, b, a) = self else { return }
+      let (_, s, l) = rgb2hsl(r, g, b)
+      let (red, green, blue) = hsl2rgb(h, s, l)
+      self = .rgba(red, green, blue, a)
+    }
+  }
 
-public func white(_ w: Float, _ a: Float) -> Color {
-  return .init(red: w, green: w, blue: w, alpha: a)
-}
+  public private(set) var saturation: Float? {
+    get {
+      guard case let .rgba(r, g, b, _) = self else { return nil }
+      return rgb2hsl(r, g, b).saturation
+    }
+    set(s) {
+      guard let s = s, case let .rgba(r, g, b, a) = self else { return }
+      let (h, _, l) = rgb2hsl(r, g, b)
+      let (red, green, blue) = hsl2rgb(h, s, l)
+      self = .rgba(red, green, blue, a)
+    }
+  }
 
-public let red = rgba(255, 0, 0, 1)
-public let green = rgba(0, 255, 0, 1)
-public let blue = rgba(0, 0, 255, 1)
-
-extension Color: Val {
-  public func value() -> Value {
-    let (r, g, b) = (toUInt8(self.red), toUInt8(self.green), toUInt8(self.blue))
-    let formatted = self.alpha == 1
-      ? "#" + phex(r) + phex(g) + phex(b)
-      : "rgba(\(r),\(g),\(b),\(self.alpha))"
-    return .init(.plain(formatted))
+  public private(set) var lightness: Float? {
+    get {
+      guard case let .rgba(r, g, b, _) = self else { return nil }
+      return rgb2hsl(r, g, b).lightness
+    }
+    set(l) {
+      guard let l = l, case let .rgba(r, g, b, a) = self else { return }
+      let (h, s, _) = rgb2hsl(r, g, b)
+      let (red, green, blue) = hsl2rgb(h, s, l)
+      self = .rgba(red, green, blue, a)
+    }
   }
 }
 
 public func darken(_ by: Float) -> (Color) -> Color {
-  return over(\Color.lightness) <| { $0 * (1 - by) }
+  return over(\Color.lightness) <| { $0.map { $0 * (1 - by) } }
 }
 
 public func lighten(_ by: Float) -> (Color) -> Color {
-  return over(\Color.lightness) <| { $0 * (1 + by) }
+  return over(\Color.lightness) <| { $0.map { $0 * (1 + by) } }
 }
 
 public func saturate(_ by: Float) -> (Color) -> Color {
-  return over(\Color.saturation) <| { $0 * (1 + by) }
+  return over(\Color.saturation) <| { $0.map { $0 * (1 + by) } }
 }
 
 public func desaturate(_ by: Float) -> (Color) -> Color {
-  return over(\Color.saturation) <| { $0 * (1 - by) }
+  return over(\Color.saturation) <| { $0.map { $0 * (1 - by) } }
 }
 
-private func rgb2hsl(_ r: Float, _ g: Float, _ b: Float) -> (hue: Int, saturation: Float, lightness: Float) {
+//extension Color: Equatable {
+//  public static func ==(lhs: Color, rhs: Color) -> Bool {
+//    return toUInt8(lhs.red) == toUInt8(rhs.red)
+//      && toUInt8(lhs.blue) == toUInt8(rhs.blue)
+//      && toUInt8(lhs.green) == toUInt8(rhs.green)
+//      && toUInt8(lhs.alpha) == toUInt8(rhs.alpha)
+//  }
+//}
+
+private func rgb2hsl(_ r: UInt8, _ g: UInt8, _ b: UInt8) -> (hue: Int, saturation: Float, lightness: Float) {
+  let (r, g, b) = (toFloat(r), toFloat(g), toFloat(b))
+
   let maximum = max(r, max(g, b))
   let minimum = min(r, min(g, b))
   let c = maximum - minimum
@@ -178,7 +189,7 @@ private func rgb2hsl(_ r: Float, _ g: Float, _ b: Float) -> (hue: Int, saturatio
   return (h, s, l)
 }
 
-private func hsl2rgb(_ h: Int, _ s: Float, _ l: Float) -> (red: Float, green: Float, blue: Float) {
+private func hsl2rgb(_ h: Int, _ s: Float, _ l: Float) -> (red: UInt8, green: UInt8, blue: UInt8) {
   let c = (1 - abs(2 * l - 1)) * s
   let hPrime = Float(h) / 60
   let hPrimePrime = hPrime.truncatingRemainder(dividingBy: 2)
@@ -205,7 +216,7 @@ private func hsl2rgb(_ h: Int, _ s: Float, _ l: Float) -> (red: Float, green: Fl
   let m = l - 0.5 * c
   let (r, g, b) = (r1 + m, g1 + m, b1 + m)
 
-  return (r, g, b)
+  return (toUInt8(r), toUInt8(g), toUInt8(b))
 }
 
 private func clamped<T>(_ to: Range<T>) -> (T) -> T {
@@ -214,10 +225,14 @@ private func clamped<T>(_ to: Range<T>) -> (T) -> T {
   }
 }
 
-private func phex(_ n: Int) -> String {
+private func phex(_ n: UInt8) -> String {
   return (n < 16 ? "0" : "") + String(n, radix: 16, uppercase: false)
 }
 
-private func toUInt8(_ x: Float) -> Int {
-  return Int(max(0, min(255, x * 255)).rounded())
+private func toFloat(_ x: UInt8) -> Float {
+  return Float(x) / 255
+}
+
+private func toUInt8(_ x: Float) -> UInt8 {
+  return UInt8(max(0, min(255, x * 255)).rounded())
 }
