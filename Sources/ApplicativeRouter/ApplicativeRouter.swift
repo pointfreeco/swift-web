@@ -16,7 +16,9 @@ public struct Parser<A> {
   fileprivate let parse: (Route) -> (rest: Route, match: A)?
 }
 
-extension Parser { // : Functor
+// MARK: - Functor
+
+extension Parser {
   public func map<B>(_ a2b: @escaping (A) -> B) -> Parser<B> {
     return Parser<B> { route in
       guard let (rest, a) = self.parse(route) else { return nil }
@@ -28,21 +30,19 @@ extension Parser { // : Functor
     return pa.map(a2b)
   }
 
-  public static func <¢ (a: A, p: Parser<()>) -> Parser {
+  public static func <¢ <B>(a: A, p: Parser<B>) -> Parser {
+    return const(a) <¢> p
+  }
+
+  public static func ¢> <B>(p: Parser<B>, a: A) -> Parser {
     return const(a) <¢> p
   }
 }
 
-extension Parser { // : Alt
-  public static func <|> (lhs: Parser, rhs: Parser) -> Parser { // : Alt
-    return Parser<A> { route in
-      lhs.parse(route) ?? rhs.parse(route)
-    }
-  }
-}
+// MARK: - Apply
 
-extension Parser { // : Apply
-  public static func <*> <B>(pa2b: Parser<(A) -> B>, pa: Parser) -> Parser<B> { // : Apply
+extension Parser {
+  public static func <*> <B>(pa2b: Parser<(A) -> B>, pa: Parser) -> Parser<B> {
     return Parser<B> { route in
       guard let (more, a2b) = pa2b.parse(route) else { return nil }
       guard let (rest, a) = pa.parse(more) else { return nil }
@@ -59,17 +59,33 @@ extension Parser { // : Apply
   }
 }
 
-extension Parser { // : Plus
+// MARK: - Applicative
+
+public func pure<A>(_ a: A) -> Parser<A> {
+  return Parser<A> { route in
+    (route, a)
+  }
+}
+
+// MARK: - Alt
+
+extension Parser {
+  public static func <|> (lhs: Parser, rhs: Parser) -> Parser {
+    return Parser<A> { route in
+      lhs.parse(route) ?? rhs.parse(route)
+    }
+  }
+}
+
+// MARK: - Plus
+
+extension Parser {
   public static var empty: Parser {
     return Parser { _ in nil }
   }
 }
 
-public func pure<A>(_ a: A) -> Parser<A> { // : Applicative
-  return Parser<A> { route in
-    (route, a)
-  }
-}
+// MARL: - Combinators
 
 public let end = Parser<()> { route in
   guard route.path.isEmpty else { return nil }
@@ -145,9 +161,8 @@ fileprivate func route(from request: URLRequest) -> Route {
   guard let components = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })
   else { return (method, [], [:]) }
 
-  let path = components.path
-    .components(separatedBy: "/")
-    .flatMap { $0.isEmpty ? nil : $0 } // bad flatMap, bad
+  let path = components.path.components(separatedBy: "/")
+    |> mapOptional { $0.isEmpty ? nil : $0 }
 
   var query: [String: String] = [:]
   components.queryItems?.forEach { query[$0.name] = $0.value ?? "" }
