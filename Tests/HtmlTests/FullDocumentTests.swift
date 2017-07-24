@@ -109,8 +109,8 @@ class FullDocumentTests: XCTestCase {
                   [
                     h4(["Sign up for our newsletter!"]),
                     label([Html.for <| "email"], ["Email: "]),
-                    input([type <| "text", Html.name <| "email", id <| "email", Html.value <| ""]),
-                    input([type <| "submit", Html.value <| "Submit"])
+                    input([type <| .text, Html.name <| "email", id <| "email", Html.value <| ""]),
+                    input([type <| .submit, Html.value <| "Submit"])
                   ]
                 )
               ]
