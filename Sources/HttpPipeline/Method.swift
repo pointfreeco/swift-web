@@ -5,8 +5,7 @@ public enum Method {
   case patch
   case delete
   case options
-
-  case custom(String)
+  case other(String)
 
   public var description: String {
     switch self {
@@ -22,7 +21,7 @@ public enum Method {
       return "DELETE"
     case .options:
       return "OPTIONS"
-    case let .custom(str):
+    case let .other(str):
       return str
     }
   }

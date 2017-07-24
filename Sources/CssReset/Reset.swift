@@ -4,7 +4,6 @@ import Prelude
 private let allReset: Stylesheet = (
   a
     | abbr
-    | acronym
     | address
     | article
     | aside

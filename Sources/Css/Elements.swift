@@ -1,6 +1,5 @@
 public let a = CssSelector.elem(.a)
 public let abbr = CssSelector.elem(.abbr)
-public let acronym = CssSelector.elem(.acronym)
 public let address = CssSelector.elem(.address)
 public let article = CssSelector.elem(.article)
 public let aside = CssSelector.elem(.aside)

@@ -68,6 +68,12 @@ extension Value {
   }
 }
 
+extension Value where Self: CustomStringConvertible {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self.description)
+  }
+}
+
 extension Value where Self: RawRepresentable, Self.RawValue: Value {
   public func renderedValue() -> EncodedString? {
     return self.rawValue.renderedValue()

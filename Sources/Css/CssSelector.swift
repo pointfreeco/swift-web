@@ -61,7 +61,6 @@ public enum CssSelector {
   public enum Element {
     case a
     case abbr
-    case acronym
     case address
     case article
     case aside
@@ -73,7 +72,6 @@ public enum CssSelector {
     case caption
     case cite
     case code
-    case custom(String)
     case dd
     case details
     case div
@@ -105,6 +103,7 @@ public enum CssSelector {
     case menu
     case nav
     case ol
+    case other(String)
     case p
     case pre
     case q
@@ -205,7 +204,7 @@ extension CssSelector: ExpressibleByStringLiteral {
     case .some("."):
       self = .`class`(String(value.dropFirst()))
     default:
-      self = .elem(.custom(value))
+      self = .elem(.other(value))
     }
   }
 }
