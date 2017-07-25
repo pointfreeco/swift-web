@@ -87,7 +87,7 @@ public struct Color {
 }
 
 extension Color: _ExpressibleByColorLiteral {
-  public init(colorLiteralRed red: Float, green: Float, blue: Float, alpha: Float) {
+  public init(_colorLiteralRed red: Float, green: Float, blue: Float, alpha: Float) {
     self.init(red: red, green: green, blue: blue, alpha: alpha)
   }
 }

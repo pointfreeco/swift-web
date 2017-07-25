@@ -126,12 +126,8 @@ public func address(_ content: [Node]) -> Node {
   return address([], content)
 }
 
-public func area(_ attribs: [Attribute<Element.Area>], _ content: [Node]) -> Node {
-  return node("area", attribs, content)
-}
-
-public func area(_ content: [Node]) -> Node {
-  return area([], content)
+public func area(_ attribs: [Attribute<Element.Area>]) -> Node {
+  return node("area", attribs, nil)
 }
 
 public func article(_ attribs: [Attribute<Element.Article>], _ content: [Node]) -> Node {
@@ -236,12 +232,8 @@ public func code(_ content: [Node]) -> Node {
   return code([], content)
 }
 
-public func col(_ attribs: [Attribute<Element.Col>], _ content: [Node]) -> Node {
-  return node("col", attribs, content)
-}
-
-public func col(_ content: [Node]) -> Node {
-  return col([], content)
+public func col(_ attribs: [Attribute<Element.Col>]) -> Node {
+  return node("col", attribs, nil)
 }
 
 public func colgroup(_ attribs: [Attribute<Element.Colgroup>], _ content: [Node]) -> Node {
@@ -249,7 +241,7 @@ public func colgroup(_ attribs: [Attribute<Element.Colgroup>], _ content: [Node]
 }
 
 public func colgroup(_ content: [Node]) -> Node {
-  return col([], content)
+  return colgroup([], content)
 }
 
 public func dd(_ attribs: [Attribute<Element.Dd>], _ content: [Node]) -> Node {
@@ -466,12 +458,8 @@ public func kbd(_ content: [Node]) -> Node {
   return kbd([], content)
 }
 
-public func keygen(_ attribs: [Attribute<Element.Keygen>], _ content: [Node]) -> Node {
-  return node("keygen", attribs, content)
-}
-
-public func keygen(_ content: [Node]) -> Node {
-  return keygen([], content)
+public func keygen(_ attribs: [Attribute<Element.Keygen>]) -> Node {
+  return node("keygen", attribs, nil)
 }
 
 public func label(_ attribs: [Attribute<Element.Label>], _ content: [Node]) -> Node {
@@ -496,6 +484,10 @@ public func li(_ attribs: [Attribute<Element.Li>], _ content: [Node]) -> Node {
 
 public func li(_ content: [Node]) -> Node {
   return li([], content)
+}
+
+public func link(_ attribs: [Attribute<Element.Link>]) -> Node {
+  return node("li", attribs, nil)
 }
 
 public func main(_ attribs: [Attribute<Element.Main>], _ content: [Node]) -> Node {
@@ -607,6 +599,10 @@ public func p(_ attribs: [Attribute<Element.P>], _ content: [Node]) -> Node {
 
 public func p(_ content: [Node]) -> Node {
   return p([], content)
+}
+
+public func param(_ attribs: [Attribute<Element.Param>]) -> Node {
+  return node("param", attribs, nil)
 }
 
 public func picture(_ attribs: [Attribute<Element.Picture>], _ content: [Node]) -> Node {
@@ -832,3 +828,5 @@ public func video(_ attribs: [Attribute<Element.Video>], _ content: [Node]) -> N
 public func video(_ content: [Node]) -> Node {
   return video([], content)
 }
+
+public let wbr: Node = node("wbr", nil)
