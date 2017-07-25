@@ -556,7 +556,7 @@ public enum Scope: String, Value {
   case rowgroup
 }
 public func scope(_ value: Bool) -> Attribute<Element.Th> {
-  return .init("selected", value)
+  return .init("scope", value)
 }
 
 public func selected(_ value: Bool) -> Attribute<Element.Option> {
@@ -651,7 +651,7 @@ public func title<T>(_ value: String) -> Attribute<T> {
 }
 
 public func translate<T>(_ value: Bool) -> Attribute<T> {
-  return .init("tabindex", value ? "yes" : "no")
+  return .init("translate", value ? "yes" : "no")
 }
 
 extension MediaType: Value {}

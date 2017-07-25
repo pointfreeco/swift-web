@@ -695,7 +695,7 @@ public func summary(_ content: [Node]) -> Node {
 }
 
 public func sup(_ attribs: [Attribute<Element.Sup>], _ content: [Node]) -> Node {
-  return node("sub", attribs, content)
+  return node("sup", attribs, content)
 }
 
 public func sup(_ content: [Node]) -> Node {
@@ -755,7 +755,7 @@ public func title(_ string: String) -> Node {
 }
 
 public func tr(_ attribs: [Attribute<Element.Tr>], _ content: [Node]) -> Node {
-  return node("td", attribs, content)
+  return node("tr", attribs, content)
 }
 
 public func tr(_ content: [Node]) -> Node {
@@ -767,7 +767,7 @@ public func track(_ attribs: [Attribute<Element.Track>]) -> Node {
 }
 
 public func u(_ attribs: [Attribute<Element.U>], _ content: [Node]) -> Node {
-  return node("a", attribs, content)
+  return node("u", attribs, content)
 }
 
 public func u(_ content: [Node]) -> Node {
