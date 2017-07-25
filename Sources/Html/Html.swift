@@ -54,8 +54,12 @@ public func node(_ name: String, _ content: [Node]?) -> Node {
   return .element(.init(name: name, attribs: [], content: content))
 }
 
-public func text(_ text: String) -> Node {
-  return .text(encode(text))
+public func text(_ content: String) -> Node {
+  return .text(encode(content))
+}
+
+public func text<T: ContainsSource>(_ content: String) -> ChildOf<T> {
+  return .init(text(content))
 }
 
 public func attribute<T>(_ name: String, _ value: Value) -> Attribute<T> {

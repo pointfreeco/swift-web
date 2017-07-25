@@ -3,6 +3,8 @@ import Prelude
 
 public protocol ContainsList {}
 public protocol ContainsOptions {}
+public protocol ContainsSource {}
+public protocol ContainsTrack {}
 
 extension Element {
   public enum A: HasHref, HasRel, HasTarget {}
@@ -11,7 +13,8 @@ extension Element {
   public enum Area: HasAlt, HasHref, HasRel, HasTarget {}
   public enum Article {}
   public enum Aside {}
-  public enum Audio: HasAutoplay, HasControls, HasLoop, HasMuted, HasPreload, HasSrc {}
+  public enum Audio: ContainsSource, ContainsTrack, HasAutoplay, HasControls, HasLoop, HasMuted, HasPreload,
+    HasSrc {}
   public enum B {}
   public enum Base: HasHref, HasTarget {}
   public enum Bdi {}
@@ -74,7 +77,7 @@ extension Element {
   public enum Output: HasFor, HasForm, HasName {}
   public enum P {}
   public enum Param: HasName, HasValue {}
-  public enum Picture {}
+  public enum Picture: ContainsSource {}
   public enum Pre {}
   public enum Progress: HasMax {}
   public enum Q: HasCite {}
@@ -105,7 +108,8 @@ extension Element {
   public enum U {}
   public enum Ul: ContainsList {}
   public enum Var {}
-  public enum Video: HasAutoplay, HasControls, HasHeight, HasLoop, HasMuted, HasPreload, HasSrc, HasWidth {}
+  public enum Video: ContainsSource, ContainsTrack, HasAutoplay, HasControls, HasHeight, HasLoop, HasMuted,
+    HasPreload, HasSrc, HasWidth {}
 }
 
 public struct ChildOf<T> {
@@ -160,11 +164,11 @@ public func aside(_ content: [Node]) -> Node {
   return aside([], content)
 }
 
-public func audio(_ attribs: [Attribute<Element.Audio>], _ content: [Node]) -> Node {
-  return node("audio", attribs, content)
+public func audio(_ attribs: [Attribute<Element.Audio>], _ content: [ChildOf<Element.Audio>]) -> Node {
+  return node("audio", attribs, content.map(get(\.node)))
 }
 
-public func audio(_ content: [Node]) -> Node {
+public func audio(_ content: [ChildOf<Element.Audio>]) -> Node {
   return audio([], content)
 }
 
@@ -621,11 +625,11 @@ public func param(_ attribs: [Attribute<Element.Param>]) -> Node {
   return node("param", attribs, nil)
 }
 
-public func picture(_ attribs: [Attribute<Element.Picture>], _ content: [Node]) -> Node {
-  return node("picture", attribs, content)
+public func picture(_ attribs: [Attribute<Element.Picture>], _ content: [ChildOf<Element.Picture>]) -> Node {
+  return node("picture", attribs, content.map(get(\.node)))
 }
 
-public func picture(_ content: [Node]) -> Node {
+public func picture(_ content: [ChildOf<Element.Picture>]) -> Node {
   return picture([], content)
 }
 
@@ -709,8 +713,8 @@ public func small(_ content: [Node]) -> Node {
   return small([], content)
 }
 
-public func source(_ attribs: [Attribute<Element.Source>]) -> Node {
-  return node("source", attribs, nil)
+public func source<T: ContainsSource>(_ attribs: [Attribute<Element.Source>]) -> ChildOf<T> {
+  return .init(node("source", attribs, nil))
 }
 
 public func span(_ attribs: [Attribute<Element.Span>], _ content: [Node]) -> Node {
@@ -829,8 +833,8 @@ public func tr(_ content: [Node]) -> Node {
   return tr([], content)
 }
 
-public func track(_ attribs: [Attribute<Element.Track>]) -> Node {
-  return node("track", attribs, nil)
+public func track<T: ContainsTrack>(_ attribs: [Attribute<Element.Track>]) -> ChildOf<T> {
+  return .init(node("track", attribs, nil))
 }
 
 public func u(_ attribs: [Attribute<Element.U>], _ content: [Node]) -> Node {
@@ -857,11 +861,11 @@ public func `var`(_ content: [Node]) -> Node {
   return `var`([], content)
 }
 
-public func video(_ attribs: [Attribute<Element.Video>], _ content: [Node]) -> Node {
-  return node("video", attribs, content)
+public func video(_ attribs: [Attribute<Element.Video>], _ content: [ChildOf<Element.Video>]) -> Node {
+  return node("video", attribs, content.map(get(\.node)))
 }
 
-public func video(_ content: [Node]) -> Node {
+public func video(_ content: [ChildOf<Element.Video>]) -> Node {
   return video([], content)
 }
 
