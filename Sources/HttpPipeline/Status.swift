@@ -17,5 +17,5 @@ public enum Status: Int {
   case notAcceptable = 406
   case tooManyRequests = 429
 
-  //  case custom(Int/* , String */) // TODO
+  //  case other(Int/* , String */) // TODO
 }

@@ -15,6 +15,7 @@ let package = Package(
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
+    .library(name: "MediaType", targets: ["MediaType"]),
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("5bb9f1a")),
@@ -33,7 +34,7 @@ let package = Package(
 
     .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotTesting"]),
 
-    .target(name: "Html", dependencies: ["Prelude"]),
+    .target(name: "Html", dependencies: ["MediaType", "Prelude"]),
     .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
@@ -44,10 +45,12 @@ let package = Package(
 
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
-    .target(name: "HttpPipeline", dependencies: ["Prelude"]),
+    .target(name: "HttpPipeline", dependencies: ["MediaType", "Prelude"]),
     .testTarget(name: "HttpPipelineTests", dependencies: ["HttpPipeline"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
+
+    .target(name: "MediaType", dependencies: []),
   ]
 )

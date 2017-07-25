@@ -11,6 +11,6 @@ class ResetTests: XCTestCase {
   }
 
   func testResetCompact() {
-    assertSnapshot(matching: render(config: compact, css: reset))
+    assertSnapshot(matching: render(config: compact, css: reset), pathExtension: "css")
   }
 }

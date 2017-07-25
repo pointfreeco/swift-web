@@ -150,14 +150,52 @@ func render(element: CssSelector.Element) -> String {
   switch element {
   case .a:
     return "a"
+  case .abbr:
+    return "abbr"
+  case .address:
+    return "address"
+  case .aside:
+    return "aside"
   case .article:
     return "article"
+  case .audio:
+    return "audio"
+  case .b:
+    return "b"
   case .blockquote:
     return "blockquote"
   case .body:
     return "body"
+  case .canvas:
+    return "canvas"
+  case .caption:
+    return "caption"
+  case .cite:
+    return "cite"
+  case .code:
+    return "code"
+  case .dd:
+    return "dd"
+  case .details:
+    return "details"
   case .div:
     return "div"
+  case .dl:
+    return "dl"
+  case .dt:
+    return "dt"
+  case .em:
+    return "em"
+  case .embed:
+    return "embed"
+  case .fieldset:
+    return "fieldset"
+  case .figure:
+    return "figure"
+  case .figcaption:
+    return "figcaption"
+  case .form:
+    return "form"
   case .footer:
     return "footer"
   case .h1:
@@ -172,62 +210,48 @@ func render(element: CssSelector.Element) -> String {
     return "h5"
   case .h6:
     return "h6"
+  case .hgroup:
+    return "hgroup"
+  case .header:
+    return "header"
   case .html:
     return "html"
+  case .i:
+    return "i"
+  case .iframe:
+    return "iframe"
+  case .img:
+    return "img"
   case .input:
     return "input"
+  case .label:
+    return "label"
+  case .legend:
+    return "legend"
   case .li:
     return "li"
   case .menu:
     return "menu"
-  case .ol:
-    return "ol"
-  case .span:
-    return "span"
-  case .p:
-    return "p"
-  case .q:
-    return "q"
-  case .ul:
-    return "ul"
-  case let .custom(str):
-    return str
-  case .audio:
-    return "audio"
-  case .b:
-    return "b"
-  case .caption:
-    return "caption"
-  case .code:
-    return "code"
-  case .dd:
-    return "dd"
-  case .dl:
-    return "dl"
-  case .dt:
-    return "dt"
-  case .em:
-    return "em"
-  case .fieldset:
-    return "fieldset"
-  case .form:
-    return "form"
-  case .header:
-    return "header"
-  case .iframe:
-    return "iframe"
-  case .i:
-    return "i"
-  case .img:
-    return "img"
-  case .label:
-    return "label"
   case .nav:
     return "nav"
+  case .ol:
+    return "ol"
+  case let .other(str):
+    return str
+  case .p:
+    return "p"
+  case .pre:
+    return "pre"
+  case .q:
+    return "q"
   case .section:
     return "section"
+  case .span:
+    return "span"
   case .strong:
     return "strong"
+  case .summary:
+    return "summary"
   case .table:
     return "table"
   case .tbody:
@@ -240,42 +264,16 @@ func render(element: CssSelector.Element) -> String {
     return "th"
   case .thead:
     return "thead"
-  case .tr:
-    return "tr"
-  case .pre:
-    return "pre"
-  case .u:
-    return "u"
-  case .video:
-    return "video"
-  case .abbr:
-    return "abbr"
-  case .acronym:
-    return "acronym"
-  case .address:
-    return "address"
-  case .aside:
-    return "aside"
-  case .canvas:
-    return "canvas"
-  case .cite:
-    return "cite"
-  case .details:
-    return "details"
-  case .embed:
-    return "embed"
-  case .figure:
-    return "figure"
-  case .figcaption:
-    return "figcaption"
-  case .hgroup:
-    return "hgroup"
-  case .legend:
-    return "legend"
-  case .summary:
-    return "summary"
   case .time:
     return "time"
+  case .tr:
+    return "tr"
+  case .u:
+    return "u"
+  case .ul:
+    return "ul"
+  case .video:
+    return "video"
   }
 }
 
@@ -337,7 +335,7 @@ func collect(_ key: Key<Unit>, _ value: Value) -> [Either<String, (String, Strin
 func merger(_ xs: [App]) -> CssSelector {
   guard let (head, tail) = uncons(xs) else {
     // todo: is this the right default?
-    return .elem(.custom(""))
+    return .elem(.other(""))
   }
 
   switch head {

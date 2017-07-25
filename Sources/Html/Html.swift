@@ -58,13 +58,23 @@ public func text(_ text: String) -> Node {
   return .text(encode(text))
 }
 
+public func attribute<T>(_ name: String, _ value: Value) -> Attribute<T> {
+  return .init(name, value)
+}
+
 extension Value {
   public func render(with key: String) -> EncodedString? {
-    return self.renderedValue().map { Html.encode("\(key)=") + quote($0) }
+    return self.renderedValue().map { Html.encode("\(key)=") + quote($0) } ?? Html.encode(key)
   }
 
   public func renderedValue() -> EncodedString? {
     return Html.encode("\(self)")
+  }
+}
+
+extension Value where Self: CustomStringConvertible {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self.description)
   }
 }
 
@@ -75,10 +85,6 @@ extension Value where Self: RawRepresentable, Self.RawValue: Value {
 }
 
 extension Bool: Value {
-  public func render(with key: String) -> EncodedString? {
-    return self ? Html.encode(key) : nil
-  }
-
   public func renderedValue() -> EncodedString? {
     return nil
   }
