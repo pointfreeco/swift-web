@@ -4,6 +4,7 @@ import Prelude
 public protocol ContainsAVSource {}
 public protocol ContainsList {}
 public protocol ContainsOptions {}
+public protocol ContainsTr {}
 public protocol ContainsTrack {}
 
 extension Element {
@@ -21,7 +22,7 @@ extension Element {
   public enum Bdo {}
   public enum Blockquote: HasCite {}
   public enum Body {}
-  public enum Button: HasAutofocus, HasDisabled, HasForm, HasName, HasValue {}
+  public enum Button: HasAutofocus, HasDisabled, HasForm, HasName, HasStringValue {}
   public enum Canvas: HasHeight, HasWidth {}
   public enum Caption {}
   public enum Cite {}
@@ -29,7 +30,7 @@ extension Element {
   public enum Col: HasSpan {}
   public enum Colgroup: HasSpan {}
   public enum Dd {}
-  public enum Del: HasCite {}
+  public enum Del: HasCite, HasDatetime {}
   public enum Details {}
   public enum Dfn {}
   public enum Div {}
@@ -54,33 +55,35 @@ extension Element {
   public enum I {}
   public enum Iframe: HasHeight, HasName, HasSrc, HasWidth {}
   public enum Img: HasAlt, HasCrossorigin, HasHeight, HasSrc, HasSrcset, HasWidth {}
-  public enum Input: HasAlt, HasAutofocus, HasDisabled, HasForm, HasHeight, HasMax, HasMaxlength, HasMin,
-    HasMinlength, HasMultiple, HasName, HasPlaceholder, HasReadonly, HasRequired, HasSrc, HasValue,
-    HasWidth {}
-  public enum Ins: HasCite {}
+  public enum Input: HasAlt, HasAutofocus, HasDisabled, HasDoubleValue, HasForm, HasHeight, HasMax,
+    HasMaxlength, HasMin, HasMinlength, HasMultiple, HasName, HasPlaceholder, HasReadonly, HasRequired,
+    HasSrc, HasStringValue, HasWidth {}
+  public enum Ins: HasCite, HasDatetime {}
   public enum Kbd {}
-  public enum Keygen: HasAutofocus, HasDisabled, HasForm, HasName {}
   public enum Label: HasFor, HasForm {}
   public enum Legend {}
-  public enum Li: HasValue {}
+  public enum Li: HasStringValue {}
   public enum Link: HasHref, HasRel, HasMediaType {}
   public enum Main {}
   public enum Mark {}
   public enum Map: HasName {}
   public enum Meta: HasCharset {}
-  public enum Meter: HasForm, HasMax, HasMin {}
+  public enum Meter: HasDoubleValue, HasForm, HasMax, HasMin {}
   public enum Nav {}
   public enum Object: HasForm, HasHeight, HasName, HasMediaType, HasWidth {}
   public enum Ol: ContainsList {}
   public enum Optgroup: ContainsOptions, HasDisabled {}
-  public enum Option: HasDisabled, HasValue {}
+  public enum Option: HasDisabled, HasStringValue {}
   public enum Output: HasFor, HasForm, HasName {}
   public enum P {}
-  public enum Param: HasName, HasValue {}
+  public enum Param: HasName, HasStringValue {}
   public enum Picture {}
   public enum Pre {}
-  public enum Progress: HasMax {}
+  public enum Progress: HasDoubleValue, HasMax {}
   public enum Q: HasCite {}
+  public enum Rp {}
+  public enum Rt {}
+  public enum Ruby {}
   public enum S {}
   public enum Samp {}
   public enum Script: HasCharset, HasCrossorigin, HasSrc, HasMediaType {}
@@ -95,15 +98,16 @@ extension Element {
   public enum Sub {}
   public enum Summary {}
   public enum Sup {}
-  public enum Table {}
-  public enum Tbody {}
+  public enum Table: ContainsTr {}
+  public enum Tbody: ContainsTr {}
   public enum Td: HasColspan, HasHeaders, HasRowspan {}
   public enum Textarea: HasAutofocus, HasDisabled, HasForm, HasMaxlength, HasMinlength, HasName,
     HasPlaceholder, HasReadonly, HasRequired {}
   public enum Tfoot {}
+  public enum Time: HasDatetime {}
   public enum Track: HasSrc {}
   public enum Th: HasColspan, HasHeaders, HasRowspan {}
-  public enum Thead {}
+  public enum Thead: ContainsTr {}
   public enum Tr {}
   public enum U {}
   public enum Ul: ContainsList {}
@@ -144,8 +148,8 @@ public func address(_ content: [Node]) -> Node {
   return address([], content)
 }
 
-public func area(_ attribs: [Attribute<Element.Area>]) -> Node {
-  return node("area", attribs, nil)
+public func area(_ attribs: [Attribute<Element.Area>]) -> ChildOf<Element.Map> {
+  return .init(node("area", attribs, nil))
 }
 
 public func article(_ attribs: [Attribute<Element.Article>], _ content: [Node]) -> Node {
@@ -197,6 +201,14 @@ public func bdi(_ content: [Node]) -> Node {
   return bdi([], content)
 }
 
+public func bdo(dir: Direction, _ attribs: [Attribute<Element.Bdi>], _ content: [Node]) -> Node {
+  return node("bdo", [Html.dir(dir)] + attribs, content)
+}
+
+public func bdo(dir: Direction, _ content: [Node]) -> Node {
+  return bdo(dir: dir, [], content)
+}
+
 public func blockquote(_ attribs: [Attribute<Element.Blockquote>], _ content: [Node]) -> Node {
   return node("blockquote", attribs, content)
 }
@@ -231,11 +243,12 @@ public func canvas(_ content: [Node]) -> Node {
   return canvas([], content)
 }
 
-public func caption(_ attribs: [Attribute<Element.Caption>], _ content: [Node]) -> Node {
-  return node("caption", attribs, content)
+// TODO: "caption" can only be the first element of a "table"
+public func caption(_ attribs: [Attribute<Element.Caption>], _ content: [Node]) -> ChildOf<Element.Table> {
+  return .init(node("caption", attribs, content))
 }
 
-public func caption(_ content: [Node]) -> Node {
+public func caption(_ content: [Node]) -> ChildOf<Element.Table> {
   return caption([], content)
 }
 
@@ -255,15 +268,17 @@ public func code(_ content: [Node]) -> Node {
   return code([], content)
 }
 
-public func col(_ attribs: [Attribute<Element.Col>]) -> Node {
-  return node("col", attribs, nil)
+public func col(_ attribs: [Attribute<Element.Col>]) -> ChildOf<Element.Colgroup> {
+  return .init(node("col", attribs, nil))
 }
 
-public func colgroup(_ attribs: [Attribute<Element.Colgroup>], _ content: [Node]) -> Node {
-  return node("colgroup", attribs, content)
+public func colgroup(_ attribs: [Attribute<Element.Colgroup>], _ content: [ChildOf<Element.Colgroup>])
+  -> ChildOf<Element.Table> {
+
+    return .init(node("colgroup", attribs, content.map(get(\.node))))
 }
 
-public func colgroup(_ content: [Node]) -> Node {
+public func colgroup(_ content: [ChildOf<Element.Colgroup>]) -> ChildOf<Element.Table> {
   return colgroup([], content)
 }
 
@@ -283,6 +298,7 @@ public func del(_ content: [Node]) -> Node {
   return del([], content)
 }
 
+// TODO: required first child element "summary"
 public func details(_ attribs: [Attribute<Element.Details>], _ content: [Node]) -> Node {
   return node("details", attribs, content)
 }
@@ -343,19 +359,21 @@ public func fieldset(_ content: [Node]) -> Node {
   return fieldset([], content)
 }
 
-public func figcaption(_ attribs: [Attribute<Element.Figcaption>], _ content: [Node]) -> Node {
-  return node("figcaption", attribs, content)
+public func figcaption(_ attribs: [Attribute<Element.Figcaption>], _ content: [Node])
+  -> ChildOf<Element.Figure> {
+
+    return .init(node("figcaption", attribs, content))
 }
 
-public func figcaption(_ content: [Node]) -> Node {
+public func figcaption(_ content: [Node]) -> ChildOf<Element.Figure> {
   return figcaption([], content)
 }
 
-public func figure(_ attribs: [Attribute<Element.Figure>], _ content: [Node]) -> Node {
-  return node("figure", attribs, content)
+public func figure(_ attribs: [Attribute<Element.Figure>], _ content: [ChildOf<Element.Figure>]) -> Node {
+  return node("figure", attribs, content.map(get(\.node)))
 }
 
-public func figure(_ content: [Node]) -> Node {
+public func figure(_ content: [ChildOf<Element.Figure>]) -> Node {
   return figure([], content)
 }
 
@@ -457,6 +475,7 @@ public func iframe(_ attribs: [Attribute<Element.Iframe>], _ content: [Node] = [
   return node("iframe", attribs, content)
 }
 
+// TODO: "img" requires "src" and "alt"
 public func img(_ attribs: [Attribute<Element.Img>]) -> Node {
   return node("img", attribs, nil)
 }
@@ -481,10 +500,6 @@ public func kbd(_ content: [Node]) -> Node {
   return kbd([], content)
 }
 
-public func keygen(_ attribs: [Attribute<Element.Keygen>]) -> Node {
-  return node("keygen", attribs, nil)
-}
-
 public func label(_ attribs: [Attribute<Element.Label>], _ content: [Node]) -> Node {
   return node("label", attribs, content)
 }
@@ -493,11 +508,11 @@ public func label(_ content: [Node]) -> Node {
   return label([], content)
 }
 
-public func legend(_ attribs: [Attribute<Element.Legend>], _ content: [Node]) -> Node {
-  return node("legend", attribs, content)
+public func legend(_ attribs: [Attribute<Element.Legend>], _ content: [Node]) -> ChildOf<Element.Fieldset> {
+  return .init(node("legend", attribs, content))
 }
 
-public func legend(_ content: [Node]) -> Node {
+public func legend(_ content: [Node]) -> ChildOf<Element.Fieldset> {
   return legend([], content)
 }
 
@@ -521,7 +536,15 @@ public func main(_ content: [Node]) -> Node {
   return main([], content)
 }
 
-// TODO: "map" element
+public func map(name: String, _ attribs: [Attribute<Element.Map>], _ content: [ChildOf<Element.Map>])
+  -> Node {
+
+    return node("map", [Html.name(name)] + attribs, content.map(get(\.node)))
+}
+
+public func map(name: String, _ content: [ChildOf<Element.Map>]) -> Node {
+  return map(name: name, [], content)
+}
 
 public func mark(_ attribs: [Attribute<Element.Mark>], _ content: [Node]) -> Node {
   return node("mark", attribs, content)
@@ -568,6 +591,14 @@ public func meta(keywords: [String]) -> ChildOf<Element.Head> {
   return meta([name(.keywords), content(keywords)])
 }
 
+public func meter(value: Double, _ attribs: [Attribute<Element.Meter>], _ content: [Node]) -> Node {
+  return node("nav", [Html.value(value)] + attribs, content)
+}
+
+public func meter(value: Double, _ content: [Node]) -> Node {
+  return meter(value: value, [], content)
+}
+
 public func nav(_ attribs: [Attribute<Element.Nav>], _ content: [Node]) -> Node {
   return node("nav", attribs, content)
 }
@@ -576,6 +607,7 @@ public func nav(_ content: [Node]) -> Node {
   return nav([], content)
 }
 
+// TODO: Required attribute "data" or "type"
 public func object(_ attribs: [Attribute<Element.Object>], _ content: [ChildOf<Element.Object>]) -> Node {
   return node("object", attribs, content.map(get(\.node)))
 }
@@ -726,7 +758,7 @@ public func small(_ content: [Node]) -> Node {
 public func source<T: ContainsAVSource>(
   src: String,
   _ attribs: [Attribute<Element.Source>],
-  _ transparent: [Node])
+  _ transparent: [Node] = [])
   -> ChildOf<T> {
     return .init(node("source", [Html.src(src)] + attribs, nil))
 }
@@ -768,11 +800,11 @@ public func sub(_ content: [Node]) -> Node {
   return sub([], content)
 }
 
-public func summary(_ attribs: [Attribute<Element.Summary>], _ content: [Node]) -> Node {
-  return node("summary", attribs, content)
+public func summary(_ attribs: [Attribute<Element.Summary>], _ content: [Node]) -> ChildOf<Element.Details> {
+  return .init(node("summary", attribs, content))
 }
 
-public func summary(_ content: [Node]) -> Node {
+public func summary(_ content: [Node]) -> ChildOf<Element.Details> {
   return summary([], content)
 }
 
@@ -792,19 +824,19 @@ public func table(_ content: [Node]) -> Node {
   return table([], content)
 }
 
-public func tbody(_ attribs: [Attribute<Element.Tbody>], _ content: [Node]) -> Node {
-  return node("tbody", attribs, content)
+public func tbody(_ attribs: [Attribute<Element.Tbody>], _ content: [Node]) -> ChildOf<Element.Table> {
+  return .init(node("tbody", attribs, content))
 }
 
-public func tbody(_ content: [Node]) -> Node {
+public func tbody(_ content: [Node]) -> ChildOf<Element.Table> {
   return tbody([], content)
 }
 
-public func td(_ attribs: [Attribute<Element.Td>], _ content: [Node]) -> Node {
-  return node("td", attribs, content)
+public func td(_ attribs: [Attribute<Element.Td>], _ content: [Node]) -> ChildOf<Element.Tr> {
+  return .init(node("td", attribs, content))
 }
 
-public func td(_ content: [Node]) -> Node {
+public func td(_ content: [Node]) -> ChildOf<Element.Tr> {
   return td([], content)
 }
 
@@ -816,36 +848,53 @@ public func textarea(_ content: String = "") -> Node {
   return textarea([], content)
 }
 
-public func th(_ attribs: [Attribute<Element.Th>], _ content: [Node]) -> Node {
-  return node("td", attribs, content)
+public func tfoot(_ attribs: [Attribute<Element.Tfoot>], _ content: [Node]) -> ChildOf<Element.Table> {
+  return .init(node("tfoot", attribs, content))
 }
 
-public func th(_ content: [Node]) -> Node {
+public func tfoot(_ content: [Node]) -> ChildOf<Element.Table> {
+  return tfoot([], content)
+}
+
+// TODO: "th" can only be within "thead" or the first "tr" of a "table"
+public func th(_ attribs: [Attribute<Element.Th>], _ content: [Node]) -> ChildOf<Element.Tr> {
+  return .init(node("td", attribs, content))
+}
+
+public func th(_ content: [Node]) -> ChildOf<Element.Tr> {
   return th([], content)
 }
 
-public func thead(_ attribs: [Attribute<Element.Thead>], _ content: [Node]) -> Node {
-  return node("thead", attribs, content)
+public func thead(_ attribs: [Attribute<Element.Thead>], _ content: [Node]) -> ChildOf<Element.Table> {
+  return .init(node("thead", attribs, content))
 }
 
-public func thead(_ content: [Node]) -> Node {
+public func thead(_ content: [Node]) -> ChildOf<Element.Table> {
   return thead([], content)
+}
+
+public func time(_ attribs: [Attribute<Element.Time>], _ content: [Node]) -> Node {
+  return node("time", attribs, content)
+}
+
+public func time(_ content: [Node]) -> Node {
+  return time([], content)
 }
 
 public func title(_ string: String) -> ChildOf<Element.Head> {
   return .init(node("title", [text(string)]))
 }
 
-public func tr(_ attribs: [Attribute<Element.Tr>], _ content: [Node]) -> Node {
-  return node("tr", attribs, content)
+public func tr<T: ContainsTr>(_ attribs: [Attribute<Element.Tr>], _ content: [Node]) -> ChildOf<T> {
+  return .init(node("tr", attribs, content))
 }
 
-public func tr(_ content: [Node]) -> Node {
+public func tr<T: ContainsTr>(_ content: [Node]) -> ChildOf<T> {
   return tr([], content)
 }
 
-public func track<T: ContainsTrack>(_ attribs: [Attribute<Element.Track>]) -> ChildOf<T> {
-  return .init(node("track", attribs, nil))
+public func track<T: ContainsTrack>(src: String, _ attribs: [Attribute<Element.Track>]) -> ChildOf<T> {
+  return .init(node("track", [Html.src(src)] + attribs, nil))
 }
 
 public func u(_ attribs: [Attribute<Element.U>], _ content: [Node]) -> Node {
