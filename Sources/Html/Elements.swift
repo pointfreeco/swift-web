@@ -782,7 +782,7 @@ public func thead(_ content: [Node]) -> Node {
 }
 
 public func title(_ string: String) -> Node {
-  return node("title", [.text(encode(.init(string)))])
+  return node("title", [text(string)])
 }
 
 public func tr(_ attribs: [Attribute<Element.Tr>], _ content: [Node]) -> Node {

@@ -58,6 +58,10 @@ public func text(_ text: String) -> Node {
   return .text(encode(text))
 }
 
+public func attribute<T>(_ name: String, _ value: Value) -> Attribute<T> {
+  return .init(name, value)
+}
+
 extension Value {
   public func render(with key: String) -> EncodedString? {
     return self.renderedValue().map { Html.encode("\(key)=") + quote($0) } ?? Html.encode(key)

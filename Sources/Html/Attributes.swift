@@ -1,6 +1,8 @@
 import MediaType
 import Prelude
 
+public typealias Id = String
+
 public func abbr(_ value: String) -> Attribute<Element.Th> {
   return .init("abbr", value)
 }
@@ -105,6 +107,15 @@ public enum Draggable: String, Value {
   case `false`
   case auto
 }
+extension Draggable: ExpressibleByBooleanLiteral {
+  public init(booleanLiteral value: Bool) {
+    if value {
+      self = .true
+    } else {
+      self = .false
+    }
+  }
+}
 public func draggable<T>(_ value: Draggable) -> Attribute<T> {
   return .init("draggable", value)
 }
@@ -119,17 +130,17 @@ public func dropzone<T>(_ value: Dropzone) -> Attribute<T> {
 }
 
 public protocol HasFor {}
-public func `for`<T: HasFor>(_ value: String) -> Attribute<T> {
+public func `for`<T: HasFor>(_ value: Id) -> Attribute<T> {
   return .init("for", value)
 }
 
 public protocol HasForm {}
-public func form<T: HasForm>(_ value: String) -> Attribute<T> {
+public func form<T: HasForm>(_ value: Id) -> Attribute<T> {
   return .init("form", value)
 }
 
 public protocol HasHeaders {}
-public func headers<T: HasHeaders>(_ value: String) -> Attribute<T> {
+public func headers<T: HasHeaders>(_ value: Id) -> Attribute<T> {
   return .init("headers", value)
 }
 
@@ -156,7 +167,7 @@ public func httpEquiv(_ value: HttpEquiv) -> Attribute<Element.Meta> {
   return .init("http-equiv", value)
 }
 
-public func id<T>(_ value: String) -> Attribute<T> {
+public func id<T>(_ value: Id) -> Attribute<T> {
   return .init("id", value)
 }
 
@@ -654,8 +665,21 @@ public func title<T>(_ value: String) -> Attribute<T> {
   return .init("title", value)
 }
 
-public func translate<T>(_ value: Bool) -> Attribute<T> {
-  return .init("translate", value ? "yes" : "no")
+public enum Translate: String, Value {
+  case yes
+  case no
+}
+extension Translate: ExpressibleByBooleanLiteral {
+  public init(booleanLiteral value: Bool) {
+    if value {
+      self = .yes
+    } else {
+      self = .no
+    }
+  }
+}
+public func translate<T>(_ value: Translate) -> Attribute<T> {
+  return .init("translate", value)
 }
 
 extension MediaType: Value {}
