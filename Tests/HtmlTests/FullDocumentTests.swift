@@ -99,9 +99,9 @@ class FullDocumentTests: XCTestCase {
                 h2(["The Site"]),
                 ul(
                   [
-                    a([href <| "#"], ["Contact us"]),
-                    a([href <| "#"], ["About"]),
-                    a([href <| "#"], ["Home"]),
+                    li([a([href <| "#"], ["Contact us"])]),
+                    li([a([href <| "#"], ["About"])]),
+                    li([a([href <| "#"], ["Home"])]),
                   ]
                 ),
                 form(

@@ -1,3 +1,4 @@
+import Foundation
 import MediaType
 import Prelude
 
@@ -28,10 +29,6 @@ public func autofocus<T: HasAutofocus>(_ value: Bool) -> Attribute<T> {
 public protocol HasAutoplay {}
 public func autoplay<T: HasAutoplay>(_ value: Bool) -> Attribute<T> {
   return .init("autoplay", value)
-}
-
-public func challenge(_ value: Bool) -> Attribute<Element.Keygen> {
-  return .init("challenge", value)
 }
 
 extension Charset: Value {}
@@ -81,6 +78,22 @@ public enum Crossorigin: String, Value {
 }
 public protocol HasCrossorigin {}
 public func crossorigin<T: HasCrossorigin>(_ value: Crossorigin) -> Attribute<T> {
+  return .init("crossorigin", value)
+}
+
+private let iso8601DateFormatter: DateFormatter = {
+  let formatter = DateFormatter()
+  formatter.locale = Locale(identifier: "en_US_POSIX")
+  formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+  return formatter
+}()
+extension Date: Value {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(iso8601DateFormatter.string(from: self))
+  }
+}
+public protocol HasDatetime {}
+public func datetime<T: HasDatetime>(_ value: Date) -> Attribute<T> {
   return .init("crossorigin", value)
 }
 
@@ -169,15 +182,6 @@ public func httpEquiv(_ value: HttpEquiv) -> Attribute<Element.Meta> {
 
 public func id<T>(_ value: Id) -> Attribute<T> {
   return .init("id", value)
-}
-
-public enum Keytype: String, Value {
-  case dsa
-  case ec
-  case rsa
-}
-public func keytype(_ value: Keytype) -> Attribute<Element.Keygen> {
-  return .init("keytype", value)
 }
 
 public enum Kind: String, Value {
@@ -394,7 +398,7 @@ public func loop<T: HasLoop>(_ value: Bool) -> Attribute<T> {
 }
 
 public protocol HasMax {}
-public func max<T: HasMax>(_ value: Int) -> Attribute<T> {
+public func max<T: HasMax>(_ value: Double) -> Attribute<T> {
   return .init("max", value)
 }
 
@@ -417,7 +421,7 @@ public func method(_ value: Method) -> Attribute<Element.Form> {
 }
 
 public protocol HasMin {}
-public func min<T: HasMin>(_ value: Int) -> Attribute<T> {
+public func min<T: HasMin>(_ value: Double) -> Attribute<T> {
   return .init("min", value)
 }
 
@@ -725,12 +729,13 @@ public func type(_ value: InputType) -> Attribute<Element.Input> {
   return .init("type", value)
 }
 
-public protocol HasValue {}
-public func value<T: HasValue>(_ value: String) -> Attribute<T> {
+public protocol HasStringValue {}
+public func value<T: HasStringValue>(_ value: String) -> Attribute<T> {
   return .init("value", value)
 }
 
-public func value(_ value: Double) -> Attribute<Element.Progress> {
+public protocol HasDoubleValue {}
+public func value<T: HasDoubleValue>(_ value: Double) -> Attribute<T> {
   return .init("value", value)
 }
 

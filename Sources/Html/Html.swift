@@ -1,7 +1,7 @@
 import Prelude
 
 public enum Node {
-  case comment(String)
+  case comment(EncodedString)
   indirect case document([Node])
   case element(Element)
   case text(EncodedString)
@@ -10,6 +10,14 @@ public enum Node {
 extension Node: ExpressibleByStringLiteral {
   public init(stringLiteral value: String) {
     self = .text(encode(value))
+  }
+}
+
+public struct ChildOf<T> {
+  public let node: Node
+
+  public init(_ node: Node) {
+    self.node = node
   }
 }
 
@@ -54,12 +62,20 @@ public func node(_ name: String, _ content: [Node]?) -> Node {
   return .element(.init(name: name, attribs: [], content: content))
 }
 
-public func text(_ text: String) -> Node {
-  return .text(encode(text))
+public func text(_ content: String) -> Node {
+  return .text(encode(content))
 }
 
 public func attribute<T>(_ name: String, _ value: Value) -> Attribute<T> {
   return .init(name, value)
+}
+
+public func comment(_ content: String) -> Node {
+  return .comment(EncodedString(content))
+}
+
+public func comment<T>(_ content: String) -> ChildOf<T> {
+  return .init(comment(content))
 }
 
 extension Value {

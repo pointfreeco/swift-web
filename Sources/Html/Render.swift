@@ -26,7 +26,7 @@ public func render(_ node: Node, config: Config = compact) -> String {
 
     switch node {
     case let .comment(string):
-      return indentation + "<!-- " + string + " -->" + config.newline
+      return indentation + "<!-- " + string.string + " -->" + config.newline
     case let .document(nodes):
       return indentation + "<!DOCTYPE html>" + config.newline + nodes
         .map { realRender($0, config: config, indentation: indentation) }
