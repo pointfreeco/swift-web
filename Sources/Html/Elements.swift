@@ -116,14 +116,6 @@ extension Element {
     HasPreload, HasSrc, HasWidth {}
 }
 
-public struct ChildOf<T> {
-  public let node: Node
-
-  public init(_ node: Node) {
-    self.node = node
-  }
-}
-
 public func a(_ attribs: [Attribute<Element.A>], _ content: [Node]) -> Node {
   return node("a", attribs, content)
 }

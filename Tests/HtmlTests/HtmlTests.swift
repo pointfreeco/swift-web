@@ -120,7 +120,8 @@ class HTMLTests: XCTestCase {
       script("alert(\"Hello!\")")
     ])
 
-    XCTAssertEqual("<div><script src=\"app.js\"></script><script>alert(\"Hello!\")</script></div>", render(html))
+    XCTAssertEqual("<div><script src=\"app.js\"></script><script>alert(\"Hello!\")</script></div>",
+                   render(html))
   }
 
   func testPrettyRender() {
@@ -130,7 +131,7 @@ class HTMLTests: XCTestCase {
       [
         body(
           [
-            .comment("Welcome to our app!"),
+            comment("Welcome to our app!"),
             h1(["Title"]),
             p(
               [

@@ -13,7 +13,7 @@ class PrettyTests: XCTestCase {
           [
             body(
               [
-                .comment("This is gonna be a long comment. Let's see what happens!"),
+                comment("This is gonna be a long comment. Let's see what happens!"),
                 div(
                   [
                     div(
