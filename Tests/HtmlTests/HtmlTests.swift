@@ -90,11 +90,11 @@ class HTMLTests: XCTestCase {
 
   func testHtmlWithInlineStyles() {
     let html = p(
-      [ style <| .color(.red) ],
+      [ style <| color(.red) ],
       [
         "Welcome to ",
         a(
-          [ style <| .background(Color.blue) ],
+          [ style <| background(Color.blue) ],
           [ "Point Free" ]
         ),
         "!"

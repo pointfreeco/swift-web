@@ -123,7 +123,6 @@ func rule(_ r: Rule) -> Stylesheet {
 }
 
 extension Stylesheet: Monoid {
-
   public static var empty: Stylesheet = Stylesheet([])
 
   public static func <>(lhs: Stylesheet, rhs: Stylesheet) -> Stylesheet {

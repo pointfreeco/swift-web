@@ -17,7 +17,7 @@ class FullDocumentTests: XCTestCase {
             title("The Site Title"),
             style(
               body % (
-                .background(Color.rgb(240, 240, 240))
+                background(Color.rgb(240, 240, 240))
               )
             )
           ]

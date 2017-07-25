@@ -52,20 +52,18 @@ public struct FontWeight: Val, Inherit {
   }
 }
 
-extension Stylesheet {
-  public static let color: (Color) -> Stylesheet = key("color")
-  public static let font: (Color) -> Stylesheet = key("font")
-  public static let fontFamily: (GenericFontFamily) -> Stylesheet = key("font-family")
+public func color(_ color: Color) -> Stylesheet { return key("color", color) }
+public let font: (Color) -> Stylesheet = key("font")
+public let fontFamily: (GenericFontFamily) -> Stylesheet = key("font-family")
 
-  public func fontFamily(_ families: [String]) -> Stylesheet {
-    return key(
-      "font-family",
-      Value(.plain(families.joined(separator: ",")))
-    )
-  }
-
-  public static let fontSize: (Size) -> Stylesheet = key("font-size")
-  public static let fontStyle: (FontStyle) -> Stylesheet = key("font-style")
-  public static let fontWeight: (FontWeight) -> Stylesheet = key("font-weight")
-  public static let lineHeight: (Size) -> Stylesheet = key("line-height")
+public func fontFamily(_ families: [String]) -> Stylesheet {
+  return key(
+    "font-family",
+    Value(.plain(families.joined(separator: ",")))
+  )
 }
+
+public let fontSize: (Size) -> Stylesheet = key("font-size")
+public let fontStyle: (FontStyle) -> Stylesheet = key("font-style")
+public let fontWeight: (FontWeight) -> Stylesheet = key("font-weight")
+public let lineHeight: (Size) -> Stylesheet = key("line-height")

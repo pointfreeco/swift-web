@@ -7,10 +7,10 @@ class MediaTests: XCTestCase {
   func testMediaQueryOnly() {
 
     let css =
-      body % .background(Color.blue)
+      body % background(Color.blue)
         <>
         queryOnly(screen, [maxWidth(.px(550))]) {
-          body % .background(Color.red)
+          body % background(Color.red)
     }
 
 
@@ -38,7 +38,7 @@ body {
   func testMediaQueryNot() {
     let css =
       queryNot(print, [maxWidth(.px(550))]) {
-        body % .background(Color.red)
+        body % background(Color.red)
     }
 
     XCTAssertEqual(

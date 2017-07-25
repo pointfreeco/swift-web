@@ -20,8 +20,6 @@ extension BoxType: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static func boxSizing(_ type: BoxType) -> Stylesheet {
-    return prefixed(browsers <> "box-sizing", type)
-  }
+public func boxSizing(_ type: BoxType) -> Stylesheet {
+  return prefixed(browsers <> "box-sizing", type)
 }

@@ -15,9 +15,7 @@ extension Visibility: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static let visibility: (Visibility) -> Stylesheet = key("visibility")
-}
+public let visibility: (Visibility) -> Stylesheet = key("visibility")
 
 public struct FloatStyle: Val, None, Inherit {
   let style: Value
@@ -33,9 +31,7 @@ public struct FloatStyle: Val, None, Inherit {
   public static let right: FloatStyle = "right"
 }
 
-extension Stylesheet {
-  public static let float: (FloatStyle) -> Stylesheet = key("float")
-}
+public let float: (FloatStyle) -> Stylesheet = key("float")
 
 extension FloatStyle: ExpressibleByStringLiteral {
   public init(stringLiteral value: String) {
@@ -68,9 +64,7 @@ extension Clear: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static let clear: (Clear) -> Stylesheet = key("clear")
-}
+public let clear: (Clear) -> Stylesheet = key("clear")
 
 public struct Position: Val, Other, Inherit {
   let position: Value
@@ -97,9 +91,7 @@ extension Position: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static let position: (Position) -> Stylesheet = key("position")
-}
+public let position: (Position) -> Stylesheet = key("position")
 
 public struct Display: Val, Other, None, Inherit {
   let display: Value
@@ -126,9 +118,7 @@ extension Display: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static let display: (Display) -> Stylesheet = key("display")
-}
+public let display: (Display) -> Stylesheet = key("display")
 
 public protocol VerticalAlign: Val {
   func verticalAlign() -> Stylesheet
@@ -161,6 +151,4 @@ extension VerticalAlignValue: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static let verticalAlign: (VerticalAlignValue) -> Stylesheet = key("vertical-align")
-}
+public let verticalAlign: (VerticalAlignValue) -> Stylesheet = key("vertical-align")
