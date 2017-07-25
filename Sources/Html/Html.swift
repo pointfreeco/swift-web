@@ -58,10 +58,6 @@ public func text(_ content: String) -> Node {
   return .text(encode(content))
 }
 
-public func text<T: ContainsSource>(_ content: String) -> ChildOf<T> {
-  return .init(text(content))
-}
-
 public func attribute<T>(_ name: String, _ value: Value) -> Attribute<T> {
   return .init(name, value)
 }

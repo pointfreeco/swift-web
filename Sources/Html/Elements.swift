@@ -4,7 +4,12 @@ import Prelude
 public protocol ContainsList {}
 public protocol ContainsOptions {}
 public protocol ContainsSource {}
+public protocol ContainsText {}
 public protocol ContainsTrack {}
+
+public func text<T: ContainsText>(_ content: String) -> ChildOf<T> {
+  return .init(text(content))
+}
 
 extension Element {
   public enum A: HasHref, HasRel, HasTarget {}
@@ -13,8 +18,8 @@ extension Element {
   public enum Area: HasAlt, HasHref, HasRel, HasTarget {}
   public enum Article {}
   public enum Aside {}
-  public enum Audio: ContainsSource, ContainsTrack, HasAutoplay, HasControls, HasLoop, HasMuted, HasPreload,
-    HasSrc {}
+  public enum Audio: ContainsSource, ContainsText, ContainsTrack, HasAutoplay, HasControls, HasLoop, HasMuted,
+    HasPreload, HasSrc {}
   public enum B {}
   public enum Base: HasHref, HasTarget {}
   public enum Bdi {}
@@ -108,8 +113,8 @@ extension Element {
   public enum U {}
   public enum Ul: ContainsList {}
   public enum Var {}
-  public enum Video: ContainsSource, ContainsTrack, HasAutoplay, HasControls, HasHeight, HasLoop, HasMuted,
-    HasPreload, HasSrc, HasWidth {}
+  public enum Video: ContainsSource, ContainsText, ContainsTrack, HasAutoplay, HasControls, HasHeight,
+    HasLoop, HasMuted, HasPreload, HasSrc, HasWidth {}
 }
 
 public struct ChildOf<T> {
@@ -456,6 +461,10 @@ public func img(_ attribs: [Attribute<Element.Img>]) -> Node {
   return node("img", attribs, nil)
 }
 
+public func img(_ attribs: [Attribute<Element.Img>]) -> ChildOf<Element.Picture> {
+  return .init(img(attribs))
+}
+
 public func input(_ attribs: [Attribute<Element.Input>]) -> Node {
   return node("input", attribs, nil)
 }
@@ -678,11 +687,11 @@ public func script(_ content: String) -> Node {
 }
 
 public func script<T>(_ attribs: [Attribute<Element.Script>], _ content: String) -> ChildOf<T> {
-  return .init(node("script", attribs, [text(content)]))
+  return .init(script(attribs, content))
 }
 
 public func script<T>(_ attribs: [Attribute<Element.Script>]) -> ChildOf<T> {
-  return .init(node("script", attribs, []))
+  return .init(script(attribs))
 }
 
 public func script<T>(_ content: String) -> ChildOf<T> {
