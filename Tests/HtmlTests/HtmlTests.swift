@@ -135,7 +135,7 @@ class HTMLTests: XCTestCase {
             h1(["Title"]),
             p(
               [
-                "Some text ",
+                "Some text",
                 a(["A link"]),
                 "Some more text..."
               ]

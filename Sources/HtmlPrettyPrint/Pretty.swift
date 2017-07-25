@@ -22,7 +22,8 @@ private func prettyPrint(node: Node) -> Doc {
   case let .element(element):
     return prettyPrint(element: element)
   case let .text(text):
-    return prettyPrint(text: text)
+    return .text(text.string)
+    // return prettyPrint(text: text)
   case let .comment(comment):
     return prettyPrint(comment: comment.string)
   case let .document(nodes):
