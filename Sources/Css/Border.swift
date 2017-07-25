@@ -34,106 +34,104 @@ extension BorderStyle: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static func borderStyle(top: BorderStyle? = nil,
-                                 right: BorderStyle? = nil,
-                                 bottom: BorderStyle? = nil,
-                                 left: BorderStyle? = nil) -> Stylesheet {
+public func borderStyle(top: BorderStyle? = nil,
+                        right: BorderStyle? = nil,
+                        bottom: BorderStyle? = nil,
+                        left: BorderStyle? = nil) -> Stylesheet {
 
-    return [ top.map { key("border-top-style", $0) },
-             right.map { key("border-right-style", $0) },
-             bottom.map { key("border-bottom-style", $0) },
-             left.map { key("border-left-style", $0) } ]
-      |> catOptionals
-      |> concat
-  }
+  return [ top.map { key("border-top-style", $0) },
+           right.map { key("border-right-style", $0) },
+           bottom.map { key("border-bottom-style", $0) },
+           left.map { key("border-left-style", $0) } ]
+    |> catOptionals
+    |> concat
+}
 
-  public static func borderStyle(topBottom: BorderStyle? = nil, leftRight: BorderStyle? = nil) -> Stylesheet {
-    return borderStyle(top: topBottom, bottom: topBottom)
-      <> borderStyle(right: leftRight, left: leftRight)
-  }
+public func borderStyle(topBottom: BorderStyle? = nil, leftRight: BorderStyle? = nil) -> Stylesheet {
+  return borderStyle(top: topBottom, bottom: topBottom)
+    <> borderStyle(right: leftRight, left: leftRight)
+}
 
-  public static func borderStyle(all: BorderStyle) -> Stylesheet {
-    return borderStyle(top: all, right: all, bottom: all, left: all)
-  }
+public func borderStyle(all: BorderStyle) -> Stylesheet {
+  return borderStyle(top: all, right: all, bottom: all, left: all)
+}
 
-  // MARK: - border-*-radius
+// MARK: - border-*-radius
 
-  public static func borderRadius(topLeft: Size? = nil,
-                           topRight: Size? = nil,
-                           bottomRight: Size? = nil,
-                           bottomLeft: Size? = nil) -> Stylesheet {
+public func borderRadius(topLeft: Size? = nil,
+                         topRight: Size? = nil,
+                         bottomRight: Size? = nil,
+                         bottomLeft: Size? = nil) -> Stylesheet {
 
-    return [ topLeft.map { key("border-top-left-radius", $0) },
-             topRight.map { key("border-top-right-radius", $0) },
-             bottomRight.map { key("border-bottom-right-radius", $0) },
-             bottomLeft.map { key("border-bottom-left-radius", $0) } ]
-      |> catOptionals
-      |> concat
-  }
+  return [ topLeft.map { key("border-top-left-radius", $0) },
+           topRight.map { key("border-top-right-radius", $0) },
+           bottomRight.map { key("border-bottom-right-radius", $0) },
+           bottomLeft.map { key("border-bottom-left-radius", $0) } ]
+    |> catOptionals
+    |> concat
+}
 
-  public static func borderRadius(top: Size? = nil, bottom: Size? = nil) -> Stylesheet {
-    return borderRadius(topLeft: top, topRight: top)
-      <> borderRadius(bottomRight: bottom, bottomLeft: bottom)
-  }
+public func borderRadius(top: Size? = nil, bottom: Size? = nil) -> Stylesheet {
+  return borderRadius(topLeft: top, topRight: top)
+    <> borderRadius(bottomRight: bottom, bottomLeft: bottom)
+}
 
-  public static func borderRadius(all: Size) -> Stylesheet {
-    return borderRadius(topLeft: all, topRight: all, bottomRight: all, bottomLeft: all)
-  }
+public func borderRadius(all: Size) -> Stylesheet {
+  return borderRadius(topLeft: all, topRight: all, bottomRight: all, bottomLeft: all)
+}
 
-  // MARK: - border-collapse
+// MARK: - border-collapse
 
-  public static let borderCollapse: (Visibility) -> Stylesheet = key("border-collapse")
+public let borderCollapse: (Visibility) -> Stylesheet = key("border-collapse")
 
-  // Mark: border-spacing
+// Mark: border-spacing
 
-  public static let borderSpacing: (Size) -> Stylesheet = key("border-spacing")
+public let borderSpacing: (Size) -> Stylesheet = key("border-spacing")
 
-  // MARK: - border-color-*
+// MARK: - border-color-*
 
-  public static func borderColor(top: Color? = nil,
-                                 right: Color? = nil,
-                                 bottom: Color? = nil,
-                                 left: Color? = nil) -> Stylesheet {
+public func borderColor(top: Color? = nil,
+                        right: Color? = nil,
+                        bottom: Color? = nil,
+                        left: Color? = nil) -> Stylesheet {
 
-    return [ top.map { key("border-top-color", $0) },
-             right.map { key("border-right-color", $0) },
-             bottom.map { key("border-bottom-color", $0) },
-             left.map { key("border-left-color", $0) } ]
-      |> catOptionals
-      |> concat
-  }
+  return [ top.map { key("border-top-color", $0) },
+           right.map { key("border-right-color", $0) },
+           bottom.map { key("border-bottom-color", $0) },
+           left.map { key("border-left-color", $0) } ]
+    |> catOptionals
+    |> concat
+}
 
-  public static func borderColor(topBottom: Color? = nil, leftRight: Color? = nil) -> Stylesheet {
-    return borderColor(top: topBottom, bottom: topBottom)
-      <> borderColor(right: leftRight, left: leftRight)
-  }
+public func borderColor(topBottom: Color? = nil, leftRight: Color? = nil) -> Stylesheet {
+  return borderColor(top: topBottom, bottom: topBottom)
+    <> borderColor(right: leftRight, left: leftRight)
+}
 
-  public static func borderColor(all: Color) -> Stylesheet {
-    return borderColor(top: all, right: all, bottom: all, left: all)
-  }
+public func borderColor(all: Color) -> Stylesheet {
+  return borderColor(top: all, right: all, bottom: all, left: all)
+}
 
-  // MARK: - border-width-*
+// MARK: - border-width-*
 
-  public static func borderWidth(top: Size? = nil,
-                                 right: Size? = nil,
-                                 bottom: Size? = nil,
-                                 left: Size? = nil) -> Stylesheet {
+public func borderWidth(top: Size? = nil,
+                        right: Size? = nil,
+                        bottom: Size? = nil,
+                        left: Size? = nil) -> Stylesheet {
 
-    return [ top.map { key("border-top-width", $0) },
-             right.map { key("border-right-width", $0) },
-             bottom.map { key("border-bottom-width", $0) },
-             left.map { key("border-left-width", $0) } ]
-      |> catOptionals
-      |> concat
-  }
+  return [ top.map { key("border-top-width", $0) },
+           right.map { key("border-right-width", $0) },
+           bottom.map { key("border-bottom-width", $0) },
+           left.map { key("border-left-width", $0) } ]
+    |> catOptionals
+    |> concat
+}
 
-  public static func borderWidth(topBottom: Size? = nil, leftRight: Size? = nil) -> Stylesheet {
-    return borderWidth(top: topBottom, bottom: topBottom)
-      <> borderWidth(right: leftRight, left: leftRight)
-  }
+public func borderWidth(topBottom: Size? = nil, leftRight: Size? = nil) -> Stylesheet {
+  return borderWidth(top: topBottom, bottom: topBottom)
+    <> borderWidth(right: leftRight, left: leftRight)
+}
 
-  public static func borderWidth(all: Size) -> Stylesheet {
-    return borderWidth(top: all, right: all, bottom: all, left: all)
-  }
+public func borderWidth(all: Size) -> Stylesheet {
+  return borderWidth(top: all, right: all, bottom: all, left: all)
 }

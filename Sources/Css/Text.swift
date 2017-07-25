@@ -8,9 +8,7 @@ public struct Content: Val, None {
   public static let none = Content(content: .none)
 }
 
-extension Stylesheet {
-  public static let content: (Content) -> Stylesheet = key("content")
-}
+public let content: (Content) -> Stylesheet = key("content")
 
 public func stringContent(_ s: String) -> Content {
   return .init(content: Literal(s).value())
@@ -26,9 +24,7 @@ public struct Quotes: Val, None {
   public static let none = Quotes(quote: .none)
 }
 
-extension Stylesheet {
-  public static let quotes: (Quotes) -> Stylesheet = key("quotes")
-}
+public let quotes: (Quotes) -> Stylesheet = key("quotes")
 
 public struct TextAlign: Val, Normal, Inherit, Other, Center {
   let textAlign: Value
@@ -61,6 +57,4 @@ extension TextAlign: ExpressibleByStringLiteral {
   }
 }
 
-extension Stylesheet {
-  public static let textAlign: (TextAlign) -> Stylesheet = key("text-align")
-}
+public let textAlign: (TextAlign) -> Stylesheet = key("text-align")
