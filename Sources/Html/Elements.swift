@@ -1,3 +1,5 @@
+import MediaType
+
 extension Element {
   public enum A: HasHref, HasRel, HasTarget {}
   public enum Abbr {}
@@ -516,6 +518,39 @@ public func mark(_ content: [Node]) -> Node {
 
 public func meta(_ attribs: [Attribute<Element.Meta>]) -> Node {
   return node("meta", attribs, nil)
+}
+
+public func meta(contentType: MediaType) -> Node {
+  return meta([httpEquiv(.contentType), .init("content", contentType)])
+}
+
+public func meta(defaultStyle: String) -> Node {
+  return meta([httpEquiv(.defaultStyle), content(defaultStyle)])
+}
+
+public func meta(refresh: Int) -> Node {
+  return meta([httpEquiv(.refresh), .init("content", refresh)])
+}
+
+public func meta(applicationName: String) -> Node {
+  return meta([name(.applicationName), content(applicationName)])
+}
+
+public func meta(author: String) -> Node {
+  return meta([name(.author), content(author)])
+}
+
+public func meta(description: String) -> Node {
+  return meta([name(.description), content(description)])
+}
+
+public func meta(generator: String) -> Node {
+  return meta([name(.generator), content(generator)])
+}
+
+public func meta(keywords: [String]) -> Node {
+  let keywords = keywords.map { $0.replacingOccurrences(of: ",", with: "&#44;") }.joined(separator: ",")
+  return meta([name(.keywords), content(keywords)])
 }
 
 public func nav(_ attribs: [Attribute<Element.Nav>], _ content: [Node]) -> Node {

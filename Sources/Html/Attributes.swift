@@ -32,11 +32,7 @@ public func challenge(_ value: Bool) -> Attribute<Element.Keygen> {
   return .init("challenge", value)
 }
 
-public enum Charset: String, Value {
-  case utf8 = "utf-8"
-  // TODO: add rest from here http://www.iana.org/assignments/character-sets/character-sets.xhtml
-}
-
+extension Charset: Value {}
 public protocol HasCharset {}
 public func charset<T: HasCharset>(_ value: Charset) -> Attribute<T> {
   return .init("charset", value)
@@ -149,6 +145,15 @@ public func hidden<T>(_ value: Bool) -> Attribute<T> {
 public protocol HasHref {}
 public func href<T: HasHref>(_ value: String) -> Attribute<T> {
   return .init("href", value)
+}
+
+public enum HttpEquiv: String, Value {
+  case contentType = "content-type"
+  case defaultStyle = "default-style"
+  case refresh = "refresh"
+}
+public func httpEquiv(_ value: HttpEquiv) -> Attribute<Element.Meta> {
+  return .init("http-equiv", value)
 }
 
 public func id<T>(_ value: String) -> Attribute<T> {
@@ -431,7 +436,6 @@ public enum MetaName: String, Value {
   case description
   case generator
   case keywords
-  case viewport
 }
 public func name(_ value: MetaName) -> Attribute<Element.Meta> {
   return .init("name", value)

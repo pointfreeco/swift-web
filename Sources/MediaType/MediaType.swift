@@ -7,13 +7,15 @@ public enum MediaType: CustomStringConvertible {
   case message(String)
   case model(String)
   case multipart(Multipart, boundary: String?)
-  case text(Text, charset: String?)
+  case text(Text, charset: Charset?)
 
   public static let gif = MediaType.image(.gif)
   public static let javascript = MediaType.application(.javascript)
   public static let jpeg = MediaType.image(.jpeg)
   public static let json = MediaType.application(.json)
+  public static let html = MediaType.text(.html, charset: .utf8)
   public static let mp3 = MediaType.audio(.mpeg)
+  public static let plain = MediaType.text(.plain, charset: nil)
   public static let png = MediaType.image(.png)
 
   public var description: String {
@@ -185,4 +187,9 @@ public enum Video: CustomStringConvertible {
       return string
     }
   }
+}
+
+public enum Charset: String {
+  case utf8 = "utf-8"
+  // TODO: add rest from here http://www.iana.org/assignments/character-sets/character-sets.xhtml
 }
