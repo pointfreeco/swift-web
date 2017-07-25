@@ -195,6 +195,11 @@ extension Color: _ExpressibleByColorLiteral {
   public init(_colorLiteralRed red: Float, green: Float, blue: Float, alpha: Float) {
     self = .rgba(toUInt8(red), toUInt8(green), toUInt8(blue), alpha)
   }
+
+  // TODO: Remove. Pre-Xcode 9 beta 4
+  public init(colorLiteralRed red: Float, green: Float, blue: Float, alpha: Float) {
+    self = .rgba(toUInt8(red), toUInt8(green), toUInt8(blue), alpha)
+  }
 }
 
 public extension Color {
