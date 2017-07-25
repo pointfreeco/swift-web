@@ -53,9 +53,9 @@ public struct Clear: Val, Other, None, Inherit {
   public static let none = Clear(clear: .none)
   public static let inherit = Clear(clear: .inherit)
 
-  public static let clearLeft: Clear = "left"
-  public static let clearRight: Clear = "right"
-  public static let clearBoth: Clear = "both"
+  public static let left: Clear = "left"
+  public static let right: Clear = "right"
+  public static let both: Clear = "both"
 }
 
 extension Clear: ExpressibleByStringLiteral {
