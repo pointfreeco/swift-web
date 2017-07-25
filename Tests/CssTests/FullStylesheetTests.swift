@@ -9,15 +9,15 @@ class FullStylesheetTests: XCTestCase {
   func testABigStyleSheet() {
     let css: Stylesheet =
       body % (
-        .background(red)
+        .background(Color.red)
           <> (a & .pseudo(.firstChild)) % (
-            .color(blue)
+            .color(.blue)
         )
     )
     <> (ul ** li) % (
-      .color(red)
+      .color(.red)
         <> (.pseudo(.firstChild)) & (
-          .color(blue)
+          .color(.blue)
       )
     )
 
