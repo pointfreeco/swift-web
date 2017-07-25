@@ -39,7 +39,7 @@ let package = Package(
 An embedded domain specific language (EDSL) in Swift for modeling HTML documents. A few simple value types and functions allow you to model most of HTML, and they compose easily.
 
 ```swift
-import HTML
+import Html
 
 let document = html(
   [
@@ -77,6 +77,8 @@ The design of this library has been covered by the following articles:
 An EDSL for a CSS preprocessor like [Sass](http://sass-lang.com). A few simple value types and functions allow you to model most of CSS, and allow you express new things not possible in standard CSS.
 
 ```swift
+import Css
+
 let css = body % (
   padding(all: rem(2))
     <> background(hsl(60, 0.5, 0.8))

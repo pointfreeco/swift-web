@@ -1,9 +1,10 @@
-public func action(_ action: String) -> Attribute {
-  return Attribute("action", action)
+public func action(_ action: String) -> Attribute<Element.Form> {
+  return .init("action", action)
 }
 
-public func autofocus(_ autofocus: Bool) -> Attribute {
-  return Attribute("autofocus", autofocus)
+public protocol HasAutofocus {}
+public func autofocus<T: HasAutofocus>(_ autofocus: Bool) -> Attribute<T> {
+  return .init("autofocus", autofocus)
 }
 
 public enum Charset: String {
@@ -11,137 +12,136 @@ public enum Charset: String {
   // TODO: add rest from here http://www.iana.org/assignments/character-sets/character-sets.xhtml
 }
 
-public func charset(_ charset: Charset) -> Attribute {
+public protocol HasCharset {}
+public func charset<T: HasCharset>(_ charset: Charset) -> Attribute<T> {
   return .init("charset", charset.rawValue)
 }
 
-public func checked(_ checked: Bool) -> Attribute {
-  return Attribute("checked", checked)
+public func checked(_ checked: Bool) -> Attribute<Element.Input> {
+  return .init("checked", checked)
 }
 
-public func `class`(_ `class`: String) -> Attribute {
-  return Attribute("class", `class`)
+public func `class`<T>(_ `class`: String) -> Attribute<T> {
+  return .init("class", `class`)
 }
 
-public func cols(_ cols: Int) -> Attribute {
-  return Attribute("cols", cols)
+public func cols(_ cols: Int) -> Attribute<Element.Textarea> {
+  return .init("cols", cols)
 }
 
-public func content(_ content: String) -> Attribute {
-  return Attribute("content", content)
+public func content(_ content: String) -> Attribute<Element.Meta> {
+  return .init("content", content)
 }
 
-public func disabled(_ disabled: Bool) -> Attribute {
-  return Attribute("disabled", disabled)
+public protocol HasDisabled {}
+public func disabled<T: HasDisabled>(_ disabled: Bool) -> Attribute<T> {
+  return .init("disabled", disabled)
 }
 
-public func `for`(_ `for`: String) -> Attribute {
-  return Attribute("for", `for`)
+public protocol HasFor {}
+public func `for`<T: HasFor>(_ `for`: String) -> Attribute<T> {
+  return .init("for", `for`)
 }
 
-public func href(_ href: String) -> Attribute {
-  return Attribute("href", href)
+public protocol HasHref {}
+public func href<T: HasHref>(_ href: String) -> Attribute<T> {
+  return .init("href", href)
 }
 
-public func id(_ id: String) -> Attribute {
-  return Attribute("id", id)
+public func id<T>(_ id: String) -> Attribute<T> {
+  return .init("id", id)
 }
 
-public func height(_ height: Int) -> Attribute {
-  return Attribute("height", height)
+public protocol HasHeight {}
+public func height<T: HasHeight>(_ height: Int) -> Attribute<T> {
+  return .init("height", height)
 }
 
-public func max(_ max: Int) -> Attribute {
-  return Attribute("max", max)
+public protocol HasMax {}
+public func max<T: HasMax>(_ max: Int) -> Attribute<T> {
+  return .init("max", max)
 }
 
-public func maxlength(_ maxlength: Int) -> Attribute {
-  return Attribute("maxlength", maxlength)
+public protocol HasMaxlength {}
+public func maxlength<T>(_ maxlength: Int) -> Attribute<T> {
+  return .init("maxlength", maxlength)
 }
 
-public enum Method: Value {
-  case get
-  case post
-
-  public func render(with key: String) -> EncodedString? {
-    return self.renderedValue().map { encode("method=") + quote($0) }
-  }
-
-  public func renderedValue() -> EncodedString? {
-    return encode(self.description)
-  }
-
-  public var description: String {
-    switch self {
-    case .get:
-      return "GET"
-    case .post:
-      return "POST"
-    }
-  }
+public enum Method: String, Value {
+  case get = "GET"
+  case post = "POST"
 }
-public func method(_ method: Method) -> Attribute {
-  return Attribute("method", method)
+public func method(_ method: Method) -> Attribute<Element.Form> {
+  return .init("method", method)
 }
 
-public func min(_ min: Int) -> Attribute {
-  return Attribute("min", min)
+public protocol HasMin {}
+public func min<T: HasMin>(_ min: Int) -> Attribute<T> {
+  return .init("min", min)
 }
 
-public func minlength(_ minlength: Int) -> Attribute {
-  return Attribute("minlength", minlength)
+public protocol HasMinlength {}
+public func minlength<T: HasMinlength>(_ minlength: Int) -> Attribute<T> {
+  return .init("minlength", minlength)
 }
 
-public func multiple(_ multiple: Bool) -> Attribute {
-  return Attribute("multiple", multiple)
+public protocol HasMultiple {}
+public func multiple<T: HasMultiple>(_ multiple: Bool) -> Attribute<T> {
+  return .init("multiple", multiple)
 }
 
-public func name(_ name: String) -> Attribute {
-  return Attribute("name", name)
+public protocol HasName {}
+public func name<T: HasName>(_ name: String) -> Attribute<T> {
+  return .init("name", name)
 }
 
-public func novalidate(_ novalidate: Bool) -> Attribute {
-  return Attribute("novalidate", novalidate)
+public func novalidate(_ novalidate: Bool) -> Attribute<Element.Form> {
+  return .init("novalidate", novalidate)
 }
 
-public func pattern(_ pattern: String) -> Attribute {
-  return Attribute("pattern", pattern)
+public func pattern(_ pattern: String) -> Attribute<Element.Input> {
+  return .init("pattern", pattern)
 }
 
-public func placeholder(_ placeholder: String) -> Attribute {
-  return Attribute("placeholder", placeholder)
+public protocol HasPlaceholder {}
+public func placeholder<T: HasPlaceholder>(_ placeholder: String) -> Attribute<T> {
+  return .init("placeholder", placeholder)
 }
 
-public func readonly(_ readonly: Bool) -> Attribute {
-  return Attribute("readonly", readonly)
+public protocol HasReadonly {}
+public func readonly<T>(_ readonly: Bool) -> Attribute<T> {
+  return .init("readonly", readonly)
 }
 
-public func rel(_ rel: String) -> Attribute {
-  return Attribute("rel", rel)
+public protocol HasRel {}
+public func rel<T: HasRel>(_ rel: String) -> Attribute<T> {
+  return .init("rel", rel)
 }
 
-public func required(_ required: Bool) -> Attribute {
-  return Attribute("required", required)
+public protocol HasRequired {}
+public func required<T: HasRequired>(_ required: Bool) -> Attribute<T> {
+  return .init("required", required)
 }
 
-public func rows(_ rows: Int) -> Attribute {
-  return Attribute("rows", rows)
+public func rows(_ rows: Int) -> Attribute<Element.Textarea> {
+  return .init("rows", rows)
 }
 
-public func selected(_ selected: Bool) -> Attribute {
-  return Attribute("selected", selected)
+public func selected(_ selected: Bool) -> Attribute<Element.Option> {
+  return .init("selected", selected)
 }
 
-public func src(_ src: String) -> Attribute {
-  return Attribute("src", src)
+public protocol HasSrc {}
+public func src<T: HasSrc>(_ src: String) -> Attribute<T> {
+  return .init("src", src)
 }
 
-public func step(_ step: Int) -> Attribute {
-  return Attribute("step", step)
+public func step(_ step: Int) -> Attribute<Element.Input> {
+  return .init("step", step)
 }
 
-public func style(_ style: String) -> Attribute {
-  return Attribute("style", style)
+public func style<T>(_ style: String) -> Attribute<T> {
+  return .init("style", style)
 }
 
 public enum Target: Value {
@@ -150,10 +150,6 @@ public enum Target: Value {
   case parent
   case top
   case frame(named: String)
-
-  public func render(with key: String) -> EncodedString? {
-    return self.renderedValue().map { encode("target=") + quote($0) }
-  }
 
   public func renderedValue() -> EncodedString? {
     return encode(self.description)
@@ -174,43 +170,81 @@ public enum Target: Value {
     }
   }
 }
-public func target(_ target: Target) -> Attribute {
-  return Attribute("target", target)
+public protocol HasTarget {}
+public func target<T: HasTarget>(_ target: Target) -> Attribute<T> {
+  return .init("target", target)
 }
 
-public func type(_ type: String) -> Attribute {
-  return Attribute("type", type)
+// TODO: type as media type
+public protocol HasMediaType {}
+public func type<T: HasMediaType>(_ type: String) -> Attribute<T> {
+  return .init("type", type)
 }
 
-public func value(_ value: String) -> Attribute {
-  return Attribute("value", value)
+public enum ButtonType: String, Value {
+  case button
+  case reset
+  case submit
+}
+public func type(_ type: ButtonType) -> Attribute<Element.Button> {
+  return .init("type", type)
 }
 
-public func width(_ width: Int) -> Attribute {
-  return Attribute("width", width)
+public enum InputType: String, Value {
+  case button
+  case checkbox
+  case color
+  case date
+  case datetimeLocal = "datetime-local"
+  case email
+  case file
+  case hidden
+  case image
+  case month
+  case number
+  case password
+  case radio
+  case range
+  case reset
+  case search
+  case submit
+  case tel
+  case text
+  case time
+  case url
+  case week
+}
+public func type(_ type: InputType) -> Attribute<Element.Input> {
+  return .init("type", type)
 }
 
-public enum Wrap: Value {
+public enum MenuType: String, Value {
+  case list
+  case context
+  case toolbar
+}
+public func type(_ type: MenuType) -> Attribute<Element.Menu> {
+  return .init("type", type)
+}
+
+public protocol HasValue {}
+public func value<T: HasValue>(_ value: String) -> Attribute<T> {
+  return .init("value", value)
+}
+
+public func value(_ value: Double) -> Attribute<Element.Progress> {
+  return .init("value", value)
+}
+
+public protocol HasWidth {}
+public func width<T: HasWidth>(_ width: Int) -> Attribute<T> {
+  return .init("width", width)
+}
+
+public enum Wrap: String, Value {
   case hard
   case soft
-
-  public func render(with key: String) -> EncodedString? {
-    return self.renderedValue().map { encode("wrap=") + quote($0) }
-  }
-
-  public func renderedValue() -> EncodedString? {
-    return encode(self.description)
-  }
-
-  public var description: String {
-    switch self {
-    case .hard:
-      return "hard"
-    case .soft:
-      return "soft"
-    }
-  }
 }
-public func wrap(_ wrap: Wrap) -> Attribute {
-  return Attribute("wrap", wrap)
+public func wrap(_ wrap: Wrap) -> Attribute<Element.Textarea> {
+  return .init("wrap", wrap)
 }

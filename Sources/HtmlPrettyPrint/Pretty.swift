@@ -60,7 +60,7 @@ private func prettyPrintCloseTag(element: Element) -> Doc {
     : .hardline <> .text("</") <> .text(element.name) <> .text(">")
 }
 
-private func prettyPrint(attributes attribs: [Attribute]) -> Doc {
+private func prettyPrint(attributes attribs: [AnyAttribute]) -> Doc {
 
   return .text(attribs.count == 0 ? "" : " ")
     <> attribs
@@ -69,7 +69,7 @@ private func prettyPrint(attributes attribs: [Attribute]) -> Doc {
       .hang(0)
 }
 
-private func prettyPrint(attribute: Attribute) -> Doc {
+private func prettyPrint(attribute: AnyAttribute) -> Doc {
 
   // class attributes get special rendering logic so to make them line up
   // when they flow past the page width.
