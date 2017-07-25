@@ -7,7 +7,7 @@ import XCTest
 
 class HTMLTests: XCTestCase {
   func testImgTag() {
-    let html: Node = img(
+    let html = img(
       [ src <| "cat.jpg",
         width <| 100,
         height <| 100 ]

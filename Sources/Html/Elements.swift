@@ -1,15 +1,10 @@
 import MediaType
 import Prelude
 
+public protocol ContainsAVSource {}
 public protocol ContainsList {}
 public protocol ContainsOptions {}
-public protocol ContainsSource {}
-public protocol ContainsText {}
 public protocol ContainsTrack {}
-
-public func text<T: ContainsText>(_ content: String) -> ChildOf<T> {
-  return .init(text(content))
-}
 
 extension Element {
   public enum A: HasHref, HasRel, HasTarget {}
@@ -18,8 +13,8 @@ extension Element {
   public enum Area: HasAlt, HasHref, HasRel, HasTarget {}
   public enum Article {}
   public enum Aside {}
-  public enum Audio: ContainsSource, ContainsText, ContainsTrack, HasAutoplay, HasControls, HasLoop, HasMuted,
-    HasPreload, HasSrc {}
+  public enum Audio: ContainsAVSource, ContainsTrack, HasAutoplay, HasControls, HasLoop, HasMuted, HasPreload,
+    HasSrc {}
   public enum B {}
   public enum Base: HasHref, HasTarget {}
   public enum Bdi {}
@@ -82,7 +77,7 @@ extension Element {
   public enum Output: HasFor, HasForm, HasName {}
   public enum P {}
   public enum Param: HasName, HasValue {}
-  public enum Picture: ContainsSource {}
+  public enum Picture {}
   public enum Pre {}
   public enum Progress: HasMax {}
   public enum Q: HasCite {}
@@ -113,8 +108,8 @@ extension Element {
   public enum U {}
   public enum Ul: ContainsList {}
   public enum Var {}
-  public enum Video: ContainsSource, ContainsText, ContainsTrack, HasAutoplay, HasControls, HasHeight,
-    HasLoop, HasMuted, HasPreload, HasSrc, HasWidth {}
+  public enum Video: ContainsAVSource, ContainsTrack, HasAutoplay, HasControls, HasHeight, HasLoop, HasMuted,
+    HasPreload, HasSrc, HasWidth {}
 }
 
 public struct ChildOf<T> {
@@ -169,12 +164,17 @@ public func aside(_ content: [Node]) -> Node {
   return aside([], content)
 }
 
-public func audio(_ attribs: [Attribute<Element.Audio>], _ content: [ChildOf<Element.Audio>]) -> Node {
-  return node("audio", attribs, content.map(get(\.node)))
+public func audio(
+  _ attribs: [Attribute<Element.Audio>],
+  _ content: [ChildOf<Element.Audio>],
+  _ transparent: [Node] = [])
+  -> Node {
+
+    return node("audio", attribs, content.map(get(\.node)) + transparent)
 }
 
-public func audio(_ content: [ChildOf<Element.Audio>]) -> Node {
-  return audio([], content)
+public func audio(_ content: [ChildOf<Element.Audio>], _ transparent: [Node] = []) -> Node {
+  return audio([], content, transparent)
 }
 
 public func b(_ attribs: [Attribute<Element.B>], _ content: [Node]) -> Node {
@@ -461,10 +461,6 @@ public func img(_ attribs: [Attribute<Element.Img>]) -> Node {
   return node("img", attribs, nil)
 }
 
-public func img(_ attribs: [Attribute<Element.Img>]) -> ChildOf<Element.Picture> {
-  return .init(img(attribs))
-}
-
 public func input(_ attribs: [Attribute<Element.Input>]) -> Node {
   return node("input", attribs, nil)
 }
@@ -634,12 +630,17 @@ public func param(_ attribs: [Attribute<Element.Param>]) -> ChildOf<Element.Obje
   return .init(node("param", attribs, nil))
 }
 
-public func picture(_ attribs: [Attribute<Element.Picture>], _ content: [ChildOf<Element.Picture>]) -> Node {
-  return node("picture", attribs, content.map(get(\.node)))
+public func picture(
+  _ attribs: [Attribute<Element.Picture>],
+  _ content: [ChildOf<Element.Picture>],
+  _ imgAttribs: [Attribute<Element.Img>] = [])
+  -> Node {
+
+    return node("picture", attribs, content.map(get(\.node)) + [img(imgAttribs)])
 }
 
-public func picture(_ content: [ChildOf<Element.Picture>]) -> Node {
-  return picture([], content)
+public func picture(_ content: [ChildOf<Element.Picture>], _ imgAttribs: [Attribute<Element.Img>]) -> Node {
+  return picture([], content, imgAttribs)
 }
 
 public func pre(_ attribs: [Attribute<Element.Pre>], _ content: [Node]) -> Node {
@@ -722,8 +723,17 @@ public func small(_ content: [Node]) -> Node {
   return small([], content)
 }
 
-public func source<T: ContainsSource>(_ attribs: [Attribute<Element.Source>]) -> ChildOf<T> {
-  return .init(node("source", attribs, nil))
+public func source<T: ContainsAVSource>(
+  src: String,
+  _ attribs: [Attribute<Element.Source>],
+  _ transparent: [Node])
+  -> ChildOf<T> {
+    return .init(node("source", [Html.src(src)] + attribs, nil))
+}
+
+public func source(srcset string: String, _ attribs: [Attribute<Element.Source>])
+  -> ChildOf<Element.Picture> {
+    return .init(node("source", [srcset(string)] + attribs, nil))
 }
 
 public func span(_ attribs: [Attribute<Element.Span>], _ content: [Node]) -> Node {
@@ -862,12 +872,17 @@ public func `var`(_ content: [Node]) -> Node {
   return `var`([], content)
 }
 
-public func video(_ attribs: [Attribute<Element.Video>], _ content: [ChildOf<Element.Video>]) -> Node {
-  return node("video", attribs, content.map(get(\.node)))
+public func video(
+  _ attribs: [Attribute<Element.Video>],
+  _ content: [ChildOf<Element.Video>],
+  _ transparent: [Node] = [])
+  -> Node {
+
+    return node("video", attribs, content.map(get(\.node)) + transparent)
 }
 
-public func video(_ content: [ChildOf<Element.Video>]) -> Node {
-  return video([], content)
+public func video(_ content: [ChildOf<Element.Video>], _ transparent: [Node]) -> Node {
+  return video([], content, transparent)
 }
 
 public let wbr: Node = node("wbr", nil)
