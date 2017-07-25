@@ -475,9 +475,8 @@ public func iframe(_ attribs: [Attribute<Element.Iframe>], _ content: [Node] = [
   return node("iframe", attribs, content)
 }
 
-// TODO: "img" requires "src" and "alt"
-public func img(_ attribs: [Attribute<Element.Img>]) -> Node {
-  return node("img", attribs, nil)
+public func img(src: String, alt: String, _ attribs: [Attribute<Element.Img>]) -> Node {
+  return node("img", [Html.src(src), Html.alt(alt)] + attribs, nil)
 }
 
 public func input(_ attribs: [Attribute<Element.Input>]) -> Node {
@@ -665,14 +664,22 @@ public func param(_ attribs: [Attribute<Element.Param>]) -> ChildOf<Element.Obje
 public func picture(
   _ attribs: [Attribute<Element.Picture>],
   _ content: [ChildOf<Element.Picture>],
+  src: String,
+  alt: String,
   _ imgAttribs: [Attribute<Element.Img>] = [])
   -> Node {
 
-    return node("picture", attribs, content.map(get(\.node)) + [img(imgAttribs)])
+    return node("picture", attribs, content.map(get(\.node)) + [img(src: src, alt: alt, imgAttribs)])
 }
 
-public func picture(_ content: [ChildOf<Element.Picture>], _ imgAttribs: [Attribute<Element.Img>]) -> Node {
-  return picture([], content, imgAttribs)
+public func picture(
+  _ content: [ChildOf<Element.Picture>],
+  src: String,
+  alt: String,
+  _ imgAttribs: [Attribute<Element.Img>] = [])
+  -> Node {
+
+    return picture([], content, src: src, alt: alt, imgAttribs)
 }
 
 public func pre(_ attribs: [Attribute<Element.Pre>], _ content: [Node]) -> Node {
@@ -757,13 +764,13 @@ public func small(_ content: [Node]) -> Node {
 
 public func source<T: ContainsAVSource>(
   src: String,
-  _ attribs: [Attribute<Element.Source>],
+  _ attribs: [Attribute<Element.Source>] = [],
   _ transparent: [Node] = [])
   -> ChildOf<T> {
     return .init(node("source", [Html.src(src)] + attribs, nil))
 }
 
-public func source(srcset string: String, _ attribs: [Attribute<Element.Source>])
+public func source(srcset string: String, _ attribs: [Attribute<Element.Source>] = [])
   -> ChildOf<Element.Picture> {
     return .init(node("source", [srcset(string)] + attribs, nil))
 }
@@ -893,7 +900,7 @@ public func tr<T: ContainsTr>(_ content: [Node]) -> ChildOf<T> {
   return tr([], content)
 }
 
-public func track<T: ContainsTrack>(src: String, _ attribs: [Attribute<Element.Track>]) -> ChildOf<T> {
+public func track<T: ContainsTrack>(src: String, _ attribs: [Attribute<Element.Track>] = []) -> ChildOf<T> {
   return .init(node("track", [Html.src(src)] + attribs, nil))
 }
 

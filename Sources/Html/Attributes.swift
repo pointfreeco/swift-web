@@ -81,8 +81,16 @@ public func crossorigin<T: HasCrossorigin>(_ value: Crossorigin) -> Attribute<T>
   return .init("crossorigin", value)
 }
 
+private let iso8601DateFormatter: DateFormatter = {
+  let formatter = DateFormatter()
+  formatter.locale = Locale(identifier: "en_US_POSIX")
+  formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+  return formatter
+}()
 extension Date: Value {
-
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(iso8601DateFormatter.string(from: self))
+  }
 }
 public protocol HasDatetime {}
 public func datetime<T: HasDatetime>(_ value: Date) -> Attribute<T> {

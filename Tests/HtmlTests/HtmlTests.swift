@@ -8,27 +8,31 @@ import XCTest
 class HTMLTests: XCTestCase {
   func testImgTag() {
     let html = img(
-      [ src <| "cat.jpg",
+      src: "cat.jpg",
+      alt: "", [
         width <| 100,
-        height <| 100 ]
+        height <| 100
+      ]
     )
 
     let rendered = render(html)
 
     XCTAssertEqual(
-      "<img src=\"cat.jpg\" width=\"100\" height=\"100\">",
+      "<img src=\"cat.jpg\" alt=\"\" width=\"100\" height=\"100\">",
       rendered
     )
   }
 
   func testHtml3() {
     let html = p(
-      [ Html.`class` <| "main" ],
+      [ Html.class <| "main" ],
       [
         img(
-          [ src <| "cat.jpg",
+          src: "cat.jpg",
+          alt: "", [
             width <| 100,
-            height <| 100 ]
+            height <| 100
+          ]
         ),
 
         "A cat!"
@@ -36,7 +40,7 @@ class HTMLTests: XCTestCase {
     )
 
     XCTAssertEqual(
-      "<p class=\"main\"><img src=\"cat.jpg\" width=\"100\" height=\"100\">A cat!</p>",
+      "<p class=\"main\"><img src=\"cat.jpg\" alt=\"\" width=\"100\" height=\"100\">A cat!</p>",
       render(html)
     )
   }
