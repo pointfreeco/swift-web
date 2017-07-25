@@ -6,7 +6,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_StandardCombinationOfElemIdClassPseudo() {
     let css = (a & .id("hello") & .`class`("world") & .pseudo(.firstChild)) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -17,7 +17,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_UsingStringLiterals() {
     let css = (a & "#hello" & ".world" & .pseudo(.firstChild)) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -28,7 +28,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Star() {
     let css = (body ** p ** .star) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -39,7 +39,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Elem() {
     let css = .elem(.footer) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -50,7 +50,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Id() {
     let css = .id("hello-world") % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -61,7 +61,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Class() {
     let css = .`class`("hello-world") % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -72,7 +72,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_PseudoClass() {
     let css = (body ** p & .pseudo(.firstChild)) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -83,7 +83,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_PseudoElem() {
     let css = (body ** p & .pseudoElem(.firstSentence)) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -94,7 +94,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Attr() {
     let css = .attr(input, .match("type", .val, "button")) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -105,7 +105,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_AttributeBeginsOperator() {
     let css = input["type"^="button"] % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -116,7 +116,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_AttributeContainsOperator() {
     let css = input["type"*="button"] % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -127,7 +127,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_AttributeValOperator() {
     let css = input["type"=="button"] % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -138,7 +138,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_AttributeEndsOperator() {
     let css = input["type"¢="button"] % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -149,7 +149,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_AttributeSpaceOperator() {
     let css = input["type"~="button"] % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -160,7 +160,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_AttributeHyphenOperator() {
     let css = input["type"|="button"] % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -171,7 +171,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Child() {
     let css = .child(body, p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -182,7 +182,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_ChildOperator() {
     let css = (body > p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -193,7 +193,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Deep() {
     let css = .deep(body, p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -204,7 +204,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_DeepOperator() {
     let css = (body ** p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -215,7 +215,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Adjacent() {
     let css = .adjacent(body, p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -226,7 +226,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_AdjacentOperator() {
     let css = (body + p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -237,7 +237,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Sibling() {
     let css = .sibling(p, a) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -248,7 +248,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_SiblingOperator() {
     let css = (p ~ a) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -259,7 +259,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Combined() {
     let css = .combined(p, .`class`("hello")) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -270,7 +270,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_CombinedOperator() {
     let css = (p & .`class`("hello")) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -281,7 +281,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_Union() {
     let css = .union(a, p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -292,7 +292,7 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_UnionOperator() {
     let css = (a | p) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
@@ -303,11 +303,11 @@ class RenderTests: XCTestCase {
 
   func testRenderSelector_NestedCss() {
     let css = (body & .id("hello")) % (
-      .background(red)
+      .background(Color.red)
         <> (p & .pseudo(.firstChild)) % (
-          .background(green)
+          .background(Color.lime)
             <> (a & .`class`("blue")) % (
-              .background(blue)
+              .background(Color.blue)
           )
       )
     )
@@ -321,7 +321,7 @@ class RenderTests: XCTestCase {
   func testNestedIds() {
     let css = .id("hello") % (
       .id("world") % (
-        .background(red)
+        .background(Color.red)
       )
     )
 
@@ -367,7 +367,7 @@ class RenderTests: XCTestCase {
   func testSubCss() {
     let css = body % (
       a % (
-        .background(red)
+        .background(Color.red)
       )
     )
 
@@ -401,9 +401,9 @@ body {
 
   func testASD() {
     let css = a % (
-      .background(red)
+      .background(Color.red)
         <> .`class`("active") & (
-          .background(blue)
+          .background(Color.blue)
       )
     )
 
@@ -415,7 +415,7 @@ body {
 
   func testAllOperatorsTogether() {
     let css = (body & "#home" > ".link" | (".row" ** (".column" + ".column"))) % (
-      .background(red)
+      .background(Color.red)
     )
 
     XCTAssertEqual(
