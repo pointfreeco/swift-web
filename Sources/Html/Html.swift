@@ -60,7 +60,7 @@ public func text(_ text: String) -> Node {
 
 extension Value {
   public func render(with key: String) -> EncodedString? {
-    return self.renderedValue().map { Html.encode("\(key)=") + quote($0) }
+    return self.renderedValue().map { Html.encode("\(key)=") + quote($0) } ?? Html.encode(key)
   }
 
   public func renderedValue() -> EncodedString? {
@@ -81,10 +81,6 @@ extension Value where Self: RawRepresentable, Self.RawValue: Value {
 }
 
 extension Bool: Value {
-  public func render(with key: String) -> EncodedString? {
-    return self ? Html.encode(key) : nil
-  }
-
   public func renderedValue() -> EncodedString? {
     return nil
   }
