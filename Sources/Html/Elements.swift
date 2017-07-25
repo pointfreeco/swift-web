@@ -580,11 +580,11 @@ public func nav(_ content: [Node]) -> Node {
   return nav([], content)
 }
 
-public func object(_ attribs: [Attribute<Element.Object>], _ content: [Node]) -> Node {
-  return node("object", attribs, content)
+public func object(_ attribs: [Attribute<Element.Object>], _ content: [ChildOf<Element.Object>]) -> Node {
+  return node("object", attribs, content.map(get(\.node)))
 }
 
-public func object(_ content: [Node]) -> Node {
+public func object(_ content: [ChildOf<Element.Object>]) -> Node {
   return object([], content)
 }
 
@@ -630,8 +630,8 @@ public func p(_ content: [Node]) -> Node {
   return p([], content)
 }
 
-public func param(_ attribs: [Attribute<Element.Param>]) -> Node {
-  return node("param", attribs, nil)
+public func param(_ attribs: [Attribute<Element.Param>]) -> ChildOf<Element.Object> {
+  return .init(node("param", attribs, nil))
 }
 
 public func picture(_ attribs: [Attribute<Element.Picture>], _ content: [ChildOf<Element.Picture>]) -> Node {
@@ -675,7 +675,7 @@ public func samp(_ content: [Node]) -> Node {
 }
 
 public func script(_ attribs: [Attribute<Element.Script>], _ content: String) -> Node {
-  return node("script", attribs, [text(content)])
+  return node("script", attribs, [.text(EncodedString(content))])
 }
 
 public func script(_ attribs: [Attribute<Element.Script>]) -> Node {
@@ -742,20 +742,12 @@ public func strong(_ content: [Node]) -> Node {
   return strong([], content)
 }
 
-public func style(_ attribs: [Attribute<Element.Style>], _ css: String) -> Node {
-  return node("style", attribs, [text(css)])
+public func style(_ attribs: [Attribute<Element.Style>], _ content: String) -> ChildOf<Element.Head> {
+  return .init(node("style", attribs, [.text(EncodedString(content))]))
 }
 
-public func style(_ css: String) -> Node {
-  return style([], css)
-}
-
-public func style<T>(_ attribs: [Attribute<Element.Style>], _ css: String) -> ChildOf<T> {
-  return .init(node("style", attribs, [text(css)]))
-}
-
-public func style<T>(_ css: String) -> ChildOf<T> {
-  return style([], css)
+public func style(_ content: String) -> ChildOf<Element.Head> {
+  return style([], content)
 }
 
 public func sub(_ attribs: [Attribute<Element.Sub>], _ content: [Node]) -> Node {

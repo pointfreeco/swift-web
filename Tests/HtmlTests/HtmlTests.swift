@@ -7,7 +7,7 @@ import XCTest
 
 class HTMLTests: XCTestCase {
   func testImgTag() {
-    let html = img(
+    let html: Node = img(
       [ src <| "cat.jpg",
         width <| 100,
         height <| 100 ]
@@ -45,17 +45,16 @@ class HTMLTests: XCTestCase {
     let testHtml = html(
       [ id <| "home" ],
       [
-        p(
-          [],
+        body(
           [
-            "Welcome to point free!"
+            p(["Welcome to point free!"])
           ]
         )
       ]
     )
 
     XCTAssertEqual(
-      "<html id=\"home\"><p>Welcome to point free!</p></html>",
+      "<html id=\"home\"><body><p>Welcome to point free!</p></body></html>",
       render(testHtml)
     )
   }
@@ -64,19 +63,23 @@ class HTMLTests: XCTestCase {
     let testHtml = html(
       [ id <| "home" ],
       [
-        a(
+        body(
           [
-            href <| "/"
-          ],
-          [
-            "Go home!"
+            a(
+              [
+                href <| "/"
+              ],
+              [
+                "Go home!"
+              ]
+            )
           ]
         )
       ]
     )
 
     XCTAssertEqual(
-      "<html id=\"home\"><a href=\"/\">Go home!</a></html>",
+      "<html id=\"home\"><body><a href=\"/\">Go home!</a></body></html>",
       render(testHtml)
     )
   }

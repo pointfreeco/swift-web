@@ -6,14 +6,14 @@ import XCTest
 
 class SupportTests: XCTestCase {
   func testStyleAttribute() {
-    let document = body(
+    let node = p (
       [ style(.color(.red)) ],
       [ "Hello world!" ]
     )
 
     XCTAssertEqual(
-      "<body style=\"color:#ff0000\">Hello world!</body>",
-      render(document, config: compact)
+      "<p style=\"color:#ff0000\">Hello world!</p>",
+      render(node, config: compact)
     )
   }
 
