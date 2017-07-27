@@ -13,10 +13,10 @@ func req(_ method: ApplicativeRouter.Method, _ location: String, _ body: Data? =
 class ApplicativeRouterTests: XCTestCase {
   func testRouter() {
     let router =
-      Route.home <¢ get <* end
-        <|> Route.episode <¢> (get <* lit("episode") *> str) <* end
-        <|> Route.episodes <¢ (get <* lit("episodes")) <* end
-        <|> Route.search <¢> (get <* lit("search") *> opt(param("query"))) <* end
+      Route.home <¢ .get <* .end
+        <|> Route.episode <¢> (.get <* .lit("episode") *> .str) <* .end
+        <|> Route.episodes <¢ (.get <* .lit("episodes")) <* .end
+        <|> Route.search <¢> (.get <* .lit("search") *> .opt(.param("query"))) <* .end
 
     XCTAssertEqual(router.match(req(.get, "/")), .home)
     XCTAssertEqual(router.match(req(.get, "/episodes")), .episodes)
@@ -30,8 +30,8 @@ class ApplicativeRouterTests: XCTestCase {
 
   func testPostData() {
     let router =
-      PostTestRoute.postData <¢> (post *> body) <* lit("post") <* end
-        <|> PostTestRoute.postString <¢> (post *> stringBody) <* lit("post") <* end
+      PostTestRoute.postData <¢> (.post *> .dataBody) <* .lit("post") <* .end
+        <|> PostTestRoute.postString <¢> (.post *> .stringBody) <* .lit("post") <* .end
 
 
     XCTAssertNil(router.match(req(.post, "/post", nil)))
@@ -42,8 +42,7 @@ class ApplicativeRouterTests: XCTestCase {
 
   func testPostString() {
     let router =
-      PostTestRoute.postString <¢> (post *> stringBody) <* lit("post") <* end
-
+      PostTestRoute.postString <¢> (.post *> .stringBody) <* .lit("post") <* .end
 
     XCTAssertNil(router.match(req(.post, "/post", nil)))
 
@@ -52,9 +51,9 @@ class ApplicativeRouterTests: XCTestCase {
     XCTAssertEqual(.postString(hello), router.match(req(.post, "/post", helloData)))
   }
 
-  func testPostDecodable() {
+  func testPostJsonBody() {
     let router =
-      PostTestRoute.postUser <¢> (post *> .body) <* lit("post") <* end
+      PostTestRoute.postUser <¢> (.post *> .jsonBody) <* .lit("post") <* .end
 
     XCTAssertNil(router.match(req(.post, "/post", nil)))
 
