@@ -24,7 +24,7 @@ let package = Package(
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Prelude"]),
-    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter"]),
+    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics"]),
 
     .target(name: "Css", dependencies: ["Prelude", "Either"]),
     .testTarget(name: "CssTests", dependencies: ["Css", "CssTestSupport"]),

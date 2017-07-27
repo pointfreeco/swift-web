@@ -1,3 +1,4 @@
+import Foundation
 import Prelude
 
 public enum Method: String {
@@ -10,7 +11,7 @@ extension Method {
   }
 }
 
-public typealias Route = (method: Method, path: [String], query: [String: String])
+public typealias Route = (method: Method, path: [String], query: [String: String], body: Data?)
 
 public struct Parser<A> {
   fileprivate let parse: (Route) -> (rest: Route, match: A)?
@@ -89,35 +90,35 @@ extension Parser {
 
 public let end = Parser<()> { route in
   guard route.path.isEmpty else { return nil }
-  return ((method: route.method, path: [], query: [:]), ())
+  return ((method: route.method, path: [], query: [:], body: nil), ())
 }
 
 public func lit(_ string: String) -> Parser<()> {
   return Parser<()> { route in
     guard let (p, ps) = uncons(route.path), p == string else { return nil }
-    return ((route.method, ps, route.query), ())
+    return ((route.method, ps, route.query, route.body), ())
   }
 }
 
 public let num = Parser<Double> { route in
   guard let (p, ps) = uncons(route.path), let n = Double(p) else { return nil }
-  return ((route.method, ps, route.query), n)
+  return ((route.method, ps, route.query, route.body), n)
 }
 
 public let int = Parser<Int> { route in
   guard let (p, ps) = uncons(route.path), let n = Int(p) else { return nil }
-  return ((route.method, ps, route.query), n)
+  return ((route.method, ps, route.query, route.body), n)
 }
 
 public let str = Parser<String> { route in
   guard let (p, ps) = uncons(route.path) else { return nil }
-  return ((route.method, ps, route.query), p)
+  return ((route.method, ps, route.query, route.body), p)
 }
 
 public func param(_ k: String) -> Parser<String> {
   return Parser<String> { route in
     guard let v = route.query[k] else { return nil }
-    return ((route.method, route.path, route.query), v)
+    return ((route.method, route.path, route.query, route.body), v)
   }
 }
 
@@ -125,17 +126,40 @@ public func opt<A>(_ p: Parser<A>) -> Parser<A?> {
   return A?.some <¢> p <|> pure(.none)
 }
 
+// todo: make a `params` that works with decodable
+
 public let params = Parser<[String: String]> { route in
   return (route, route.query)
 }
 
+public let body: Parser<Data> = Parser { route in
+  return route.body.map { (route, $0) }
+}
+
+public let stringBody: Parser<String> = Parser { route in
+  body.parse(route).flatMap { route in
+    String(data: route.match, encoding: .utf8).map { (route.rest, $0) }
+  }
+}
+
+extension Parser where A: Decodable {
+  public static var body: Parser<A> {
+    return .init { route in
+      ApplicativeRouter.body.parse(route).flatMap { route in
+        let decoder = JSONDecoder()
+        return (try? decoder.decode(A.self, from: route.match)).map { (route.rest, $0) }
+      }
+    }
+  }
+}
+
 public let any = Parser<()> { route in
   guard let (_, ps) = uncons(route.path) else { return nil }
-  return ((route.method, ps, route.query), ())
+  return ((route.method, ps, route.query, route.body), ())
 }
 
 public let many = Parser<()> { route in
-  ((route.method, [], route.query), ())
+  ((route.method, [], route.query, route.body), ())
 }
 
 public func method(_ method: Method) -> Parser<()> {
@@ -159,7 +183,7 @@ fileprivate func route(from request: URLRequest) -> Route {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let components = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })
-  else { return (method, [], [:]) }
+  else { return (method, [], [:], request.httpBody) }
 
   let path = components.path.components(separatedBy: "/")
     |> mapOptional { $0.isEmpty ? nil : $0 }
@@ -167,7 +191,7 @@ fileprivate func route(from request: URLRequest) -> Route {
   var query: [String: String] = [:]
   components.queryItems?.forEach { query[$0.name] = $0.value ?? "" }
 
-  return (method, path, query)
+  return (method, path, query, request.httpBody)
 }
 
 extension Parser {

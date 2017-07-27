@@ -1,6 +1,71 @@
 import ApplicativeRouter
+import Optics
 import Prelude
+import SnapshotTesting
 import XCTest
+
+func req(_ method: ApplicativeRouter.Method, _ location: String, _ body: Data? = nil) -> URLRequest {
+  return URLRequest(url: URL(string: location)!)
+    |> \.httpMethod .~ method.rawValue.uppercased()
+    |> \.httpBody .~ body
+}
+
+class ApplicativeRouterTests: XCTestCase {
+  func testRouter() {
+    let router =
+      Route.home <¢ get <* end
+        <|> Route.episode <¢> (get <* lit("episode") *> str) <* end
+        <|> Route.episodes <¢ (get <* lit("episodes")) <* end
+        <|> Route.search <¢> (get <* lit("search") *> opt(param("query"))) <* end
+
+    XCTAssertEqual(router.match(req(.get, "/")), .home)
+    XCTAssertEqual(router.match(req(.get, "/episodes")), .episodes)
+    XCTAssertEqual(router.match(req(.get, "/episodes/")), .episodes)
+    XCTAssertEqual(router.match(req(.get, "/episodes//")), .episodes)
+    XCTAssertEqual(router.match(req(.get, "/episode/hello-world")), .episode("hello-world"))
+    XCTAssertEqual(router.match(req(.get, "/search")), .search(nil))
+    XCTAssertEqual(router.match(req(.get, "/search?query=what")), .search("what"))
+    XCTAssertNil(router.match(req(.get, "/not-found")))
+  }
+
+  func testPostData() {
+    let router =
+      PostTestRoute.postData <¢> (post *> body) <* lit("post") <* end
+        <|> PostTestRoute.postString <¢> (post *> stringBody) <* lit("post") <* end
+
+
+    XCTAssertNil(router.match(req(.post, "/post", nil)))
+
+    let helloData = "hello".data(using: .utf8)!
+    XCTAssertEqual(.postData(helloData), router.match(req(.post, "/post", helloData)))
+  }
+
+  func testPostString() {
+    let router =
+      PostTestRoute.postString <¢> (post *> stringBody) <* lit("post") <* end
+
+
+    XCTAssertNil(router.match(req(.post, "/post", nil)))
+
+    let hello = "hello"
+    let helloData = hello.data(using: .utf8)!
+    XCTAssertEqual(.postString(hello), router.match(req(.post, "/post", helloData)))
+  }
+
+  func testPostDecodable() {
+    let router =
+      PostTestRoute.postUser <¢> (post *> .body) <* lit("post") <* end
+
+    XCTAssertNil(router.match(req(.post, "/post", nil)))
+
+    let userData = "{\"id\":1}".data(using: .utf8)!
+    XCTAssertEqual(.postUser(.init(id: 1)), router.match(req(.post, "/post", userData)))
+  }
+
+  static var allTests = [
+    ("testRouter", testRouter),
+  ]
+}
 
 enum Route {
   case home
@@ -26,30 +91,22 @@ extension Route: Equatable {
   }
 }
 
-let req = { (method: ApplicativeRouter.Method, location: String) in
-  URLRequest(url: URL(string: location)!)
-    |> (set(\URLRequest.httpMethod) <| method.rawValue.uppercased())
+struct User: Decodable {
+  let id: Int
 }
 
-class ApplicativeRouterTests: XCTestCase {
-  func testRouter() {
-    let router =
-      Route.home <¢ get <* end
-        <|> Route.episode <¢> (get <* lit("episode") *> str) <* end
-        <|> Route.episodes <¢ (get <* lit("episodes")) <* end
-        <|> Route.search <¢> (get <* lit("search") *> opt(param("query"))) <* end
+enum PostTestRoute: Equatable {
+  case postData(Data)
+  case postString(String)
+  case postUser(User)
 
-    XCTAssertEqual(router.match(req(.get, "/")), .home)
-    XCTAssertEqual(router.match(req(.get, "/episodes")), .episodes)
-    XCTAssertEqual(router.match(req(.get, "/episodes/")), .episodes)
-    XCTAssertEqual(router.match(req(.get, "/episodes//")), .episodes)
-    XCTAssertEqual(router.match(req(.get, "/episode/hello-world")), .episode("hello-world"))
-    XCTAssertEqual(router.match(req(.get, "/search")), .search(nil))
-    XCTAssertEqual(router.match(req(.get, "/search?query=what")), .search("what"))
-    XCTAssertNil(router.match(req(.get, "/not-found")))
+  static func == (lhs: PostTestRoute, rhs: PostTestRoute) -> Bool {
+    switch (lhs, rhs) {
+    case let (.postData(lhs), .postData(rhs)):      return lhs == rhs
+    case let (.postString(lhs), .postString(rhs)):  return lhs == rhs
+    case let (.postUser(lhs), .postUser(rhs)):      return lhs.id == rhs.id
+    default:
+      return false
+    }
   }
-
-  static var allTests = [
-    ("testRouter", testRouter),
-  ]
 }
