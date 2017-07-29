@@ -1,7 +1,6 @@
 import ApplicativeRouter
 import Optics
 import Prelude
-import SnapshotTesting
 import XCTest
 
 func req(_ method: ApplicativeRouter.Method, _ location: String, _ body: Data? = nil) -> URLRequest {
@@ -14,9 +13,9 @@ class ApplicativeRouterTests: XCTestCase {
   func testRouter() {
     let router =
       Route.home <¢ .get <* .end
-        <|> Route.episode <¢> (.get <* .lit("episode") *> .str) <* .end
-        <|> Route.episodes <¢ (.get <* .lit("episodes")) <* .end
-        <|> Route.search <¢> (.get <* .lit("search") *> .opt(.param("query"))) <* .end
+        <|> Route.episode <¢> (.get <* lit("episode") *> .str) <* .end
+        <|> Route.episodes <¢ (.get <* lit("episodes")) <* .end
+        <|> Route.search <¢> (.get <* lit("search") *> opt(param("query"))) <* .end
 
     XCTAssertEqual(router.match(req(.get, "/")), .home)
     XCTAssertEqual(router.match(req(.get, "/episodes")), .episodes)
@@ -30,8 +29,8 @@ class ApplicativeRouterTests: XCTestCase {
 
   func testPostData() {
     let router =
-      PostTestRoute.postData <¢> (.post *> .dataBody) <* .lit("post") <* .end
-        <|> PostTestRoute.postString <¢> (.post *> .stringBody) <* .lit("post") <* .end
+      PostTestRoute.postData <¢> (.post *> .dataBody) <* lit("post") <* .end
+        <|> PostTestRoute.postString <¢> (.post *> .stringBody) <* lit("post") <* .end
 
 
     XCTAssertNil(router.match(req(.post, "/post", nil)))
@@ -42,7 +41,7 @@ class ApplicativeRouterTests: XCTestCase {
 
   func testPostString() {
     let router =
-      PostTestRoute.postString <¢> (.post *> .stringBody) <* .lit("post") <* .end
+      PostTestRoute.postString <¢> (.post *> .stringBody) <* lit("post") <* .end
 
     XCTAssertNil(router.match(req(.post, "/post", nil)))
 
@@ -53,17 +52,13 @@ class ApplicativeRouterTests: XCTestCase {
 
   func testPostJsonBody() {
     let router =
-      PostTestRoute.postUser <¢> (.post *> .jsonBody) <* .lit("post") <* .end
+      PostTestRoute.postUser <¢> (.post *> .jsonBody) <* lit("post") <* .end
 
     XCTAssertNil(router.match(req(.post, "/post", nil)))
 
     let userData = "{\"id\":1}".data(using: .utf8)!
     XCTAssertEqual(.postUser(.init(id: 1)), router.match(req(.post, "/post", userData)))
   }
-
-  static var allTests = [
-    ("testRouter", testRouter),
-  ]
 }
 
 enum Route {
@@ -101,9 +96,12 @@ enum PostTestRoute: Equatable {
 
   static func == (lhs: PostTestRoute, rhs: PostTestRoute) -> Bool {
     switch (lhs, rhs) {
-    case let (.postData(lhs), .postData(rhs)):      return lhs == rhs
-    case let (.postString(lhs), .postString(rhs)):  return lhs == rhs
-    case let (.postUser(lhs), .postUser(rhs)):      return lhs.id == rhs.id
+    case let (.postData(lhs), .postData(rhs)):
+      return lhs == rhs
+    case let (.postString(lhs), .postString(rhs)):
+      return lhs == rhs
+    case let (.postUser(lhs), .postUser(rhs)):
+      return lhs.id == rhs.id
     default:
       return false
     }
