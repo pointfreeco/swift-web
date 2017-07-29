@@ -69,9 +69,9 @@ extension Parser {
 
 // MARK: - Applicative
 
-public func pure<I, A>(_ a: A) -> Parser<I, A> {
+public func pure<I, A>(_ x: A) -> Parser<I, A> {
   return .init { route in
-    (route, a)
+    (route, x)
   }
 }
 
