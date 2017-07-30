@@ -1,3 +1,4 @@
+import Either
 import Foundation
 import Prelude
 
@@ -95,6 +96,13 @@ extension Parser {
 
 // MARL: - Combinators
 
+public func component<I, A>(_ f: @escaping (String) -> A?) -> Parser<I, A> {
+  return .init { route in
+    guard let (p, ps) = uncons(route.path), let v = f(p) else { return nil }
+    return ((route.method, ps, route.query, route.body), v)
+  }
+}
+
 public func method<I>(_ method: Method) -> Parser<I, ()> {
   return .init { route in
     guard route.method == method else { return nil }
@@ -103,21 +111,27 @@ public func method<I>(_ method: Method) -> Parser<I, ()> {
 }
 
 public func lit<I>(_ string: String) -> Parser<I, ()> {
-  return .init { route in
-    guard let (p, ps) = uncons(route.path), p == string else { return nil }
-    return ((route.method, ps, route.query, route.body), ())
-  }
+  return component { $0 == string ? () : nil }
 }
 
-public func param<I>(_ k: String) -> Parser<I, String> {
+public func param<I, A>(_ k: String, _ p: Parser<I, A>) -> Parser<I, A> {
   return .init { route in
-    guard let v = route.query[k] else { return nil }
+    guard let str = route.query[k] else { return nil }
+    guard let v = p.match(.init(url: URL(string: "/\(str)")!)) else { return nil }
     return ((route.method, route.path, route.query, route.body), v)
   }
 }
 
+public func param<I>(_ k: String) -> Parser<I, String> {
+  return param(k, .str)
+}
+
 public func opt<I, A>(_ p: Parser<I, A>) -> Parser<I, A?> {
   return A?.some <¢> p <|> pure(.none)
+}
+
+public func either<I, L, R>(_ l: Parser<I, L>, _ r: Parser<I, R>) -> Parser<I, Either<L, R>> {
+  return l.map(Either.left) <|> r.map(Either.right)
 }
 
 extension Parser {
@@ -129,24 +143,15 @@ extension Parser {
   }
 
   public static var num: Parser<I, Double> {
-    return .init { route in
-      guard let (p, ps) = uncons(route.path), let n = Double(p) else { return nil }
-      return ((route.method, ps, route.query, route.body), n)
-    }
+    return component(Double.init)
   }
 
   public static var int: Parser<I, Int> {
-    return .init { route in
-      guard let (p, ps) = uncons(route.path), let n = Int(p) else { return nil }
-      return ((route.method, ps, route.query, route.body), n)
-    }
+    return component { Int($0) }
   }
 
   public static var str: Parser<I, String> {
-    return .init { route in
-      guard let (p, ps) = uncons(route.path) else { return nil }
-      return ((route.method, ps, route.query, route.body), p)
-    }
+    return component(id)
   }
 
   // TODO: make a `params` that works with decodable
@@ -157,10 +162,7 @@ extension Parser {
   }
 
   public static var any: Parser<I, ()> {
-    return .init { route in
-      guard let (_, ps) = uncons(route.path) else { return nil }
-      return ((route.method, ps, route.query, route.body), ())
-    }
+    return component(const(()))
   }
 
   public static var many: Parser<I, ()> {
