@@ -54,6 +54,10 @@ public func className<T>(_ value: String) -> Attribute<T> {
   return Html.class(value)
 }
 
+public func classList<T>(_ value: [String]) -> Attribute<T> {
+  return Html.class(value.joined(separator: " "))
+}
+
 public func cols(_ value: Int) -> Attribute<Element.Textarea> {
   return .init("cols", value)
 }
