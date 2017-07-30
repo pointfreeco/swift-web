@@ -50,6 +50,10 @@ public func `class`<T>(_ value: String) -> Attribute<T> {
   return .init("class", value)
 }
 
+public func className<T>(_ value: String) -> Attribute<T> {
+  return Html.class(value)
+}
+
 public func cols(_ value: Int) -> Attribute<Element.Textarea> {
   return .init("cols", value)
 }
@@ -101,6 +105,10 @@ public func `default`(_ value: Bool) -> Attribute<Element.Track> {
   return .init("default", value)
 }
 
+public func isDefault(_ value: Bool) -> Attribute<Element.Track> {
+  return Html.default(value)
+}
+
 public enum Direction: String, Value {
   case ltr
   case rtl
@@ -145,6 +153,10 @@ public func dropzone<T>(_ value: Dropzone) -> Attribute<T> {
 public protocol HasFor {}
 public func `for`<T: HasFor>(_ value: Id) -> Attribute<T> {
   return .init("for", value)
+}
+
+public func htmlFor<T: HasFor>(_ value: Id) -> Attribute<T> {
+  return Html.for(value)
 }
 
 public protocol HasForm {}
