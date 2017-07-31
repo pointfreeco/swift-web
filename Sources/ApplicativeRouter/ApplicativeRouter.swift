@@ -117,9 +117,13 @@ public func lit<I>(_ string: String) -> Parser<I, ()> {
 public func param<I, A>(_ k: String, _ p: Parser<I, A>) -> Parser<I, A> {
   return .init { route in
     guard let str = route.query[k] else { return nil }
-    guard let v = p.match(.init(url: URL(string: "/\(str)")!)) else { return nil }
+    guard let (_, v) = p.parse((route.method, [str], [:], nil)) else { return nil }
     return ((route.method, route.path, route.query, route.body), v)
   }
+}
+
+public func param<I, A>(_ k: String, _ f: @escaping (String) -> A?) -> Parser<I, A> {
+  return param(k, component(f))
 }
 
 public func param<I>(_ k: String) -> Parser<I, String> {

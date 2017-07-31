@@ -1,4 +1,5 @@
 import ApplicativeRouter
+import Either
 import Optics
 import Prelude
 import XCTest
@@ -32,7 +33,6 @@ class ApplicativeRouterTests: XCTestCase {
       PostTestRoute.postData <¢> (.post *> .dataBody) <* lit("post") <* .end
         <|> PostTestRoute.postString <¢> (.post *> .stringBody) <* lit("post") <* .end
 
-
     XCTAssertNil(router.match(req(.post, "/post", nil)))
 
     let helloData = "hello".data(using: .utf8)!
@@ -52,12 +52,12 @@ class ApplicativeRouterTests: XCTestCase {
 
   func testPostJsonBody() {
     let router =
-      PostTestRoute.postUser <¢> (.post *> .jsonBody) <* lit("post") <* .end
+      PostTestRoute.postUser <¢> (.post *> either(.jsonBody, pure("Invalid JSON"))) <* lit("post") <* .end
 
-    XCTAssertNil(router.match(req(.post, "/post", nil)))
+    XCTAssertEqual(.postUser(.right("Invalid JSON")), router.match(req(.post, "/post", nil)))
 
     let userData = "{\"id\":1}".data(using: .utf8)!
-    XCTAssertEqual(.postUser(.init(id: 1)), router.match(req(.post, "/post", userData)))
+    XCTAssertEqual(.postUser(.left(.init(id: 1))), router.match(req(.post, "/post", userData)))
   }
 }
 
@@ -92,7 +92,7 @@ struct User: Decodable {
 enum PostTestRoute: Equatable {
   case postData(Data)
   case postString(String)
-  case postUser(User)
+  case postUser(Either<User, String>)
 
   static func == (lhs: PostTestRoute, rhs: PostTestRoute) -> Bool {
     switch (lhs, rhs) {
@@ -100,8 +100,10 @@ enum PostTestRoute: Equatable {
       return lhs == rhs
     case let (.postString(lhs), .postString(rhs)):
       return lhs == rhs
-    case let (.postUser(lhs), .postUser(rhs)):
+    case let (.postUser(.left(lhs)), .postUser(.left(rhs))):
       return lhs.id == rhs.id
+    case let (.postUser(.right(lhs)), .postUser(.right(rhs))):
+      return lhs == rhs
     default:
       return false
     }
