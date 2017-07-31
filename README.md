@@ -125,22 +125,29 @@ A router built on the principles of “applicative parsing” that is robust, co
 ```swift
 import ApplicativeRouter
 
+struct UserData: Decodable {
+  let email: String
+}
+
 enum Route {
   case home
   case episodes
   case episode(String)
   case search(String?)
+  case signup(UserData?)
 }
 
 let router =
-        // Matches: /
-        Route.home <¢ end
-        // Matches: /episode/:str
-    <|> Route.episode <¢> (lit("episode") *> str) <* end
-        // Matches: /episodes
-    <|> Route.episodes <¢ lit("episodes") <* end
-        // Matches: search?query=
-    <|> Route.search <¢> (lit("search") *> opt(param("query"))) <* end
+        // Matches: GET /
+        Route.home <¢ .get <* .end
+        // Matches: GET /episode/:str
+    <|> Route.episode <¢> (.get *> lit("episode") *> .str) <* .end
+        // Matches: GET /episodes
+    <|> Route.episodes <¢ (.get *> lit("episodes")) <* .end
+        // Matches: GET /search?query=
+    <|> Route.search <¢> (.get *> lit("search") *> opt(param("query"))) <* .end
+        // Matches: POST /signup
+    <|> Route.signup <¢> (.post *> lit("signup") *> opt(.jsonBody)) <* .end
 
 let request = URLRequest(url: URL(string: "http://localhost:8000/episode/001-hello-world")!)
 let route = router.match(request) // => Route.episode("001-hello-world")

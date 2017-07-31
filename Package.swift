@@ -23,10 +23,10 @@ let package = Package(
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
   ],
   targets: [
-    .target(name: "ApplicativeRouter", dependencies: ["Prelude"]),
-    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter"]),
+    .target(name: "ApplicativeRouter", dependencies: ["Either", "Prelude"]),
+    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics"]),
 
-    .target(name: "Css", dependencies: ["Prelude", "Either"]),
+    .target(name: "Css", dependencies: ["Either", "Prelude"]),
     .testTarget(name: "CssTests", dependencies: ["Css", "CssTestSupport"]),
 
     .target(name: "CssReset", dependencies: ["Css"]),
