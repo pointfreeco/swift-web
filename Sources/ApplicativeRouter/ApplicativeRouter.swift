@@ -68,6 +68,20 @@ extension Parser {
   }
 }
 
+// MARK: - Indexed
+
+infix operator <*|: infixl4 // iapplyFirst
+
+extension Parser {
+  public static func <*| <J, B>(px: Parser, py: Parser<J, B>) -> Parser<J, A> {
+    return .init { route in
+      guard let (more, x) = px.parse(route) else { return nil }
+      guard let (rest, _) = py.parse(more) else { return nil }
+      return (rest, x)
+    }
+  }
+}
+
 // MARK: - Applicative
 
 public func pure<I, A>(_ x: A) -> Parser<I, A> {
@@ -138,14 +152,12 @@ public func either<I, L, R>(_ l: Parser<I, L>, _ r: Parser<I, R>) -> Parser<I, E
   return l.map(Either.left) <|> r.map(Either.right)
 }
 
-extension Parser {
-  public static var end: Parser<I, ()> {
-    return .init { route in
-      guard route.path.isEmpty else { return nil }
-      return ((method: route.method, path: [], query: [:], body: nil), ())
-    }
-  }
+public let end = Parser<(), ()> { route in
+  guard route.path.isEmpty else { return nil }
+  return ((method: route.method, path: [], query: [:], body: nil), ())
+}
 
+extension Parser {
   public static var num: Parser<I, Double> {
     return component(Double.init)
   }
