@@ -139,15 +139,15 @@ enum Route {
 
 let router =
         // Matches: GET /
-        Route.home <¢ .get <* .end
+        Route.home <¢ .get <*| end
         // Matches: GET /episode/:str
-    <|> Route.episode <¢> (.get *> lit("episode") *> .str) <* .end
+    <|> Route.episode <¢> (.get *> lit("episode") *> .str) <*| end
         // Matches: GET /episodes
-    <|> Route.episodes <¢ (.get *> lit("episodes")) <* .end
+    <|> Route.episodes <¢ (.get *> lit("episodes")) <*| end
         // Matches: GET /search?query=
-    <|> Route.search <¢> (.get *> lit("search") *> opt(param("query"))) <* .end
+    <|> Route.search <¢> (.get *> lit("search") *> opt(param("query"))) <*| end
         // Matches: POST /signup
-    <|> Route.signup <¢> (.post *> lit("signup") *> opt(.jsonBody)) <* .end
+    <|> Route.signup <¢> (.post *> lit("signup") *> opt(.jsonBody)) <*| end
 
 let request = URLRequest(url: URL(string: "http://localhost:8000/episode/001-hello-world")!)
 let route = router.match(request) // => Route.episode("001-hello-world")
