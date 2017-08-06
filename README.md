@@ -80,8 +80,8 @@ An EDSL for a CSS preprocessor like [Sass](http://sass-lang.com). A few simple v
 import Css
 
 let css = body % (
-  padding(all: rem(2))
-    <> background(hsl(60, 0.5, 0.8))
+  padding(all: .rem(2))
+    <> background(Color.hsl(60, 0.5, 0.8))
 )
 
 render(css: css)
@@ -162,9 +162,8 @@ import Foundation
 import Html
 import HttpPipeline
 import HttpPipelineHtmlSupport
-import Prelude
 
-let view = View<Prelude.Unit> { _ in p(["Hello world!"]) }
+let view = View(p(["Hello world!"]))
 
 let middleware = writeStatus(.ok)
   >>> respond(view)
@@ -232,11 +231,11 @@ let doc: Node = .document(
   [
     body(
       [
-        .comment("This is gonna be a long comment. Let's see what happens!"),
+        comment("This is gonna be a long comment. Let's see what happens!"),
         div(
           [
-            div([ id("some-long-id"), Html.`class`("foo bar baz"), ], ["hello world"]),
-            img([ id("cat"), Html.`class`("cat"), src("cat.jpg") ])
+            div([ id("some-long-id"), Html.class("foo bar baz") ], ["hello world"]),
+            img(src: "cat.jpg", alt: "", [ id("cat"), Html.class("cat") ])
           ]
         )
       ]
@@ -257,6 +256,7 @@ prettyPrint(node: doc, pageWidth: 40))
       hello world
     </div>
     <img id="cat"
+         alt=""
          class="cat"
          src="cat.jpg" />
   </div>
