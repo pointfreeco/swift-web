@@ -60,6 +60,34 @@ class ApplicativeRouterTests: XCTestCase {
     let userData = "{\"id\":1}".data(using: .utf8)!
     XCTAssertEqual(.postUser(.left(.init(id: 1))), router.match(req(.post, "/post", userData)))
   }
+
+  func testFormData() {
+    let router =
+      PostTestRoute.postFormData <¢> (.post *> .formData) <* lit("post") <*| end
+
+    let formString = "email=hello%40pointfree.co"
+    let formData = formString.data(using: .utf8)!
+    XCTAssertEqual(.postFormData(["email": "hello@pointfree.co"]),
+                   router.match(req(.post, "/post", formData)))
+  }
+
+  func testFormField() {
+    let router =
+      PostTestRoute.postString <¢> (.post *> .formField("email")) <* lit("post") <*| end
+
+    let formString = "email=hello%40pointfree.co"
+    let formData = formString.data(using: .utf8)!
+    XCTAssertEqual(.postString("hello@pointfree.co"), router.match(req(.post, "/post", formData)))
+  }
+
+  func testFormFieldParser() {
+    let router =
+      PostTestRoute.postInt <¢> (.post *> .formField("page", .int)) <* lit("post") <*| end
+
+    let formString = "page=50"
+    let formData = formString.data(using: .utf8)!
+    XCTAssertEqual(.postInt(50), router.match(req(.post, "/post", formData)))
+  }
 }
 
 enum Route {
@@ -93,12 +121,18 @@ struct User: Decodable {
 
 enum PostTestRoute: Equatable {
   case postData(Data)
+  case postFormData([String: String])
+  case postInt(Int)
   case postString(String)
   case postUser(Either<User, String>)
 
   static func == (lhs: PostTestRoute, rhs: PostTestRoute) -> Bool {
     switch (lhs, rhs) {
     case let (.postData(lhs), .postData(rhs)):
+      return lhs == rhs
+    case let (.postFormData(lhs), .postFormData(rhs)):
+      return lhs == rhs
+    case let (.postInt(lhs), .postInt(rhs)):
       return lhs == rhs
     case let (.postString(lhs), .postString(rhs)):
       return lhs == rhs

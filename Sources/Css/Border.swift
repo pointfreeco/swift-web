@@ -2,42 +2,42 @@ import Prelude
 
 // MARK: - border-style
 
-public struct BorderStyle: Val, Other, Inherit, Auto, None {
+public struct Stroke: Val, Other, Inherit, Auto, None {
   let stroke: Value
 
   public func value() -> Value {
     return self.stroke
   }
 
-  public static func other(_ other: Value) -> BorderStyle {
+  public static func other(_ other: Value) -> Stroke {
     return .init(stroke: other)
   }
 
-  public static let auto = BorderStyle(stroke: .auto)
-  public static let inherit = BorderStyle(stroke: .inherit)
-  public static let none = BorderStyle(stroke: .none)
+  public static let auto = Stroke(stroke: .auto)
+  public static let inherit = Stroke(stroke: .inherit)
+  public static let none = Stroke(stroke: .none)
 
-  public static let dashed: BorderStyle = "dashed"
-  public static let dotted: BorderStyle = "dotted"
-  public static let double: BorderStyle = "double"
-  public static let groove: BorderStyle = "groove"
-  public static let hidden: BorderStyle = "hidden"
-  public static let inset: BorderStyle = "inset"
-  public static let outset: BorderStyle = "outset"
-  public static let ridge: BorderStyle = "ridge"
-  public static let solid: BorderStyle = "solid"
+  public static let dashed: Stroke = "dashed"
+  public static let dotted: Stroke = "dotted"
+  public static let double: Stroke = "double"
+  public static let groove: Stroke = "groove"
+  public static let hidden: Stroke = "hidden"
+  public static let inset: Stroke = "inset"
+  public static let outset: Stroke = "outset"
+  public static let ridge: Stroke = "ridge"
+  public static let solid: Stroke = "solid"
 }
 
-extension BorderStyle: ExpressibleByStringLiteral {
+extension Stroke: ExpressibleByStringLiteral {
   public init(stringLiteral value: String) {
-    self = BorderStyle(stroke: .init(stringLiteral: value))
+    self = Stroke(stroke: .init(stringLiteral: value))
   }
 }
 
-public func borderStyle(top: BorderStyle? = nil,
-                        right: BorderStyle? = nil,
-                        bottom: BorderStyle? = nil,
-                        left: BorderStyle? = nil) -> Stylesheet {
+public func borderStyle(top: Stroke? = nil,
+                        right: Stroke? = nil,
+                        bottom: Stroke? = nil,
+                        left: Stroke? = nil) -> Stylesheet {
 
   return [ top.map { key("border-top-style", $0) },
            right.map { key("border-right-style", $0) },
@@ -47,12 +47,12 @@ public func borderStyle(top: BorderStyle? = nil,
     |> concat
 }
 
-public func borderStyle(topBottom: BorderStyle? = nil, leftRight: BorderStyle? = nil) -> Stylesheet {
+public func borderStyle(topBottom: Stroke? = nil, leftRight: Stroke? = nil) -> Stylesheet {
   return borderStyle(top: topBottom, bottom: topBottom)
     <> borderStyle(right: leftRight, left: leftRight)
 }
 
-public func borderStyle(all: BorderStyle) -> Stylesheet {
+public func borderStyle(all: Stroke) -> Stylesheet {
   return borderStyle(top: all, right: all, bottom: all, left: all)
 }
 
@@ -134,4 +134,26 @@ public func borderWidth(topBottom: Size? = nil, leftRight: Size? = nil) -> Style
 
 public func borderWidth(all: Size) -> Stylesheet {
   return borderWidth(top: all, right: all, bottom: all, left: all)
+}
+
+public func outlineStyle(all: Stroke) -> Stylesheet {
+  return outline(style: all, color: nil, width: nil)
+}
+
+public func outlineColor(all: Color) -> Stylesheet {
+  return outline(style: nil, color: all, width: nil)
+}
+
+public func outlineWidth(all: Size) -> Stylesheet {
+  return outline(style: nil, color: nil, width: all)
+}
+
+public func outline(style: Stroke? = nil, color: Color? = nil, width: Size? = nil) -> Stylesheet {
+  return [
+    style.map { key("outline-style", $0) },
+    color.map { key("outline-color", $0) },
+    width.map { key("outline-width", $0) }
+    ]
+    |> catOptionals
+    |> concat
 }
