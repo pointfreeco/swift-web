@@ -23,7 +23,11 @@ public enum Delete {}
 public typealias Route = (method: Method, path: [String], query: [String: String], body: Data?)
 
 public struct Parser<I, A> {
-  fileprivate let parse: (Route) -> (rest: Route, match: A)?
+  public let parse: (Route) -> (rest: Route, match: A)?
+
+  public init(parse: @escaping (Route) -> (rest: Route, match: A)?) {
+    self.parse = parse
+  }
 }
 
 // MARK: - Functor
@@ -220,6 +224,30 @@ extension Parser where I: HasBody {
       dataBody.parse(route).flatMap { route in
         String(data: route.match, encoding: .utf8).map { (route.rest, $0) }
       }
+    }
+  }
+
+  public static var formData: Parser<I, [String: String]> {
+    return self.stringBody.map { body in
+      let pairs = body.split(separator: "&")
+        .map {
+          $0.split(separator: "=", maxSplits: 1)
+            .flatMap(String.init >>> Prelude.get(\.removingPercentEncoding))
+        }
+        .map { ($0[0], $0[1]) }
+      return [String: String](uniqueKeysWithValues: pairs)
+    }
+  }
+
+  public static func formField(_ name: String) -> Parser<I, String> {
+    return formField(name, str)
+  }
+
+  public static func formField<A>(_ name: String, _ p: Parser<I, A>) -> Parser<I, A> {
+    return .init { route in
+      guard let (rest, formData) = Parser.formData.parse(route), let str = formData[name] else { return nil }
+      guard let (_, v) = p.parse((route.method, [str], [:], nil)) else { return nil }
+      return (rest, v)
     }
   }
 }
