@@ -40,6 +40,6 @@ public func connection(from request: URLRequest) -> Conn<StatusLineOpen, Prelude
   return .init(
     data: unit,
     request: request,
-    response: Response(status: .ok, headers: [], body: "")
+    response: Response(status: .ok, headers: [], body: nil)
   )
 }

@@ -3,34 +3,34 @@ import Prelude
 
 public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> Conn<J, B>
 
-public func writeStatus<Data>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, Data, Data> {
+public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
   return { connection in
     return .init(
       data: connection.data,
       request: connection.request,
-      response: Response(status: status, headers: connection.response.headers, body: "")
+      response: Response(status: status, headers: connection.response.headers, body: nil)
     )
   }
 }
 
-public func writeHeader<Data>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, Data, Data> {
+public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return { conn in
     .init(
       data: conn.data,
       request: conn.request,
       response: Response(
         status: conn.response.status,
-        headers: conn.response.headers + [header], body: ""
+        headers: conn.response.headers + [header], body: nil
       )
     )
   }
 }
 
-public func writeHeader<Data>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, Data, Data> {
+public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return writeHeader(.other(name, value))
 }
 
-public func closeHeaders<Data>() -> Middleware<HeadersOpen, BodyOpen, Data, Data> {
+public func closeHeaders<A>() -> Middleware<HeadersOpen, BodyOpen, A, A> {
   return { conn in
     .init(
       data: conn.data,
@@ -40,7 +40,7 @@ public func closeHeaders<Data>() -> Middleware<HeadersOpen, BodyOpen, Data, Data
   }
 }
 
-public let end: Middleware<BodyOpen, ResponseEnded, String, String> =
+public let end: Middleware<BodyOpen, ResponseEnded, Data?, Data?> =
   { conn in
     .init(
       data: conn.data,
@@ -53,14 +53,14 @@ public let end: Middleware<BodyOpen, ResponseEnded, String, String> =
     )
 }
 
-public func redirect<Data>(_ location: String) -> Middleware<StatusLineOpen, HeadersOpen, Data, Data> {
+public func redirect<A>(_ location: String) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
   return writeStatus(.found)
     >>> writeHeader("Location", location)
 }
 
-public func basicAuth<Data>(user: String, password: String)
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Data, String>)
-  -> Middleware<StatusLineOpen, ResponseEnded, Data, String> {
+public func basicAuth<A>(user: String, password: String)
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
 
     return { middleware in
       { conn in
@@ -78,35 +78,55 @@ public func basicAuth<Data>(user: String, password: String)
     }
 }
 
-public func respond<Data>(text: String) -> Middleware<HeadersOpen, ResponseEnded, Data, String> {
+public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> {
   return { conn in
-    conn.map(const(text))
+
+    var concatenatedData = conn.data
+    if let data = data {
+      concatenatedData?.append(data)
+    }
+
+    return .init(
+      data: conn.data,
+      request: conn.request,
+      response: Response(
+        status: conn.response.status,
+        headers: conn.response.headers,
+        body: concatenatedData
+      )
+    )
+  }
+}
+
+public func respond<A>(text: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
+  return { conn in
+    conn.map(const(text.data(using: .utf8)))
       |> writeHeader(.contentType(.text))
       |> closeHeaders()
       |> end
   }
 }
 
-public func respond<Data>(html: String) -> Middleware<HeadersOpen, ResponseEnded, Data, String> {
+public func respond<A>(html: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
   return { conn in
-    conn.map(const(html))
+    conn.map(const(html.data(using: .utf8)))
       |> writeHeader(.contentType(.html))
       |> closeHeaders()
       |> end
   }
 }
 
-public func respond<Data>(json: String) -> Middleware<HeadersOpen, ResponseEnded, Data, String> {
+public func respond<A>(json: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
   return { conn in
-    conn.map(const(json))
+    conn.map(const(json.data(using: .utf8)))
       |> writeHeader(.contentType(.json))
       |> closeHeaders()
       |> end
   }
 }
 
-public func notFound<Data>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, Data, String>)
-  -> Middleware<StatusLineOpen, ResponseEnded, Data, String> {
+public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
     return writeStatus(.notFound)
       >>> middleware
 }

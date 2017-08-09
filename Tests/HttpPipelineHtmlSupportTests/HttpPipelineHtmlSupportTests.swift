@@ -17,6 +17,6 @@ class HttpPipelineHtmlSupportTests: XCTestCase {
       "Content-Type: text/html",
       response.response.headers.map { $0.description }.joined(separator: "")
     )
-    XCTAssertEqual("<p>Hello world!</p>", response.response.body)
+    XCTAssertEqual("<p>Hello world!</p>", String(data: response.response.body!, encoding: .utf8))
   }
 }
