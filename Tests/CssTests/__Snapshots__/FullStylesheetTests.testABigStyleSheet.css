@@ -18,5 +18,6 @@ ul li:first-child {
 input {
   outline-style : none;
   outline-width : none;
+  outline-color : none;
 }
 

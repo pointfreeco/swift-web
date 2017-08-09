@@ -13,19 +13,19 @@ public struct Stroke: Val, Other, Inherit, Auto, None {
     return .init(stroke: other)
   }
 
-  public static let auto = BorderStyle(stroke: .auto)
-  public static let inherit = BorderStyle(stroke: .inherit)
-  public static let none = BorderStyle(stroke: .none)
+  public static let auto = Stroke(stroke: .auto)
+  public static let inherit = Stroke(stroke: .inherit)
+  public static let none = Stroke(stroke: .none)
 
-  public static let dashed: BorderStyle = "dashed"
-  public static let dotted: BorderStyle = "dotted"
-  public static let double: BorderStyle = "double"
-  public static let groove: BorderStyle = "groove"
-  public static let hidden: BorderStyle = "hidden"
-  public static let inset: BorderStyle = "inset"
-  public static let outset: BorderStyle = "outset"
-  public static let ridge: BorderStyle = "ridge"
-  public static let solid: BorderStyle = "solid"
+  public static let dashed: Stroke = "dashed"
+  public static let dotted: Stroke = "dotted"
+  public static let double: Stroke = "double"
+  public static let groove: Stroke = "groove"
+  public static let hidden: Stroke = "hidden"
+  public static let inset: Stroke = "inset"
+  public static let outset: Stroke = "outset"
+  public static let ridge: Stroke = "ridge"
+  public static let solid: Stroke = "solid"
 }
 
 extension Stroke: ExpressibleByStringLiteral {
@@ -33,16 +33,6 @@ extension Stroke: ExpressibleByStringLiteral {
     self = Stroke(stroke: .init(stringLiteral: value))
   }
 }
-
-public let solid: Stroke = "solid"
-public let dotted: Stroke = "dotted"
-public let dashed: Stroke = "dashed"
-public let double: Stroke = "double"
-public let groove: Stroke = "groove"
-public let ridge: Stroke = "ridge"
-public let inset: Stroke = "inset"
-public let outset: Stroke = "outset"
-public let hidden: Stroke = "hidden"
 
 public func borderStyle(top: Stroke? = nil,
                         right: Stroke? = nil,
