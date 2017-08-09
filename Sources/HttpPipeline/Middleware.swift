@@ -3,7 +3,7 @@ import Prelude
 
 public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> Conn<J, B>
 
-public func writeStatus<Data>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, Data, Data> {
+public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
   return { connection in
     return .init(
       data: connection.data,
@@ -13,7 +13,7 @@ public func writeStatus<Data>(_ status: Status) -> Middleware<StatusLineOpen, He
   }
 }
 
-public func writeHeader<Data>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, Data, Data> {
+public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return { conn in
     .init(
       data: conn.data,
@@ -26,11 +26,11 @@ public func writeHeader<Data>(_ header: ResponseHeader) -> Middleware<HeadersOpe
   }
 }
 
-public func writeHeader<Data>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, Data, Data> {
+public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return writeHeader(.other(name, value))
 }
 
-public func closeHeaders<Data>() -> Middleware<HeadersOpen, BodyOpen, Data, Data> {
+public func closeHeaders<A>() -> Middleware<HeadersOpen, BodyOpen, A, A> {
   return { conn in
     .init(
       data: conn.data,
@@ -53,7 +53,7 @@ public let end: Middleware<BodyOpen, ResponseEnded, Data?, Data?> =
     )
 }
 
-public func redirect<Data>(_ location: String) -> Middleware<StatusLineOpen, HeadersOpen, Data, Data> {
+public func redirect<A>(_ location: String) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
   return writeStatus(.found)
     >>> writeHeader("Location", location)
 }
