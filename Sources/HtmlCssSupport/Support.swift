@@ -1,12 +1,16 @@
 import Css
 import Html
 
-public func style(_ style: Stylesheet) -> Attribute {
+public func style<T>(_ style: Stylesheet) -> Attribute<T> {
   return .init("style", style)
 }
 
-public func style(_ css: Stylesheet) -> Node {
+public func style(_ attribs: [Attribute<Element.Style>], _ css: Stylesheet) -> ChildOf<Element.Head> {
   return style(render(config: Css.compact, css: css))
+}
+
+public func style(_ css: Stylesheet) -> ChildOf<Element.Head> {
+  return style([], css)
 }
 
 extension Stylesheet: Html.Value {

@@ -6,19 +6,20 @@ import XCTest
 
 class SupportTests: XCTestCase {
   func testStyleAttribute() {
-    let document = body(
-      [ style(color(red)) ],
+    let sheet = color(.red)
+    let node = p(
+      [ style(sheet) ],
       [ "Hello world!" ]
     )
 
     XCTAssertEqual(
-      "<body style=\"color:#ff0000\">Hello world!</body>",
-      render(document, config: compact)
+      "<p style=\"color:#ff0000\">Hello world!</p>",
+      render(node, config: compact)
     )
   }
 
   func testStyleElement() {
-    let css = body % color(red)
+    let css = body % color(.red)
     let document = html([head([style(css)])])
 
     XCTAssertEqual(

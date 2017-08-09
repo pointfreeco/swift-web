@@ -3,8 +3,7 @@ public enum ResponseHeader {
   case contentType(Format)
   case location(String)
   case setCookie([String: String])
-
-  case custom(String, String)
+  case other(String, String)
 
   public var pair: (String, String) {
     switch self {
@@ -19,7 +18,7 @@ public enum ResponseHeader {
         pair.key + "=" + pair.value // todo: escape
       }.joined(separator: "; ")
       return ("Set-Cookie", str)
-    case let .custom(header, value):
+    case let .other(header, value):
       return (header, value)
     }
   }

@@ -7,9 +7,11 @@ public struct BoxType: Val, Inherit {
     return self.boxType
   }
 
-  public static var inherit: BoxType {
-    return .init(boxType: inheritValue)
-  }
+  public static let inherit = BoxType(boxType: .inherit)
+
+  public static let paddingBox: BoxType = "padding-box"
+  public static let borderBox: BoxType = "border-box"
+  public static let contentBox: BoxType = "content-box"
 }
 
 extension BoxType: ExpressibleByStringLiteral {
@@ -17,10 +19,6 @@ extension BoxType: ExpressibleByStringLiteral {
     self = .init(boxType: .init(stringLiteral: value))
   }
 }
-
-public let paddingBox: BoxType = "padding-box"
-public let borderBox: BoxType = "border-box"
-public let contentBox: BoxType = "content-box"
 
 public func boxSizing(_ type: BoxType) -> Stylesheet {
   return prefixed(browsers <> "box-sizing", type)

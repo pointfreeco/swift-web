@@ -13,17 +13,19 @@ public struct Stroke: Val, Other, Inherit, Auto, None {
     return .init(stroke: other)
   }
 
-  public static var inherit: Stroke {
-    return .init(stroke: inheritValue)
-  }
+  public static let auto = BorderStyle(stroke: .auto)
+  public static let inherit = BorderStyle(stroke: .inherit)
+  public static let none = BorderStyle(stroke: .none)
 
-  public static var auto: Stroke {
-    return .init(stroke: autoValue)
-  }
-
-  public static var none: Stroke {
-    return .init(stroke: noneValue)
-  }
+  public static let dashed: BorderStyle = "dashed"
+  public static let dotted: BorderStyle = "dotted"
+  public static let double: BorderStyle = "double"
+  public static let groove: BorderStyle = "groove"
+  public static let hidden: BorderStyle = "hidden"
+  public static let inset: BorderStyle = "inset"
+  public static let outset: BorderStyle = "outset"
+  public static let ridge: BorderStyle = "ridge"
+  public static let solid: BorderStyle = "solid"
 }
 
 extension Stroke: ExpressibleByStringLiteral {

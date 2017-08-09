@@ -29,7 +29,7 @@ class ViewTests: XCTestCase {
       .map { nodes in
         [
           Html.header(
-            [ style <| color(red) ],
+            [ style <| color(.red) ],
             nodes
           )
         ]
@@ -42,7 +42,7 @@ class ViewTests: XCTestCase {
         .map { nodes in
           [
             Html.footer(
-              [ style <| color(blue) ],
+              [ style <| color(.blue) ],
               nodes
             )
           ]
@@ -82,7 +82,7 @@ class ViewTests: XCTestCase {
       return <>color(c)
     }
 
-    let blueSpan = styledSpan.contramap(set(color: blue))
+    let blueSpan = styledSpan.contramap(set(color: .blue))
 
     XCTAssertEqual(
       """

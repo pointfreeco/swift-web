@@ -20,24 +20,37 @@ indirect public enum Size: Val, Auto, Normal, Inherit, None, Other {
     }
   }
 
-  public static var auto: Size {
-    return .otherSize(autoValue)
-  }
-
-  public static var normal: Size {
-    return .otherSize(normalValue)
-  }
-
-  public static var inherit: Size {
-    return .otherSize(inheritValue)
-  }
-
-  public static var none: Size {
-    return .otherSize(noneValue)
-  }
-
   public static func other(_ other: Value) -> Size {
     return .otherSize(other)
+  }
+
+  public static let auto = Size.otherSize(.auto)
+  public static let inherit = Size.otherSize(.inherit)
+  public static let none = Size.otherSize(.none)
+  public static let normal = Size.otherSize(.normal)
+
+  public static func pct(_ d: Double) -> Size {
+    return .simple("\(trunc(d))%")
+  }
+
+  public static func px(_ d: Double) -> Size {
+    return .simple("\(trunc(d))px")
+  }
+
+  public static func rem(_ d: Double) -> Size {
+    return .simple("\(trunc(d))rem")
+  }
+
+  public static func em(_ d: Double) -> Size {
+    return .simple("\(trunc(d))em")
+  }
+
+  public static func unitless(_ d: Double) -> Size {
+    return .simple("\(trunc(d))")
+  }
+
+  public static func pt(_ d: Double) -> Size {
+    return .simple("\(trunc(d))pt")
   }
 }
 
@@ -61,30 +74,6 @@ private func renderExpression(size: Size) -> String {
 private func trunc(_ d: Double) -> String {
   let s = String(d)
   return s.hasSuffix(".0") ? String(s.dropLast(2)) : s
-}
-
-public func pct(_ d: Double) -> Size {
-  return .simple("\(trunc(d))%")
-}
-
-public func px(_ d: Double) -> Size {
-  return .simple("\(trunc(d))px")
-}
-
-public func rem(_ d: Double) -> Size {
-  return .simple("\(trunc(d))rem")
-}
-
-public func em(_ d: Double) -> Size {
-  return .simple("\(trunc(d))em")
-}
-
-public func unitless(_ d: Double) -> Size {
-  return .simple("\(trunc(d))")
-}
-
-public func pt(_ d: Double) -> Size {
-  return .simple("\(trunc(d))pt")
 }
 
 public func + (lhs: Size, rhs: Size) -> Size {

@@ -8,27 +8,31 @@ import XCTest
 class HTMLTests: XCTestCase {
   func testImgTag() {
     let html = img(
-      [ src <| "cat.jpg",
+      src: "cat.jpg",
+      alt: "", [
         width <| 100,
-        height <| 100 ]
+        height <| 100
+      ]
     )
 
     let rendered = render(html)
 
     XCTAssertEqual(
-      "<img src=\"cat.jpg\" width=\"100\" height=\"100\">",
+      "<img src=\"cat.jpg\" alt=\"\" width=\"100\" height=\"100\">",
       rendered
     )
   }
 
   func testHtml3() {
     let html = p(
-      [ Html.`class` <| "main" ],
+      [ Html.class <| "main" ],
       [
         img(
-          [ src <| "cat.jpg",
+          src: "cat.jpg",
+          alt: "", [
             width <| 100,
-            height <| 100 ]
+            height <| 100
+          ]
         ),
 
         "A cat!"
@@ -36,7 +40,7 @@ class HTMLTests: XCTestCase {
     )
 
     XCTAssertEqual(
-      "<p class=\"main\"><img src=\"cat.jpg\" width=\"100\" height=\"100\">A cat!</p>",
+      "<p class=\"main\"><img src=\"cat.jpg\" alt=\"\" width=\"100\" height=\"100\">A cat!</p>",
       render(html)
     )
   }
@@ -45,17 +49,16 @@ class HTMLTests: XCTestCase {
     let testHtml = html(
       [ id <| "home" ],
       [
-        p(
-          [],
+        body(
           [
-            "Welcome to point free!"
+            p(["Welcome to point free!"])
           ]
         )
       ]
     )
 
     XCTAssertEqual(
-      "<html id=\"home\"><p>Welcome to point free!</p></html>",
+      "<html id=\"home\"><body><p>Welcome to point free!</p></body></html>",
       render(testHtml)
     )
   }
@@ -64,30 +67,34 @@ class HTMLTests: XCTestCase {
     let testHtml = html(
       [ id <| "home" ],
       [
-        a(
+        body(
           [
-            href <| "/"
-          ],
-          [
-            "Go home!"
+            a(
+              [
+                href <| "/"
+              ],
+              [
+                "Go home!"
+              ]
+            )
           ]
         )
       ]
     )
 
     XCTAssertEqual(
-      "<html id=\"home\"><a href=\"/\">Go home!</a></html>",
+      "<html id=\"home\"><body><a href=\"/\">Go home!</a></body></html>",
       render(testHtml)
     )
   }
 
   func testHtmlWithInlineStyles() {
     let html = p(
-      [ style <| color(red) ],
+      [ style <| color(.red) ],
       [
         "Welcome to ",
         a(
-          [ style <| background(blue) ],
+          [ style <| background(Color.blue) ],
           [ "Point Free" ]
         ),
         "!"
@@ -113,7 +120,8 @@ class HTMLTests: XCTestCase {
       script("alert(\"Hello!\")")
     ])
 
-    XCTAssertEqual("<div><script src=\"app.js\"></script><script>alert(\"Hello!\")</script></div>", render(html))
+    XCTAssertEqual("<div><script src=\"app.js\"></script><script>alert(\"Hello!\")</script></div>",
+                   render(html))
   }
 
   func testPrettyRender() {
@@ -123,11 +131,11 @@ class HTMLTests: XCTestCase {
       [
         body(
           [
-            .comment("Welcome to our app!"),
+            comment("Welcome to our app!"),
             h1(["Title"]),
             p(
               [
-                "Some text ",
+                "Some text",
                 a(["A link"]),
                 "Some more text..."
               ]

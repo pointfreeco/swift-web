@@ -2,8 +2,7 @@ public enum Format {
   case json
   case html
   case text
-
-  case custom(String)
+  case other(String)
 
   var description: String {
     switch self {
@@ -13,7 +12,7 @@ public enum Format {
       return "text/html"
     case .text:
       return "text/plain"
-    case let .custom(str):
+    case let .other(str):
       return str
     }
   }

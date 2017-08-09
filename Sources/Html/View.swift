@@ -27,3 +27,13 @@ extension View where M == [Node] {
     self.call = const([node])
   }
 }
+
+extension View where A == (), M == [Node] {
+  public init(_ call: @escaping (A) -> Node) {
+    self.call = call >>> pure
+  }
+
+  public init(_ node: Node) {
+    self.call = const([node])
+  }
+}

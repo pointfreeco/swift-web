@@ -15,17 +15,18 @@ let package = Package(
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
+    .library(name: "MediaType", targets: ["MediaType"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("5bb9f1a")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("b06511e")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("ecb645f")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("2c2b390")),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
   ],
   targets: [
-    .target(name: "ApplicativeRouter", dependencies: ["Prelude"]),
-    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter"]),
+    .target(name: "ApplicativeRouter", dependencies: ["Either", "Prelude"]),
+    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics"]),
 
-    .target(name: "Css", dependencies: ["Prelude", "Either"]),
+    .target(name: "Css", dependencies: ["Either", "Prelude"]),
     .testTarget(name: "CssTests", dependencies: ["Css", "CssTestSupport"]),
 
     .target(name: "CssReset", dependencies: ["Css"]),
@@ -33,7 +34,7 @@ let package = Package(
 
     .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotTesting"]),
 
-    .target(name: "Html", dependencies: ["Prelude"]),
+    .target(name: "Html", dependencies: ["MediaType", "Prelude"]),
     .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
@@ -44,10 +45,12 @@ let package = Package(
 
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
-    .target(name: "HttpPipeline", dependencies: ["Prelude"]),
+    .target(name: "HttpPipeline", dependencies: ["MediaType", "Prelude"]),
     .testTarget(name: "HttpPipelineTests", dependencies: ["HttpPipeline"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
+
+    .target(name: "MediaType", dependencies: []),
   ]
 )

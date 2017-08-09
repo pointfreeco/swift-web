@@ -18,21 +18,17 @@ public struct EdgeInsets: Val {
   }
 }
 
-public func padding(top: Size? = nil,
-                    right: Size? = nil,
-                    bottom: Size? = nil,
-                    left: Size? = nil) -> Stylesheet {
-
-  return [ top.map { key("padding-top", $0) },
-           right.map { key("padding-right", $0) },
-           bottom.map { key("padding-bottom", $0) },
-           left.map { key("padding-left", $0) } ]
-    |> catOptionals
-    |> concat
+public func padding(top: Size? = nil, right: Size? = nil, bottom: Size? = nil, left: Size? = nil)
+  -> Stylesheet {
+    return [ top.map { key("padding-top", $0) },
+             right.map { key("padding-right", $0) },
+             bottom.map { key("padding-bottom", $0) },
+             left.map { key("padding-left", $0) } ]
+      |> catOptionals
+      |> concat
 }
 
 public func padding(topBottom: Size? = nil, leftRight: Size? = nil) -> Stylesheet {
-
   return padding(top: topBottom, bottom: topBottom)
     <> padding(right: leftRight, left: leftRight)
 }
@@ -41,7 +37,8 @@ public func padding(all: Size) -> Stylesheet {
   return padding(top: all, right: all, bottom: all, left: all)
 }
 
-public func margin(top: Size? = nil, right: Size? = nil, bottom: Size? = nil, left: Size? = nil) -> Stylesheet {
+public func margin(top: Size? = nil, right: Size? = nil, bottom: Size? = nil, left: Size? = nil)
+  -> Stylesheet {
 
   return [ top.map { key("margin-top", $0) },
            right.map { key("margin-right", $0) },
@@ -52,7 +49,6 @@ public func margin(top: Size? = nil, right: Size? = nil, bottom: Size? = nil, le
 }
 
 public func margin(topBottom: Size? = nil, leftRight: Size? = nil) -> Stylesheet {
-
   return margin(top: topBottom, bottom: topBottom)
     <> margin(right: leftRight, left: leftRight)
 }
@@ -62,9 +58,9 @@ public func margin(all: Size) -> Stylesheet {
 }
 
 public let size: (Size) -> Stylesheet = key("size")
-public func top(_ s: Size) -> Stylesheet { return key("top") <| s }
+public let top: (Size) -> Stylesheet = key("top")
 public let left: (Size) -> Stylesheet = key("left")
-public func bottom(_ s: Size) -> Stylesheet { return key("bottom") <| s }
+public let bottom: (Size) -> Stylesheet = key("bottom")
 public let right: (Size) -> Stylesheet = key("right")
 public let width: (Size) -> Stylesheet = key("width")
 public let height: (Size) -> Stylesheet = key("height")

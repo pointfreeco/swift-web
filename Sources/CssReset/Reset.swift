@@ -4,7 +4,6 @@ import Prelude
 private let allReset: Stylesheet = (
   a
     | abbr
-    | acronym
     | address
     | article
     | aside
@@ -68,7 +67,7 @@ private let allReset: Stylesheet = (
   ) % (
     margin(all: 0)
       <> padding(all: 0)
-      <> fontSize(pct(100))
+      <> fontSize(.pct(100))
       <> fontFamily(.inherit)
       <> fontStyle(.inherit)
       <> fontWeight(.inherit)
@@ -83,7 +82,7 @@ private let blockResets = (
     | nav
     | section
   ) % (
-    display(block)
+    display(.block)
 )
 
 private let bodyReset: Stylesheet
@@ -114,7 +113,7 @@ private let listReset = (ol | ul) % (
 
 private let tableResets =
   table % (
-    borderCollapse(collapse)
+    borderCollapse(.collapse)
       <> borderSpacing(0)
 )
 

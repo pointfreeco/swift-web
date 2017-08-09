@@ -5,14 +5,10 @@ public struct Content: Val, None {
     return self.content
   }
 
-  public static var none: Content {
-    return .init(content: noneValue)
-  }
+  public static let none = Content(content: .none)
 }
 
-public func content(_ c: Content) -> Stylesheet {
-  return key("content", c)
-}
+public let content: (Content) -> Stylesheet = key("content")
 
 public func stringContent(_ s: String) -> Content {
   return .init(content: Literal(s).value())
@@ -25,14 +21,10 @@ public struct Quotes: Val, None {
     return self.quote
   }
 
-  public static var none: Quotes {
-    return .init(quote: noneValue)
-  }
+  public static let none = Quotes(quote: .none)
 }
 
-public func quotes(_ q: Quotes) -> Stylesheet {
-  return key("quotes", q)
-}
+public let quotes: (Quotes) -> Stylesheet = key("quotes")
 
 public struct TextAlign: Val, Normal, Inherit, Other, Center {
   let textAlign: Value
@@ -45,21 +37,18 @@ public struct TextAlign: Val, Normal, Inherit, Other, Center {
     return self.textAlign
   }
 
-  public static var normal: TextAlign {
-    return .init(normalValue)
-  }
-
-  public static var inherit: TextAlign {
-    return .init(inheritValue)
-  }
-
   public static func other(_ other: Value) -> TextAlign {
     return .init(other)
   }
 
-  public static var center: TextAlign {
-    return .init(centerValue)
-  }
+  public static let center = TextAlign(.center)
+  public static let normal = TextAlign(.normal)
+  public static let inherit = TextAlign(.inherit)
+
+  public static let justify: TextAlign = "justify"
+  public static let matchParent: TextAlign = "match-parent"
+  public static let start: TextAlign = "start"
+  public static let end: TextAlign = "end"
 }
 
 extension TextAlign: ExpressibleByStringLiteral {
@@ -67,10 +56,5 @@ extension TextAlign: ExpressibleByStringLiteral {
     self = .init(.init(stringLiteral: value))
   }
 }
-
-public let justify: TextAlign = "justify"
-public let matchParent: TextAlign = "match-parent"
-public let start: TextAlign = "start"
-public let end: TextAlign = "end"
 
 public let textAlign: (TextAlign) -> Stylesheet = key("text-align")

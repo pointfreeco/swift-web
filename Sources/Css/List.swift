@@ -5,13 +5,8 @@ public struct ListStyleType: Val, Inherit, None {
     return self.type
   }
 
-  public static var inherit: ListStyleType {
-    return .init(type: inheritValue)
-  }
-
-  public static var none: ListStyleType {
-    return .init(type: noneValue)
-  }
+  public static let inherit = ListStyleType(type: .inherit)
+  public static let none = ListStyleType(type: .none)
 }
 
 public let listStyleType: (ListStyleType) -> Stylesheet = key("list-style-type")

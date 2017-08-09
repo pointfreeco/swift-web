@@ -4,6 +4,9 @@ public struct Visibility: Val {
   public func value() -> Value {
     return self.visibility
   }
+
+  public static let collapse: Visibility = "collapse"
+  public static let separate: Visibility = "separate"
 }
 
 extension Visibility: ExpressibleByStringLiteral {
@@ -12,12 +15,7 @@ extension Visibility: ExpressibleByStringLiteral {
   }
 }
 
-public func visibility(_ v: Visibility) -> Stylesheet {
-  return key("visibility", v)
-}
-
-public let collapse: Visibility = "collapse"
-public let separate: Visibility = "separate"
+public let visibility: (Visibility) -> Stylesheet = key("visibility")
 
 public struct FloatStyle: Val, None, Inherit {
   let style: Value
@@ -26,25 +24,20 @@ public struct FloatStyle: Val, None, Inherit {
     return self.style
   }
 
-  public static var none: FloatStyle {
-    return .init(style: noneValue)
-  }
+  public static let none = FloatStyle(style: .none)
+  public static let inherit = FloatStyle(style: .inherit)
 
-  public static var inherit: FloatStyle {
-    return .init(style: inheritValue)
-  }
+  public static let left: FloatStyle = "left"
+  public static let right: FloatStyle = "right"
 }
+
+public let float: (FloatStyle) -> Stylesheet = key("float")
 
 extension FloatStyle: ExpressibleByStringLiteral {
   public init(stringLiteral value: String) {
     self = .init(style: .init(stringLiteral: value))
   }
 }
-
-public let floatLeft: FloatStyle = "left"
-public let floatRight: FloatStyle = "right"
-
-public let float: (FloatStyle) -> Stylesheet = key("float")
 
 public struct Clear: Val, Other, None, Inherit {
   let clear: Value
@@ -57,13 +50,12 @@ public struct Clear: Val, Other, None, Inherit {
     return .init(clear: other)
   }
 
-  public static var none: Clear {
-    return .init(clear: noneValue)
-  }
+  public static let none = Clear(clear: .none)
+  public static let inherit = Clear(clear: .inherit)
 
-  public static var inherit: Clear {
-    return .init(clear: inheritValue)
-  }
+  public static let left: Clear = "left"
+  public static let right: Clear = "right"
+  public static let both: Clear = "both"
 }
 
 extension Clear: ExpressibleByStringLiteral {
@@ -71,10 +63,6 @@ extension Clear: ExpressibleByStringLiteral {
     self = .init(clear: .init(stringLiteral: value))
   }
 }
-
-public let clearLeft: Clear = "left"
-public let clearRight: Clear = "right"
-public let clearBoth: Clear = "both"
 
 public let clear: (Clear) -> Stylesheet = key("clear")
 
@@ -89,9 +77,12 @@ public struct Position: Val, Other, Inherit {
     return .init(position: other)
   }
 
-  public static var inherit: Position {
-    return .init(position: inheritValue)
-  }
+  public static let inherit = Position(position: .inherit)
+
+  public static let `static`: Position = "static"
+  public static let absolute: Position = "absolute"
+  public static let fixed: Position = "fixed"
+  public static let relative: Position = "relative"
 }
 
 extension Position: ExpressibleByStringLiteral {
@@ -99,11 +90,6 @@ extension Position: ExpressibleByStringLiteral {
     self = .init(position: .init(stringLiteral: value))
   }
 }
-
-public let `static`: Position = "static"
-public let absolute: Position = "absolute"
-public let fixed: Position = "fixed"
-public let relative: Position = "relative"
 
 public let position: (Position) -> Stylesheet = key("position")
 
@@ -118,13 +104,12 @@ public struct Display: Val, Other, None, Inherit {
     return .init(display: other)
   }
 
-  public static var none: Display {
-    return .init(display: noneValue)
-  }
+  public static let none = Display(display: .none)
+  public static let inherit = Display(display: .inherit)
 
-  public static var inherit: Display {
-    return .init(display: inheritValue)
-  }
+  public static let block: Display = "block"
+  public static let inlineBlock: Display = "inline-block"
+  public static let table: Display = "table"
 }
 
 extension Display: ExpressibleByStringLiteral {
@@ -133,13 +118,7 @@ extension Display: ExpressibleByStringLiteral {
   }
 }
 
-public let block: Display = "block"
-public let inlineBlock: Display = "inline-block"
-public let displayTable: Display = "table"
-
 public let display: (Display) -> Stylesheet = key("display")
-
-
 
 public protocol VerticalAlign: Val {
   func verticalAlign() -> Stylesheet
@@ -156,13 +135,14 @@ public struct VerticalAlignValue: Val, Baseline, Center {
     return self.verticalAlign
   }
 
-  public static var baseline: VerticalAlignValue {
-    return .init(baselineValue)
-  }
+  public static let baseline = VerticalAlignValue(.baseline)
+  public static let center = VerticalAlignValue(.center)
 
-  public static var center: VerticalAlignValue {
-    return .init(centerValue)
-  }
+  public static let middle: VerticalAlignValue = "middle"
+  public static let top: VerticalAlignValue = "top"
+  public static let bottom: VerticalAlignValue = "bottom"
+  public static let textTop: VerticalAlignValue = "text-top"
+  public static let textBottom: VerticalAlignValue = "text-bottom"
 }
 
 extension VerticalAlignValue: ExpressibleByStringLiteral {
@@ -170,11 +150,5 @@ extension VerticalAlignValue: ExpressibleByStringLiteral {
     self = .init(.init(stringLiteral: value))
   }
 }
-
-public let middle: VerticalAlignValue = "middle"
-public let top: VerticalAlignValue = "top"
-public let bottom: VerticalAlignValue = "bottom"
-public let textTop: VerticalAlignValue = "text-top"
-public let textBottom: VerticalAlignValue = "text-bottom"
 
 public let verticalAlign: (VerticalAlignValue) -> Stylesheet = key("vertical-align")

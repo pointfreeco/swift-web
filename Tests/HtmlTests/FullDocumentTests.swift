@@ -17,7 +17,7 @@ class FullDocumentTests: XCTestCase {
             title("The Site Title"),
             style(
               body % (
-                background(rgb(240, 240, 240))
+                background(Color.rgb(240, 240, 240))
               )
             )
           ]
@@ -99,9 +99,9 @@ class FullDocumentTests: XCTestCase {
                 h2(["The Site"]),
                 ul(
                   [
-                    a([href <| "#"], ["Contact us"]),
-                    a([href <| "#"], ["About"]),
-                    a([href <| "#"], ["Home"]),
+                    li([a([href <| "#"], ["Contact us"])]),
+                    li([a([href <| "#"], ["About"])]),
+                    li([a([href <| "#"], ["Home"])]),
                   ]
                 ),
                 form(
@@ -109,8 +109,8 @@ class FullDocumentTests: XCTestCase {
                   [
                     h4(["Sign up for our newsletter!"]),
                     label([Html.for <| "email"], ["Email: "]),
-                    input([type <| "text", Html.name <| "email", id <| "email", Html.value <| ""]),
-                    input([type <| "submit", Html.value <| "Submit"])
+                    input([type <| .text, Html.name <| "email", id <| "email", Html.value <| ""]),
+                    input([type <| .submit, Html.value <| "Submit"])
                   ]
                 )
               ]

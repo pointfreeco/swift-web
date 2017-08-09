@@ -27,7 +27,7 @@ public func writeHeader<Data>(_ header: ResponseHeader) -> Middleware<HeadersOpe
 }
 
 public func writeHeader<Data>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, Data, Data> {
-  return writeHeader(.custom(name, value))
+  return writeHeader(.other(name, value))
 }
 
 public func closeHeaders<Data>() -> Middleware<HeadersOpen, BodyOpen, Data, Data> {
