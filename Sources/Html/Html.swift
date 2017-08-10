@@ -5,6 +5,11 @@ public enum Node {
   indirect case document([Node])
   case element(Element)
   case text(EncodedString)
+
+  public var element: Element? {
+    if case let .element(element) = self { return element }
+    return nil
+  }
 }
 
 extension Node: ExpressibleByStringLiteral {
@@ -22,9 +27,9 @@ public struct ChildOf<T> {
 }
 
 public struct Element {
-  public let name: String
-  public let attribs: [AnyAttribute]
-  public let content: [Node]?
+  fileprivate(set) public var name: String
+  fileprivate(set) public var attribs: [AnyAttribute]
+  fileprivate(set) public var content: [Node]?
 }
 
 public struct AnyAttribute {
