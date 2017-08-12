@@ -71,4 +71,14 @@ class HttpPipelineTests: XCTestCase {
 
     assertSnapshot(matching: middleware(conn).response)
   }
+
+  func testCookies() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      writeStatus(.ok)
+        >>> writeHeader(.setCookie(["user_id": "123456"]))
+        >>> writeHeader(.setCookie(["lang": "es"]))
+        >>> respond(html: "<p>Hello, world</p>")
+
+    assertSnapshot(matching: middleware(conn).response)
+  }
 }
