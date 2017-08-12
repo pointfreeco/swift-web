@@ -10,7 +10,7 @@ private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 class HttpPipelineTests: XCTestCase {
   override func setUp() {
     super.setUp()
-    recording = true
+//    recording = true
   }
 
   func testPipeline() {

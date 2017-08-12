@@ -62,7 +62,6 @@ public func redirect<A>(
     return writeStatus(.found)
       >>> headersMiddleware
       >>> map(const(nil)) >>> closeHeaders
-      >>> send(nil)
       >>> end
 }
 
