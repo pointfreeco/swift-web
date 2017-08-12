@@ -19,7 +19,7 @@ public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, Heade
 }
 
 public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
-  return \Conn.response.headers %~ { $0 + [header] }
+  return \.response.headers %~ { $0 + [header] }
 }
 
 public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
