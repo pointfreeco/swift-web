@@ -28,7 +28,7 @@ Bytes: \(self.body?.count ?? 0)
         return nil
     }.first
 
-    if contentMediaType?.isApplication == .some(true) || contentMediaType?.isText == .some(true) {
+    if contentMediaType?.application?.isOther == .some(true) || contentMediaType?.isText == .some(true) {
       // todo: use proper encoding when available
       return top + "\n\n\(self.body.flatMap { String(data: $0, encoding: .utf8) } ?? "")\n"
     }

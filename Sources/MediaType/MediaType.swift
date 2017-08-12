@@ -9,9 +9,9 @@ public enum MediaType: CustomStringConvertible {
   case multipart(Multipart, boundary: String?)
   case text(Text, charset: Charset?)
 
-  public var isApplication: Bool {
-    if case .application = self { return true }
-    return false
+  public var application: Application? {
+    if case let .application(application) = self { return application }
+    return nil
   }
 
   public var isText: Bool {
@@ -55,8 +55,14 @@ public enum MediaType: CustomStringConvertible {
 public enum Application: CustomStringConvertible {
   case javascript
   case json
+  case xml
   case xWwwFormUrlencoded
   case other(String)
+
+  public var isOther: Bool {
+    if case .other = self { return true }
+    return false
+  }
 
   public var description: String {
     switch self {
@@ -64,6 +70,8 @@ public enum Application: CustomStringConvertible {
       return "javascript"
     case .json:
       return "json"
+    case .xml:
+      return "xml"
     case .xWwwFormUrlencoded:
       return "x-www-form-url-encoded"
     case let .other(string):
