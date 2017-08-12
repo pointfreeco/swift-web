@@ -8,7 +8,7 @@ public func respond<A>(_ view: View<A>) -> Middleware<HeadersOpen, ResponseEnded
     conn.map(view.rendered(with:))
       |> map { $0.data(using: .utf8) }
       |> writeHeader(.contentType(.html))
-      |> closeHeaders()
+      |> closeHeaders
       |> end
   }
 }

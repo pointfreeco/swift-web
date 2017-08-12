@@ -9,6 +9,16 @@ public enum MediaType: CustomStringConvertible {
   case multipart(Multipart, boundary: String?)
   case text(Text, charset: Charset?)
 
+  public var isApplication: Bool {
+    if case .application = self { return true }
+    return false
+  }
+
+  public var isText: Bool {
+    if case .text = self { return true }
+    return false
+  }
+
   public static let gif = MediaType.image(.gif)
   public static let javascript = MediaType.application(.javascript)
   public static let jpeg = MediaType.image(.jpeg)
