@@ -26,8 +26,8 @@ public func boxSizing(_ type: BoxType) -> Stylesheet {
 
 public func boxShadow(
   stroke: Stroke? = nil,
-  x: Css.Size? = nil,
-  y: Css.Size? = nil,
+  hShadow: Css.Size,
+  vShadow: Css.Size,
   blurRadius: Css.Size? = nil,
   spreadRadius: Css.Size? = nil,
   color: Color? = nil
@@ -37,7 +37,7 @@ public func boxShadow(
 
     return prefixed(
       browsers <> "box-shadow",
-      ([stroke, x, y, blurRadius, spreadRadius, color] as [Val?])
+      ([stroke, hShadow, vShadow, blurRadius, spreadRadius, color] as [Val?])
         |> catOptionals
         |> map({ Value($0.value().unValue) })
         |> intersperse(" ")

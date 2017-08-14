@@ -26,7 +26,7 @@ class FullStylesheetTests: XCTestCase {
         <> outlineColor(all: .none)
     )
     <> input["type"=="submit"] % (
-      boxShadow(stroke: .inset, x: .px(1), y: .px(1), color: .rgba(0, 0, 0, 1))
+      boxShadow(stroke: .inset, hShadow: .px(1), vShadow: .px(1), color: .rgba(0, 0, 0, 1))
     )
 
     assertSnapshot(matching: css)
