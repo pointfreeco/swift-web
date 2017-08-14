@@ -24,48 +24,6 @@ public func boxSizing(_ type: BoxType) -> Stylesheet {
   return prefixed(browsers <> "box-sizing", type)
 }
 
-
-
-
-//boxSizing :: BoxType -> Css
-//boxSizing = prefixed (browsers <> "box-sizing")
-//
-//-------------------------------------------------------------------------------
-//
-//boxShadow :: Size a -> Size a -> Size a -> Color -> Css
-//boxShadow x y w c = prefixed (browsers <> "box-shadow") (x ! y ! w ! c)
-//
-//boxShadowWithSpread :: Size a -> Size a -> Size a -> Size a -> Color -> Css
-//boxShadowWithSpread x y blurRadius spreadRadius color =
-//prefixed (browsers <> "box-shadow") (x ! y ! blurRadius ! spreadRadius ! color)
-//
-//boxShadows :: [(Size a, Size a, Size a, Color)] -> Css
-//boxShadows = prefixed (browsers <> "box-shadow") . map (\(a, b, c, d) -> a ! b ! c ! d)
-//
-//-------------------------------------------------------------------------------
-//
-//insetBoxShadow :: Stroke -> Size a -> Size a -> Size a -> Color -> Css
-//insetBoxShadow x y w c z = prefixed (browsers <> "box-shadow") (x ! y ! w ! c ! z)
-
-extension Optional {
-  func `do`(_ f: (Wrapped) -> Void) {
-    guard let x = self else { return }
-    f(x)
-  }
-}
-
-func intersperse<A>(_ a: A) -> ([A]) -> [A] {
-  return { xs in
-    var result = [A]()
-    for x in xs.dropLast() {
-      result.append(x)
-      result.append(a)
-    }
-    xs.last.do { result.append($0) }
-    return result
-  }
-}
-
 public func boxShadow(
   stroke: Stroke? = nil,
   x: Css.Size? = nil,
