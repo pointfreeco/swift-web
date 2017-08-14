@@ -234,7 +234,13 @@ extension Parser where I: HasBody {
           $0.split(separator: "=", maxSplits: 1)
             .flatMap(String.init >>> Prelude.get(\.removingPercentEncoding))
         }
-        .map { ($0[0], $0[1]) }
+      //        .map {
+      //          ($0[0], $0[1])
+        // fix
+        .flatMap { pair -> (String, String)? in
+          guard pair.count == 2 else { return nil }
+          return (pair[0], pair[1])
+      }
       return [String: String](uniqueKeysWithValues: pairs)
     }
   }

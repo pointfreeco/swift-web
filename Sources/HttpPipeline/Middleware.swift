@@ -101,7 +101,7 @@ public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> 
 public func respond<A>(text: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
   return { conn in
     conn.map(const(text.data(using: .utf8)))
-      |> writeHeader(.contentType(.text))
+      |> writeHeader(.contentType(.plain))
       |> closeHeaders()
       |> end
   }
