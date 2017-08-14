@@ -21,3 +21,11 @@ input {
   outline-color : none;
 }
 
+input[type="submit"] {
+  -webkit-box-shadow : inset 1px 1px #000000;
+  -moz-box-shadow    : inset 1px 1px #000000;
+  -ms-box-shadow     : inset 1px 1px #000000;
+  -o-box-shadow      : inset 1px 1px #000000;
+  box-shadow         : inset 1px 1px #000000;
+}
+
