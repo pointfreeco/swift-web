@@ -18,7 +18,7 @@ let package = Package(
     .library(name: "MediaType", targets: ["MediaType"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("ecb645f")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("ae9837a")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("2c2b390")),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
   ],
