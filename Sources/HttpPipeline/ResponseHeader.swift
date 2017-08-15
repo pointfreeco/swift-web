@@ -1,8 +1,6 @@
-import MediaType
-
 public enum ResponseHeader {
   case allow([Method])
-  case contentType(MediaType)
+  case contentType(Format)
   case location(String)
   case setCookie([String: String])
   case other(String, String)
