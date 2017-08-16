@@ -88,6 +88,24 @@ class ApplicativeRouterTests: XCTestCase {
     let formData = formString.data(using: .utf8)!
     XCTAssertEqual(.postInt(50), router.match(req(.post, "/post", formData)))
   }
+
+  func testMissingFormFieldValue() {
+    let router =
+      PostTestRoute.postString <¢> (.post *> .formField("email")) <* lit("post") <*| end
+
+    let formString = "email="
+    let formData = formString.data(using: .utf8)!
+    XCTAssertEqual(.postString(""), router.match(req(.post, "/post", formData)))
+  }
+
+  func testMissingData() {
+    let router =
+      PostTestRoute.postString <¢> (.post *> .formField("email")) <* lit("post") <*| end
+
+    let formString = ""
+    let formData = formString.data(using: .utf8)!
+    XCTAssertNil(router.match(req(.post, "/post", formData)))
+  }
 }
 
 enum Route {

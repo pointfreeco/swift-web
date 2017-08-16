@@ -231,7 +231,7 @@ extension Parser where I: HasBody {
     return self.stringBody.map { body in
       let pairs = body.split(separator: "&")
         .map {
-          $0.split(separator: "=", maxSplits: 1)
+          $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
             .flatMap(String.init >>> Prelude.get(\.removingPercentEncoding))
         }
         .map { ($0[0], $0[1]) }
