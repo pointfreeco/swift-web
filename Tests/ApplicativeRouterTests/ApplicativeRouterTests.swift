@@ -95,7 +95,7 @@ class ApplicativeRouterTests: XCTestCase {
 
     let formString = "email="
     let formData = formString.data(using: .utf8)!
-    XCTAssertNil(router.match(req(.post, "/post", formData)))
+    XCTAssertEqual(.postString(""), router.match(req(.post, "/post", formData)))
   }
 
   func testMissingData() {

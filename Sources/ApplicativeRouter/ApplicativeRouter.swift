@@ -231,13 +231,10 @@ extension Parser where I: HasBody {
     return self.stringBody.map { body in
       let pairs = body.split(separator: "&")
         .map {
-          $0.split(separator: "=", maxSplits: 1)
+          $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
             .flatMap(String.init >>> Prelude.get(\.removingPercentEncoding))
         }
-        .flatMap { pair -> (String, String)? in
-          guard pair.count == 2 else { return nil }
-          return (pair[0], pair[1])
-      }
+        .map { ($0[0], $0[1]) }
       return [String: String](uniqueKeysWithValues: pairs)
     }
   }
