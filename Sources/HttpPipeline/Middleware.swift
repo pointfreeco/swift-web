@@ -6,7 +6,7 @@ public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> Conn<J, B>
 
 public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
   return { conn in
-    return .init(
+    .init(
       data: conn.data,
       request: conn.request,
       response: Response(
@@ -61,7 +61,8 @@ public func redirect<A>(
 
     return writeStatus(.found)
       >>> headersMiddleware
-      >>> map(const(nil)) >>> closeHeaders
+      >>> map(const(nil))
+      >>> closeHeaders
       >>> end
 }
 
