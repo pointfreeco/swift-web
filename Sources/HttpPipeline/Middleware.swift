@@ -1,61 +1,69 @@
 import Foundation
+import Optics
 import Prelude
 
 public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> Conn<J, B>
 
 public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
-  return { connection in
-    return .init(
-      data: connection.data,
-      request: connection.request,
-      response: Response(status: status, headers: connection.response.headers, body: nil)
-    )
-  }
-}
-
-public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return { conn in
     .init(
       data: conn.data,
       request: conn.request,
       response: Response(
-        status: conn.response.status,
-        headers: conn.response.headers + [header], body: nil
+        status: status,
+        headers: conn.response.headers,
+        body: nil
       )
     )
   }
+}
+
+public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
+  return \.response.headers %~ { $0 + [header] }
 }
 
 public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return writeHeader(.other(name, value))
 }
 
-public func closeHeaders<A>() -> Middleware<HeadersOpen, BodyOpen, A, A> {
-  return { conn in
-    .init(
-      data: conn.data,
-      request: conn.request,
-      response: conn.response
-    )
-  }
+public func closeHeaders<A>(conn: Conn<HeadersOpen, A>) -> Conn<BodyOpen, A> {
+  return .init(
+    data: conn.data,
+    request: conn.request,
+    response: conn.response
+  )
 }
 
-public let end: Middleware<BodyOpen, ResponseEnded, Data?, Data?> =
-  { conn in
-    .init(
-      data: conn.data,
-      request: conn.request,
-      response: Response(
-        status: conn.response.status,
-        headers: conn.response.headers,
-        body: conn.data
-      )
+public func end(conn: Conn<BodyOpen, Data?>) -> Conn<ResponseEnded, Data?> {
+  return .init(
+    data: conn.data,
+    request: conn.request,
+    response: Response(
+      status: conn.response.status,
+      headers: conn.response.headers,
+      body: conn.data
     )
+  )
 }
 
-public func redirect<A>(_ location: String) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
-  return writeStatus(.found)
-    >>> writeHeader("Location", location)
+public func end<A>(conn: Conn<HeadersOpen, A>) -> Conn<ResponseEnded, Data?> {
+  return conn
+    |> closeHeaders
+    |> map(const(nil)) >>> end
+}
+
+public func redirect<A>(
+  to location: String,
+  headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A> = id
+  )
+  ->
+  Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+
+    return writeStatus(.found)
+      >>> headersMiddleware
+      >>> map(const(nil))
+      >>> closeHeaders
+      >>> end
 }
 
 public func basicAuth<A>(user: String, password: String)
@@ -99,30 +107,24 @@ public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> 
 }
 
 public func respond<A>(text: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
-  return { conn in
-    conn.map(const(text.data(using: .utf8)))
-      |> writeHeader(.contentType(.text))
-      |> closeHeaders()
-      |> end
-  }
+  return map(const(text.data(using: .utf8)))
+    >>> writeHeader(.contentType(.plain))
+    >>> closeHeaders
+    >>> end
 }
 
 public func respond<A>(html: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
-  return { conn in
-    conn.map(const(html.data(using: .utf8)))
-      |> writeHeader(.contentType(.html))
-      |> closeHeaders()
-      |> end
-  }
+  return map(const(html.data(using: .utf8)))
+    >>> writeHeader(.contentType(.html))
+    >>> closeHeaders
+    >>> end
 }
 
 public func respond<A>(json: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
-  return { conn in
-    conn.map(const(json.data(using: .utf8)))
-      |> writeHeader(.contentType(.json))
-      |> closeHeaders()
-      |> end
-  }
+  return map(const(json.data(using: .utf8)))
+    >>> writeHeader(.contentType(.json))
+    >>> closeHeaders
+    >>> end
 }
 
 public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>)

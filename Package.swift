@@ -15,6 +15,7 @@ let package = Package(
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
+    .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
     .library(name: "MediaType", targets: ["MediaType"]),
   ],
   dependencies: [
@@ -45,11 +46,13 @@ let package = Package(
 
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
-    .target(name: "HttpPipeline", dependencies: ["MediaType", "Prelude"]),
-    .testTarget(name: "HttpPipelineTests", dependencies: ["HttpPipeline"]),
+    .target(name: "HttpPipeline", dependencies: ["MediaType", "Prelude", "Optics"]),
+    .testTarget(name: "HttpPipelineTests", dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
+
+    .target(name: "HttpPipelineTestSupport", dependencies: ["HttpPipeline", "MediaType", "SnapshotTesting"]),
 
     .target(name: "MediaType", dependencies: []),
   ]
