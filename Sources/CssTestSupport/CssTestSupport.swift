@@ -2,7 +2,7 @@ import Css
 import SnapshotTesting
 
 extension Stylesheet: Snapshot {
-  public static var snapshotFileExtension: String? {
+  public static var snapshotPathExtension: String? {
     return "css"
   }
 
