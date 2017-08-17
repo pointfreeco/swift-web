@@ -1,8 +1,0 @@
-Status 401 (unauthorized)
-Headers: [
-  WWW-Authenticate: Basic
-  Content-Type: text/plain
-]
-Bytes: 20
-
-Please authenticate.

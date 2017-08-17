@@ -3,7 +3,7 @@ import HtmlPrettyPrint
 import SnapshotTesting
 
 extension Node: Snapshot {
-  public static var snapshotFileExtension: String? {
+  public static var snapshotPathExtension: String? {
     return "html"
   }
 
