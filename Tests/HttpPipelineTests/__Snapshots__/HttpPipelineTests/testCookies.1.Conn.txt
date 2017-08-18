@@ -1,3 +1,18 @@
+Step:
+-----
+ResponseEnded
+
+Request:
+--------
+URL: /
+Method: GET
+Headers: [
+  
+]
+Body: (Data, 0 bytes)
+
+Response:
+---------
 Status 200 (ok)
 Headers: [
   Content-Type: text/html; charset=utf8

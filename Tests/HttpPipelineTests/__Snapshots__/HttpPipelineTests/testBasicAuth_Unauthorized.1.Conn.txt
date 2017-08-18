@@ -1,3 +1,18 @@
+Step:
+-----
+ResponseEnded
+
+Request:
+--------
+URL: /
+Method: GET
+Headers: [
+  
+]
+Body: (Data, 0 bytes)
+
+Response:
+---------
 Status 401 (unauthorized)
 Headers: [
   Content-Type: text/plain
