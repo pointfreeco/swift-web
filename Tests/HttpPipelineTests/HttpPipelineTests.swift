@@ -8,11 +8,6 @@ import SnapshotTesting
 private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 
 class HttpPipelineTests: XCTestCase {
-  override func setUp() {
-    super.setUp()
-    record = true
-  }
-
   func testPipeline() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       writeStatus(.ok)
