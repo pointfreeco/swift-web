@@ -1,7 +1,7 @@
 Status 401 (unauthorized)
 Headers: [
-  WWW-Authenticate: Basic
   Content-Type: text/plain
+  WWW-Authenticate: Basic
 ]
 Bytes: 20
 

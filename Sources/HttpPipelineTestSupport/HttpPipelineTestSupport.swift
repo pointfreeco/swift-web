@@ -7,7 +7,7 @@ import XCTest
 extension Response: Snapshot {
   public typealias Format = String
 
-  public static var snapshotFileExtension: String? {
+  public static var snapshotPathExtension: String? {
     return "response.txt"
   }
 
@@ -15,7 +15,7 @@ extension Response: Snapshot {
     let top = """
 Status \(self.status.rawValue) (\(self.status))
 Headers: [
-  \(self.headers.map { $0.description }.joined(separator: "\n  "))
+  \(self.headers.sorted(by: \.description).map { $0.description }.joined(separator: "\n  "))
 ]
 Bytes: \(self.body?.count ?? 0)
 """
@@ -33,5 +33,14 @@ Bytes: \(self.body?.count ?? 0)
       return top + "\n\n\(self.body.flatMap { String(data: $0, encoding: .utf8) } ?? "")\n"
     }
     return top
+  }
+}
+
+// todo: move to prelude
+extension Sequence {
+  fileprivate func sorted<C: Comparable>(by keyPath: KeyPath<Element, C>) -> [Element] {
+    return self.sorted { lhs, rhs in
+      lhs[keyPath: keyPath] < rhs[keyPath: keyPath]
+    }
   }
 }

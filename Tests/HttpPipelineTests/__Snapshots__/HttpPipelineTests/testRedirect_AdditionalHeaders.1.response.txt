@@ -1,6 +1,6 @@
 Status 302 (found)
 Headers: [
-  Pass-through: hello!
   Location: /sign-in
+  Pass-through: hello!
 ]
 Bytes: 0

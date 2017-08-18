@@ -61,7 +61,10 @@ class HttpPipelineTests: XCTestCase {
   func testWriteHeaders() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       writeStatus(.ok)
+        >>> writeHeader("Z", "Header should be last")
         >>> writeHeader("Hello", "World")
+        >>> writeHeader("Goodbye", "World")
+        >>> writeHeader("A", "Header should be first")
         >>> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn).response)

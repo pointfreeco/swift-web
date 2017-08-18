@@ -1,8 +1,10 @@
 Status 200 (ok)
 Headers: [
-  Set-Cookie: user_id=123456
-  Set-Cookie: lang=es
+  A: Header should be first
   Content-Type: text/html; charset=utf8
+  Goodbye: World
+  Hello: World
+  Z: Header should be last
 ]
 Bytes: 19
 
