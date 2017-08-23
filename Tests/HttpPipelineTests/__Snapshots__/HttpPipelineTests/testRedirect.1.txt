@@ -1,5 +1,0 @@
-Status 302 (found)
-Headers: [
-  Location: /sign-in
-]
-Bytes: 0
