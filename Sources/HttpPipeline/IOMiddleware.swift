@@ -16,23 +16,10 @@ public func resolve<I, A>(_ conn: IO<Conn<I, A>>) -> Conn<I, A> {
   return conn.perform()
 }
 
-
-//func resolve<I, A>(_ future: Future<Conn<I, A>>) -> Conn<I, A> {
-//
-//  var conn: Conn<I, A>!
-//
-//  let sema = DispatchSemaphore(value: 0)
-//  future.onResult { result in
-//    sema.signal()
-//    conn = result
-//  }
-//  sema.wait()
-//
-//  return conn
-//}
-//
-//func resolve<I, A>(_ future: Conn<I, Future<A>>) -> Conn<I, A> {
-//  fatalError()
-//}
-//
-//
+public func resolve<I, A>(_ conn: Conn<I, IO<A>>) -> Conn<I, A> {
+  return Conn(
+    data: conn.data.perform(),
+    request: conn.request,
+    response: conn.response
+  )
+}
