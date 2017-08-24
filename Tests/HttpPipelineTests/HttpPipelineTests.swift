@@ -13,7 +13,7 @@ class HttpPipelineTests: XCTestCase {
       writeStatus(.ok)
         >>> respond(text: "Hello, world")
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 
   func testHtmlResponse() {
@@ -21,20 +21,20 @@ class HttpPipelineTests: XCTestCase {
       writeStatus(.ok)
         >>> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 
   func testRedirect() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> = redirect(to: "/sign-in")
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 
   func testRedirect_AdditionalHeaders() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 
   func testBasicAuth_Unauthorized() {
@@ -42,7 +42,7 @@ class HttpPipelineTests: XCTestCase {
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok) >>> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 
   func testBasicAuth_Authorized() {
@@ -55,16 +55,19 @@ class HttpPipelineTests: XCTestCase {
         |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
     )
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 
   func testWriteHeaders() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       writeStatus(.ok)
+        >>> writeHeader("Z", "Header should be last")
         >>> writeHeader("Hello", "World")
+        >>> writeHeader("Goodbye", "World")
+        >>> writeHeader("A", "Header should be first")
         >>> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 
   func testCookies() {
@@ -74,6 +77,6 @@ class HttpPipelineTests: XCTestCase {
         >>> writeHeader(.setCookie(["lang": "es"]))
         >>> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).response)
+    assertSnapshot(matching: middleware(conn))
   }
 }
