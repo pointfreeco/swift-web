@@ -1,19 +1,15 @@
 import Prelude
 
 public func >-> <I, J, K, A, B, C>(
-  _ lhs: @escaping (Conn<I, A>) -> IO<Conn<J, B>>,
-  _ rhs: @escaping (Conn<J, B>) -> IO<Conn<K, C>>
+  _ lhs: @escaping (Conn<I, A>) -> Conn<J, IO<B>>,
+  _ rhs: @escaping (Conn<J, B>) -> Conn<K, IO<C>>
   )
   -> (Conn<I, A>)
-  -> IO<Conn<K, C>> {
+  -> Conn<K, IO<C>> {
 
     return { conn in
-      return flatMap(rhs) <| lhs(conn)
+      rhs(lhs(conn).map { ioB in ioB.perform() })
     }
-}
-
-public func resolve<I, A>(_ conn: IO<Conn<I, A>>) -> Conn<I, A> {
-  return conn.perform()
 }
 
 public func resolve<I, A>(_ conn: Conn<I, IO<A>>) -> Conn<I, A> {
