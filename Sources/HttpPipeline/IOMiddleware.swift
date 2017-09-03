@@ -35,15 +35,6 @@ public func resolve<I, A>(_ conn: IO<Conn<I, A>>) -> Conn<I, A> {
   return conn.perform()
 }
 
-public func resolve<I, A>(_ conn: Conn<I, IO<A>>) -> Conn<I, A> {
-  return conn |> \.data .~ conn.data.perform()
-}
-
 func flip<I, A>(_ conn: Conn<I, IO<A>>) -> IO<Conn<I, A>> {
   return IO<Conn<I, A>> { conn.map(const(conn.data.perform())) }
-}
-
-func flip<I, A>(_ conn: IO<Conn<I, A>>) -> Conn<I, IO<A>> {
-  _ =  IO { conn.perform().data }
-  fatalError()
 }
