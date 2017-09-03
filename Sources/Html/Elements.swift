@@ -586,6 +586,65 @@ public func meta(property: String, content: String) -> ChildOf<Element.Head> {
   return meta([attribute("property", property), Html.content(content)])
 }
 
+public enum Viewport {
+  case height(Int)
+  case initialScale(Double)
+  case maximumScale(Double)
+  case minimumScale(Double)
+  case userScalable(Bool)
+  case width(ViewportWidth)
+}
+extension Viewport: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case let .height(px):
+      return "height=\(px.description)"
+    case let .initialScale(scale):
+      return "initial-scale=\(scale)"
+    case let .maximumScale(scale):
+      return "maximum-scale=\(scale)"
+    case let .minimumScale(scale):
+      return "minimum-scale=\(scale)"
+    case let .userScalable(isUserScalable):
+      return "user-scalable=\(isUserScalable ? "yes" : "no")"
+    case let .width(px):
+      return "width=\(px.description)"
+    }
+  }
+}
+public enum ViewportHeight {
+  case deviceHeight
+  case px(Int)
+}
+extension ViewportHeight: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .deviceHeight:
+      return "device-height"
+    case let .px(px):
+      return "\(px)"
+    }
+  }
+}
+public enum ViewportWidth {
+  case deviceWidth
+  case px(Int)
+}
+extension ViewportWidth: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .deviceWidth:
+      return "device-width"
+    case let .px(px):
+      return "\(px)"
+    }
+  }
+}
+// TODO: props: NonEmptySet<Viewport>
+public func meta(viewport props: [Viewport]) -> ChildOf<Element.Head> {
+  return meta([name(.viewport), content(props.map { $0.description }.joined(separator: ","))])
+}
+
 public func meter(value: Double, _ attribs: [Attribute<Element.Meter>], _ content: [Node]) -> Node {
   return node("nav", [Html.value(value)] + attribs, content)
 }

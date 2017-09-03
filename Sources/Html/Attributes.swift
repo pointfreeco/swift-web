@@ -451,6 +451,8 @@ public enum MetaName: String, Value {
   case description
   case generator
   case keywords
+  // ...
+  case viewport
 }
 public func name(_ value: MetaName) -> Attribute<Element.Meta> {
   return .init("name", value)
