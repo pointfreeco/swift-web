@@ -591,7 +591,7 @@ public func meta(property: String, content: String) -> ChildOf<Element.Head> {
 }
 
 public enum Viewport {
-  case height(Int)
+  case height(ViewportHeight)
   case initialScale(Double)
   case maximumScale(Double)
   case minimumScale(Double)
