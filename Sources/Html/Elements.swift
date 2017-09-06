@@ -586,6 +586,10 @@ public func meta(property: String, content: String) -> ChildOf<Element.Head> {
   return meta([attribute("property", property), Html.content(content)])
 }
 
+public func meta(name: String, content: String) -> ChildOf<Element.Head> {
+  return meta([attribute("name", name), Html.content(content)])
+}
+
 public func meter(value: Double, _ attribs: [Attribute<Element.Meter>], _ content: [Node]) -> Node {
   return node("nav", [Html.value(value)] + attribs, content)
 }
