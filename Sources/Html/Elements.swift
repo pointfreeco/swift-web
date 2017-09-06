@@ -685,10 +685,6 @@ public func object(_ attribs: [Attribute<Element.Object>], _ content: [ChildOf<E
   return node("object", attribs, content.map(get(\.node)))
 }
 
-public func object(_ content: [ChildOf<Element.Object>]) -> Node {
-  return object([], content)
-}
-
 public func ol(_ attribs: [Attribute<Element.Ol>], _ content: [ChildOf<Element.Ol>]) -> Node {
   return node("ol", attribs, content.map(get(\.node)))
 }
