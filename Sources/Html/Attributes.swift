@@ -94,7 +94,7 @@ extension Date: Value {
 }
 public protocol HasDatetime {}
 public func datetime<T: HasDatetime>(_ value: Date) -> Attribute<T> {
-  return .init("crossorigin", value)
+  return .init("datetime", value)
 }
 
 public func `default`(_ value: Bool) -> Attribute<Element.Track> {

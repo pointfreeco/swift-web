@@ -517,7 +517,7 @@ public func li<T: ContainsList>(_ content: [Node]) -> ChildOf<T> {
 }
 
 public func link(_ attribs: [Attribute<Element.Link>]) -> ChildOf<Element.Head> {
-  return .init(node("li", attribs, nil))
+  return .init(node("link", attribs, nil))
 }
 
 public func main(_ attribs: [Attribute<Element.Main>], _ content: [Node]) -> Node {
@@ -665,7 +665,7 @@ public func meta(viewport prop: Viewport, _ props: Viewport...) -> ChildOf<Eleme
 }
 
 public func meter(value: Double, _ attribs: [Attribute<Element.Meter>], _ content: [Node]) -> Node {
-  return node("nav", [Html.value(value)] + attribs, content)
+  return node("meter", [Html.value(value)] + attribs, content)
 }
 
 public func meter(value: Double, _ content: [Node]) -> Node {
@@ -935,7 +935,7 @@ public func tfoot(_ content: [Node]) -> ChildOf<Element.Table> {
 
 // TODO: "th" can only be within "thead" or the first "tr" of a "table"
 public func th(_ attribs: [Attribute<Element.Th>], _ content: [Node]) -> ChildOf<Element.Tr> {
-  return .init(node("td", attribs, content))
+  return .init(node("th", attribs, content))
 }
 
 public func th(_ content: [Node]) -> ChildOf<Element.Tr> {
