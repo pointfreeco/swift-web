@@ -117,6 +117,7 @@ public enum Image: CustomStringConvertible {
   case jpeg
   case gif
   case png
+  case svg
   case tiff
   case other(String)
 
@@ -130,6 +131,8 @@ public enum Image: CustomStringConvertible {
       return "gif"
     case .png:
       return "png"
+    case .svg:
+      return "svg+xml"
     case .tiff:
       return "tiff"
     case let .other(string):

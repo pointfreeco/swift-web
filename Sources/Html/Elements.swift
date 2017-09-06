@@ -471,6 +471,10 @@ public func img(src: String, alt: String, _ attribs: [Attribute<Element.Img>]) -
   return node("img", [Html.src(src), Html.alt(alt)] + attribs, nil)
 }
 
+public func img(base64: String, mediaType: MediaType, alt: String, _ attribs: [Attribute<Element.Img>]) -> Node {
+  return node("img", [Html.src("data:\(mediaType);base64, \(base64)"), Html.alt(alt)] + attribs, nil)
+}
+
 public func input(_ attribs: [Attribute<Element.Input>]) -> Node {
   return node("input", attribs, nil)
 }
