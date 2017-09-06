@@ -35,7 +35,7 @@ let package = Package(
 
     .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotTesting"]),
 
-    .target(name: "Html", dependencies: ["MediaType", "Prelude"]),
+    .target(name: "Html", dependencies: ["MediaType", "NonEmpty", "Prelude"]),
     .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),

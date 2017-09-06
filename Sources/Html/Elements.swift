@@ -1,4 +1,5 @@
 import MediaType
+import NonEmpty
 import Prelude
 
 public protocol ContainsAVSource {}
@@ -630,6 +631,11 @@ extension ViewportHeight: CustomStringConvertible {
     }
   }
 }
+extension ViewportHeight: ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Int) {
+    self = .px(value)
+  }
+}
 public enum ViewportWidth {
   case deviceWidth
   case px(Int)
@@ -644,9 +650,18 @@ extension ViewportWidth: CustomStringConvertible {
     }
   }
 }
-// TODO: props: NonEmptySet<Viewport>
-public func meta(viewport props: [Viewport]) -> ChildOf<Element.Head> {
-  return meta([name(.viewport), content(props.map { $0.description }.joined(separator: ","))])
+extension ViewportWidth: ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Int) {
+    self = .px(value)
+  }
+}
+
+public func meta(viewport props: NonEmptyArray<Viewport>) -> ChildOf<Element.Head> {
+  return meta([name(.viewport), content(Array(props).map(get(\.description)).joined(separator: ","))])
+}
+
+public func meta(viewport prop: Viewport, _ props: Viewport...) -> ChildOf<Element.Head> {
+  return meta(viewport: prop >| props)
 }
 
 public func meter(value: Double, _ attribs: [Attribute<Element.Meter>], _ content: [Node]) -> Node {
