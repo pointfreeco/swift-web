@@ -1,0 +1,22 @@
+Step:
+-----
+ResponseEnded
+
+Request:
+--------
+URL: /
+Method: GET
+Headers: [
+  
+]
+Body: (Data, 0 bytes)
+
+Response:
+---------
+Status 200 (ok)
+Headers: [
+  Content-Type: text/plain
+]
+Bytes: 12
+
+Hello, world

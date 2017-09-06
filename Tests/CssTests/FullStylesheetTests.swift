@@ -27,6 +27,7 @@ class FullStylesheetTests: XCTestCase {
     )
     <> input["type"=="submit"] % (
       boxShadow(stroke: .inset, hShadow: .px(1), vShadow: .px(1), color: .rgba(0, 0, 0, 1))
+        <> appearance(.button)
     )
 
     assertSnapshot(matching: css)

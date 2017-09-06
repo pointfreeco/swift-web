@@ -49,7 +49,8 @@ public func end(conn: Conn<BodyOpen, Data?>) -> Conn<ResponseEnded, Data?> {
 public func end<A>(conn: Conn<HeadersOpen, A>) -> Conn<ResponseEnded, Data?> {
   return conn
     |> closeHeaders
-    |> map(const(nil)) >>> end
+    |> map(const(nil))
+    |> end
 }
 
 public func redirect<A>(

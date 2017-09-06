@@ -27,5 +27,8 @@ input[type="submit"] {
   -ms-box-shadow     : inset 1px 1px #000000;
   -o-box-shadow      : inset 1px 1px #000000;
   box-shadow         : inset 1px 1px #000000;
+  -webkit-appearance : button;
+  -moz-appearance    : button;
+  appearance         : button;
 }
 
