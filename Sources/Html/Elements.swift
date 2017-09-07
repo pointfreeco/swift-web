@@ -1,4 +1,5 @@
 import MediaType
+import NonEmpty
 import Prelude
 
 public protocol ContainsAVSource {}
@@ -520,7 +521,7 @@ public func li<T: ContainsList>(_ content: [Node]) -> ChildOf<T> {
 }
 
 public func link(_ attribs: [Attribute<Element.Link>]) -> ChildOf<Element.Head> {
-  return .init(node("li", attribs, nil))
+  return .init(node("link", attribs, nil))
 }
 
 public func main(_ attribs: [Attribute<Element.Main>], _ content: [Node]) -> Node {
@@ -586,16 +587,89 @@ public func meta(keywords: [String]) -> ChildOf<Element.Head> {
   return meta([name(.keywords), content(keywords)])
 }
 
-public func meta(property: String, content: String) -> ChildOf<Element.Head> {
-  return meta([attribute("property", property), Html.content(content)])
-}
-
 public func meta(name: String, content: String) -> ChildOf<Element.Head> {
   return meta([attribute("name", name), Html.content(content)])
 }
 
+public func meta(property: String, content: String) -> ChildOf<Element.Head> {
+  return meta([attribute("property", property), Html.content(content)])
+}
+
+public enum Viewport {
+  case height(ViewportHeight)
+  case initialScale(Double)
+  case maximumScale(Double)
+  case minimumScale(Double)
+  case userScalable(Bool)
+  case width(ViewportWidth)
+}
+extension Viewport: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case let .height(px):
+      return "height=\(px.description)"
+    case let .initialScale(scale):
+      return "initial-scale=\(scale)"
+    case let .maximumScale(scale):
+      return "maximum-scale=\(scale)"
+    case let .minimumScale(scale):
+      return "minimum-scale=\(scale)"
+    case let .userScalable(isUserScalable):
+      return "user-scalable=\(isUserScalable ? "yes" : "no")"
+    case let .width(px):
+      return "width=\(px.description)"
+    }
+  }
+}
+public enum ViewportHeight {
+  case deviceHeight
+  case px(Int)
+}
+extension ViewportHeight: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .deviceHeight:
+      return "device-height"
+    case let .px(px):
+      return "\(px)"
+    }
+  }
+}
+extension ViewportHeight: ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Int) {
+    self = .px(value)
+  }
+}
+public enum ViewportWidth {
+  case deviceWidth
+  case px(Int)
+}
+extension ViewportWidth: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .deviceWidth:
+      return "device-width"
+    case let .px(px):
+      return "\(px)"
+    }
+  }
+}
+extension ViewportWidth: ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Int) {
+    self = .px(value)
+  }
+}
+
+public func meta(viewport props: NonEmptyArray<Viewport>) -> ChildOf<Element.Head> {
+  return meta([name(.viewport), content(Array(props).map(get(\.description)).joined(separator: ","))])
+}
+
+public func meta(viewport prop: Viewport, _ props: Viewport...) -> ChildOf<Element.Head> {
+  return meta(viewport: prop >| props)
+}
+
 public func meter(value: Double, _ attribs: [Attribute<Element.Meter>], _ content: [Node]) -> Node {
-  return node("nav", [Html.value(value)] + attribs, content)
+  return node("meter", [Html.value(value)] + attribs, content)
 }
 
 public func meter(value: Double, _ content: [Node]) -> Node {
@@ -613,10 +687,6 @@ public func nav(_ content: [Node]) -> Node {
 // TODO: Required attribute "data" or "type"
 public func object(_ attribs: [Attribute<Element.Object>], _ content: [ChildOf<Element.Object>]) -> Node {
   return node("object", attribs, content.map(get(\.node)))
-}
-
-public func object(_ content: [ChildOf<Element.Object>]) -> Node {
-  return object([], content)
 }
 
 public func ol(_ attribs: [Attribute<Element.Ol>], _ content: [ChildOf<Element.Ol>]) -> Node {
@@ -869,7 +939,7 @@ public func tfoot(_ content: [Node]) -> ChildOf<Element.Table> {
 
 // TODO: "th" can only be within "thead" or the first "tr" of a "table"
 public func th(_ attribs: [Attribute<Element.Th>], _ content: [Node]) -> ChildOf<Element.Tr> {
-  return .init(node("td", attribs, content))
+  return .init(node("th", attribs, content))
 }
 
 public func th(_ content: [Node]) -> ChildOf<Element.Tr> {
