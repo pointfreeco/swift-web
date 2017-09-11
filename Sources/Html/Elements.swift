@@ -789,7 +789,7 @@ public func samp(_ content: [Node]) -> Node {
   return samp([], content)
 }
 
-public func script(_ attribs: [Attribute<Element.Script>], _ content: StringLiteralType) -> Node {
+public func script(_ attribs: [Attribute<Element.Script>], _ content: StaticString) -> Node {
   return node("script", attribs, [.text(EncodedString(content))])
 }
 
@@ -797,11 +797,11 @@ public func script(_ attribs: [Attribute<Element.Script>]) -> Node {
   return node("script", attribs, [])
 }
 
-public func script(_ content: StringLiteralType) -> Node {
+public func script(_ content: StaticString) -> Node {
   return script([], content)
 }
 
-public func script<T>(_ attribs: [Attribute<Element.Script>], _ content: StringLiteralType) -> ChildOf<T> {
+public func script<T>(_ attribs: [Attribute<Element.Script>], _ content: StaticString) -> ChildOf<T> {
   return .init(script(attribs, content))
 }
 
@@ -809,7 +809,7 @@ public func script<T>(_ attribs: [Attribute<Element.Script>]) -> ChildOf<T> {
   return .init(script(attribs))
 }
 
-public func script<T>(_ content: StringLiteralType) -> ChildOf<T> {
+public func script<T>(_ content: StaticString) -> ChildOf<T> {
   return script([], content)
 }
 
@@ -898,11 +898,11 @@ public func sup(_ content: [Node]) -> Node {
   return sup([], content)
 }
 
-public func svg(_ attribs: [Attribute<Element.Svg>], _ content: StringLiteralType) -> Node {
+public func svg(_ attribs: [Attribute<Element.Svg>], _ content: StaticString) -> Node {
   return node("svg", attribs, [.text(EncodedString(content))])
 }
 
-public func svg(_ content: StringLiteralType) -> Node {
+public func svg(_ content: StaticString) -> Node {
   return node("svg", [.text(EncodedString(content))])
 }
 

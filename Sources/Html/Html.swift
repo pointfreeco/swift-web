@@ -59,20 +59,20 @@ public func document(_ content: [Node]) -> Node {
   return .document(content)
 }
 
-public func node<T>(_ name: StringLiteralType, _ attribs: [Attribute<T>], _ content: [Node]?) -> Node {
-  return .element(.init(name: name, attribs: attribs.map(get(\.attrib)), content: content))
+public func node<T>(_ name: StaticString, _ attribs: [Attribute<T>], _ content: [Node]?) -> Node {
+  return .element(.init(name: String(describing: name), attribs: attribs.map(get(\.attrib)), content: content))
 }
 
-public func node(_ name: StringLiteralType, _ content: [Node]?) -> Node {
-  return .element(.init(name: name, attribs: [], content: content))
+public func node(_ name: StaticString, _ content: [Node]?) -> Node {
+  return .element(.init(name: String(describing: name), attribs: [], content: content))
 }
 
 public func text(_ content: String) -> Node {
   return .text(encode(content))
 }
 
-public func attribute<T>(_ name: StringLiteralType, _ value: Value) -> Attribute<T> {
-  return .init(name, value)
+public func attribute<T>(_ name: StaticString, _ value: Value) -> Attribute<T> {
+  return .init(String(describing: name), value)
 }
 
 public func comment(_ content: String) -> Node {
