@@ -59,11 +59,11 @@ public func document(_ content: [Node]) -> Node {
   return .document(content)
 }
 
-public func node<T>(_ name: String, _ attribs: [Attribute<T>], _ content: [Node]?) -> Node {
+public func node<T>(_ name: StringLiteralType, _ attribs: [Attribute<T>], _ content: [Node]?) -> Node {
   return .element(.init(name: name, attribs: attribs.map(get(\.attrib)), content: content))
 }
 
-public func node(_ name: String, _ content: [Node]?) -> Node {
+public func node(_ name: StringLiteralType, _ content: [Node]?) -> Node {
   return .element(.init(name: name, attribs: [], content: content))
 }
 
@@ -71,7 +71,7 @@ public func text(_ content: String) -> Node {
   return .text(encode(content))
 }
 
-public func attribute<T>(_ name: String, _ value: Value) -> Attribute<T> {
+public func attribute<T>(_ name: StringLiteralType, _ value: Value) -> Attribute<T> {
   return .init(name, value)
 }
 
