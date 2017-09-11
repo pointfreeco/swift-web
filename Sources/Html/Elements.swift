@@ -866,11 +866,11 @@ public func strong(_ content: [Node]) -> Node {
   return strong([], content)
 }
 
-public func style(_ attribs: [Attribute<Element.Style>], _ content: String) -> ChildOf<Element.Head> {
+public func style(_ attribs: [Attribute<Element.Style>], _ content: StaticString) -> ChildOf<Element.Head> {
   return .init(node("style", attribs, [.text(EncodedString(content))]))
 }
 
-public func style(_ content: String) -> ChildOf<Element.Head> {
+public func style(_ content: StaticString) -> ChildOf<Element.Head> {
   return style([], content)
 }
 

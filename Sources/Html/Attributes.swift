@@ -632,7 +632,7 @@ public func step(_ value: Int) -> Attribute<Element.Input> {
   return .init("step", value)
 }
 
-public func style<T>(_ value: String) -> Attribute<T> {
+public func style<T>(_ value: StaticString) -> Attribute<T> {
   return .init("style", value)
 }
 

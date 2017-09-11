@@ -3,8 +3,9 @@ import Prelude
 
 public struct EncodedString {
   public let string: String
-  internal init(_ string: String) {
-    self.string = string
+
+  internal init(vouchedSafetyFor vouched: VouchedSafety) {
+    self.string = vouched.string
   }
 
   internal init(_ string: StaticString) {
@@ -12,8 +13,16 @@ public struct EncodedString {
   }
 }
 
+public struct VouchedSafety {
+  let string: String
+
+  init(vouched string: String) {
+    self.string = string
+  }
+}
+
 public func + (lhs: EncodedString, rhs: EncodedString) -> EncodedString {
-  return .init(lhs.string + rhs.string)
+  return .init(vouchedSafetyFor: .init(vouched: lhs.string + rhs.string))
 }
 
 extension EncodedString: Monoid {
@@ -25,16 +34,18 @@ extension EncodedString: Monoid {
 }
 
 public func quote(_ string: EncodedString) -> EncodedString {
-  return .init("\"" + string.string + "\"")
+  return .init(vouchedSafetyFor: .init(vouched: "\"" + string.string + "\""))
 }
 
 public func encode(_ unencoded: String) -> EncodedString {
   return .init(
-    unencoded
-      .replacingOccurrences(of: "&", with: "&amp;")
-      .replacingOccurrences(of: "<", with: "&lt;")
-      .replacingOccurrences(of: ">", with: "&gt;")
-      .replacingOccurrences(of: "\"", with: "&quot;")
-      .replacingOccurrences(of: "'", with: "&#39;")
+    vouchedSafetyFor: .init(
+      vouched: unencoded
+        .replacingOccurrences(of: "&", with: "&amp;")
+        .replacingOccurrences(of: "<", with: "&lt;")
+        .replacingOccurrences(of: ">", with: "&gt;")
+        .replacingOccurrences(of: "\"", with: "&quot;")
+        .replacingOccurrences(of: "'", with: "&#39;")
+    )
   )
 }
