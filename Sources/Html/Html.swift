@@ -75,11 +75,11 @@ public func attribute<T>(_ name: StaticString, _ value: Value) -> Attribute<T> {
   return .init(String(describing: name), value)
 }
 
-public func comment(_ content: String) -> Node {
+public func comment(_ content: StaticString) -> Node {
   return .comment(EncodedString(content))
 }
 
-public func comment<T>(_ content: String) -> ChildOf<T> {
+public func comment<T>(_ content: StaticString) -> ChildOf<T> {
   return .init(comment(content))
 }
 
