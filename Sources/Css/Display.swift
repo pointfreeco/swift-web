@@ -108,6 +108,8 @@ public struct Display: Val, Other, None, Inherit {
   public static let inherit = Display(display: .inherit)
 
   public static let block: Display = "block"
+  public static let flex: Display = "flex"
+  public static let inlineFlex: Display = "inline-flex"
   public static let inlineBlock: Display = "inline-block"
   public static let table: Display = "table"
 }
