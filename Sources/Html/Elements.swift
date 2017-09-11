@@ -99,6 +99,7 @@ extension Element {
   public enum Sub {}
   public enum Summary {}
   public enum Sup {}
+  public enum Svg: HasWidth, HasHeight, HasXmlns {}
   public enum Table: ContainsTr {}
   public enum Tbody: ContainsTr {}
   public enum Td: HasColspan, HasHeaders, HasRowspan {}
@@ -788,7 +789,7 @@ public func samp(_ content: [Node]) -> Node {
   return samp([], content)
 }
 
-public func script(_ attribs: [Attribute<Element.Script>], _ content: String) -> Node {
+public func script(_ attribs: [Attribute<Element.Script>], _ content: StaticString) -> Node {
   return node("script", attribs, [.text(EncodedString(content))])
 }
 
@@ -796,11 +797,11 @@ public func script(_ attribs: [Attribute<Element.Script>]) -> Node {
   return node("script", attribs, [])
 }
 
-public func script(_ content: String) -> Node {
+public func script(_ content: StaticString) -> Node {
   return script([], content)
 }
 
-public func script<T>(_ attribs: [Attribute<Element.Script>], _ content: String) -> ChildOf<T> {
+public func script<T>(_ attribs: [Attribute<Element.Script>], _ content: StaticString) -> ChildOf<T> {
   return .init(script(attribs, content))
 }
 
@@ -808,7 +809,7 @@ public func script<T>(_ attribs: [Attribute<Element.Script>]) -> ChildOf<T> {
   return .init(script(attribs))
 }
 
-public func script<T>(_ content: String) -> ChildOf<T> {
+public func script<T>(_ content: StaticString) -> ChildOf<T> {
   return script([], content)
 }
 
@@ -895,6 +896,14 @@ public func sup(_ attribs: [Attribute<Element.Sup>], _ content: [Node]) -> Node 
 
 public func sup(_ content: [Node]) -> Node {
   return sup([], content)
+}
+
+public func svg(_ attribs: [Attribute<Element.Svg>], _ content: StaticString) -> Node {
+  return node("svg", attribs, [.text(EncodedString(content))])
+}
+
+public func svg(_ content: StaticString) -> Node {
+  return node("svg", [.text(EncodedString(content))])
 }
 
 public func table(_ attribs: [Attribute<Element.Table>], _ content: [Node]) -> Node {

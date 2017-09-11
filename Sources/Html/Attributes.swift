@@ -746,6 +746,11 @@ public func width<T: HasWidth>(_ value: Int) -> Attribute<T> {
   return .init("width", value)
 }
 
+public protocol HasXmlns {}
+public func xmlns<T: HasXmlns>(_ value: String) -> Attribute<T> {
+  return .init("xmlns", value)
+}
+
 public enum Wrap: String, Value {
   case hard
   case soft

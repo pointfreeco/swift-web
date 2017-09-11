@@ -6,6 +6,10 @@ public struct EncodedString {
   internal init(_ string: String) {
     self.string = string
   }
+
+  internal init(_ string: StaticString) {
+    self.string = String(describing: string)
+  }
 }
 
 public func + (lhs: EncodedString, rhs: EncodedString) -> EncodedString {
