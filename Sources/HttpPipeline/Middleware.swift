@@ -121,7 +121,7 @@ public func respond<A>(json: String) -> Middleware<HeadersOpen, ResponseEnded, A
   return respond(body: json, contentType: .json)
 }
 
-private func respond<A>(body: String, contentType: MediaType)
+public func respond<A>(body: String, contentType: MediaType)
   -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
     let data = body.data(using: .utf8)
     return map(const(data))
