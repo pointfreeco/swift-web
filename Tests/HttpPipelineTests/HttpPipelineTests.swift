@@ -79,4 +79,13 @@ class HttpPipelineTests: XCTestCase {
 
     assertSnapshot(matching: middleware(conn))
   }
+
+  func testContentLengthMiddlewareTransformer() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      contentLength
+        <| writeStatus(.ok)
+        >>> respond(html: "<p>Hello, world</p>")
+
+    assertSnapshot(matching: middleware(conn))
+  }
 }
