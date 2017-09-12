@@ -2,6 +2,7 @@ import MediaType
 
 public enum ResponseHeader {
   case allow([Method])
+  case contentLength(Int)
   case contentType(MediaType)
   case location(String)
   case setCookie([String: String])
@@ -11,6 +12,8 @@ public enum ResponseHeader {
     switch self {
     case let .allow(methods):
       return ("Allow", methods.map { $0.description }.joined(separator: ", "))
+    case let .contentLength(length):
+      return ("Content-Length", "\(length)")
     case let .contentType(mediaType):
       return ("Content-Type", mediaType.description)
     case let .location(uri):

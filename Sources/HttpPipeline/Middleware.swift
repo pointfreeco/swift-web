@@ -145,3 +145,18 @@ public func validateBasicAuth(user: String, password: String, request: URLReques
 
   return parts?.first == .some(user) && parts?.last == .some(password)
 }
+
+public func contentLength<A, B>(
+  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, B>
+  )
+  -> Middleware<StatusLineOpen, ResponseEnded, A, B> {
+
+    return { conn in
+      let nextConn = middleware(conn)
+      return nextConn
+        |> \.response.headers %~ {
+          $0 + [.contentLength(nextConn.response.body?.count ?? 0)]
+      }
+    }
+}
+
