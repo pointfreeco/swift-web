@@ -13,10 +13,8 @@ Body: (Data, 0 bytes)
 
 Response:
 ---------
-Status 200 (ok)
-Headers: [
-  Content-Type: text/plain
-]
-Bytes: 12
+Status 200 OK
+Content-Length: 12
+Content-Type: text/plain
 
 Hello, world

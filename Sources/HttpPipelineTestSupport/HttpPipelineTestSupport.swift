@@ -13,11 +13,8 @@ extension Response: Snapshot {
 
   public var snapshotFormat: String {
     let top = """
-Status \(self.status.rawValue) (\(self.status))
-Headers: [
-  \(self.headers.sorted(by: \.description).map { $0.description }.joined(separator: "\n  "))
-]
-Bytes: \(self.body?.count ?? 0)
+Status \(self.status.rawValue) \(String(describing: self.status).uppercased())
+\(self.headers.map { $0.description }.sorted().joined(separator: "\n"))
 """
 
     let contentMediaType: MediaType? = self.headers

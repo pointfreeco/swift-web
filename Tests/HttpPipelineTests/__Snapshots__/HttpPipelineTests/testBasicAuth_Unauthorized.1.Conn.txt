@@ -13,11 +13,9 @@ Body: (Data, 0 bytes)
 
 Response:
 ---------
-Status 401 (unauthorized)
-Headers: [
-  Content-Type: text/plain
-  WWW-Authenticate: Basic
-]
-Bytes: 20
+Status 401 UNAUTHORIZED
+Content-Length: 20
+Content-Type: text/plain
+WWW-Authenticate: Basic
 
 Please authenticate.

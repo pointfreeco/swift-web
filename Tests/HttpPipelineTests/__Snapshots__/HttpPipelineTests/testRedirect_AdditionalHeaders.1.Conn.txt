@@ -13,9 +13,6 @@ Body: (Data, 0 bytes)
 
 Response:
 ---------
-Status 302 (found)
-Headers: [
-  Location: /sign-in
-  Pass-through: hello!
-]
-Bytes: 0
+Status 302 FOUND
+Location: /sign-in
+Pass-through: hello!

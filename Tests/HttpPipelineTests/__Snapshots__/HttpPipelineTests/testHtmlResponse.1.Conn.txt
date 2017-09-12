@@ -13,10 +13,8 @@ Body: (Data, 0 bytes)
 
 Response:
 ---------
-Status 200 (ok)
-Headers: [
-  Content-Type: text/html; charset=utf8
-]
-Bytes: 19
+Status 200 OK
+Content-Length: 19
+Content-Type: text/html; charset=utf8
 
 <p>Hello, world</p>
