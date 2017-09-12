@@ -1,21 +1,12 @@
-Step:
------
-ResponseEnded
+▿ Step
+  ResponseEnded
 
-Request:
---------
-URL: /
-Method: GET
-Headers: [
-  
-]
-Body: (Data, 0 bytes)
+▿ Request
+  GET /
 
-Response:
----------
-Status 302 (found)
-Headers: [
+  (Data, 0 bytes)
+
+▿ Response
+  Status 302 FOUND
   Location: /sign-in
   Pass-through: hello!
-]
-Bytes: 0

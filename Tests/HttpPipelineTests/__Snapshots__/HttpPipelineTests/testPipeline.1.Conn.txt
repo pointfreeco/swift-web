@@ -1,22 +1,14 @@
-Step:
------
-ResponseEnded
+▿ Step
+  ResponseEnded
 
-Request:
---------
-URL: /
-Method: GET
-Headers: [
-  
-]
-Body: (Data, 0 bytes)
+▿ Request
+  GET /
 
-Response:
----------
-Status 200 (ok)
-Headers: [
+  (Data, 0 bytes)
+
+▿ Response
+  Status 200 OK
+  Content-Length: 12
   Content-Type: text/plain
-]
-Bytes: 12
 
-Hello, world
+  Hello, world

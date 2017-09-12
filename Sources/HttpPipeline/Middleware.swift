@@ -1,4 +1,5 @@
 import Foundation
+import MediaType
 import Optics
 import Prelude
 
@@ -97,7 +98,7 @@ public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> 
     }
 
     return .init(
-      data: conn.data,
+      data: concatenatedData,
       request: conn.request,
       response: Response(
         status: conn.response.status,
@@ -109,24 +110,25 @@ public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> 
 }
 
 public func respond<A>(text: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
-  return map(const(text.data(using: .utf8)))
-    >>> writeHeader(.contentType(.plain))
-    >>> closeHeaders
-    >>> end
+  return respond(body: text, contentType: .plain)
 }
 
 public func respond<A>(html: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
-  return map(const(html.data(using: .utf8)))
-    >>> writeHeader(.contentType(.html))
-    >>> closeHeaders
-    >>> end
+  return respond(body: html, contentType: .html)
 }
 
 public func respond<A>(json: String) -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
-  return map(const(json.data(using: .utf8)))
-    >>> writeHeader(.contentType(.json))
-    >>> closeHeaders
-    >>> end
+  return respond(body: json, contentType: .json)
+}
+
+public func respond<A>(body: String, contentType: MediaType)
+  -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
+    let data = body.data(using: .utf8)
+    return map(const(data))
+      >>> writeHeader(.contentType(contentType))
+      >>> writeHeader(.contentLength(data?.count ?? 0))
+      >>> closeHeaders
+      >>> end
 }
 
 public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>)

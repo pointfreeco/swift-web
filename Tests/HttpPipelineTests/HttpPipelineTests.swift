@@ -84,7 +84,11 @@ class HttpPipelineTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       contentLength
         <| writeStatus(.ok)
-        >>> respond(html: "<p>Hello, world</p>")
+        >>> writeHeader(.contentType(.html))
+        >>> closeHeaders
+        >>> map(const(Data()))
+        >>> send("<p>Hello, world</p>".data(using: .utf8))
+        >>> end
 
     assertSnapshot(matching: middleware(conn))
   }

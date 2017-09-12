@@ -1,26 +1,18 @@
-Step:
------
-ResponseEnded
+▿ Step
+  ResponseEnded
 
-Request:
---------
-URL: /
-Method: GET
-Headers: [
-  
-]
-Body: (Data, 0 bytes)
+▿ Request
+  GET /
 
-Response:
----------
-Status 200 (ok)
-Headers: [
+  (Data, 0 bytes)
+
+▿ Response
+  Status 200 OK
   A: Header should be first
+  Content-Length: 19
   Content-Type: text/html; charset=utf8
   Goodbye: World
   Hello: World
   Z: Header should be last
-]
-Bytes: 19
 
-<p>Hello, world</p>
+  <p>Hello, world</p>
