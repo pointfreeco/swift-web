@@ -1,20 +1,15 @@
-Step:
------
-ResponseEnded
+▿ Step
+  ResponseEnded
 
-Request:
---------
-URL: /
-Method: GET
-Headers: [
-    Authorization: Basic SGVsbG86V29ybGQ=
-]
-Body: (Data, 0 bytes)
+▿ Request
+  GET /
+  Authorization: Basic SGVsbG86V29ybGQ=
 
-Response:
----------
-Status 200 OK
-Content-Length: 19
-Content-Type: text/html; charset=utf8
+  (Data, 0 bytes)
 
-<p>Hello, world</p>
+▿ Response
+  Status 200 OK
+  Content-Length: 19
+  Content-Type: text/html; charset=utf8
+
+  <p>Hello, world</p>

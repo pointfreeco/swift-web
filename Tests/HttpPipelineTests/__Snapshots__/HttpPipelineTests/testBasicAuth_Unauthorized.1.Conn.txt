@@ -1,21 +1,16 @@
-Step:
------
-ResponseEnded
+▿ Step
+  ResponseEnded
 
-Request:
---------
-URL: /
-Method: GET
-Headers: [
-  
-]
-Body: (Data, 0 bytes)
+▿ Request
+  GET /
 
-Response:
----------
-Status 401 UNAUTHORIZED
-Content-Length: 20
-Content-Type: text/plain
-WWW-Authenticate: Basic
 
-Please authenticate.
+  (Data, 0 bytes)
+
+▿ Response
+  Status 401 UNAUTHORIZED
+  Content-Length: 20
+  Content-Type: text/plain
+  WWW-Authenticate: Basic
+
+  Please authenticate.

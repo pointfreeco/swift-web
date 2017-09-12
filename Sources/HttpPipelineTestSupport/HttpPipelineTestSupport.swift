@@ -1,6 +1,7 @@
 import Foundation
 import HttpPipeline
 import MediaType
+import Prelude
 import SnapshotTesting
 import XCTest
 
@@ -33,29 +34,18 @@ Status \(self.status.rawValue) \(String(describing: self.status).uppercased())
   }
 }
 
-// todo: move to prelude
-extension Sequence {
-  fileprivate func sorted<C: Comparable>(by keyPath: KeyPath<Element, C>) -> [Element] {
-    return self.sorted { lhs, rhs in
-      lhs[keyPath: keyPath] < rhs[keyPath: keyPath]
-    }
-  }
-}
-
 extension Conn: Snapshot {
   public var snapshotFormat: String {
+    let indent = "  "
     return """
-Step:
------
-\(Step.self)
+▿ Step
+  \(Step.self)
 
-Request:
---------
-\(self.request.snapshotFormat)
+▿ Request
+\(prefixLines(with: indent) <| self.request.snapshotFormat)
 
-Response:
----------
-\(self.response.snapshotFormat)
+▿ Response
+\(prefixLines(with: indent) <| self.response.snapshotFormat)
 """
   }
 
@@ -64,30 +54,45 @@ Response:
   }
 }
 
-// Todo: move to snapshot lib
+// TODO: move to snapshot-testing
 extension URLRequest: Snapshot {
 
   public var snapshotFormat: String {
     let headers = (self.allHTTPHeaderFields ?? [:])
-      .map { key, value in
-        "  \(key): \(value)"
-      }
-      .joined(separator: "\n  ")
+      .map { key, value in "\(key): \(value)" }
+      .sorted()
+      .joined(separator: "\n")
 
     let body = self.httpBody.flatMap { String(data: $0, encoding: .utf8) }
       ?? "(Data, \(self.httpBody?.count ?? 0) bytes)"
 
     return """
-URL: \(self.url.map(String.init(describing:)) ?? "None")
-Method: \(self.httpMethod ?? "GET")
-Headers: [
-  \(headers)
-]
-Body: \(body)
+\(self.httpMethod ?? "GET") \(self.url.map(String.init(describing:)) ?? "?")
+\(headers)
+
+\(body)
 """
   }
 
   public static var snapshotPathExtension: String? {
     return "URLRequest.txt"
+  }
+}
+
+// TODO: move to prelude
+extension Sequence {
+  fileprivate func sorted<C: Comparable>(by keyPath: KeyPath<Element, C>) -> [Element] {
+    return self.sorted { lhs, rhs in
+      lhs[keyPath: keyPath] < rhs[keyPath: keyPath]
+    }
+  }
+}
+
+private func prefixLines(with prefix: String) -> (String) -> String {
+  return { string in
+    string
+      .split(separator: "\n", omittingEmptySubsequences: false)
+      .map { $0.isEmpty ? "\($0)" : "\(prefix)\($0)" }
+      .joined(separator: "\n")
   }
 }
