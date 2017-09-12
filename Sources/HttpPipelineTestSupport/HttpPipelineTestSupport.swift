@@ -13,10 +13,9 @@ extension Response: Snapshot {
   }
 
   public var snapshotFormat: String {
-    let top = """
-Status \(self.status.rawValue) \(String(describing: self.status).uppercased())
-\(self.headers.map { $0.description }.sorted().joined(separator: "\n"))
-"""
+    let lines = ["Status \(self.status.rawValue) \(String(describing: self.status).uppercased())"]
+      + self.headers.map { $0.description }.sorted()
+    let top = lines.joined(separator: "\n")
 
     let contentMediaType: MediaType? = self.headers
       .flatMap {
@@ -61,14 +60,16 @@ extension URLRequest: Snapshot {
     let headers = (self.allHTTPHeaderFields ?? [:])
       .map { key, value in "\(key): \(value)" }
       .sorted()
-      .joined(separator: "\n")
+
+    let lines = ["\(self.httpMethod ?? "GET") \(self.url.map(String.init(describing:)) ?? "?")"]
+      + headers
+    let top = lines.joined(separator: "\n")
 
     let body = self.httpBody.flatMap { String(data: $0, encoding: .utf8) }
       ?? "(Data, \(self.httpBody?.count ?? 0) bytes)"
 
     return """
-\(self.httpMethod ?? "GET") \(self.url.map(String.init(describing:)) ?? "?")
-\(headers)
+\(top)
 
 \(body)
 """
