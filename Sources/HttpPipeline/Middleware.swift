@@ -98,7 +98,7 @@ public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> 
     }
 
     return .init(
-      data: conn.data,
+      data: concatenatedData,
       request: conn.request,
       response: Response(
         status: conn.response.status,
