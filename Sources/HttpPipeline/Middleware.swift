@@ -92,10 +92,8 @@ public func basicAuth<A>(user: String, password: String)
 public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> {
   return { conn in
 
-    var concatenatedData = conn.data
-    if let data = data {
-      concatenatedData?.append(data)
-    }
+    var concatenatedData = conn.data ?? Data()
+    data.do { concatenatedData.append($0) }
 
     return .init(
       data: concatenatedData,
