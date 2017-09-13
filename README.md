@@ -20,6 +20,16 @@ let package = Package(
 
 ## Getting started
 
+This library contains an extensive test suite and a set of playgrounds that can be explored. To get it running:
+
+* `git clone https://github.com/pointfreeco/swift-web.git`
+* `cd swift-web`
+* `swift package generate-xcodeproj`
+* `xed .`
+* Run tests: cmd+U
+* Build: Cmd+R
+* Open playgrounds!
+
 ## Included modules
 
 #### Primary modules
