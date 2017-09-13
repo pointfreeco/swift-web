@@ -1,6 +1,6 @@
 # swift-web [![CircleCI](https://circleci.com/gh/pointfreeco/swift-web.svg?style=svg)](https://circleci.com/gh/pointfreeco/swift-web)
 
-A collection of frameworks for solving various problems in building a Swift web framework. Each framework focuses on a single problem, like HTML rendering, CSS preprocessing, routing, middleware, and more. They also do not depend on any other framework in the collection. You can choose which pieces you want and don’t want, for example you can use `Html` without `Css`.
+A collection of frameworks for solving various problems in building a Swift web framework. Each framework focuses on a single problem, like HTML rendering, CSS preprocessing, routing, middleware, and more. They also do not depend on any other framework in the collection. You can choose which pieces you want and don't want, for example you can use `Html` without `Css`.
 
 ## Stability
 
@@ -26,8 +26,8 @@ This library contains an extensive test suite and a set of playgrounds that can 
 * `cd swift-web`
 * `swift package generate-xcodeproj`
 * `xed .`
-* Run tests: cmd+U
-* Build: Cmd+B
+* Run tests: Command+U
+* Build: Command+B
 * Open a playground!
 
 ## Included modules
