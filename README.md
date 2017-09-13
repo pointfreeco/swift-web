@@ -27,8 +27,8 @@ This library contains an extensive test suite and a set of playgrounds that can 
 * `swift package generate-xcodeproj`
 * `xed .`
 * Run tests: cmd+U
-* Build: Cmd+R
-* Open playgrounds!
+* Build: Cmd+B
+* Open a playground!
 
 ## Included modules
 
