@@ -1,6 +1,6 @@
 # swift-web [![CircleCI](https://circleci.com/gh/pointfreeco/swift-web.svg?style=svg)](https://circleci.com/gh/pointfreeco/swift-web)
 
-A collection of frameworks for solving various problems in building a Swift web framework. Each framework focuses on a single problem, like HTML rendering, CSS preprocessing, routing, middleware, and more. They also do not depend on any other framework in the collection. You can choose which pieces you want and don’t want, for example you can use `Html` without `Css`.
+A collection of frameworks for solving various problems in building a Swift web framework. Each framework focuses on a single problem, like HTML rendering, CSS preprocessing, routing, middleware, and more. They also do not depend on any other framework in the collection. You can choose which pieces you want and don't want, for example you can use `Html` without `Css`.
 
 ## Stability
 
@@ -18,7 +18,19 @@ let package = Package(
 )
 ```
 
-## Table of Contents
+## Getting started
+
+This library contains an extensive test suite and a set of playgrounds that can be explored. To get it running:
+
+* `git clone https://github.com/pointfreeco/swift-web.git`
+* `cd swift-web`
+* `swift package generate-xcodeproj`
+* `xed .`
+* Run tests: Command+U
+* Build: Command+B
+* Open a playground!
+
+## Included modules
 
 #### Primary modules
 
@@ -46,8 +58,8 @@ let document = html(
     body(
       [
         p(["Hello world!"]),
-        p(["Goodbye!"],
-        [ a([href("/")], ["Home"]) ]
+        p(["Goodbye!"]),
+        a([href("/")], ["Home"])
       ]
     )
   ]
@@ -98,24 +110,34 @@ body {
 
 ## `HttpPipeline`
 
-A few types and functions for modeling server middleware as a simple function that transforms a request to a response.
+A few types and functions for modeling server middleware as a simple function that transforms a request to a response. It uses phantom types express the state transitions of when you are allowed to write the status, headers and response body.
 
 ```swift
+import HttpPipeline
+
 let middleware = writeStatus(.ok)
-  >>> writeHeader(.contentType(.text))
-  >>> closeHeaders()
+  >>> writeHeader(.contentType(.html))
+  >>> closeHeaders
+  >>> send(render(document).data(using: .utf8))
   >>> end
 
 let request = URLRequest(url: URL(string: "/")!)
-let conn = connection(from: request).map(const("Hello, world"))
-
-middleware(conn).response.description
+let conn = connection(from: request).map(const(Data?.none))
 ```
 ```text
-Status 200
-Content-Type: text/plain
+▿ Step
+  ResponseEnded
 
-Hello, world
+▿ Request
+  GET /
+
+  (Data, 0 bytes)
+
+▿ Response
+  Status 200 OK
+  Content-Type: text/html; charset=utf8
+
+  <html><body><p>Hello world!</p><p>Goodbye!</p><a href="/">Home</a></body></html>
 ```
 
 ## `ApplicativeRouter`
@@ -138,19 +160,19 @@ enum Route {
 }
 
 let router =
-        // Matches: GET /
-        Route.home <¢ .get <*| end
-        // Matches: GET /episode/:str
+  // Matches: GET /
+  Route.home <¢ .get <*| end
+    // Matches: GET /episode/:str
     <|> Route.episode <¢> (.get *> lit("episode") *> .str) <*| end
-        // Matches: GET /episodes
+    // Matches: GET /episodes
     <|> Route.episodes <¢ (.get *> lit("episodes")) <*| end
-        // Matches: GET /search?query=
+    // Matches: GET /search?query=
     <|> Route.search <¢> (.get *> lit("search") *> opt(param("query"))) <*| end
-        // Matches: POST /signup
+    // Matches: POST /signup
     <|> Route.signup <¢> (.post *> lit("signup") *> opt(.jsonBody)) <*| end
 
-let request = URLRequest(url: URL(string: "http://localhost:8000/episode/001-hello-world")!)
-let route = router.match(request) // => Route.episode("001-hello-world")
+let requestToRoute = URLRequest(url: URL(string: "http://localhost:8000/episode/001-hello-world")!)
+let route = router.match(requestToRoute) // => Route.episode("001-hello-world")
 ```
 
 ##  `HttpPipelineHtmlSupport`
@@ -206,36 +228,48 @@ import Css
 import Html
 import HtmlCssSupport
 
-let document = p(
-  [ style(color(blue)) ],
+let anchorStyle = color(.red)
+  <> textTransform(.capitalize)
+
+let styledDocument = p(
   [
     "Go back ",
-    a([style(color(red))], ["Home"])
+    a([style(anchorStyle)], ["Home"])
   ]
 )
-render(document)
+print(render(styledDocument, config: pretty))
 ```
 ```html
-<p style="color:#0000ff">
+<p>
   Go back
-  <a style="color:#ff0000">Home</a>
+  <a style="color:#ff0000;text-transform:capitalize">
+    Home
+  </a>
 </p>
 ```
 
 ## `HtmlPrettyPrint`
 
-Contains functions for pretty printing an `Html` node (or nodes) using [DoctorPretty](https://github.com/bkase/DoctorPretty.git), a wonderful little pretty printer library. It not only takes care of adding newlines for tags so that the DOM structure is easy to read, but will also insert newlines when text goes past a column width, and even align smartly:
+Contains functions for pretty printing an `Html` node (or nodes) using [DoctorPretty](https://github.com/bkase/DoctorPretty.git), a wonderful little pretty printer library. The implementation of this library has been covered in [this](http://www.fewbutripe.com/swift/html/dsl/2017/07/17/pretty-printing-html.html) article.
+
+The library not only takes care of adding newlines for tags so that the DOM structure is easy to read, but will also insert newlines when text goes past a column width, and even align smartly:
 
 ```swift
+import HtmlPrettyPrint
+
 let doc: Node = .document(
   [
-    body(
+    html(
       [
-        comment("This is gonna be a long comment. Let's see what happens!"),
-        div(
+        body(
           [
-            div([ id("some-long-id"), Html.class("foo bar baz") ], ["hello world"]),
-            img(src: "cat.jpg", alt: "", [ id("cat"), Html.class("cat") ])
+            comment("This is gonna be a long comment. Let's see what happens!"),
+            div(
+              [
+                div([ id("some-long-id"), Html.class("foo bar baz") ], ["hello world"]),
+                img(src: "cat.jpg", alt: "", [ id("cat"), Html.class("cat") ])
+              ]
+            )
           ]
         )
       ]
@@ -243,24 +277,27 @@ let doc: Node = .document(
   ]
 )
 
-prettyPrint(node: doc, pageWidth: 40))
+prettyPrint(node: doc, pageWidth: 40)
 ```
 ```html
 <!DOCTYPE html>
-<body>
-  <!-- This is gonna be a long comment.
-       Let's see what happens! -->
-  <div>
-    <div id="some-long-id"
-         class="foo bar baz">
-      hello world
+<html>
+  <body>
+    <!-- This is gonna be a long
+         comment. Let's see what
+         happens! -->
+    <div>
+      <div id="some-long-id"
+           class="foo bar baz">
+        hello world
+      </div>
+      <img src="cat.jpg"
+           alt=""
+           id="cat"
+           class="cat">
     </div>
-    <img id="cat"
-         alt=""
-         class="cat"
-         src="cat.jpg" />
-  </div>
-</body>
+  </body>
+</html>
 ```
 
 ## `CssReset`
