@@ -54,6 +54,21 @@ public func end<A>(conn: Conn<HeadersOpen, A>) -> Conn<ResponseEnded, Data?> {
     |> end
 }
 
+public func redirect<A>(
+  to location: String,
+  headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A> = id
+  )
+  ->
+  Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+
+    return writeStatus(.found)
+      >>> headersMiddleware
+      >>> writeHeader(.location(location))
+      >>> map(const(nil))
+      >>> closeHeaders
+      >>> end
+}
+
 public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> {
   return { conn in
 
@@ -94,17 +109,3 @@ public func respond<A>(body: String, contentType: MediaType)
       >>> end
 }
 
-public func redirect<A>(
-  to location: String,
-  headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A> = id
-  )
-  ->
-  Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
-
-    return writeStatus(.found)
-      >>> headersMiddleware
-      >>> writeHeader(.location(location))
-      >>> map(const(nil))
-      >>> closeHeaders
-      >>> end
-}
