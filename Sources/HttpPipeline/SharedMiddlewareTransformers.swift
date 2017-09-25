@@ -2,7 +2,41 @@ import Foundation
 import Optics
 import Prelude
 
-public func basicAuth<A>(user: String, password: String)
+/// Wraps basic auth middleware around existing middleware. Provides only the most basic of authentication
+/// where the username and password are static, e.g. we do not look in a database for the user. If
+/// authentication fails a basic "Please authenticate." html page will be rendered.
+///
+/// - Parameters:
+///   - user: The user name to authenticate against.
+///   - password: The password to authenticate against.
+/// - Returns: Transformed middleware
+public func basicAuth<A>(
+  user: String,
+  password: String
+  )
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+
+    return basicAuth(
+      user: user,
+      password: password,
+      authenticateMiddleware: respond(text: "Please authenticate.")
+    )
+}
+
+/// Wraps basic auth middleware around existing middleware. Provides only the most basic of authentication
+/// where the username and password are static, e.g. we do not look in a database for the user.
+///
+/// - Parameters:
+///   - user: The user name to authenticate against.
+///   - password: The password to authenticate against.
+///   - authenticateMiddleware: The middleware to run in the case that authentication fails.
+/// - Returns: Transformed middleware
+public func basicAuth<A>(
+  user: String,
+  password: String,
+  authenticateMiddleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>
+  )
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
 
@@ -16,7 +50,7 @@ public func basicAuth<A>(user: String, password: String)
           (
             writeStatus(.unauthorized)
               >>> writeHeader("WWW-Authenticate", "Basic")
-              >>> respond(text: "Please authenticate.")
+              >>> authenticateMiddleware
         )
       }
     }
@@ -77,7 +111,6 @@ public func redirectUnrelatedHosts<A>(
       }
     }
 }
-
 
 public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
