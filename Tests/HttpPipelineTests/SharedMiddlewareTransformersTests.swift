@@ -16,6 +16,26 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: middleware(conn))
   }
 
+  func testBasicAuth_Unauthorized_Realm() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      basicAuth(user: "Hello", password: "World", realm: "Point-Free")
+        <| writeStatus(.ok) >>> respond(html: "<p>Hello, world</p>")
+
+    assertSnapshot(matching: middleware(conn))
+  }
+
+  func testBasicAuth_Unauthorized_CustomFailure() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      basicAuth(
+        user: "Hello",
+        password: "World",
+        failure: respond(text: "Custom authentication page!")
+        )
+        <| writeStatus(.ok) >>> respond(html: "<p>Hello, world</p>")
+
+    assertSnapshot(matching: middleware(conn))
+  }
+
   func testBasicAuth_Authorized() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       basicAuth(user: "Hello", password: "World")

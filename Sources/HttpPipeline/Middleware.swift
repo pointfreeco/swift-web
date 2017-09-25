@@ -108,4 +108,3 @@ public func respond<A>(body: String, contentType: MediaType)
       >>> closeHeaders
       >>> end
 }
-

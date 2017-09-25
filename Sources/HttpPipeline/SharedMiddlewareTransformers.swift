@@ -12,7 +12,8 @@ import Prelude
 /// - Returns: Transformed middleware
 public func basicAuth<A>(
   user: String,
-  password: String
+  password: String,
+  realm: String? = nil
   )
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
@@ -20,7 +21,8 @@ public func basicAuth<A>(
     return basicAuth(
       user: user,
       password: password,
-      authenticateMiddleware: respond(text: "Please authenticate.")
+      realm: realm,
+      failure: respond(text: "Please authenticate.")
     )
 }
 
@@ -30,12 +32,13 @@ public func basicAuth<A>(
 /// - Parameters:
 ///   - user: The user name to authenticate against.
 ///   - password: The password to authenticate against.
-///   - authenticateMiddleware: The middleware to run in the case that authentication fails.
+///   - failure: The middleware to run in the case that authentication fails.
 /// - Returns: Transformed middleware
 public func basicAuth<A>(
   user: String,
   password: String,
-  authenticateMiddleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>
+  realm: String? = nil,
+  failure: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>
   )
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
@@ -49,8 +52,8 @@ public func basicAuth<A>(
         return conn |>
           (
             writeStatus(.unauthorized)
-              >>> writeHeader("WWW-Authenticate", "Basic")
-              >>> authenticateMiddleware
+              >>> writeHeader(.wwwAuthenticate(.basic(realm: realm)))
+              >>> failure
         )
       }
     }
