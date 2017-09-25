@@ -69,26 +69,6 @@ public func redirect<A>(
       >>> end
 }
 
-public func basicAuth<A>(user: String, password: String)
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
-
-    return { middleware in
-      { conn in
-        if validateBasicAuth(user: user, password: password, request: conn.request) {
-          return middleware(conn)
-        }
-
-        return conn |>
-          (
-            writeStatus(.unauthorized)
-              >>> writeHeader("WWW-Authenticate", "Basic")
-              >>> respond(text: "Please authenticate.")
-        )
-      }
-    }
-}
-
 public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> {
   return { conn in
 
@@ -128,35 +108,3 @@ public func respond<A>(body: String, contentType: MediaType)
       >>> closeHeaders
       >>> end
 }
-
-public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
-    return writeStatus(.notFound)
-      >>> middleware
-}
-
-public func validateBasicAuth(user: String, password: String, request: URLRequest) -> Bool {
-
-  let auth = request.allHTTPHeaderFields?.first(where: { $0.key == "Authorization" })?.value ?? ""
-
-  let parts = Foundation.Data(base64Encoded: String(auth.dropFirst(6)))
-    .flatMap { String(data: $0, encoding: .utf8) }
-    .map { $0.split(separator: ":").map(String.init) }
-
-  return parts?.first == .some(user) && parts?.last == .some(password)
-}
-
-public func contentLength<A, B>(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, B>
-  )
-  -> Middleware<StatusLineOpen, ResponseEnded, A, B> {
-
-    return { conn in
-      let nextConn = middleware(conn)
-      return nextConn
-        |> \.response.headers %~ {
-          $0 + [.contentLength(nextConn.response.body?.count ?? 0)]
-      }
-    }
-}
-

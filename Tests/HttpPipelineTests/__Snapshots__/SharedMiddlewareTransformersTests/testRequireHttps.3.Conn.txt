@@ -1,0 +1,13 @@
+▿ Step
+  ResponseEnded
+
+▿ Request
+  GET http://0.0.0.0:8080
+
+  (Data, 0 bytes)
+
+▿ Response
+  Status 200 OK
+  Content-Type: text/html; charset=utf8
+
+  <p>Hello, world</p>

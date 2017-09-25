@@ -13,7 +13,7 @@ extension Response: Snapshot {
   }
 
   public var snapshotFormat: String {
-    let lines = ["Status \(self.status.rawValue) \(String(describing: self.status).uppercased())"]
+    let lines = ["Status \(self.status.rawValue) \(String(describing: self.status).formattedStatusString())"]
       + self.headers.map { $0.description }.sorted()
     let top = lines.joined(separator: "\n")
 
@@ -95,5 +95,19 @@ private func prefixLines(with prefix: String) -> (String) -> String {
       .split(separator: "\n", omittingEmptySubsequences: false)
       .map { $0.isEmpty ? "\($0)" : "\(prefix)\($0)" }
       .joined(separator: "\n")
+  }
+}
+
+extension String {
+  fileprivate func formattedStatusString() -> String {
+    return self.characters
+      .lazy
+      .map(String.init)
+      .reduce("") { (string: String, character: String) -> String in
+        character.uppercased() == character
+          ? string + " " + character
+          : string + character
+      }
+      .uppercased()
   }
 }

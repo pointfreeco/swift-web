@@ -7,6 +7,11 @@ public enum ResponseHeader {
   case location(String)
   case setCookie([String: String])
   case other(String, String)
+  case wwwAuthenticate(Authenticate)
+
+  public enum Authenticate {
+    case basic(realm: String?)
+  }
 
   public var pair: (String, String) {
     switch self {
@@ -25,6 +30,11 @@ public enum ResponseHeader {
       return ("Set-Cookie", str)
     case let .other(header, value):
       return (header, value)
+    case let .wwwAuthenticate(authenticate):
+      switch authenticate {
+      case let .basic(realm: realm):
+        return ("WWW-Authenticate", "Basic" + (realm.map { " realm=\"\($0)\"" } ?? ""))
+      }
     }
   }
 

@@ -1,0 +1,15 @@
+▿ Step
+  ResponseEnded
+
+▿ Request
+  GET /
+
+  (Data, 0 bytes)
+
+▿ Response
+  Status 401 UNAUTHORIZED
+  Content-Length: 20
+  Content-Type: text/plain
+  WWW-Authenticate: Basic realm="Point-Free"
+
+  Please authenticate.

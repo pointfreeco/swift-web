@@ -37,27 +37,6 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: middleware(conn))
   }
 
-  func testBasicAuth_Unauthorized() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
-      basicAuth(user: "Hello", password: "World")
-        <| writeStatus(.ok) >>> respond(html: "<p>Hello, world</p>")
-
-    assertSnapshot(matching: middleware(conn))
-  }
-
-  func testBasicAuth_Authorized() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
-      basicAuth(user: "Hello", password: "World")
-        <| writeStatus(.ok) >>> respond(html: "<p>Hello, world</p>")
-
-    let conn = connection(
-      from: URLRequest(url: URL(string: "/")!)
-        |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
-    )
-
-    assertSnapshot(matching: middleware(conn))
-  }
-
   func testWriteHeaders() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       writeStatus(.ok)
@@ -76,19 +55,6 @@ class HttpPipelineTests: XCTestCase {
         >>> writeHeader(.setCookie(["user_id": "123456"]))
         >>> writeHeader(.setCookie(["lang": "es"]))
         >>> respond(html: "<p>Hello, world</p>")
-
-    assertSnapshot(matching: middleware(conn))
-  }
-
-  func testContentLengthMiddlewareTransformer() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
-      contentLength
-        <| writeStatus(.ok)
-        >>> writeHeader(.contentType(.html))
-        >>> closeHeaders
-        >>> map(const(Data()))
-        >>> send("<p>Hello, world</p>".data(using: .utf8))
-        >>> end
 
     assertSnapshot(matching: middleware(conn))
   }
