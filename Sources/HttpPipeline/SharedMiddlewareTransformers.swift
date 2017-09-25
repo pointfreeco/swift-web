@@ -2,21 +2,6 @@ import Foundation
 import Optics
 import Prelude
 
-public func redirect<A>(
-  to location: String,
-  headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A> = id
-  )
-  ->
-  Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
-
-    return writeStatus(.found)
-      >>> headersMiddleware
-      >>> writeHeader(.location(location))
-      >>> map(const(nil))
-      >>> closeHeaders
-      >>> end
-}
-
 public func basicAuth<A>(user: String, password: String)
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {

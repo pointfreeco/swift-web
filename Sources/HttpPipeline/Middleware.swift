@@ -93,3 +93,18 @@ public func respond<A>(body: String, contentType: MediaType)
       >>> closeHeaders
       >>> end
 }
+
+public func redirect<A>(
+  to location: String,
+  headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A> = id
+  )
+  ->
+  Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+
+    return writeStatus(.found)
+      >>> headersMiddleware
+      >>> writeHeader(.location(location))
+      >>> map(const(nil))
+      >>> closeHeaders
+      >>> end
+}

@@ -11,19 +11,6 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   override func setUp() {
     record = true
   }
-  
-  func testRedirect() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> = redirect(to: "/sign-in")
-
-    assertSnapshot(matching: middleware(conn))
-  }
-
-  func testRedirect_AdditionalHeaders() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
-      redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
-
-    assertSnapshot(matching: middleware(conn))
-  }
 
   func testBasicAuth_Unauthorized() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =

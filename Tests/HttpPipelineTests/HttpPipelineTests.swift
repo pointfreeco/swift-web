@@ -28,6 +28,19 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: middleware(conn))
   }
 
+  func testRedirect() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> = redirect(to: "/sign-in")
+
+    assertSnapshot(matching: middleware(conn))
+  }
+
+  func testRedirect_AdditionalHeaders() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
+
+    assertSnapshot(matching: middleware(conn))
+  }
+
   func testWriteHeaders() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       writeStatus(.ok)
