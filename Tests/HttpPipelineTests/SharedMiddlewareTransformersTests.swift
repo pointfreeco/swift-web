@@ -45,4 +45,96 @@ class SharedMiddlewareTransformersTests: XCTestCase {
 
     assertSnapshot(matching: middleware(conn))
   }
+
+  func testRedirectUnrelatedHosts() {
+    let allowedHosts = [
+      "www.pointfree.co",
+      "127.0.0.1",
+      "localhost",
+      "0.0.0.0",
+    ]
+
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      redirectUnrelatedHosts(allowedHosts: allowedHosts, canonicalHost: "www.pointfree.co")
+        <| writeStatus(.ok)
+        >>> writeHeader(.contentType(.html))
+        >>> closeHeaders
+        >>> map(const(Data()))
+        >>> send("<p>Hello, world</p>".data(using: .utf8))
+        >>> end
+
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!)))
+    )
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!)))
+    )
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://pointfree.co")!)))
+    )
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.point-free.co")!)))
+    )
+  }
+
+  func testRequireHerokuHttps() {
+    let allowedInsecureHosts = [
+      "127.0.0.1",
+      "localhost",
+      "0.0.0.0",
+      ]
+
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      requireHerokuHttps(allowedInsecureHosts: allowedInsecureHosts)
+        <| writeStatus(.ok)
+        >>> writeHeader(.contentType(.html))
+        >>> closeHeaders
+        >>> map(const(Data()))
+        >>> send("<p>Hello, world</p>".data(using: .utf8))
+        >>> end
+
+    func securedConnection(from request: URLRequest) -> Conn<StatusLineOpen, Prelude.Unit> {
+      var result = request
+      result.allHTTPHeaderFields = result.allHTTPHeaderFields ?? [:]
+      result.allHTTPHeaderFields?["X-Forwarded-Proto"] = "https"
+      return connection(from: result)
+    }
+
+    assertSnapshot(
+      matching: middleware(securedConnection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!)))
+    )
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!)))
+    )
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!)))
+    )
+  }
+
+  func testRequireHttps() {
+    let allowedInsecureHosts = [
+      "127.0.0.1",
+      "localhost",
+      "0.0.0.0",
+      ]
+
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      requireHttps(allowedInsecureHosts: allowedInsecureHosts)
+        <| writeStatus(.ok)
+        >>> writeHeader(.contentType(.html))
+        >>> closeHeaders
+        >>> map(const(Data()))
+        >>> send("<p>Hello, world</p>".data(using: .utf8))
+        >>> end
+
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!)))
+    )
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!)))
+    )
+    assertSnapshot(
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!)))
+    )
+  }
 }

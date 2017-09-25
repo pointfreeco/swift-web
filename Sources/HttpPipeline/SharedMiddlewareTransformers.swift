@@ -59,6 +59,7 @@ public func redirectUnrelatedHosts<A>(
     return { middleware in
       return { conn in
         conn.request.url
+          .filterOptional { !allowedHosts.contains($0.host ?? "") }
           .flatMap { url in
             URLComponents(url: url, resolvingAgainstBaseURL: false)
               |> map(\.host .~ canonicalHost)
