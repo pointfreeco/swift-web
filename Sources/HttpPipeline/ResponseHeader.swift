@@ -6,7 +6,7 @@ public enum ResponseHeader {
   case contentLength(Int)
   case contentType(MediaType)
   case location(String)
-  case setCookie(key: String, value: String, options: [CookieOption])
+  case setCookie(key: String, value: String, options: Set<CookieOption>)
   case other(String, String)
   case wwwAuthenticate(Authenticate)
 

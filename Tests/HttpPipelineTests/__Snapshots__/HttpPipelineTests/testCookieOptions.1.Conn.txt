@@ -13,7 +13,7 @@
   Set-Cookie: domain=1; Domain=www.pointfree.co
   Set-Cookie: httpOnly=2; HttpOnly
   Set-Cookie: maxAge=3; Max-Age=3600
-  Set-Cookie: multiple=8; Domain=www.pointfree.co; HttpOnly; Secure
+  Set-Cookie: multiple=8; Secure; Domain=www.pointfree.co; HttpOnly
   Set-Cookie: path=4; Path=/path/to/some/where
   Set-Cookie: sameSiteLax=5; SameSite=Lax
   Set-Cookie: sameSiteStrict=6; SameSite=String
