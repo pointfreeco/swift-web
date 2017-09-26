@@ -1,0 +1,15 @@
+▿ Step
+  ResponseEnded
+
+▿ Request
+  GET /
+
+  (Data, 0 bytes)
+
+▿ Response
+  Status 200 OK
+  Content-Length: 19
+  Content-Type: text/html; charset=utf8
+  Set-Cookie: domain=; Domain=www.pointfree.co
+
+  <p>Hello, world</p>

@@ -52,8 +52,26 @@ class HttpPipelineTests: XCTestCase {
   func testCookies() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       writeStatus(.ok)
-        >>> writeHeader(.setCookie(["user_id": "123456"]))
-        >>> writeHeader(.setCookie(["lang": "es"]))
+        >>> writeHeader(.setCookie(key: "user_id", value: "123456", options: []))
+        >>> writeHeader(.setCookie(key: "lang", value: "es", options: []))
+        >>> respond(html: "<p>Hello, world</p>")
+
+    assertSnapshot(matching: middleware(conn))
+  }
+
+  func testCookieOptions() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+      writeStatus(.ok)
+        >>> writeHeader(.setCookie(key: "domain", value: "1", options: [.domain("www.pointfree.co")]))
+        >>> writeHeader(.setCookie(key: "httpOnly", value: "2", options: [.httpOnly]))
+        >>> writeHeader(.setCookie(key: "maxAge", value: "3", options: [.maxAge(3600)]))
+        >>> writeHeader(.setCookie(key: "path", value: "4", options: [.path("/path/to/some/where")]))
+        >>> writeHeader(.setCookie(key: "sameSiteLax", value: "5", options: [.sameSite(.lax)]))
+        >>> writeHeader(.setCookie(key: "sameSiteStrict", value: "6", options: [.sameSite(.strict)]))
+        >>> writeHeader(.setCookie(key: "secure", value: "7", options: [.secure]))
+        >>> writeHeader(
+          .setCookie(key: "multiple", value: "8", options: [.domain("www.pointfree.co"), .httpOnly, .secure])
+        )
         >>> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn))

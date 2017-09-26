@@ -11,6 +11,24 @@
         }
       },
       {
+        "package": "CommonCrypto",
+        "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
+        "state": {
+          "branch": null,
+          "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
+          "version": "0.1.5"
+        }
+      },
+      {
+        "package": "Cryptor",
+        "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
+        "state": {
+          "branch": null,
+          "revision": "389bbad82d5a11f6fdbd98bc4407967569787c21",
+          "version": "0.8.17"
+        }
+      },
+      {
         "package": "DoctorPretty",
         "repositoryURL": "https://github.com/bkase/DoctorPretty.git",
         "state": {
