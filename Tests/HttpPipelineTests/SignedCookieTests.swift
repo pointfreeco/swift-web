@@ -9,6 +9,7 @@ import XCTest
 private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 
 class SignedCookieTests: XCTestCase {
+
   func testSignedCookie() {
     let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
     let signedCookieValue = """
@@ -17,7 +18,7 @@ aGVsbG8td29ybGQ=\
 4wgeyWTkB2EKsLHYK7Ao1VzjFMXeTLZHXX76XTTOBCw=
 """
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
       writeStatus(.ok)
         >>> writeHeaders(
           [
@@ -28,8 +29,7 @@ aGVsbG8td29ybGQ=\
               secret: secret
             )
             ] |> catOptionals
-        )
-        >>> respond(html: "<p>Hello, world</p>")
+    )
 
     assertSnapshot(matching: middleware(conn))
 
@@ -55,7 +55,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 6nCh0Of4anIuD8+6EgYj+g6hOf4wvwiZr6lDodIc+z0=
 """
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
       writeStatus(.ok)
         >>> writeHeaders(
           [
@@ -66,8 +66,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
               secret: secret
             )
             ] |> catOptionals
-        )
-        >>> respond(html: "<p>Hello, world</p>")
+    )
 
     assertSnapshot(matching: middleware(conn))
 
@@ -93,7 +92,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 68fe5aaecd5cfad403ffad8ae6d0f116
 """
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
+    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
       writeStatus(.ok)
         >>> writeHeaders(
           [
@@ -105,8 +104,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
               encrypt: true
             )
             ] |> catOptionals
-        )
-        >>> respond(html: "<p>Hello, world</p>")
+    )
 
     assertSnapshot(matching: middleware(conn))
 

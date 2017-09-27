@@ -1,5 +1,5 @@
 ▿ Step
-  ResponseEnded
+  HeadersOpen
 
 ▿ Request
   GET /
@@ -8,8 +8,4 @@
 
 ▿ Response
   Status 200 OK
-  Content-Length: 19
-  Content-Type: text/html; charset=utf8
   Set-Cookie: session=eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=--6nCh0Of4anIuD8+6EgYj+g6hOf4wvwiZr6lDodIc+z0=; Secure; HttpOnly
-
-  <p>Hello, world</p>
