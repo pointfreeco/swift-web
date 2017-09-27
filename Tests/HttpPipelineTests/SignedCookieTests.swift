@@ -21,13 +21,8 @@ aGVsbG8td29ybGQ=\
     let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
       writeStatus(.ok)
         >>> writeHeaders(
-          [
-            .setSignedCookie(
-              key: "session",
-              value: "hello-world",
-              secret: secret
-            )
-            ] |> catOptionals
+          [.setSignedCookie(key: "session", value: "hello-world", secret: secret)]
+            |> catOptionals
     )
 
     assertSnapshot(matching: middleware(conn))
@@ -57,13 +52,8 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
       writeStatus(.ok)
         >>> writeHeaders(
-          [
-            .setSignedCookie(
-              key: "session",
-              value: episode,
-              secret: secret
-            )
-            ] |> catOptionals
+          [.setSignedCookie(key: "session", value: episode, secret: secret)]
+            |> catOptionals
     )
 
     assertSnapshot(matching: middleware(conn))
@@ -93,14 +83,8 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
       writeStatus(.ok)
         >>> writeHeaders(
-          [
-            .setSignedCookie(
-              key: "session",
-              value: "hello-world",
-              secret: secret,
-              encrypt: true
-            )
-            ] |> catOptionals
+          [.setSignedCookie(key: "session", value: "hello-world", secret: secret, encrypt: true)]
+            |> catOptionals
     )
 
     assertSnapshot(matching: middleware(conn))
@@ -137,14 +121,8 @@ cb4db8ac9390ac810837809f11bc6803\
     let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
       writeStatus(.ok)
         >>> writeHeaders(
-          [
-            .setSignedCookie(
-              key: "session",
-              value: episode,
-              secret: secret,
-              encrypt: true
-            )
-            ] |> catOptionals
+          [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true)]
+            |> catOptionals
     )
 
     assertSnapshot(matching: middleware(conn))
