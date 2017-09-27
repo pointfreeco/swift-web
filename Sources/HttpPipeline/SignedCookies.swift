@@ -15,14 +15,19 @@ extension ResponseHeader {
     key: String,
     data: Data,
     options: Set<CookieOption>,
-    secret: String
+    secret: String,
+    encrypt: Bool = false
     )
     -> ResponseHeader? {
 
       let encodedValue = data.base64EncodedString()
       guard let computedDigest = digest(value: encodedValue, secret: secret) else { return nil }
 
-      return .some(.setCookie(key: key, value: "\(encodedValue)--\(computedDigest)", options: options))
+      let signedValue = "\(encodedValue)--\(computedDigest)"
+      guard let finalValue = encrypt ? encrypted(text: signedValue, secret: secret) : signedValue
+        else { return nil }
+
+      return .some(.setCookie(key: key, value: finalValue, options: options))
   }
 
   /// A helper for creating a signed cookie of a string value.
@@ -31,11 +36,14 @@ extension ResponseHeader {
     key: String,
     value: String,
     options: Set<CookieOption>,
-    secret: String
+    secret: String,
+    encrypt: Bool = false
     )
     -> ResponseHeader? {
 
-      return setSignedCookie(key: key, data: Data(value.utf8), options: options, secret: secret)
+      return setSignedCookie(
+        key: key, data: Data(value.utf8), options: options, secret: secret, encrypt: encrypt
+      )
   }
 
   /// A helper for creating a signed cookie of an encodable value.
@@ -44,12 +52,13 @@ extension ResponseHeader {
     key: String,
     value: A,
     options: Set<CookieOption>,
-    secret: String
+    secret: String,
+    encrypt: Bool = false
     )
     -> ResponseHeader? {
 
       return (try? JSONEncoder().encode(value))
-        .flatMap { setSignedCookie(key: key, data: $0, options: options, secret: secret) }
+        .flatMap { setSignedCookie(key: key, data: $0, options: options, secret: secret, encrypt: encrypt) }
   }
 
   /// Verifies signed cookie data using the secret that it was signed with.
@@ -59,8 +68,12 @@ extension ResponseHeader {
   ///                        "\(data)--\(digest)".
   ///   - secret: The secret used to sign the cookie.
   /// - Returns: The data of the cookie value if the verification was successful, and `nil` otherwise.
-  public static func verifiedData(signedCookieValue: String, secret: String) -> Data? {
-    let parts = signedCookieValue.components(separatedBy: "--")
+  public static func verifiedData(signedCookieValue: String, secret: String, decrypt: Bool = false) -> Data? {
+
+    guard let cookieValue = decrypt ? decrypted(text: signedCookieValue, secret: secret) : signedCookieValue
+      else { return nil }
+
+    let parts = cookieValue.components(separatedBy: "--")
     guard let encodedValue = parts.first,
       let providedDigest = parts.last
       else {
@@ -76,15 +89,25 @@ extension ResponseHeader {
   }
 
   /// Helper function that calls `verifiedData` and then tries converting the data to a string.
-  public static func verifiedString(signedCookieValue: String, secret: String) -> String? {
-    return verifiedData(signedCookieValue: signedCookieValue, secret: secret)
-      .flatMap { String(data: $0, encoding: .utf8) }
+  public static func verifiedString(
+    signedCookieValue: String,
+    secret: String,
+    decrypt: Bool = false
+    )
+    -> String? {
+      return verifiedData(signedCookieValue: signedCookieValue, secret: secret, decrypt: decrypt)
+        .flatMap { String(data: $0, encoding: .utf8) }
   }
 
   /// Help function that calls `verifiedData` and then tries to decode the data into an `A`.
-  public static func verifiedValue<A: Decodable>(signedCookieValue: String, secret: String) -> A? {
-    return verifiedData(signedCookieValue: signedCookieValue, secret: secret)
-      .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
+  public static func verifiedValue<A: Decodable>(
+    signedCookieValue: String,
+    secret: String,
+    decrypt: Bool = false
+    )
+    -> A? {
+      return verifiedData(signedCookieValue: signedCookieValue, secret: secret, decrypt: decrypt)
+        .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
   }
 }
 
@@ -101,4 +124,36 @@ private func base64DecodedString(string: String) -> String? {
 
 private func base64DecodedData(string: String) -> Data? {
   return Data(base64Encoded: Data(string.utf8))
+}
+
+private func encrypted(text plainText: String, secret: String) -> String? {
+  let secretBytes = CryptoUtils.byteArray(fromHex: secret)
+  let iv = [UInt8](repeating: 0, count: secretBytes.count)
+  let plainTextBytes = CryptoUtils.byteArray(from: plainText)
+
+  let blockSize = Cryptor.Algorithm.aes.blockSize
+  let paddedPlainTextBytes = plainTextBytes.count % blockSize != 0
+    ? CryptoUtils.zeroPad(byteArray: plainTextBytes, blockSize: blockSize)
+    : plainTextBytes
+
+  let cipherText = Cryptor(operation: .encrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv)
+    .update(byteArray: paddedPlainTextBytes)?
+    .final()
+
+  return cipherText.map { CryptoUtils.hexString(from: $0) }
+}
+
+private func decrypted(text encryptedText: String, secret: String) -> String? {
+  let secretBytes = CryptoUtils.byteArray(fromHex: secret)
+  let iv = [UInt8](repeating: 0, count: secret.count)
+  let encryptedTextBytes = CryptoUtils.byteArray(fromHex: encryptedText)
+
+  let decryptedText = Cryptor(operation: .decrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv)
+    .update(byteArray: encryptedTextBytes)?
+    .final()
+
+  return decryptedText
+    .map { $0.filter { $0 != 0 } }
+    .map(Data.init)
+    .flatMap { String.init(data: $0, encoding: .utf8) }
 }
