@@ -123,6 +123,51 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
       "Reading signed cookie with wrong credentials returns nil."
     )
   }
+
+  func testEncryptedCookie_EncodableValue() {
+    let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
+    let encryptedCookieValue = """
+674d4b73680a254d2b881823a221ac05\
+58da40e24cb393d39f4539c9229805eb\
+33873047a29a03a6b5206bdd5be1f391\
+4bd04763062925247727d2953b74a707\
+7e47c94b32c5fd246917a2ea0726f36a\
+cb4db8ac9390ac810837809f11bc6803\
+639d849d1d43ac0082b7e3aaedfd8174
+"""
+    let episode = Episode(id: 42, name: "All About Functions")
+
+    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+      writeStatus(.ok)
+        >>> writeHeaders(
+          [
+            .setSignedCookie(
+              key: "session",
+              value: episode,
+              options: [.secure, .httpOnly],
+              secret: secret,
+              encrypt: true
+            )
+            ] |> catOptionals
+    )
+
+    assertSnapshot(matching: middleware(conn))
+
+    XCTAssertEqual(
+      episode,
+      ResponseHeader.verifiedValue(signedCookieValue: encryptedCookieValue, secret: secret),
+      "Reading signed cookie with proper credentials recovers the value."
+    )
+
+    XCTAssertEqual(
+      Episode?.none,
+      ResponseHeader.verifiedValue(
+        signedCookieValue: encryptedCookieValue,
+        secret: "deadbeefdeadbeefdeadbeefdead1234"
+      ),
+      "Reading signed cookie with wrong credentials returns nil."
+    )
+  }
 }
 
 struct Episode: Codable, DerivingEquatable {
