@@ -78,7 +78,8 @@ extension ResponseHeader {
 
     let parts = cookieValue.components(separatedBy: "--")
     guard let encodedValue = parts.first,
-      let providedDigest = parts.last
+      let providedDigest = parts.last,
+      parts.count == 2
       else {
         return nil
     }
