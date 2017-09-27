@@ -1,0 +1,15 @@
+▿ Step
+  ResponseEnded
+
+▿ Request
+  GET /
+
+  (Data, 0 bytes)
+
+▿ Response
+  Status 200 OK
+  Content-Length: 19
+  Content-Type: text/html; charset=utf8
+  Set-Cookie: session=aGVsbG8td29ybGQ=--4wgeyWTkB2EKsLHYK7Ao1VzjFMXeTLZHXX76XTTOBCw=; Secure; HttpOnly
+
+  <p>Hello, world</p>

@@ -50,7 +50,7 @@ let package = Package(
     .target(name: "HttpPipeline",
             dependencies: ["Cryptor", "MediaType", "Prelude", "Optics"]),
     .testTarget(name: "HttpPipelineTests",
-                dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
+                dependencies: ["Deriving", "HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),

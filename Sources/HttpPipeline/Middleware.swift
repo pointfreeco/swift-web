@@ -23,6 +23,10 @@ public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, 
   return \.response.headers %~ { $0 + [header] }
 }
 
+public func writeHeaders<A>(_ headers: [ResponseHeader]) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
+  return \.response.headers %~ { $0 + headers }
+}
+
 public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return writeHeader(.other(name, value))
 }
