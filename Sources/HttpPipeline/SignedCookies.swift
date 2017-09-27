@@ -10,6 +10,7 @@ extension ResponseHeader {
   ///   - value: The data of the cookie to sign.
   ///   - options: Extra options to attach to the cookie.
   ///   - secret: The secret to sign the cookie with. This value must also be provided to verify a signature.
+  ///   - encrypt: (Optional) Further encrypts the signed cookie using the secret provided.
   /// - Returns: A `Set-Cookie` header containing the signed cookie.
   public static func setSignedCookie(
     key: String,
@@ -68,7 +69,9 @@ extension ResponseHeader {
   ///                        "\(data)--\(digest)".
   ///   - secret: The secret used to sign the cookie.
   /// - Returns: The data of the cookie value if the verification was successful, and `nil` otherwise.
-  public static func verifiedData(signedCookieValue: String, secret: String, decrypt: Bool = false) -> Data? {
+  public static func verifiedData(signedCookieValue: String, secret: String) -> Data? {
+    // We can determine if we need to decrypt by checking if the cookie contains the `--` delimeter.
+    let decrypt = !signedCookieValue.contains("--")
 
     guard let cookieValue = decrypt ? decrypted(text: signedCookieValue, secret: secret) : signedCookieValue
       else { return nil }
@@ -89,24 +92,15 @@ extension ResponseHeader {
   }
 
   /// Helper function that calls `verifiedData` and then tries converting the data to a string.
-  public static func verifiedString(
-    signedCookieValue: String,
-    secret: String,
-    decrypt: Bool = false
-    )
+  public static func verifiedString(signedCookieValue: String, secret: String)
     -> String? {
-      return verifiedData(signedCookieValue: signedCookieValue, secret: secret, decrypt: decrypt)
+      return verifiedData(signedCookieValue: signedCookieValue, secret: secret)
         .flatMap { String(data: $0, encoding: .utf8) }
   }
 
   /// Help function that calls `verifiedData` and then tries to decode the data into an `A`.
-  public static func verifiedValue<A: Decodable>(
-    signedCookieValue: String,
-    secret: String,
-    decrypt: Bool = false
-    )
-    -> A? {
-      return verifiedData(signedCookieValue: signedCookieValue, secret: secret, decrypt: decrypt)
+  public static func verifiedValue<A: Decodable>(signedCookieValue: String, secret: String) -> A? {
+      return verifiedData(signedCookieValue: signedCookieValue, secret: secret)
         .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
   }
 }

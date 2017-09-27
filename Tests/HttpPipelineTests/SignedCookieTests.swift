@@ -110,7 +110,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 
     XCTAssertEqual(
       "hello-world",
-      ResponseHeader.verifiedString(signedCookieValue: encryptedCookieValue, secret: secret, decrypt: true),
+      ResponseHeader.verifiedString(signedCookieValue: encryptedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
