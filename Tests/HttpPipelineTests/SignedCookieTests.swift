@@ -9,6 +9,7 @@ import XCTest
 private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 
 class SignedCookieTests: XCTestCase {
+
   func testSignedCookie() {
     let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
     let signedCookieValue = """

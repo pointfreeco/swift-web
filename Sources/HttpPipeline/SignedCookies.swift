@@ -8,7 +8,7 @@ extension ResponseHeader {
   /// - Parameters:
   ///   - key: The name of the cookie.
   ///   - value: The data of the cookie to sign.
-  ///   - options: Extra options to attach to the cookie.
+  ///   - options: (Optional) Extra options to attach to the cookie.
   ///   - secret: The secret to sign the cookie with. This value must also be provided to verify a signature.
   ///   - encrypt: (Optional) Further encrypts the signed cookie using the secret provided.
   /// - Returns: A `Set-Cookie` header containing the signed cookie.
@@ -110,10 +110,6 @@ private func digest(value: String, secret: String) -> String? {
   let valueBytes = CryptoUtils.byteArray(from: value)
   let digestBytes = HMAC(using: .sha256, key: keyBytes).update(byteArray: valueBytes)?.final()
   return digestBytes.map { Data(bytes: $0).base64EncodedString() }
-}
-
-private func base64DecodedString(string: String) -> String? {
-  return Data(base64Encoded: Data(string.utf8)).flatMap { String(data: $0, encoding: .utf8) }
 }
 
 private func base64DecodedData(string: String) -> Data? {
