@@ -98,7 +98,7 @@ extension ResponseHeader {
         .flatMap { String(data: $0, encoding: .utf8) }
   }
 
-  /// Help function that calls `verifiedData` and then tries to decode the data into an `A`.
+  /// Helper function that calls `verifiedData` and then tries to decode the data into an `A`.
   public static func verifiedValue<A: Decodable>(signedCookieValue: String, secret: String) -> A? {
       return verifiedData(signedCookieValue: signedCookieValue, secret: secret)
         .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
