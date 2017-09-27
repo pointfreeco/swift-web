@@ -147,7 +147,6 @@ private func decrypted(text encryptedText: String, secret: String) -> String? {
     .final()
 
   return decryptedText
-    .map { $0.filter { $0 != 0 } }
-    .map(Data.init)
+    .map { Data($0.filter { $0 != 0 }) }
     .flatMap { String.init(data: $0, encoding: .utf8) }
 }
