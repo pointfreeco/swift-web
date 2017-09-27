@@ -22,11 +22,7 @@ extension ResponseHeader {
       let encodedValue = data.base64EncodedString()
       guard let computedDigest = digest(value: encodedValue, secret: secret) else { return nil }
 
-      return .setCookie(
-        key: key,
-        value: "\(encodedValue)--\(computedDigest)",
-        options: options
-      )
+      return .some(.setCookie(key: key, value: "\(encodedValue)--\(computedDigest)", options: options))
   }
 
   /// A helper for creating a signed cookie of a string value.

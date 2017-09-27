@@ -66,8 +66,8 @@ public enum ResponseHeader {
     }
 
     public enum SameSite: Hashable, CustomStringConvertible {
-      case lax // Lax
-      case strict // Strict
+      case lax
+      case strict 
 
       public var description: String {
         switch self {
@@ -78,8 +78,8 @@ public enum ResponseHeader {
     }
   }
 
-  public static func setCookies(_ pairs: [String: String]) -> [ResponseHeader] {
-    return pairs.map { .setCookie(key: $0.key, value: $0.value, options: []) }
+  public static func setCookies(_ pairs: [String: String], options: Set<CookieOption>) -> [ResponseHeader] {
+    return pairs.map { .setCookie(key: $0.key, value: $0.value, options: options) }
   }
 
   public enum Authenticate {
