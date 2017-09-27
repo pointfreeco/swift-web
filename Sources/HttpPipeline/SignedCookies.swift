@@ -15,7 +15,7 @@ extension ResponseHeader {
   public static func setSignedCookie(
     key: String,
     data: Data,
-    options: Set<CookieOption>,
+    options: Set<CookieOption> = [],
     secret: String,
     encrypt: Bool = false
     )
@@ -28,7 +28,7 @@ extension ResponseHeader {
       guard let finalValue = encrypt ? encrypted(text: signedValue, secret: secret) : signedValue
         else { return nil }
 
-      return .some(.setCookie(key: key, value: finalValue, options: options))
+      return .some(.setCookie(key: key, value: finalValue, options: options.union([.httpOnly, .secure])))
   }
 
   /// A helper for creating a signed cookie of a string value.
@@ -36,7 +36,7 @@ extension ResponseHeader {
   public static func setSignedCookie(
     key: String,
     value: String,
-    options: Set<CookieOption>,
+    options: Set<CookieOption> = [],
     secret: String,
     encrypt: Bool = false
     )
@@ -52,7 +52,7 @@ extension ResponseHeader {
   public static func setSignedCookie<A: Encodable>(
     key: String,
     value: A,
-    options: Set<CookieOption>,
+    options: Set<CookieOption> = [],
     secret: String,
     encrypt: Bool = false
     )
