@@ -10,11 +10,7 @@ public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, Heade
     .init(
       data: conn.data,
       request: conn.request,
-      response: Response(
-        status: status,
-        headers: conn.response.headers,
-        body: nil
-      )
+      response: conn.response |> \.status .~ status
     )
   }
 }
