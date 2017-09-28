@@ -28,7 +28,7 @@ extension ResponseHeader {
       guard let finalValue = encrypt ? encrypted(text: signedValue, secret: secret) : signedValue
         else { return nil }
 
-      return .some(.setCookie(key: key, value: finalValue, options: options.union([.httpOnly, .secure])))
+      return .some(.setCookie(key: key, value: finalValue, options: options.union([.httpOnly])))
   }
 
   /// A helper for creating a signed cookie of a string value.
