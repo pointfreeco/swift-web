@@ -1,3 +1,4 @@
+import Foundation
 import MediaType
 import Prelude
 
@@ -12,6 +13,7 @@ public enum ResponseHeader {
 
   public enum CookieOption: Hashable, CustomStringConvertible {
     case domain(String)
+    case expires(TimeInterval)
     case httpOnly
     case maxAge(Int)
     case path(String)
@@ -22,6 +24,8 @@ public enum ResponseHeader {
       switch self {
       case let .domain(domain):
         return "Domain=\(domain)"
+      case let .expires(time):
+        return "Expires=" + expiresDateFormatter.string(from: .init(timeIntervalSince1970: time))
       case .httpOnly:
         return "HttpOnly"
       case let .maxAge(maxAge):
@@ -38,6 +42,7 @@ public enum ResponseHeader {
     public var hashValue: Int {
       switch self {
       case let .domain(domain):     return domain.hashValue
+      case let .expires(time):      return time.hashValue
       case .httpOnly:               return 1
       case let .maxAge(maxAge):     return maxAge.hashValue
       case let .path(path):         return path.hashValue
@@ -50,6 +55,8 @@ public enum ResponseHeader {
       switch (lhs, rhs) {
       case let (.domain(lhs), .domain(rhs)):
         return lhs == rhs
+      case let (.expires(lhs), .expires(rhs)):
+        return lhs == rhs
       case (.httpOnly, .httpOnly):
         return true
       case let (.maxAge(lhs), .maxAge(rhs)):
@@ -60,7 +67,8 @@ public enum ResponseHeader {
         return lhs == rhs
       case (.secure, .secure):
         return true
-      case (.domain, _), (.httpOnly, _), (.maxAge, _), (.path, _), (.sameSite, _), (.secure, _):
+      case (.domain, _), (.expires, _), (.httpOnly, _), (.maxAge, _), (.path, _), (.sameSite, _),
+           (.secure, _):
         return false
       }
     }
@@ -115,3 +123,11 @@ public enum ResponseHeader {
     return key + ": " + value
   }
 }
+
+private let expiresDateFormatter: DateFormatter = { () -> DateFormatter in
+  let formatter = DateFormatter()
+  formatter.timeZone = TimeZone(abbreviation: "UTC")
+  formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss zzz"
+  formatter.string(from: Date())
+  return formatter
+}()
