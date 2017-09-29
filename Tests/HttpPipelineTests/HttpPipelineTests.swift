@@ -54,6 +54,7 @@ class HttpPipelineTests: XCTestCase {
       writeStatus(.ok)
         >>> writeHeader(.setCookie(key: "user_id", value: "123456", options: []))
         >>> writeHeader(.setCookie(key: "lang", value: "es", options: []))
+        >>> writeHeader(.clearCookie(key: "test"))
         >>> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn))

@@ -90,6 +90,10 @@ public enum ResponseHeader {
     return pairs.map { .setCookie(key: $0.key, value: $0.value, options: options) }
   }
 
+  public static func clearCookie(key: String) -> ResponseHeader {
+    return .setCookie(key: key, value: "", options: [CookieOption.maxAge(0), .expires(0)])
+  }
+
   public enum Authenticate {
     case basic(realm: String?)
   }

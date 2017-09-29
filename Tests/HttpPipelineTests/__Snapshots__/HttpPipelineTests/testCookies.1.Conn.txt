@@ -11,6 +11,7 @@
   Content-Length: 19
   Content-Type: text/html; charset=utf8
   Set-Cookie: lang=es
+  Set-Cookie: test=; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT
   Set-Cookie: user_id=123456
 
   <p>Hello, world</p>
