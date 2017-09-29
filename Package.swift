@@ -6,6 +6,8 @@ let package = Package(
   name: "Web",
   products: [
     .library(name: "ApplicativeRouter", targets: ["ApplicativeRouter"]),
+    .library(name: "ApplicativeRouterHttpPipelineSupport",
+             targets: ["ApplicativeRouterHttpPipelineSupport"]),
     .library(name: "Css", targets: ["Css"]),
     .library(name: "CssReset", targets: ["CssReset"]),
     .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
@@ -27,6 +29,11 @@ let package = Package(
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Prelude"]),
     .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics"]),
+
+    .target(name: "ApplicativeRouterHttpPipelineSupport",
+            dependencies: ["ApplicativeRouter", "HttpPipeline", "Prelude"]),
+    .testTarget(name: "ApplicativeRouterHttpPipelineSupportTests",
+                dependencies: ["ApplicativeRouterHttpPipelineSupport", "HttpPipelineTestSupport", "SnapshotTesting"]),
 
     .target(name: "Css", dependencies: ["Either", "Prelude"]),
     .testTarget(name: "CssTests", dependencies: ["Css", "CssTestSupport"]),

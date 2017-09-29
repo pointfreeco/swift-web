@@ -1,0 +1,14 @@
+▿ Step
+  ResponseEnded
+
+▿ Request
+  GET /does/not/exist
+
+  (Data, 0 bytes)
+
+▿ Response
+  Status 404 NOT FOUND
+  Content-Length: 19
+  Content-Type: text/plain
+
+  Unrecognized route!
