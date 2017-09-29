@@ -10,17 +10,17 @@ public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, Heade
     .init(
       data: conn.data,
       request: conn.request,
-      response: Response(
-        status: status,
-        headers: conn.response.headers,
-        body: nil
-      )
+      response: conn.response |> \.status .~ status
     )
   }
 }
 
 public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return \.response.headers %~ { $0 + [header] }
+}
+
+public func writeHeaders<A>(_ headers: [ResponseHeader]) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
+  return \.response.headers %~ { $0 + headers }
 }
 
 public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {

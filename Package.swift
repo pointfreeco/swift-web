@@ -22,6 +22,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("aab186e")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("6a292e9")),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
+    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.17"))
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Prelude"]),
@@ -46,8 +47,10 @@ let package = Package(
 
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
-    .target(name: "HttpPipeline", dependencies: ["MediaType", "Prelude", "Optics"]),
-    .testTarget(name: "HttpPipelineTests", dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
+    .target(name: "HttpPipeline",
+            dependencies: ["Cryptor", "MediaType", "Prelude", "Optics"]),
+    .testTarget(name: "HttpPipelineTests",
+                dependencies: ["Deriving", "HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
