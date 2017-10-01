@@ -6,13 +6,11 @@ import Prelude
 public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> IO<Conn<J, B>>
 
 public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
-  return { conn in
-    pure(
-      .init(
-        data: conn.data,
-        request: conn.request,
-        response: conn.response |> \.status .~ status
-      )
+  return pure <<< { conn in
+    .init(
+      data: conn.data,
+      request: conn.request,
+      response: conn.response |> \.status .~ status
     )
   }
 }
@@ -30,38 +28,30 @@ public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<Header
 }
 
 public func closeHeaders<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<BodyOpen, A>> {
-  return pure(
-    .init(
-      data: conn.data,
-      request: conn.request,
-      response: conn.response
-    )
+  return pure <| .init(
+    data: conn.data,
+    request: conn.request,
+    response: conn.response
   )
 }
 
 public func end(conn: Conn<BodyOpen, Data?>) -> IO<Conn<ResponseEnded, Data?>> {
-  return pure(
-    .init(
-      data: conn.data,
-      request: conn.request,
-      response: Response(
-        status: conn.response.status,
-        headers: conn.response.headers,
-        body: conn.data
-      )
+  return pure <| .init(
+    data: conn.data,
+    request: conn.request,
+    response: Response(
+      status: conn.response.status,
+      headers: conn.response.headers,
+      body: conn.data
     )
   )
 }
 
 public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data?>> {
   return conn
-    |> (
-      closeHeaders
-        >-> map(const(nil))
-        >>> pure
-        >-> end
-  )
-
+    |> closeHeaders
+    >-> map(const(nil)) >>> pure
+    >-> end
 }
 
 public func redirect<A>(
@@ -86,15 +76,13 @@ public func send(_ data: Data?) -> Middleware<BodyOpen, BodyOpen, Data?, Data?> 
     var concatenatedData = conn.data ?? Data()
     data.do { concatenatedData.append($0) }
 
-    return pure(
-      .init(
-        data: concatenatedData,
-        request: conn.request,
-        response: Response(
-          status: conn.response.status,
-          headers: conn.response.headers,
-          body: concatenatedData
-        )
+    return pure <| .init(
+      data: concatenatedData,
+      request: conn.request,
+      response: Response(
+        status: conn.response.status,
+        headers: conn.response.headers,
+        body: concatenatedData
       )
     )
   }
@@ -115,8 +103,7 @@ public func respond<A>(json: String) -> Middleware<HeadersOpen, ResponseEnded, A
 public func respond<A>(body: String, contentType: MediaType)
   -> Middleware<HeadersOpen, ResponseEnded, A, Data?> {
     let data = body.data(using: .utf8)
-    return map(const(data))
-      >>> pure
+    return map(const(data)) >>> pure
       >-> writeHeader(.contentType(contentType))
       >-> writeHeader(.contentLength(data?.count ?? 0))
       >-> closeHeaders
