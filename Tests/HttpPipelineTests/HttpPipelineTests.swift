@@ -11,9 +11,9 @@ class HttpPipelineTests: XCTestCase {
   func testPipeline() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       writeStatus(.ok)
-        >>> respond(text: "Hello, world")
+        >-> respond(text: "Hello, world")
 
-    assertSnapshot(matching: middleware(conn))
+    assertSnapshot(matching: middleware(conn).perform())
   }
 
   func testHtmlResponse() {
