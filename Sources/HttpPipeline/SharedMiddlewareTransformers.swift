@@ -94,84 +94,78 @@ public func redirectUnrelatedHosts<A>(
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
 
-    return id
-
-//    return { middleware in
-//      return { conn in
-//        conn.request.url
-//          .filterOptional { !allowedHosts.contains($0.host ?? "") }
-//          .flatMap { url in
-//            URLComponents(url: url, resolvingAgainstBaseURL: false)
-//              |> map(\.host .~ canonicalHost)
-//          }
-//          .flatMap(get(\.url))
-//          .map {
-//            conn
-//              |> writeStatus(.movedPermanently)
-//              |> writeHeader(.location($0.absoluteString))
-//              |> map(const(nil))
-//              |> closeHeaders
-//              |> end
-//          }
-//          ?? middleware(conn)
-//      }
-//    }
+    return { middleware in
+      return { conn in
+        conn.request.url
+          .filterOptional { !allowedHosts.contains($0.host ?? "") }
+          .flatMap {
+            URLComponents(url: $0, resolvingAgainstBaseURL: false)
+              |> map(\.host .~ canonicalHost)
+          }
+          .flatMap(get(\.url))
+          .map {
+            conn
+              |> writeStatus(.movedPermanently)
+              >-> writeHeader(.location($0.absoluteString))
+              >-> map(const(nil)) >>> pure
+              >-> closeHeaders
+              >-> end
+          }
+          ?? middleware(conn)
+      }
+    }
 }
 
 public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
 
-    return id
-
-//    return { middleware in
-//      return { conn in
-//        conn.request.url
-//          .filterOptional { (url: URL) -> Bool in
-//            // `url.scheme` cannot be trusted on Heroku, instead we need to look at the `X-Forwarded-Proto`
-//            // header to determine if we are on https or not.
-//            conn.request.allHTTPHeaderFields?["X-Forwarded-Proto"] != .some("https")
-//              && !allowedInsecureHosts.contains(url.host ?? "")
-//          }
-//          .flatMap(makeHttps)
-//          .map {
-//            conn
-//              |> writeStatus(.movedPermanently)
-//              |> writeHeader(.location($0.absoluteString))
-//              |> map(const(nil))
-//              |> closeHeaders
-//              |> end
-//          }
-//          ?? middleware(conn)
-//      }
-//    }
+    return { middleware in
+      return { conn in
+        conn.request.url
+          .filterOptional { (url: URL) -> Bool in
+            // `url.scheme` cannot be trusted on Heroku, instead we need to look at the `X-Forwarded-Proto`
+            // header to determine if we are on https or not.
+            conn.request.allHTTPHeaderFields?["X-Forwarded-Proto"] != .some("https")
+              && !allowedInsecureHosts.contains(url.host ?? "")
+          }
+          .flatMap(makeHttps)
+          .map {
+            conn
+              |> writeStatus(.movedPermanently)
+              >-> writeHeader(.location($0.absoluteString))
+              >-> map(const(nil)) >>> pure
+              >-> closeHeaders
+              >-> end
+          }
+          ?? middleware(conn)
+      }
+    }
 }
 
 public func requireHttps<A>(allowedInsecureHosts: [String])
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
 
-    fatalError()
-
-//    return { middleware in
-//      return { conn in
-//        conn.request.url
-//          .filterOptional { (url: URL) -> Bool in
-//            url.scheme != .some("https")
-//              && !allowedInsecureHosts.contains(url.host ?? "")
-//          }
-//          .flatMap(makeHttps)
-//          .map {
-//            conn
-//              |> writeStatus(.movedPermanently)
-//              |> writeHeader(.location($0.absoluteString))
-//              |> map(const(nil))
-//              |> closeHeaders
-//              |> end
-//          }
-//          ?? middleware(conn)
-//      }
-//    }
+    return { middleware in
+      return { conn in
+        conn.request.url
+          .filterOptional { (url: URL) -> Bool in
+            url.scheme != .some("https")
+              && !allowedInsecureHosts.contains(url.host ?? "")
+          }
+          .flatMap(makeHttps)
+          .map {
+            conn
+              |> writeStatus(.movedPermanently)
+              >-> writeHeader(.location($0.absoluteString))
+              >-> map(const(nil)) >>> pure
+              >-> closeHeaders
+              >-> end
+          }
+          ?? middleware(conn)
+      }
+    }
 }
 
 public func validateBasicAuth(user: String, password: String, request: URLRequest) -> Bool {
