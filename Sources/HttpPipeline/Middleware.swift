@@ -20,7 +20,7 @@ public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, 
 }
 
 public func writeHeaders<A>(_ headers: [ResponseHeader]) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
-  return pure <<< (\.response.headers %~ { $0 + headers }) 
+  return pure <<< (\.response.headers %~ { $0 + headers })
 }
 
 public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
@@ -64,8 +64,7 @@ public func redirect<A>(
     return writeStatus(.found)
       >-> headersMiddleware
       >-> writeHeader(.location(location))
-      >-> map(const(nil))
-      >>> pure
+      >-> map(const(nil)) >>> pure
       >-> closeHeaders
       >-> end
 }
