@@ -52,22 +52,6 @@ extension Parser {
   }
 }
 
-// MARK: - Monad
-
-extension Parser {
-  public func flatMap<B>( _ f: @escaping (A) -> Parser<I, B>) -> Parser<I, B> {
-    return Parser<I, B>(
-      parse: { route in
-        guard case let .some(rest: rest, match: match) = self.parse(route) else { return nil }
-        return f(match).parse(rest)
-    })
-  }
-
-  public static func >>- <B>(lhs: Parser, f: @escaping (A) -> Parser<I, B>) -> Parser<I, B> {
-    return lhs.flatMap(f)
-  }
-}
-
 // MARK: - Apply
 
 extension Parser {

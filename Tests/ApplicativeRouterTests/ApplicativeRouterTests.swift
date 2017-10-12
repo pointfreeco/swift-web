@@ -212,14 +212,8 @@ struct RefTag<A> {
 /// Converts a parser of `A` into a parser of `RefTag<A>` by first trying to parse out the `A`, and then
 /// parsing a query param `ref` and storing both values in `RefTag<A>`.
 func refTag<I, A>(_ parser: Parser<I, A>) -> Parser<I, RefTag<A>> {
-  let refParser: Parser<I, String?> = opt(param("ref"))
 
-  return parser.flatMap { a in
-    Parser<I, RefTag<A>> { route in
-
-      refParser.parse(route)
-        .map { result in (result.rest, RefTag(ref: result.match, rest: a)) }
-        ?? (route, RefTag(ref: nil, rest: a))
-    }
-  }
+  return curry(RefTag<A>.init)
+    <¢> opt(param("ref"))
+    <*> parser
 }
