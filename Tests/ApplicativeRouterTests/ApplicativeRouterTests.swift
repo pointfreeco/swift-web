@@ -16,7 +16,7 @@ class ApplicativeRouterTests: XCTestCase {
     let router =
       Route.home <¢ .get <*| end
         // Route with path argument and two optional query params: /episode/:id?ref=foo&t=123
-        <|> curry(Route.episode) <¢> (.get <* lit("episode") *> .str) <*> opt(param("ref")) <*> opt(param("t", .int)) <*| end
+        <|> curry(Route.episode) <¢ .get <*> (lit("episode") *> .str) <*> opt(param("ref")) <*> opt(param("t", .int)) <*| end
 
         // Route with no path arguments and two query params, `page` and `ref`. However, the `ref` param
         // is parsed using the `refTag` helper that will provide a first class wrapper type for that value.
