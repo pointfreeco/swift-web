@@ -167,7 +167,7 @@ extension Parser {
   }
 
   public static var int: Parser<I, Int> {
-    return component { Int($0) }
+    return component(Int.init)
   }
 
   public static var str: Parser<I, String> {

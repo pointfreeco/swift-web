@@ -12,11 +12,13 @@ func req(_ method: ApplicativeRouter.Method, _ location: String, _ body: Data? =
 
 class ApplicativeRouterTests: XCTestCase {
   func testRouter() {
-
     let router =
       Route.home <¢ .get <*| end
         // Route with path argument and two optional query params: /episode/:id?ref=foo&t=123
         <|> curry(Route.episode) <¢ .get <*> (lit("episode") *> .str) <*> opt(param("ref")) <*> opt(param("t", .int)) <*| end
+
+        // Route with multiple path arguments: /episodes/:slug/comments/:id
+        <|> curry(Route.episodeComment) <¢ .get <* lit("episodes") <*> .str <* lit("comments") <*> .int <*| end
 
         // Route with no path arguments and two query params, `page` and `ref`. However, the `ref` param
         // is parsed using the `refTag` helper that will provide a first class wrapper type for that value.
@@ -51,6 +53,10 @@ class ApplicativeRouterTests: XCTestCase {
     XCTAssertEqual(
       router.match(req(.get, "/episode/hello-world?ref=twitter&t=1234")),
       .episode(id: "hello-world", ref: "twitter", startAt: 1234)
+    )
+    XCTAssertEqual(
+      router.match(req(.get, "/episodes/hello-world/comments/42")),
+      .episodeComment(episodeSlug: "hello-world", commentId: 42)
     )
     XCTAssertEqual(router.match(req(.get, "/search")), .search(nil))
     XCTAssertEqual(router.match(req(.get, "/search?query=what")), .search("what"))
@@ -146,8 +152,9 @@ class ApplicativeRouterTests: XCTestCase {
 
 enum Route {
   case home
-  case episodes(RefTag<Int?>)
   case episode(id: String, ref: String?, startAt: Int?)
+  case episodeComment(episodeSlug: String, commentId: Int)
+  case episodes(RefTag<Int?>)
   case search(String?)
   case signup(Data, ref: String?)
 }
@@ -157,15 +164,23 @@ extension Route: Equatable {
     switch (lhs, rhs) {
     case (.home, .home):
       return true
-    case let (.episodes(lhs), .episodes(rhs)):
-      return lhs.ref == rhs.ref && lhs.rest == rhs.rest
+
     case let (.episode(lhsId, lhsRef, lhsStartAt), .episode(rhsId, rhsRef, rhsStartAt)):
       return lhsId == rhsId && lhsRef == rhsRef && lhsStartAt == rhsStartAt
+
+    case let (.episodeComment(lhs), .episodeComment(rhs)):
+      return lhs == rhs
+
+    case let (.episodes(lhs), .episodes(rhs)):
+      return lhs.ref == rhs.ref && lhs.rest == rhs.rest
+
     case let (.search(l), .search(r)):
       return l == r
+
     case let (.signup(lhsData, lhsRef), .signup(rhsData, rhsRef)):
       return lhsData == rhsData && lhsRef == rhsRef
-    case (.home, _), (.episodes, _), (.episode, _), (.search, _), (.signup, _):
+
+    case (.home, _), (.episode, _), (.episodeComment, _), (.episodes, _), (.search, _), (.signup, _):
       return false
     }
   }
