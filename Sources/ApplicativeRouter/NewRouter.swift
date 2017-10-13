@@ -33,10 +33,24 @@ struct Iso<A, B> {
   }
 }
 
-extension Iso where B == (A, Void) {
-  static var unit: Iso<A, (A, Void)> {
-    return Iso<A, (A, Void)>(
-      image: { ($0, ()) },
+func commuteIso<A, B>() -> Iso<(A, B), (B, A)> {
+  return .init(
+    image: { ($1, $0) },
+    preimage: { ($1, $0) }
+  )
+}
+
+func unit<A>() -> Iso<A, (A, Prelude.Unit)> {
+  return Iso<A, (A, Prelude.Unit)>(
+    image: { ($0, Prelude.unit) },
+    preimage: { $0.0 }
+  )
+}
+
+extension Iso where B == (A, Prelude.Unit) {
+  static var unit: Iso<A, (A, Prelude.Unit)> {
+    return Iso<A, (A, Prelude.Unit)>(
+      image: { ($0, Prelude.unit) },
       preimage: { $0.0 }
     )
   }
@@ -55,6 +69,10 @@ struct Router<A> {
 // Functor
 
 extension Router {
+  func map<B>(_ f: Iso<A, B>) -> Router<B> {
+    return f <¢> self
+  }
+
   static func <¢> <B> (lhs: Iso<A, B>, rhs: Router) -> Router<B> {
     return Router<B>(
       parse: { route in
@@ -94,7 +112,7 @@ extension Router {
   }
 }
 
-extension Router where A == () {
+extension Router where A == Prelude.Unit {
 
   static func <* <B>(x: Router<B>, y: Router) -> Router<B> {
     return Iso.unit.inverted <¢> (x <*> y) // <- this applicative is right associative
@@ -102,8 +120,15 @@ extension Router where A == () {
 }
 
 extension Router {
-  static func *> (x: Router<()>, y: Router) -> Router {
-    return (Iso.unit >>> Iso.commute).inverted <¢> (x <*> y)
+  static func *> (x: Router<Prelude.Unit>, y: Router) -> Router {
+
+    // this is the cause of a runtime crash?! doing just `return y` avoids the crash
+    // return y // <-- doesn't crash!
+
+    return unit().inverted <¢> (y <*> x) // <-- crashes!
+//    return Iso.unit.inverted <¢> (y <*> x) // <-- crashes!
+//    return (Iso.commute >>> Iso.unit.inverted) <¢> (x <*> y) // <-- crashes!
+//    return (commuteIso() >>> Iso.unit.inverted) <¢> (x <*> y) // <-- crashes!
   }
 }
 
@@ -136,11 +161,11 @@ extension Router {
 
 // Combinators
 
-func lit(_ str: String) -> Router<()> {
-  return Router<()>(
+func lit(_ str: String) -> Router<Prelude.Unit> {
+  return Router<Prelude.Unit>(
     parse: { route in
       guard let (_, ps) = uncons(route.path) else { return nil }
-      return ((route.method, ps, route.query, route.body), ())
+      return ((route.method, ps, route.query, route.body), Prelude.unit)
     },
     print: { a in
       return "/\(str)"
@@ -158,10 +183,10 @@ func pathComponent<A>(_ key: String, _ f: Iso<String, A>) -> Router<A> {
   })
 }
 
-let _end = Router<()>(
+let _end = Router<Prelude.Unit>(
   parse: { route in
     guard route.path.isEmpty else { return nil }
-    return ((method: route.method, path: [], query: [:], body: nil), ())
+    return ((method: route.method, path: [], query: [:], body: nil), Prelude.unit)
   },
   print: { _ in "" }
 )
@@ -179,9 +204,6 @@ func num(_ key: String) -> Router<Double> {
   return pathComponent(key, doubleStringIso)
 }
 
-
-
-
 let intStringIso = Iso<String, Int>(
   image: Int.init,
   preimage: String.init
@@ -190,16 +212,6 @@ let doubleStringIso = Iso<String, Double>(
   image: Double.init,
   preimage: String.init
 )
-
-
-
-//public func component<I, A>(_ f: @escaping (String) -> A?) -> Parser<I, A> {
-//  return .init { route in
-//    guard let (p, ps) = uncons(route.path), let v = f(p) else { return nil }
-//    return ((route.method, ps, route.query, route.body), v)
-//  }
-//}
-
 
 fileprivate func route(from request: URLRequest) -> Route {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get

@@ -7,7 +7,7 @@ import XCTest
 class NewRouterTests: XCTestCase {
   func testRouter() {
 
-    let homeRouter = Routes.iso.home <¢> _end
+    let homeRouter = Routes.iso.home <¢> lit("home") <* _end
 
     let postCommentRouter = Routes.iso.postComment
       <¢> (
@@ -19,14 +19,14 @@ class NewRouterTests: XCTestCase {
     let postCommentsRouter = Routes.iso.postComments
       <¢> (
         (lit("posts") *> str("post_id"))
-          <* lit("comments")
-          <* _end
+//          <* lit("comments")
+//          <* _end
     )
 
     let router = [
       homeRouter,
-      postCommentRouter,
-//      postCommentsRouter
+//      postCommentRouter,
+//      postCommentsRouter,
       ]
       .reduce(Router<Routes>.empty, <|>)
 
@@ -34,15 +34,15 @@ class NewRouterTests: XCTestCase {
     print(router.print(.postComment("hello-world", 42)))
 
 
-    print(router.match(URLRequest(url: URL(string: "http://www.site.com")!)))
-    print(router.print(.home(())))
+    print(router.match(URLRequest(url: URL(string: "http://www.site.com/home")!)))
+    print(router.print(.home(unit)))
 
     print("")
   }
 }
 
 enum Routes {
-  case home(Void)
+  case home(Prelude.Unit)
   case posts
   case post(String)
   case postComments(String)
@@ -56,7 +56,7 @@ enum Routes {
         return route
     })
 
-    static let home = Iso<Void, Routes>(
+    static let home = Iso<Prelude.Unit, Routes>(
       image: Routes.home,
       preimage: {
         guard case let .home(route) = $0 else { return nil }
