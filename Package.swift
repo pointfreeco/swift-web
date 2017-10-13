@@ -27,7 +27,7 @@ let package = Package(
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.17"))
   ],
   targets: [
-    .target(name: "ApplicativeRouter", dependencies: ["Either", "Prelude"]),
+    .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude"]),
     .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics"]),
 
     .target(name: "ApplicativeRouterHttpPipelineSupport",
