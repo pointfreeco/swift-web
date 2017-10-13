@@ -12,23 +12,29 @@ func req(_ method: ApplicativeRouter.Method, _ location: String, _ body: Data? =
 
 class ApplicativeRouterTests: XCTestCase {
   func testRouter() {
-    let router =
-      Route.home <¢ .get <*| end
-        // Route with path argument and two optional query params: /episode/:id?ref=foo&t=123
-        <|> curry(Route.episode) <¢ .get <*> (lit("episode") *> .str) <*> opt(param("ref")) <*> opt(param("t", .int)) <*| end
 
-        // Route with multiple path arguments: /episodes/:slug/comments/:id
-        <|> curry(Route.episodeComment) <¢ .get <* lit("episodes") <*> .str <* lit("comments") <*> .int <*| end
+    let routes: [Parser<(), Route>] = [
+      // Matches root path: /
+      Route.home <¢ .get <*| end,
 
-        // Route with no path arguments and two query params, `page` and `ref`. However, the `ref` param
-        // is parsed using the `refTag` helper that will provide a first class wrapper type for that value.
-        <|> Route.episodes <¢> refTag(.get <* lit("episodes") *> opt(param("page", .int))) <*| end
+      // Route with path argument and two optional query params: /episode/:id?ref=foo&t=123
+      curry(Route.episode) <¢ .get <*> (lit("episode") *> .str) <*> opt(param("ref")) <*> opt(param("t", .int)) <*| end,
 
-        // Route with one query param: /search?query=foo
-        <|> Route.search <¢ .get <* lit("search") <*> opt(param("query")) <*| end
+      // Route with multiple path arguments: /episodes/:slug/comments/:id
+      curry(Route.episodeComment) <¢ .get <* lit("episodes") <*> .str <* lit("comments") <*> .int <*| end,
 
-        // POST route with body data and an optional query param.
-        <|> curry(Route.signup) <¢> (.post *> .dataBody) <* lit("signup") <*> opt(param("ref")) <*| end
+      // Route with no path arguments and two query params, `page` and `ref`. However, the `ref` param
+      // is parsed using the `refTag` helper that will provide a first class wrapper type for that value.
+      Route.episodes <¢> refTag(.get <* lit("episodes") *> opt(param("page", .int))) <*| end,
+
+      // Route with one query param: /search?query=foo
+      Route.search <¢ .get <* lit("search") <*> opt(param("query")) <*| end,
+
+      // POST route with body data and an optional query param.
+      curry(Route.signup) <¢> (.post *> .dataBody) <* lit("signup") <*> opt(param("ref")) <*| end,
+    ]
+
+    let router = routes.reduce(.empty, <|>)
 
     XCTAssertEqual(router.match(req(.get, "/")), .home)
     XCTAssertEqual(router.match(req(.get, "/episodes")), Route.episodes(RefTag(ref: nil, rest: nil)))
