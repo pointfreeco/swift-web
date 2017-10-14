@@ -13,6 +13,8 @@ func req(_ method: ApplicativeRouter.Method, _ location: String, _ body: Data? =
 class ApplicativeRouterTests: XCTestCase {
   func testRouter() {
 
+    let tmp = Route.home <¢ .get
+
     let routes: [Parser<(), Route>] = [
       // Matches root path: /
       Route.home <¢ .get <*| end,

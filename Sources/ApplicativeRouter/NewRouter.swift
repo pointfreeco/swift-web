@@ -2,9 +2,6 @@ import Foundation
 import Prelude
 import Optics
 
-// todo: use a profunctor Iso?
-//typealias Iso_<S, T, A, B> = ((S) -> A) -> ((B) -> T)
-
 // todo: move to prelude: right associative applicative
 infix operator <%>: infixr4
 infix operator %>: infixr4
@@ -15,7 +12,7 @@ public func >-> <A, B, C>(lhs: @escaping (A) -> B?, rhs: @escaping (B) -> C?) ->
   return { a in lhs(a).flatMap(rhs) }
 }
 
-fileprivate struct _Route: Monoid {
+private struct _Route: Monoid {
   var method: Method? = .get
   var path: [String] = []
   var query: [String: String] = [:]
@@ -35,7 +32,7 @@ fileprivate struct _Route: Monoid {
 }
 
 // TODO: should this be generic over any monoid `M` instead of using `_Route` directly?
-struct Router<A> {
+public struct Router<A> {
   fileprivate let parse: (_Route) -> (rest: _Route, match: A)?
   fileprivate let print: (A) -> _Route?
   fileprivate let template: (A) -> _Route?
@@ -56,11 +53,11 @@ struct Router<A> {
 // Functor
 
 extension Router {
-  func map<B>(_ f: PartialIso<A, B>) -> Router<B> {
+  public func map<B>(_ f: PartialIso<A, B>) -> Router<B> {
     return f <¢> self
   }
 
-  static func <¢> <B> (lhs: PartialIso<A, B>, rhs: Router) -> Router<B> {
+  public static func <¢> <B> (lhs: PartialIso<A, B>, rhs: Router) -> Router<B> {
     return Router<B>(
       parse: { route in
         guard let (rest, match) = rhs.parse(route) else { return nil }
@@ -70,11 +67,6 @@ extension Router {
       template: lhs.preimage >-> rhs.template
     )
   }
-
-  // TODO: how?
-//  static func ¢> (lhs: Router<()>, rhs: A) -> Router {
-//    fatalError()
-//  }
 }
 
 // Applicative
@@ -82,7 +74,7 @@ extension Router {
 extension Router {
   // todo: this form of applicative is right associative, but `<%>` is defined as infixl. maybe we should make
   // a right associative version and call it `<%>` or something?
-  static func <%> <B> (lhs: Router, rhs: Router<B>) -> Router<(A, B)> {
+  public static func <%> <B> (lhs: Router, rhs: Router<B>) -> Router<(A, B)> {
     return Router<(A, B)>(
       parse: { str in
         guard let (more, a) = lhs.parse(str) else { return nil }
@@ -100,24 +92,22 @@ extension Router {
         return (curry(<>) <¢> lhsPrint <*> rhsPrint) ?? lhsPrint ?? rhsPrint
     })
   }
-}
 
-extension Router where A == Prelude.Unit {
-  static func <% <B>(x: Router<B>, y: Router) -> Router<B> {
-    return PartialIso.unit.inverted <¢> (x <%> y) // <- this applicative is right associative
+  public static func %> (x: Router<Prelude.Unit>, y: Router) -> Router {
+    return (PartialIso.commute >>> PartialIso.unit.inverted) <¢> (x <%> y)
   }
 }
 
-extension Router {
-  static func %> (x: Router<Prelude.Unit>, y: Router) -> Router {
-    return (PartialIso.commute >>> PartialIso.unit.inverted) <¢> (x <%> y)
+extension Router where A == Prelude.Unit {
+  public static func <% <B>(x: Router<B>, y: Router) -> Router<B> {
+    return PartialIso.unit.inverted <¢> (x <%> y) // <- this applicative is right associative
   }
 }
 
 // Alternative
 
 extension Router {
-  static func <|> (lhs: Router, rhs: Router) -> Router {
+  public static func <|> (lhs: Router, rhs: Router) -> Router {
     return Router<A>(
       parse: { lhs.parse($0) ?? rhs.parse($0) },
       print: { lhs.print($0) ?? rhs.print($0) },
@@ -138,7 +128,7 @@ extension Router {
 
 // Combinators
 
-func lit(_ str: String) -> Router<Prelude.Unit> {
+public func lit(_ str: String) -> Router<Prelude.Unit> {
   return Router<Prelude.Unit>(
     parse: { route in
       guard let (_, ps) = uncons(route.path) else { return nil }
@@ -152,7 +142,7 @@ func lit(_ str: String) -> Router<Prelude.Unit> {
   })
 }
 
-func pathComponent<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
+public func pathComponent<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
   return Router<A>(
     parse: { route in
       guard let (p, ps) = uncons(route.path), let v = f.image(p) else { return nil }
@@ -166,11 +156,11 @@ func pathComponent<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
   })
 }
 
-func param(_ key: String) -> Router<String> {
+public func param(_ key: String) -> Router<String> {
   return param(key, .id)
 }
 
-func param<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
+public func param<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
   return .init(
     parse: { route in
       guard let str = route.query[key] else { return nil }
@@ -180,22 +170,11 @@ func param<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
       return _Route(method: nil, path: [], query: [key: f.preimage(a) ?? ""], body: nil)
   },
     template: { a in
-      let typeString = "\(A.self)"
-      let typeKey: String
-      if typeString.contains("Optional<") {
-        typeKey = "optional_\(typeString)"
-          .replacingOccurrences(of: "Optional<", with: "")
-          .replacingOccurrences(of: ">", with: "")
-          .lowercased()
-      } else {
-        typeKey = typeString.lowercased()
-      }
-
-      return _Route(method: nil, path: [], query: [key: ":\(typeKey)"], body: nil)
+      return _Route(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
   })
 }
 
-let _end = Router<Prelude.Unit>(
+public let _end = Router<Prelude.Unit>(
   parse: { route in
     guard route.path.isEmpty else { return nil }
     return (_Route(method: route.method, path: [], query: [:], body: nil), unit)
@@ -205,25 +184,25 @@ let _end = Router<Prelude.Unit>(
 )
 
 extension Router {
-  static var int: Router<Int> {
+  public static var int: Router<Int> {
     return pathComponent("", stringToInt)
   }
 
-  static var bool: Router<Bool> {
+  public static var bool: Router<Bool> {
     return pathComponent("", stringToBool)
   }
 
-  static var str: Router<String> {
+  public static var str: Router<String> {
     return pathComponent("", .id)
   }
 
-  static var num: Router<Double> {
+  public static var num: Router<Double> {
     return pathComponent("", stringToNum)
   }
 }
 
 extension Router where A: Codable {
-  static var params: Router {
+  public static var params: Router {
     return .init(
       parse: { route in
         (try? JSONSerialization.data(withJSONObject: route.query))
@@ -249,31 +228,7 @@ extension Router where A: Codable {
   }
 }
 
-extension Optional {
-  enum iso {
-    static var some: PartialIso<Wrapped, Wrapped?> {
-      return PartialIso<Wrapped, Wrapped?>(
-        image: { $0 },
-        preimage: { $0 }
-      )
-    }
-  }
-}
-
-let stringToInt = PartialIso<String, Int>(
-  image: Int.init,
-  preimage: String.init
-)
-let stringToNum = PartialIso<String, Double>(
-  image: Double.init,
-  preimage: String.init
-)
-let stringToBool = PartialIso<String, Bool>(
-  image: { $0 == "true" || $0 == "1" },
-  preimage: { $0 ? "true" : "false" }
-)
-
-fileprivate func route(from request: URLRequest) -> _Route {
+private func route(from request: URLRequest) -> _Route {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let components = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })
@@ -288,7 +243,7 @@ fileprivate func route(from request: URLRequest) -> _Route {
   return _Route.init(method: method, path: path, query: query, body: request.httpBody)
 }
 
-fileprivate func request(from route: _Route) -> URLRequest? {
+private func request(from route: _Route) -> URLRequest? {
   var components = URLComponents()
   components.path = route.path.joined(separator: "/")
   components.queryItems = route.query.map(URLQueryItem.init(name:value:))
@@ -297,4 +252,19 @@ fileprivate func request(from route: _Route) -> URLRequest? {
   request?.httpMethod = route.method?.rawValue
   request?.httpBody = route.body
   return request
+}
+
+private func typeKey<A>(_ a: A) -> String {
+  let typeString = "\(type(of: a))"
+  let typeKey: String
+  if typeString.contains("Optional<") {
+    typeKey = "optional_\(typeString)"
+      .replacingOccurrences(of: "Optional<", with: "")
+      .replacingOccurrences(of: ">", with: "")
+      .lowercased()
+  } else {
+    typeKey = typeString.lowercased()
+  }
+
+  return typeKey
 }

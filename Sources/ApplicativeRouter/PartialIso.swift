@@ -1,5 +1,8 @@
 import Prelude
 
+// todo: use a profunctor Iso?
+//typealias Iso_<S, T, A, B> = ((S) -> A) -> ((B) -> T)
+
 // todo: move to prelude?
 public struct PartialIso<A, B> {
   public let image: (A) -> B?
@@ -56,6 +59,32 @@ extension PartialIso where B == (A, Prelude.Unit) {
     )
   }
 }
+
+extension Optional {
+  public enum iso {
+    public static var some: PartialIso<Wrapped, Wrapped?> {
+      return PartialIso<Wrapped, Wrapped?>(
+        image: { $0 },
+        preimage: { $0 }
+      )
+    }
+  }
+}
+
+public let stringToInt = PartialIso<String, Int>(
+  image: Int.init,
+  preimage: String.init
+)
+
+public let stringToNum = PartialIso<String, Double>(
+  image: Double.init,
+  preimage: String.init
+)
+
+public let stringToBool = PartialIso<String, Bool>(
+  image: { $0 == "true" || $0 == "1" },
+  preimage: { $0 ? "true" : "false" }
+)
 
 // todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into
 // right-paranthesized nested tuples e.g. (A, (B, (C, D))), so we will need many overloads of `flatten` to

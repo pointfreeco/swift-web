@@ -6,6 +6,7 @@ import XCTest
 
 class NewRouterTests: XCTestCase {
   func testRouter() {
+
     let router = [
       Routes.iso.home
         <¢> lit("home") %> .params <% _end,
