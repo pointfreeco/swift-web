@@ -4,25 +4,24 @@ import Optics
 import Prelude
 import XCTest
 
-
-
 class NewRouterTests: XCTestCase {
   func testRouter() {
 
     let router = [
-      Routes.iso.home <¢> lit("home") <% _end,
+      curry(Routes.iso.home)
+        <¢> lit("home") <% _end,
 
-      (flatten() >>> Routes.iso.postComment)
-        <¢> lit("posts") %> .str <%> lit("comments") %> .int <%> param("ref") <% _end,
-
-      Routes.iso.postComments
+      curry(Routes.iso.postComments)
         <¢> lit("posts") %> str("post_id") <% lit("comments") <% _end,
+
+      curry(Routes.iso.postComment)
+        <¢> lit("posts") %> .str <%> lit("comments") %> .int <%> param("ref") <% _end,
       ]
       .reduce(.empty, <|>)
 
     XCTAssertEqual(
       .postComment("hello-world", 42, "twitter"),
-      router.match(URLRequest(url: URL(string: "http://www.site.com/posts/hello-world/comments/42?ref=twitter")!))
+      router.match(URLRequest(url: URL(string: "/posts/hello-world/comments/42?ref=twitter")!))
     )
     XCTAssertEqual(
       "posts/hello-world/comments/42?ref=twitter",

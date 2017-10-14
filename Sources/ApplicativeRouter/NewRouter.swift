@@ -56,6 +56,14 @@ func curry<A, B, C, D>(_ f: PartialIso<(A, B, C), D>) -> PartialIso<(A, (B, C)),
   return flatten() >>> f
 }
 
+func curry<A, B, C>(_ f: PartialIso<(A, B), C>) -> PartialIso<(A, B), C> {
+  return f
+}
+
+func curry<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B> {
+  return f
+}
+
 extension PartialIso where B == (A, Prelude.Unit) {
   static var unit: PartialIso {
     return .init(
