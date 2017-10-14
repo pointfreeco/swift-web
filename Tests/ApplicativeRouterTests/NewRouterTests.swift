@@ -6,26 +6,35 @@ import XCTest
 
 class NewRouterTests: XCTestCase {
   func testRouter() {
-
     let router = [
       curry(Routes.iso.home)
         <¢> lit("home") <% _end,
 
       curry(Routes.iso.postComments)
-        <¢> lit("posts") %> str("post_id") <% lit("comments") <% _end,
+        <¢> lit("posts") %> .str <% lit("comments") <% _end,
 
       curry(Routes.iso.postComment)
-        <¢> lit("posts") %> .str <%> lit("comments") %> .int <%> param("ref") <% _end,
+        <¢> lit("posts") %> .str
+        <%> lit("comments") %> .int
+        <%> param("ref", Optional.iso.some)
+        <%> param("active", boolStringIso)
+        <% _end,
       ]
       .reduce(.empty, <|>)
 
+    let postCommentRoute = Routes.postComment(slug: "", commentId: 0, ref: "", active: true)
+
     XCTAssertEqual(
-      .postComment("hello-world", 42, "twitter"),
-      router.match(URLRequest(url: URL(string: "/posts/hello-world/comments/42?ref=twitter")!))
+      .postComment(slug: "hello-world", commentId: 42, ref: "twitter", active: true),
+      router.match(URLRequest(url: URL(string: "/posts/hello-world/comments/42?ref=twitter&active=true")!))
     )
     XCTAssertEqual(
-      "posts/hello-world/comments/42?ref=twitter",
-      router.print(.postComment("hello-world", 42, "twitter"))?.url?.absoluteString
+      "posts/hello-world/comments/42?ref=twitter&active=false",
+      router.request(for: postCommentRoute)?.url?.absoluteString
+    )
+    XCTAssertEqual(
+      "posts/:string/comments/:int?ref=:optional_string&active=:bool",
+      router.templateRequest(for: postCommentRoute)?.url?.absoluteString
     )
 
     XCTAssertEqual(
@@ -34,7 +43,7 @@ class NewRouterTests: XCTestCase {
     )
     XCTAssertEqual(
       "home",
-      router.print(.home(unit))?.url?.path
+      router.request(for: .home(unit))?.url?.path
     )
 
     XCTAssertEqual(
@@ -43,7 +52,7 @@ class NewRouterTests: XCTestCase {
     )
     XCTAssertEqual(
       "posts/hello-world/comments",
-      router.print(.postComments("hello-world"))?.url?.path
+      router.request(for: .postComments("hello-world"))?.url?.path
     )
   }
 }
@@ -53,10 +62,10 @@ enum Routes: Equatable {
   case posts
   case post(String)
   case postComments(String)
-  case postComment(String, Int, String)
+  case postComment(slug: String, commentId: Int, ref: String?, active: Bool)
 
   enum iso {
-    static let postComment = PartialIso<(String, Int, String), Routes>(
+    static let postComment = PartialIso<(String, Int, String?, Bool), Routes>(
       image: Routes.postComment,
       preimage: {
         guard case let .postComment(route) = $0 else { return nil }
@@ -89,7 +98,7 @@ enum Routes: Equatable {
     case let (.postComments(lhs), .postComments(rhs)):
       return lhs == rhs
     case let (.postComment(lhs), .postComment(rhs)):
-      return lhs == rhs
+      return lhs.0 == rhs.0 && lhs.1 == rhs.1 && lhs.2 == rhs.2 && lhs.3 == rhs.3
 
     case (.home, _), (.post, _), (.posts, _), (.postComments, _), (.postComment, _):
       return false

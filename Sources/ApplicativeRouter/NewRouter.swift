@@ -5,6 +5,7 @@ import Optics
 // todo: use a profunctor Iso?
 //typealias Iso_<S, T, A, B> = ((S) -> A) -> ((B) -> T)
 
+// todo: move to prelude: right associative applicative
 infix operator <%>: infixr4
 infix operator %>: infixr4
 infix operator <%: infixr4
@@ -52,7 +53,18 @@ func flatten<A, B, C>() -> PartialIso<(A, (B, C)), (A, B, C)> {
   )
 }
 
+func flatten<A, B, C, D>() -> PartialIso<(A, (B, (C, D))), (A, B, C, D)> {
+  return .init(
+    image: { ($0.0, $0.1.0, $0.1.1.0, $0.1.1.1) },
+    preimage: { ($0, ($1, ($2, $3))) }
+  )
+}
+
 func curry<A, B, C, D>(_ f: PartialIso<(A, B, C), D>) -> PartialIso<(A, (B, C)), D> {
+  return flatten() >>> f
+}
+
+func curry<A, B, C, D, E>(_ f: PartialIso<(A, B, C ,D), E>) -> PartialIso<(A, (B, (C, D))), E> {
   return flatten() >>> f
 }
 
@@ -86,6 +98,7 @@ fileprivate struct _Route: Monoid {
       method: lhs.method ?? rhs.method,
       path: lhs.path + rhs.path,
       query: lhs.query.merging(rhs.query, uniquingKeysWith: { a, _ in a }),
+      // todo: is coalescing enough or should we be appending?
       body: lhs.body ?? rhs.body
     )
   }
@@ -94,17 +107,19 @@ fileprivate struct _Route: Monoid {
 // TODO: should this be generic over any monoid `M` instead of using `_Route` directly?
 struct Router<A> {
   fileprivate let parse: (_Route) -> (rest: _Route, match: A)?
-  fileprivate let _print: (A) -> _Route?
-
-  // todo:
-  // fileprivate let templatePrint: (A) -> _Route?
+  fileprivate let print: (A) -> _Route?
+  fileprivate let template: (A) -> _Route?
 
   public func match(_ request: URLRequest) -> A? {
     return (self <% _end).parse(route(from: request))?.match
   }
 
-  public func print(_ a: A) -> URLRequest? {
-    return self._print(a).flatMap(request(from:))
+  public func request(for a: A) -> URLRequest? {
+    return self.print(a).flatMap(request(from:))
+  }
+
+  public func templateRequest(for a: A) -> URLRequest? {
+    return self.template(a).flatMap(request(from:))
   }
 }
 
@@ -121,7 +136,8 @@ extension Router {
         guard let (rest, match) = rhs.parse(route) else { return nil }
         return lhs.image(match).map { (rest, $0) }
       },
-      _print: lhs.preimage >-> rhs._print
+      print: lhs.preimage >-> rhs.print,
+      template: lhs.preimage >-> rhs.template
     )
   }
 
@@ -142,10 +158,15 @@ extension Router {
         guard let (more, a) = lhs.parse(str) else { return nil }
         guard let (rest, b) = rhs.parse(more) else { return nil }
         return (rest, (a, b))
-    },
-      _print: { ab in
-        let lhsPrint = lhs._print(ab.0)
-        let rhsPrint = rhs._print(ab.1)
+      },
+      print: { ab in
+        let lhsPrint = lhs.print(ab.0)
+        let rhsPrint = rhs.print(ab.1)
+        return (curry(<>) <¢> lhsPrint <*> rhsPrint) ?? lhsPrint ?? rhsPrint
+      },
+      template: { ab in
+        let lhsPrint = lhs.template(ab.0)
+        let rhsPrint = rhs.template(ab.1)
         return (curry(<>) <¢> lhsPrint <*> rhsPrint) ?? lhsPrint ?? rhsPrint
     })
   }
@@ -163,20 +184,14 @@ extension Router {
   }
 }
 
-func pure<A: Equatable>(_ a: A) -> Router<A> {
-  return Router<A>(
-    parse: { ($0, a) },
-    _print: { a == $0 ? .empty : nil }
-  )
-}
-
 // Alternative
 
 extension Router {
   static func <|> (lhs: Router, rhs: Router) -> Router {
     return Router<A>(
       parse: { lhs.parse($0) ?? rhs.parse($0) },
-      _print: { lhs._print($0) ?? rhs._print($0) }
+      print: { lhs.print($0) ?? rhs.print($0) },
+      template: { lhs.template($0) ?? rhs.template($0) }
     )
   }
 }
@@ -185,7 +200,8 @@ extension Router {
   public static var empty: Router {
     return Router(
       parse: const(nil),
-      _print: const(nil)
+      print: const(nil),
+      template: const(nil)
     )
   }
 }
@@ -198,8 +214,11 @@ func lit(_ str: String) -> Router<Prelude.Unit> {
       guard let (_, ps) = uncons(route.path) else { return nil }
       return (_Route(method: route.method, path: ps, query: route.query, body: route.body), unit)
     },
-    _print: { a in
-      return _Route.init(method: nil, path: [str], query: [:], body: nil)
+    print: { a in
+      return _Route(method: nil, path: [str], query: [:], body: nil)
+    },
+    template: { a in
+      return _Route(method: nil, path: [str], query: [:], body: nil)
   })
 }
 
@@ -209,19 +228,40 @@ func pathComponent<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
       guard let (p, ps) = uncons(route.path), let v = f.image(p) else { return nil }
       return (_Route(method: route.method, path: ps, query: route.query, body: route.body), v)
     },
-    _print: { a in
-      return _Route.init(method: nil, path: [f.preimage(a) ?? ":\(key)"], query: [:], body: nil)
+    print: { a in
+      return .init(method: nil, path: [f.preimage(a) ?? ":\(key)"], query: [:], body: nil)
+    },
+    template: { a in
+      return .init(method: nil, path: [":" + "\(A.self)".lowercased()], query: [:], body: nil)
   })
 }
 
 func param(_ key: String) -> Router<String> {
-  return Router<String>(
+  return param(key, .id)
+}
+
+func param<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
+  return .init(
     parse: { route in
       guard let str = route.query[key] else { return nil }
-      return (route, str)
-    },
-    _print: { (a) -> _Route? in
-      return _Route(method: nil, path: [], query: [key: a], body: nil)
+      return f.image(str).map { (route, $0) }
+  },
+    print: { (a) -> _Route? in
+      return _Route(method: nil, path: [], query: [key: f.preimage(a) ?? ""], body: nil)
+  },
+    template: { a in
+      let typeString = "\(A.self)"
+      let typeKey: String
+      if typeString.contains("Optional<") {
+        typeKey = "optional_\(typeString)"
+          .replacingOccurrences(of: "Optional<", with: "")
+          .replacingOccurrences(of: ">", with: "")
+          .lowercased()
+      } else {
+        typeKey = typeString.lowercased()
+      }
+
+      return _Route(method: nil, path: [], query: [key: ":\(typeKey)"], body: nil)
   })
 }
 
@@ -230,12 +270,17 @@ let _end = Router<Prelude.Unit>(
     guard route.path.isEmpty else { return nil }
     return (_Route(method: route.method, path: [], query: [:], body: nil), unit)
   },
-  _print: { _ in .empty }
+  print: { _ in .empty },
+  template: { _ in .empty }
 )
 
 extension Router {
   static var int: Router<Int> {
     return pathComponent("", intStringIso)
+  }
+
+  static var bool: Router<Bool> {
+    return pathComponent("", boolStringIso)
   }
 
   static var str: Router<String> {
@@ -247,16 +292,36 @@ extension Router {
   }
 }
 
-func int(_ key: String) -> Router<Int> {
-  return pathComponent(key, intStringIso)
+func pure<A: Equatable>(_ a: A) -> Router<A> {
+  return Router<A>(
+    parse: { ($0, a) },
+    print: { a == $0 ? .empty : nil },
+    template: { a == $0 ? .empty : nil }
+  )
+}
+func pure<A: Equatable>(_ a: A?) -> Router<A?> {
+  return .init(
+    parse: { ($0, a) },
+    print: { a == $0 ? .empty : nil },
+    template: { a == $0 ? .empty : nil }
+  )
 }
 
-func str(_ key: String) -> Router<String> {
-  return pathComponent(key, .id)
+func opt<A: Equatable>(_ router: Router<A>) -> Router<A?> {
+  let tmp = A?.iso.some <¢> router
+  let tmp2: Router<A?> = pure(A?.none)
+  return tmp <|> tmp2
 }
 
-func num(_ key: String) -> Router<Double> {
-  return pathComponent(key, doubleStringIso)
+extension Optional {
+  enum iso {
+    static var some: PartialIso<Wrapped, Wrapped?> {
+      return PartialIso<Wrapped, Wrapped?>(
+        image: { $0 },
+        preimage: { $0 }
+      )
+    }
+  }
 }
 
 let intStringIso = PartialIso<String, Int>(
@@ -266,6 +331,10 @@ let intStringIso = PartialIso<String, Int>(
 let doubleStringIso = PartialIso<String, Double>(
   image: Double.init,
   preimage: String.init
+)
+let boolStringIso = PartialIso<String, Bool>(
+  image: { $0 == "true" || $0 == "1" },
+  preimage: { $0 ? "true" : "false" }
 )
 
 fileprivate func route(from request: URLRequest) -> _Route {
