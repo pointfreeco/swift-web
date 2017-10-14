@@ -7,19 +7,17 @@ import XCTest
 class NewRouterTests: XCTestCase {
   func testRouter() {
     let router = [
-      curry(Routes.iso.home)
-        <¢> lit("home")
-        %> params()
-        <% _end,
+      Routes.iso.home
+        <¢> lit("home") %> .params <% _end,
 
-      curry(Routes.iso.postComments)
+      Routes.iso.postComments
         <¢> lit("posts") %> .str <% lit("comments") <% _end,
 
-      curry(Routes.iso.postComment)
+      Routes.iso.postComment
         <¢> lit("posts") %> .str
         <%> lit("comments") %> .int
         <%> param("ref", Optional.iso.some)
-        <%> param("active", boolStringIso)
+        <%> param("active", stringToBool)
         <% _end,
       ]
       .reduce(.empty, <|>)
@@ -65,8 +63,6 @@ class NewRouterTests: XCTestCase {
 
 enum Routes: Equatable {
   case home(HomeData)
-  case posts
-  case post(String)
   case postComments(String)
   case postComment(slug: String, commentId: Int, ref: String?, active: Bool)
 
@@ -81,21 +77,21 @@ enum Routes: Equatable {
   }
 
   enum iso {
-    static let postComment = PartialIso<(String, Int, String?, Bool), Routes>(
+    static let postComment = parenthesize <| PartialIso<(String, Int, String?, Bool), Routes>(
       image: Routes.postComment,
       preimage: {
         guard case let .postComment(route) = $0 else { return nil }
         return route
     })
 
-    static let home = PartialIso<HomeData, Routes>(
+    static let home = parenthesize <| PartialIso<HomeData, Routes>(
       image: Routes.home,
       preimage: {
         guard case let .home(route) = $0 else { return nil }
         return route
     })
 
-    static let postComments = PartialIso<String, Routes>(
+    static let postComments = parenthesize <| PartialIso<String, Routes>(
       image: Routes.postComments,
       preimage: {
         guard case let .postComments(route) = $0 else { return nil }
@@ -107,16 +103,12 @@ enum Routes: Equatable {
     switch (lhs, rhs) {
     case let (.home(lhs), .home(rhs)):
       return lhs == rhs
-    case (.posts, .posts):
-      return true
-    case let (.post(lhs), .post(rhs)):
-      return lhs == rhs
     case let (.postComments(lhs), .postComments(rhs)):
       return lhs == rhs
     case let (.postComment(lhs), .postComment(rhs)):
       return lhs.0 == rhs.0 && lhs.1 == rhs.1 && lhs.2 == rhs.2 && lhs.3 == rhs.3
 
-    case (.home, _), (.post, _), (.posts, _), (.postComments, _), (.postComment, _):
+    case (.home, _), (.postComments, _), (.postComment, _):
       return false
     }
   }

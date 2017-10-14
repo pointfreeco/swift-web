@@ -15,76 +15,6 @@ public func >-> <A, B, C>(lhs: @escaping (A) -> B?, rhs: @escaping (B) -> C?) ->
   return { a in lhs(a).flatMap(rhs) }
 }
 
-// todo: move to prelude?
-struct PartialIso<A, B> {
-  let image: (A) -> B?
-  let preimage: (B) -> A?
-
-  var inverted: PartialIso<B, A> {
-    return .init(image: self.preimage, preimage: self.image)
-  }
-
-  static var commute: PartialIso<(A, B), (B, A)> {
-    return .init(
-      image: { ($1, $0) },
-      preimage: { ($1, $0) }
-    )
-  }
-
-  static func >>> <C> (lhs: PartialIso<A, B>, rhs: PartialIso<B, C>) -> PartialIso<A, C> {
-    return .init(
-      image: lhs.image >-> rhs.image,
-      preimage: rhs.preimage >-> lhs.preimage
-    )
-  }
-
-  static var id: PartialIso<A, A> {
-    return .init(image: { $0 }, preimage: { $0 })
-  }
-}
-
-// todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into right-paranthesized
-// nested tuples e.g. (A, (B, (C, D))), so we will need many overloads of `flatten` to correct this :/
-
-func flatten<A, B, C>() -> PartialIso<(A, (B, C)), (A, B, C)> {
-  return .init(
-    image: { ($0.0, $0.1.0, $0.1.1) },
-    preimage: { ($0, ($1, $2)) }
-  )
-}
-
-func flatten<A, B, C, D>() -> PartialIso<(A, (B, (C, D))), (A, B, C, D)> {
-  return .init(
-    image: { ($0.0, $0.1.0, $0.1.1.0, $0.1.1.1) },
-    preimage: { ($0, ($1, ($2, $3))) }
-  )
-}
-
-func curry<A, B, C, D>(_ f: PartialIso<(A, B, C), D>) -> PartialIso<(A, (B, C)), D> {
-  return flatten() >>> f
-}
-
-func curry<A, B, C, D, E>(_ f: PartialIso<(A, B, C ,D), E>) -> PartialIso<(A, (B, (C, D))), E> {
-  return flatten() >>> f
-}
-
-func curry<A, B, C>(_ f: PartialIso<(A, B), C>) -> PartialIso<(A, B), C> {
-  return f
-}
-
-func curry<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B> {
-  return f
-}
-
-extension PartialIso where B == (A, Prelude.Unit) {
-  static var unit: PartialIso {
-    return .init(
-      image: { ($0, Prelude.unit) },
-      preimage: { $0.0 }
-    )
-  }
-}
-
 fileprivate struct _Route: Monoid {
   var method: Method? = .get
   var path: [String] = []
@@ -276,11 +206,11 @@ let _end = Router<Prelude.Unit>(
 
 extension Router {
   static var int: Router<Int> {
-    return pathComponent("", intStringIso)
+    return pathComponent("", stringToInt)
   }
 
   static var bool: Router<Bool> {
-    return pathComponent("", boolStringIso)
+    return pathComponent("", stringToBool)
   }
 
   static var str: Router<String> {
@@ -288,54 +218,35 @@ extension Router {
   }
 
   static var num: Router<Double> {
-    return pathComponent("", doubleStringIso)
+    return pathComponent("", stringToNum)
   }
 }
 
-func params<A: Codable>() -> Router<A> {
-  return Router<A>(
-    parse: { route in
-      (try? JSONSerialization.data(withJSONObject: route.query))
-        .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
-        .map { (route, $0) }
-  },
-    print: { a in
-      let params = (try? JSONEncoder().encode(a))
-        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
-        .flatMap { $0 as? [String: Any] }
-        .map { $0.mapValues { "\($0)" } }
-        ?? [:]
-      return _Route(method: nil, path: [], query: params, body: nil)
-  },
-    template: { a in
-      let params = (try? JSONEncoder().encode(a))
-        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
-        .flatMap { $0 as? [String: Any] }
-        .map { $0.mapValues { _ in ":string" } }
-        ?? [:]
-      return _Route(method: nil, path: [], query: params, body: nil)
-  })
-}
-
-func pure<A: Equatable>(_ a: A) -> Router<A> {
-  return Router<A>(
-    parse: { ($0, a) },
-    print: { a == $0 ? .empty : nil },
-    template: { a == $0 ? .empty : nil }
-  )
-}
-func pure<A: Equatable>(_ a: A?) -> Router<A?> {
-  return .init(
-    parse: { ($0, a) },
-    print: { a == $0 ? .empty : nil },
-    template: { a == $0 ? .empty : nil }
-  )
-}
-
-func opt<A: Equatable>(_ router: Router<A>) -> Router<A?> {
-  let tmp = A?.iso.some <¢> router
-  let tmp2: Router<A?> = pure(A?.none)
-  return tmp <|> tmp2
+extension Router where A: Codable {
+  static var params: Router {
+    return .init(
+      parse: { route in
+        (try? JSONSerialization.data(withJSONObject: route.query))
+          .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
+          .map { (route, $0) }
+    },
+      print: { a in
+        let params = (try? JSONEncoder().encode(a))
+          .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+          .flatMap { $0 as? [String: Any] }
+          .map { $0.mapValues { "\($0)" } }
+          ?? [:]
+        return _Route(method: nil, path: [], query: params, body: nil)
+    },
+      template: { a in
+        let params = (try? JSONEncoder().encode(a))
+          .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+          .flatMap { $0 as? [String: Any] }
+          .map { $0.mapValues { _ in ":string" } }
+          ?? [:]
+        return _Route(method: nil, path: [], query: params, body: nil)
+    })
+  }
 }
 
 extension Optional {
@@ -349,15 +260,15 @@ extension Optional {
   }
 }
 
-let intStringIso = PartialIso<String, Int>(
+let stringToInt = PartialIso<String, Int>(
   image: Int.init,
   preimage: String.init
 )
-let doubleStringIso = PartialIso<String, Double>(
+let stringToNum = PartialIso<String, Double>(
   image: Double.init,
   preimage: String.init
 )
-let boolStringIso = PartialIso<String, Bool>(
+let stringToBool = PartialIso<String, Bool>(
   image: { $0 == "true" || $0 == "1" },
   preimage: { $0 ? "true" : "false" }
 )
