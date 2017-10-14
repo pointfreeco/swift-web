@@ -54,6 +54,11 @@ extension Iso where B == (A, Prelude.Unit) {
 }
 
 fileprivate struct _Route: Monoid {
+  var method: Method? = .get
+  var path: [String] = []
+  var query: [String: String] = [:]
+  var body: Data? = nil
+
   static var empty = _Route()
 
   static func <>(lhs: _Route, rhs: _Route) -> _Route {
@@ -64,11 +69,6 @@ fileprivate struct _Route: Monoid {
       body: lhs.body ?? rhs.body
     )
   }
-
-  var method: Method? = .get
-  var path: [String] = []
-  var query: [String: String] = [:]
-  var body: Data? = nil
 }
 
 // TODO: should this be generic over any monoid `M` instead of using `_Route` directly?
@@ -80,20 +80,11 @@ struct Router<A> {
   // fileprivate let templatePrint: (A) -> _Route?
 
   public func match(_ request: URLRequest) -> A? {
-    return self.parse(route(from: request))?.match
+    return (self <* _end).parse(route(from: request))?.match
   }
 
   public func print(_ a: A) -> URLRequest? {
-    guard let route = self._print(a) else { return nil }
-
-    var components = URLComponents()
-    components.path = route.path.joined(separator: "/")
-    components.queryItems = route.query.map(URLQueryItem.init(name:value:))
-
-    var request = components.url.map { URLRequest(url: $0) }
-    request?.httpMethod = route.method?.rawValue
-    request?.httpBody = route.body
-    return request
+    return self._print(a).flatMap(request(from:))
   }
 }
 
@@ -256,4 +247,15 @@ fileprivate func route(from request: URLRequest) -> _Route {
   components.queryItems?.forEach { query[$0.name] = $0.value ?? "" }
 
   return _Route.init(method: method, path: path, query: query, body: request.httpBody)
+}
+
+fileprivate func request(from route: _Route) -> URLRequest? {
+  var components = URLComponents()
+  components.path = route.path.joined(separator: "/")
+  components.queryItems = route.query.map(URLQueryItem.init(name:value:))
+
+  var request = components.url.map { URLRequest(url: $0) }
+  request?.httpMethod = route.method?.rawValue
+  request?.httpBody = route.body
+  return request
 }
