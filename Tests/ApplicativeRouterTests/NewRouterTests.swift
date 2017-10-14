@@ -8,7 +8,9 @@ class NewRouterTests: XCTestCase {
   func testRouter() {
     let router = [
       curry(Routes.iso.home)
-        <¢> lit("home") <% _end,
+        <¢> lit("home")
+        %> params()
+        <% _end,
 
       curry(Routes.iso.postComments)
         <¢> lit("posts") %> .str <% lit("comments") <% _end,
@@ -22,14 +24,14 @@ class NewRouterTests: XCTestCase {
       ]
       .reduce(.empty, <|>)
 
-    let postCommentRoute = Routes.postComment(slug: "", commentId: 0, ref: "", active: true)
+    let postCommentRoute = Routes.postComment(slug: "hello-world", commentId: 42, ref: "twitter", active: true)
 
     XCTAssertEqual(
-      .postComment(slug: "hello-world", commentId: 42, ref: "twitter", active: true),
+      postCommentRoute,
       router.match(URLRequest(url: URL(string: "/posts/hello-world/comments/42?ref=twitter&active=true")!))
     )
     XCTAssertEqual(
-      "posts/hello-world/comments/42?ref=twitter&active=false",
+      "posts/hello-world/comments/42?ref=twitter&active=true",
       router.request(for: postCommentRoute)?.url?.absoluteString
     )
     XCTAssertEqual(
@@ -38,12 +40,16 @@ class NewRouterTests: XCTestCase {
     )
 
     XCTAssertEqual(
-      .home(unit),
-      router.match(URLRequest(url: URL(string: "http://www.site.com/home")!))
+      .home(.init(x: "foo", y: "bar", z: "blob")),
+      router.match(URLRequest(url: URL(string: "http://www.site.com/home?x=foo&y=bar&z=blob")!))
     )
     XCTAssertEqual(
-      "home",
-      router.request(for: .home(unit))?.url?.path
+      "home?y=bar&x=foo&z=blob",
+      router.request(for: .home(.init(x: "foo", y: "bar", z: "blob")))?.url?.absoluteString
+    )
+    XCTAssertEqual(
+      "home?y=:string&x=:string&z=:string",
+      router.templateRequest(for: .home(.init(x: "", y: "", z: "")))?.url?.absoluteString
     )
 
     XCTAssertEqual(
@@ -58,11 +64,21 @@ class NewRouterTests: XCTestCase {
 }
 
 enum Routes: Equatable {
-  case home(Prelude.Unit)
+  case home(HomeData)
   case posts
   case post(String)
   case postComments(String)
   case postComment(slug: String, commentId: Int, ref: String?, active: Bool)
+
+  struct HomeData: Codable, Equatable {
+    let x: String
+    let y: String
+    let z: String
+
+    static func ==(lhs: Routes.HomeData, rhs: Routes.HomeData) -> Bool {
+      return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
+    }
+  }
 
   enum iso {
     static let postComment = PartialIso<(String, Int, String?, Bool), Routes>(
@@ -72,7 +88,7 @@ enum Routes: Equatable {
         return route
     })
 
-    static let home = PartialIso<Prelude.Unit, Routes>(
+    static let home = PartialIso<HomeData, Routes>(
       image: Routes.home,
       preimage: {
         guard case let .home(route) = $0 else { return nil }

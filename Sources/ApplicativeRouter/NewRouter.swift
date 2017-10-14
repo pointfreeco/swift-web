@@ -292,6 +292,31 @@ extension Router {
   }
 }
 
+func params<A: Codable>() -> Router<A> {
+  return Router<A>(
+    parse: { route in
+      (try? JSONSerialization.data(withJSONObject: route.query))
+        .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
+        .map { (route, $0) }
+  },
+    print: { a in
+      let params = (try? JSONEncoder().encode(a))
+        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+        .flatMap { $0 as? [String: Any] }
+        .map { $0.mapValues { "\($0)" } }
+        ?? [:]
+      return _Route(method: nil, path: [], query: params, body: nil)
+  },
+    template: { a in
+      let params = (try? JSONEncoder().encode(a))
+        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+        .flatMap { $0 as? [String: Any] }
+        .map { $0.mapValues { _ in ":string" } }
+        ?? [:]
+      return _Route(method: nil, path: [], query: params, body: nil)
+  })
+}
+
 func pure<A: Equatable>(_ a: A) -> Router<A> {
   return Router<A>(
     parse: { ($0, a) },
