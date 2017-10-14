@@ -33,17 +33,10 @@ struct Iso<A, B> {
   }
 }
 
-func commuteIso<A, B>() -> Iso<(A, B), (B, A)> {
-  return .init(
-    image: { ($1, $0) },
-    preimage: { ($1, $0) }
-  )
-}
-
-func unit<A>() -> Iso<A, (A, Prelude.Unit)> {
-  return Iso<A, (A, Prelude.Unit)>(
-    image: { ($0, Prelude.unit) },
-    preimage: { $0.0 }
+func flatten<A, B, C>() -> Iso<((A, B), C), (A, B, C)> {
+  return Iso<((A, B), C), (A, B, C)>(
+    image: { ($0.0.0, $0.0.1, $0.1) },
+    preimage: { (($0, $1), $2) }
   )
 }
 
@@ -57,13 +50,47 @@ extension Iso where B == (A, Prelude.Unit) {
 }
 
 //public typealias Route = (method: Method, path: [String], query: [String: String], body: Data?)
-struct _Request {
+fileprivate struct _Route: Monoid {
+  static var empty = _Route()
 
+  static func <>(lhs: _Route, rhs: _Route) -> _Route {
+    return .init(
+      method: lhs.method ?? rhs.method,
+      path: lhs.path + rhs.path,
+      query: lhs.query.merging(rhs.query, uniquingKeysWith: { a, _ in a }),
+      body: lhs.body ?? rhs.body
+    )
+  }
+
+  var method: Method? = .get
+  var path: [String] = []
+  var query: [String: String] = [:]
+  var body: Data? = nil
 }
 
 struct Router<A> {
-  let parse: (Route) -> (rest: Route, match: A)?
-  let print: (A) -> String?
+  fileprivate let parse: (_Route) -> (rest: _Route, match: A)?
+  fileprivate let _print: (A) -> _Route?
+
+  // todo:
+  // fileprivate let templatePrint: (A) -> _Route?
+
+  public func match(_ request: URLRequest) -> A? {
+    return self.parse(route(from: request))?.match
+  }
+
+  public func print(_ a: A) -> URLRequest? {
+    guard let route = self._print(a) else { return nil }
+
+    var components = URLComponents()
+    components.path = route.path.joined(separator: "/")
+    components.queryItems = route.query.map(URLQueryItem.init(name:value:))
+
+    var request = components.url.map { URLRequest(url: $0) }
+    request?.httpMethod = route.method?.rawValue
+    request?.httpBody = route.body
+    return request
+  }
 }
 
 // Functor
@@ -79,7 +106,7 @@ extension Router {
         guard let (rest, match) = rhs.parse(route) else { return nil }
         return lhs.image(match).map { (rest, $0) }
       },
-      print: { b in lhs.preimage(b).flatMap(rhs.print) }
+      _print: { b in lhs.preimage(b).flatMap(rhs._print) }
     )
   }
 
@@ -95,25 +122,24 @@ extension Router {
   static func <*> <B> (lhs: Router, rhs: Router<B>) -> Router<(A, B)> {
     return Router<(A, B)>(
       parse: { str in
-        Swift.print(lhs.parse(str))
-        return lhs.parse(str).flatMap { more, a in
-          Swift.print(rhs.parse(more))
-          return rhs.parse(more).map { rest, b in
-            //Swift.print(rest)
-            Swift.print(a)
-            Swift.print(b)
-            return (rest, (a, b))
-          }
-        }
+        guard let (more, a) = lhs.parse(str) else { return nil }
+        guard let (rest, b) = rhs.parse(more) else { return nil }
+        return (rest, (a, b))
     },
-      print: { ab in
-        curry(+) <¢> lhs.print(ab.0) <*> rhs.print(ab.1)
+      _print: { ab in
+        let lhsPrint = lhs._print(ab.0)
+        let rhsPrint = rhs._print(ab.1)
+
+        return (curry(<>) <¢> lhsPrint <*> rhsPrint) ?? lhsPrint ?? rhsPrint
+
+
+        //curry(<>) <¢> lhs._print(ab.0) <*> rhs._print(ab.1)
+//        return (lhs._print(ab.0) ?? _Route()) <> (rhs._print(ab.1) ?? _Route())
     })
   }
 }
 
 extension Router where A == Prelude.Unit {
-
   static func <* <B>(x: Router<B>, y: Router) -> Router<B> {
     return Iso.unit.inverted <¢> (x <*> y) // <- this applicative is right associative
   }
@@ -121,21 +147,14 @@ extension Router where A == Prelude.Unit {
 
 extension Router {
   static func *> (x: Router<Prelude.Unit>, y: Router) -> Router {
-
-    // this is the cause of a runtime crash?! doing just `return y` avoids the crash
-    // return y // <-- doesn't crash!
-
-    return unit().inverted <¢> (y <*> x) // <-- crashes!
-//    return Iso.unit.inverted <¢> (y <*> x) // <-- crashes!
-//    return (Iso.commute >>> Iso.unit.inverted) <¢> (x <*> y) // <-- crashes!
-//    return (commuteIso() >>> Iso.unit.inverted) <¢> (x <*> y) // <-- crashes!
+    return (Iso.commute >>> Iso.unit.inverted) <¢> (x <*> y)
   }
 }
 
 func pure<A: Equatable>(_ a: A) -> Router<A> {
   return Router<A>(
     parse: { ($0, a) },
-    print: { a == $0 ? "" : nil }
+    _print: { a == $0 ? _Route() : nil }
   )
 }
 
@@ -145,7 +164,7 @@ extension Router {
   static func <|> (lhs: Router, rhs: Router) -> Router {
     return Router<A>(
       parse: { lhs.parse($0) ?? rhs.parse($0) },
-      print: { lhs.print($0) ?? rhs.print($0) }
+      _print: { lhs._print($0) ?? rhs._print($0) }
     )
   }
 }
@@ -153,8 +172,8 @@ extension Router {
 extension Router {
   public static var empty: Router {
     return Router(
-      parse: { _ in nil },
-      print: { _ in "" }
+      parse: const(nil),
+      _print: const(nil)
     )
   }
 }
@@ -165,10 +184,10 @@ func lit(_ str: String) -> Router<Prelude.Unit> {
   return Router<Prelude.Unit>(
     parse: { route in
       guard let (_, ps) = uncons(route.path) else { return nil }
-      return ((route.method, ps, route.query, route.body), Prelude.unit)
+      return (_Route(method: route.method, path: ps, query: route.query, body: route.body), unit)
     },
-    print: { a in
-      return "/\(str)"
+    _print: { a in
+      return _Route.init(method: nil, path: [str], query: [:], body: nil)
   })
 }
 
@@ -176,21 +195,40 @@ func pathComponent<A>(_ key: String, _ f: Iso<String, A>) -> Router<A> {
   return Router<A>(
     parse: { route in
       guard let (p, ps) = uncons(route.path), let v = f.image(p) else { return nil }
-      return ((route.method, ps, route.query, route.body), v)
+      return (_Route(method: route.method, path: ps, query: route.query, body: route.body), v)
     },
-    print: { a in
-      "/" + (f.preimage(a) ?? ":\(key)")
+    _print: { a in
+      return _Route.init(method: nil, path: [f.preimage(a) ?? ":\(key)"], query: [:], body: nil)
   })
 }
+
+func param(_ key: String) -> Router<String> {
+  return Router<String>(
+    parse: { route in
+      guard let str = route.query[key] else { return nil }
+      return (route, str)
+    },
+    _print: { (a) -> _Route? in
+      return _Route(method: nil, path: [], query: [key: a], body: nil)
+  })
+}
+
+//public func param<I, A>(_ k: String, _ p: Parser<I, A>) -> Parser<I, A> {
+//  return .init { route in
+//    guard let str = route.query[k] else { return nil }
+//    guard let (_, v) = p.parse((route.method, [str], [:], nil)) else { return nil }
+//    return ((route.method, route.path, route.query, route.body), v)
+//  }
+//}
+
 
 let _end = Router<Prelude.Unit>(
   parse: { route in
     guard route.path.isEmpty else { return nil }
-    return ((method: route.method, path: [], query: [:], body: nil), Prelude.unit)
+    return (_Route(method: route.method, path: [], query: [:], body: nil), unit)
   },
-  print: { _ in "" }
+  _print: { _ in .empty }
 )
-
 
 func int(_ key: String) -> Router<Int> {
   return pathComponent(key, intStringIso)
@@ -213,11 +251,11 @@ let doubleStringIso = Iso<String, Double>(
   preimage: String.init
 )
 
-fileprivate func route(from request: URLRequest) -> Route {
+fileprivate func route(from request: URLRequest) -> _Route {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let components = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })
-    else { return (method, [], [:], request.httpBody) }
+    else { return _Route(method: method, path: [], query: [:], body: request.httpBody) }
 
   let path = components.path.components(separatedBy: "/")
     |> mapOptional { $0.isEmpty ? nil : $0 }
@@ -225,11 +263,5 @@ fileprivate func route(from request: URLRequest) -> Route {
   var query: [String: String] = [:]
   components.queryItems?.forEach { query[$0.name] = $0.value ?? "" }
 
-  return (method, path, query, request.httpBody)
-}
-
-extension Router {
-  public func match(_ request: URLRequest) -> A? {
-    return self.parse(route(from: request))?.match
-  }
+  return _Route.init(method: method, path: path, query: query, body: request.httpBody)
 }
