@@ -29,7 +29,7 @@ class NewRouterTests: XCTestCase {
       postCommentRouter,
       postCommentsRouter,
       ]
-      .reduce(Router<Routes>.empty, <|>)
+      .reduce(.empty, <|>)
 
     XCTAssertEqual(
       .postComment("hello-world", 42, "twitter"),

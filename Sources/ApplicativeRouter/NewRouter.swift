@@ -2,10 +2,12 @@ import Foundation
 import Prelude
 import Optics
 
+// todo: move to prelude
 public func >-> <A, B, C>(lhs: @escaping (A) -> B?, rhs: @escaping (B) -> C?) -> (A) -> C? {
   return { a in lhs(a).flatMap(rhs) }
 }
 
+// todo: move to prelude?
 struct Iso<A, B> {
   let image: (A) -> B?
   let preimage: (B) -> A?
@@ -15,24 +17,26 @@ struct Iso<A, B> {
   }
 
   static var commute: Iso<(A, B), (B, A)> {
-    return Iso<(A, B), (B, A)>(
+    return .init(
       image: { ($1, $0) },
       preimage: { ($1, $0) }
     )
   }
 
   static func >>> <C> (lhs: Iso<A, B>, rhs: Iso<B, C>) -> Iso<A, C> {
-    return Iso<A, C>(
+    return .init(
       image: lhs.image >-> rhs.image,
       preimage: rhs.preimage >-> lhs.preimage
     )
   }
 
   static var id: Iso<A, A> {
-    return Iso<A, A>(image: { $0 }, preimage: { $0 })
+    return .init(image: { $0 }, preimage: { $0 })
   }
 }
 
+// todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into left-paranthesized
+// nested tuples (((A, B), C), D), so we will need many overloads of `flatten` to correct this :/
 func flatten<A, B, C>() -> Iso<((A, B), C), (A, B, C)> {
   return Iso<((A, B), C), (A, B, C)>(
     image: { ($0.0.0, $0.0.1, $0.1) },
@@ -41,15 +45,14 @@ func flatten<A, B, C>() -> Iso<((A, B), C), (A, B, C)> {
 }
 
 extension Iso where B == (A, Prelude.Unit) {
-  static var unit: Iso<A, (A, Prelude.Unit)> {
-    return Iso<A, (A, Prelude.Unit)>(
+  static var unit: Iso {
+    return .init(
       image: { ($0, Prelude.unit) },
       preimage: { $0.0 }
     )
   }
 }
 
-//public typealias Route = (method: Method, path: [String], query: [String: String], body: Data?)
 fileprivate struct _Route: Monoid {
   static var empty = _Route()
 
@@ -68,6 +71,7 @@ fileprivate struct _Route: Monoid {
   var body: Data? = nil
 }
 
+// TODO: should this be generic over any monoid `M` instead of using `_Route` directly?
 struct Router<A> {
   fileprivate let parse: (_Route) -> (rest: _Route, match: A)?
   fileprivate let _print: (A) -> _Route?
@@ -106,7 +110,7 @@ extension Router {
         guard let (rest, match) = rhs.parse(route) else { return nil }
         return lhs.image(match).map { (rest, $0) }
       },
-      _print: { b in lhs.preimage(b).flatMap(rhs._print) }
+      _print: lhs.preimage >-> rhs._print
     )
   }
 
@@ -119,6 +123,8 @@ extension Router {
 // Applicative
 
 extension Router {
+  // todo: this form of applicative is right associative, but `<*>` is defined as infixl. maybe we should make
+  // a right associative version and call it `<%>` or something?
   static func <*> <B> (lhs: Router, rhs: Router<B>) -> Router<(A, B)> {
     return Router<(A, B)>(
       parse: { str in
@@ -129,12 +135,7 @@ extension Router {
       _print: { ab in
         let lhsPrint = lhs._print(ab.0)
         let rhsPrint = rhs._print(ab.1)
-
         return (curry(<>) <¢> lhsPrint <*> rhsPrint) ?? lhsPrint ?? rhsPrint
-
-
-        //curry(<>) <¢> lhs._print(ab.0) <*> rhs._print(ab.1)
-//        return (lhs._print(ab.0) ?? _Route()) <> (rhs._print(ab.1) ?? _Route())
     })
   }
 }
@@ -154,7 +155,7 @@ extension Router {
 func pure<A: Equatable>(_ a: A) -> Router<A> {
   return Router<A>(
     parse: { ($0, a) },
-    _print: { a == $0 ? _Route() : nil }
+    _print: { a == $0 ? .empty : nil }
   )
 }
 
@@ -212,15 +213,6 @@ func param(_ key: String) -> Router<String> {
       return _Route(method: nil, path: [], query: [key: a], body: nil)
   })
 }
-
-//public func param<I, A>(_ k: String, _ p: Parser<I, A>) -> Parser<I, A> {
-//  return .init { route in
-//    guard let str = route.query[k] else { return nil }
-//    guard let (_, v) = p.parse((route.method, [str], [:], nil)) else { return nil }
-//    return ((route.method, route.path, route.query, route.body), v)
-//  }
-//}
-
 
 let _end = Router<Prelude.Unit>(
   parse: { route in
