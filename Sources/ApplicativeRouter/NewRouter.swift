@@ -2,50 +2,62 @@ import Foundation
 import Prelude
 import Optics
 
+// todo: use a profunctor Iso?
+//typealias Iso_<S, T, A, B> = ((S) -> A) -> ((B) -> T)
+
+infix operator <%>: infixr4
+infix operator %>: infixr4
+infix operator <%: infixr4
+
 // todo: move to prelude
 public func >-> <A, B, C>(lhs: @escaping (A) -> B?, rhs: @escaping (B) -> C?) -> (A) -> C? {
   return { a in lhs(a).flatMap(rhs) }
 }
 
 // todo: move to prelude?
-struct Iso<A, B> {
+struct PartialIso<A, B> {
   let image: (A) -> B?
   let preimage: (B) -> A?
 
-  var inverted: Iso<B, A> {
+  var inverted: PartialIso<B, A> {
     return .init(image: self.preimage, preimage: self.image)
   }
 
-  static var commute: Iso<(A, B), (B, A)> {
+  static var commute: PartialIso<(A, B), (B, A)> {
     return .init(
       image: { ($1, $0) },
       preimage: { ($1, $0) }
     )
   }
 
-  static func >>> <C> (lhs: Iso<A, B>, rhs: Iso<B, C>) -> Iso<A, C> {
+  static func >>> <C> (lhs: PartialIso<A, B>, rhs: PartialIso<B, C>) -> PartialIso<A, C> {
     return .init(
       image: lhs.image >-> rhs.image,
       preimage: rhs.preimage >-> lhs.preimage
     )
   }
 
-  static var id: Iso<A, A> {
+  static var id: PartialIso<A, A> {
     return .init(image: { $0 }, preimage: { $0 })
   }
 }
 
-// todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into left-paranthesized
-// nested tuples (((A, B), C), D), so we will need many overloads of `flatten` to correct this :/
-func flatten<A, B, C>() -> Iso<((A, B), C), (A, B, C)> {
-  return Iso<((A, B), C), (A, B, C)>(
-    image: { ($0.0.0, $0.0.1, $0.1) },
-    preimage: { (($0, $1), $2) }
+// todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into right-paranthesized
+// nested tuples e.g. (A, (B, (C, D))), so we will need many overloads of `flatten` to correct this :/
+
+func flatten<A, B, C>() -> PartialIso<(A, (B, C)), (A, B, C)> {
+  return .init(
+    image: { ($0.0, $0.1.0, $0.1.1) },
+    preimage: { ($0, ($1, $2)) }
   )
 }
 
-extension Iso where B == (A, Prelude.Unit) {
-  static var unit: Iso {
+func curry<A, B, C, D>(_ f: PartialIso<(A, B, C), D>) -> PartialIso<(A, (B, C)), D> {
+  return flatten() >>> f
+}
+
+extension PartialIso where B == (A, Prelude.Unit) {
+  static var unit: PartialIso {
     return .init(
       image: { ($0, Prelude.unit) },
       preimage: { $0.0 }
@@ -80,7 +92,7 @@ struct Router<A> {
   // fileprivate let templatePrint: (A) -> _Route?
 
   public func match(_ request: URLRequest) -> A? {
-    return (self <* _end).parse(route(from: request))?.match
+    return (self <% _end).parse(route(from: request))?.match
   }
 
   public func print(_ a: A) -> URLRequest? {
@@ -91,11 +103,11 @@ struct Router<A> {
 // Functor
 
 extension Router {
-  func map<B>(_ f: Iso<A, B>) -> Router<B> {
+  func map<B>(_ f: PartialIso<A, B>) -> Router<B> {
     return f <¢> self
   }
 
-  static func <¢> <B> (lhs: Iso<A, B>, rhs: Router) -> Router<B> {
+  static func <¢> <B> (lhs: PartialIso<A, B>, rhs: Router) -> Router<B> {
     return Router<B>(
       parse: { route in
         guard let (rest, match) = rhs.parse(route) else { return nil }
@@ -114,9 +126,9 @@ extension Router {
 // Applicative
 
 extension Router {
-  // todo: this form of applicative is right associative, but `<*>` is defined as infixl. maybe we should make
+  // todo: this form of applicative is right associative, but `<%>` is defined as infixl. maybe we should make
   // a right associative version and call it `<%>` or something?
-  static func <*> <B> (lhs: Router, rhs: Router<B>) -> Router<(A, B)> {
+  static func <%> <B> (lhs: Router, rhs: Router<B>) -> Router<(A, B)> {
     return Router<(A, B)>(
       parse: { str in
         guard let (more, a) = lhs.parse(str) else { return nil }
@@ -132,14 +144,14 @@ extension Router {
 }
 
 extension Router where A == Prelude.Unit {
-  static func <* <B>(x: Router<B>, y: Router) -> Router<B> {
-    return Iso.unit.inverted <¢> (x <*> y) // <- this applicative is right associative
+  static func <% <B>(x: Router<B>, y: Router) -> Router<B> {
+    return PartialIso.unit.inverted <¢> (x <%> y) // <- this applicative is right associative
   }
 }
 
 extension Router {
-  static func *> (x: Router<Prelude.Unit>, y: Router) -> Router {
-    return (Iso.commute >>> Iso.unit.inverted) <¢> (x <*> y)
+  static func %> (x: Router<Prelude.Unit>, y: Router) -> Router {
+    return (PartialIso.commute >>> PartialIso.unit.inverted) <¢> (x <%> y)
   }
 }
 
@@ -183,7 +195,7 @@ func lit(_ str: String) -> Router<Prelude.Unit> {
   })
 }
 
-func pathComponent<A>(_ key: String, _ f: Iso<String, A>) -> Router<A> {
+func pathComponent<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
   return Router<A>(
     parse: { route in
       guard let (p, ps) = uncons(route.path), let v = f.image(p) else { return nil }
@@ -213,6 +225,20 @@ let _end = Router<Prelude.Unit>(
   _print: { _ in .empty }
 )
 
+extension Router {
+  static var int: Router<Int> {
+    return pathComponent("", intStringIso)
+  }
+
+  static var str: Router<String> {
+    return pathComponent("", .id)
+  }
+
+  static var num: Router<Double> {
+    return pathComponent("", doubleStringIso)
+  }
+}
+
 func int(_ key: String) -> Router<Int> {
   return pathComponent(key, intStringIso)
 }
@@ -225,11 +251,11 @@ func num(_ key: String) -> Router<Double> {
   return pathComponent(key, doubleStringIso)
 }
 
-let intStringIso = Iso<String, Int>(
+let intStringIso = PartialIso<String, Int>(
   image: Int.init,
   preimage: String.init
 )
-let doubleStringIso = Iso<String, Double>(
+let doubleStringIso = PartialIso<String, Double>(
   image: Double.init,
   preimage: String.init
 )

@@ -4,30 +4,19 @@ import Optics
 import Prelude
 import XCTest
 
+
+
 class NewRouterTests: XCTestCase {
   func testRouter() {
 
-    let homeRouter = Routes.iso.home <¢> lit("home") <* _end
-
-    let postCommentRouter = (flatten() >>> Routes.iso.postComment)
-      <¢> (
-        (lit("posts") *> str("post_id"))
-          <*> (lit("comments") *> int("comment_id"))
-          <*> param("ref")
-          <* _end
-    )
-
-    let postCommentsRouter = Routes.iso.postComments
-      <¢> (
-        (lit("posts") *> str("post_id"))
-          <* lit("comments")
-          <* _end
-    )
-
     let router = [
-      homeRouter,
-      postCommentRouter,
-      postCommentsRouter,
+      Routes.iso.home <¢> lit("home") <% _end,
+
+      (flatten() >>> Routes.iso.postComment)
+        <¢> lit("posts") %> .str <%> lit("comments") %> .int <%> param("ref") <% _end,
+
+      Routes.iso.postComments
+        <¢> lit("posts") %> str("post_id") <% lit("comments") <% _end,
       ]
       .reduce(.empty, <|>)
 
@@ -68,21 +57,21 @@ enum Routes: Equatable {
   case postComment(String, Int, String)
 
   enum iso {
-    static let postComment = Iso<(String, Int, String), Routes>(
+    static let postComment = PartialIso<(String, Int, String), Routes>(
       image: Routes.postComment,
       preimage: {
         guard case let .postComment(route) = $0 else { return nil }
         return route
     })
 
-    static let home = Iso<Prelude.Unit, Routes>(
+    static let home = PartialIso<Prelude.Unit, Routes>(
       image: Routes.home,
       preimage: {
         guard case let .home(route) = $0 else { return nil }
         return route
     })
 
-    static let postComments = Iso<String, Routes>(
+    static let postComments = PartialIso<String, Routes>(
       image: Routes.postComments,
       preimage: {
         guard case let .postComments(route) = $0 else { return nil }
