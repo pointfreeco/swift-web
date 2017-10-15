@@ -71,21 +71,6 @@ extension Optional {
   }
 }
 
-public let stringToInt = PartialIso<String, Int>(
-  image: Int.init,
-  preimage: String.init
-)
-
-public let stringToNum = PartialIso<String, Double>(
-  image: Double.init,
-  preimage: String.init
-)
-
-public let stringToBool = PartialIso<String, Bool>(
-  image: { $0 == "true" || $0 == "1" },
-  preimage: { $0 ? "true" : "false" }
-)
-
 // todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into
 // right-paranthesized nested tuples e.g. (A, (B, (C, D))), so we will need many overloads of `flatten` to
 // correct this :/
@@ -103,3 +88,4 @@ private func flatten<A, B, C, D>() -> PartialIso<(A, (B, (C, D))), (A, B, C, D)>
     preimage: { ($0, ($1, ($2, $3))) }
   )
 }
+

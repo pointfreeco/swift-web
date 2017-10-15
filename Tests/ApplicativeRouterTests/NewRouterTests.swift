@@ -9,16 +9,16 @@ class NewRouterTests: XCTestCase {
 
     let router = [
       Routes.iso.home
-        <¢> lit("home") %> .params <% _end,
+        <¢> lit("home") %> queryParams(Routes.HomeData.self) <% _end,
 
       Routes.iso.postComments
-        <¢> lit("posts") %> .str <% lit("comments") <% _end,
+        <¢> lit("posts") %> str <% lit("comments") <% _end,
 
       Routes.iso.postComment
-        <¢> lit("posts") %> .str
-        <%> lit("comments") %> .int
-        <%> param("ref", Optional.iso.some)
-        <%> param("active", stringToBool)
+        <¢> lit("posts") %> str
+        <%> lit("comments") %> int
+        <%> queryParam("ref", Optional.iso.some)
+        <%> boolQueryParam("active")
         <% _end,
       ]
       .reduce(.empty, <|>)
