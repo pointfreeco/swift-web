@@ -8,6 +8,11 @@ public struct PartialIso<A, B> {
   public let image: (A) -> B?
   public let preimage: (B) -> A?
 
+  public init(image: @escaping (A) -> B?, preimage: @escaping (B) -> A?) {
+    self.image = image
+    self.preimage = preimage
+  }
+
   public var inverted: PartialIso<B, A> {
     return .init(image: self.preimage, preimage: self.image)
   }
@@ -32,6 +37,21 @@ public struct PartialIso<A, B> {
 
   public var optional: PartialIso<A, B?> {
     return self >>> Optional.iso.some
+  }
+}
+
+extension PartialIso where A == String {
+  public static var bool: PartialIso<String, Bool> {
+    return stringToBool
+  }
+  public static var num: PartialIso<String, Double> {
+    return stringToNum
+  }
+  public static var int: PartialIso<String, Int> {
+    return stringToInt
+  }
+  public static var str: PartialIso<String, String> {
+    return .id
   }
 }
 
@@ -69,6 +89,10 @@ extension Optional {
       )
     }
   }
+}
+
+public func opt<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B?> {
+  return f >>> Optional.iso.some
 }
 
 // todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into

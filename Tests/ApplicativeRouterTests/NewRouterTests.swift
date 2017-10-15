@@ -1,24 +1,35 @@
-@testable import ApplicativeRouter
+import ApplicativeRouter
 import Either
 import Optics
 import Prelude
 import XCTest
+
+infix operator <&>
+infix operator <?>
+infix operator <^>
+infix operator </>
 
 class NewRouterTests: XCTestCase {
   func testRouter() {
 
     let router = [
       Routes.iso.home
-        <¢> lit("home") %> queryParams(Routes.HomeData.self) <% _end,
+        <¢> lit("home")
+        %> queryParams(Routes.HomeData.self)
+        <% _end,
 
       Routes.iso.postComments
-        <¢> lit("posts") %> str <% lit("comments") <% _end,
+        <¢> get %> lit("posts") %> .str <% lit("comments")
+        <% _end,
+
+      Routes.iso.postComments
+        <¢> post %> lit("posts") %> .str <% lit("comments")
+        <% _end,
 
       Routes.iso.postComment
-        <¢> lit("posts") %> str
-        <%> lit("comments") %> int
-        <%> queryParam("ref", Optional.iso.some)
-        <%> boolQueryParam("active")
+        <¢> get %> lit("posts") %> .str <%> lit("comments") %> .int
+        <%> "ref" <=> opt(.str)
+        <%> "active" <=> .bool
         <% _end,
       ]
       .reduce(.empty, <|>)
@@ -27,37 +38,37 @@ class NewRouterTests: XCTestCase {
 
     XCTAssertEqual(
       postCommentRoute,
-      router.match(URLRequest(url: URL(string: "/posts/hello-world/comments/42?ref=twitter&active=true")!))
+      router.match(url: URL(string: "/posts/hello-world/comments/42?ref=twitter&active=true")!)
     )
     XCTAssertEqual(
       "posts/hello-world/comments/42?ref=twitter&active=true",
-      router.request(for: postCommentRoute)?.url?.absoluteString
+      router.url(for: postCommentRoute)?.absoluteString
     )
     XCTAssertEqual(
       "posts/:string/comments/:int?ref=:optional_string&active=:bool",
-      router.templateRequest(for: postCommentRoute)?.url?.absoluteString
+      router.templateUrl(for: postCommentRoute)?.absoluteString
     )
 
     XCTAssertEqual(
       .home(.init(x: "foo", y: "bar", z: "blob")),
-      router.match(URLRequest(url: URL(string: "http://www.site.com/home?x=foo&y=bar&z=blob")!))
+      router.match(url: URL(string: "http://www.site.com/home?x=foo&y=bar&z=blob")!)
     )
     XCTAssertEqual(
       "home?y=bar&x=foo&z=blob",
-      router.request(for: .home(.init(x: "foo", y: "bar", z: "blob")))?.url?.absoluteString
+      router.url(for: .home(.init(x: "foo", y: "bar", z: "blob")))?.absoluteString
     )
     XCTAssertEqual(
       "home?y=:string&x=:string&z=:string",
-      router.templateRequest(for: .home(.init(x: "", y: "", z: "")))?.url?.absoluteString
+      router.templateUrl(for: .home(.init(x: "", y: "", z: "")))?.absoluteString
     )
 
     XCTAssertEqual(
       .postComments("hello-world"),
-      router.match(URLRequest(url: URL(string: "http://www.site.com/posts/hello-world/comments")!))
+      router.match(url: URL(string: "http://www.site.com/posts/hello-world/comments")!)
     )
     XCTAssertEqual(
       "posts/hello-world/comments",
-      router.request(for: .postComments("hello-world"))?.url?.path
+      router.url(for: .postComments("hello-world"))?.path
     )
   }
 }
