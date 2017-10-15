@@ -87,17 +87,6 @@ extension Router {
   }
 }
 
-func const<A, B>(_ b: B) -> PartialIso<A, B> {
-  return PartialIso<A, B>(
-    image: const(b),
-    preimage: const(nil)
-  )
-}
-
-public func <¢ <A, B> (lhs: A, rhs: Router<B>) -> Router<A> {
-  return const(lhs) <¢> rhs
-}
-
 // Apply
 
 extension Router {
