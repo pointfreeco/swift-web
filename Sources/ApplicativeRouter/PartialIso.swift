@@ -31,12 +31,14 @@ public struct PartialIso<A, B> {
     )
   }
 
-  public static var id: PartialIso<A, A> {
-    return .init(image: { $0 }, preimage: { $0 })
-  }
-
   public var optional: PartialIso<A, B?> {
     return self >>> Optional.iso.some
+  }
+}
+
+extension PartialIso where B == A {
+  public static var id: PartialIso {
+    return .init(image: { $0 }, preimage: { $0 })
   }
 }
 
