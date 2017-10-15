@@ -47,6 +47,27 @@ extension PartialIso where A: Codable, B == Data {
   }
 }
 
+public let jsonDictionaryToData = PartialIso<[String: String], Data>(
+  image: { try? JSONSerialization.data(withJSONObject: $0) },
+  preimage: {
+    (try? JSONSerialization.jsonObject(with: $0))
+      .flatMap { $0 as? [String: String] }
+})
+
+public func key<K, V>(_ key: K) -> PartialIso<[K: V], V> {
+  return PartialIso<[K: V], V>(
+    image: { $0[key] },
+    preimage: { [key: $0] }
+  )
+}
+
+public func keys<K, V>(_ keys: [K]) -> PartialIso<[K: V], [K: V]> {
+  return .init(
+    image: { $0.filter { key, _ in keys.contains(key) } },
+    preimage: id
+  )
+}
+
 private func bodyStringToFormData(_ body: String) -> [String: String] {
   let pairs = body.split(separator: "&")
     .map {

@@ -238,27 +238,6 @@ public let stringBody = dataBody.map(stringToData.inverted)
 /// Parses the body data of the request into form data of (key, value) pairs.
 public let formDataBody = stringBody.map(stringToFormData)
 
-public let jsonDictionaryToData = PartialIso<[String: String], Data>(
-  image: { try? JSONSerialization.data(withJSONObject: $0) },
-  preimage: {
-    (try? JSONSerialization.jsonObject(with: $0))
-      .flatMap { $0 as? [String: String] }
-})
-
-public func key<K, V>(_ key: K) -> PartialIso<[K: V], V> {
-  return PartialIso<[K: V], V>(
-    image: { $0[key] },
-    preimage: { [key: $0] }
-  )
-}
-
-public func keys<K, V>(_ keys: [K]) -> PartialIso<[K: V], [K: V]> {
-  return .init(
-    image: { $0.filter { key, _ in keys.contains(key) } },
-    preimage: id
-  )
-}
-
 public func formField(_ name: String) -> Router<String> {
   return formDataBody.map(key(name))
 }
