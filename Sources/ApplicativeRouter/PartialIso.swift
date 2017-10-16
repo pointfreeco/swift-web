@@ -5,6 +5,8 @@ import Prelude
 
 // todo: move to prelude?
 
+// TODO: Change PartialIso to be Partial<A, B, E: Semigroup>: `((A) -> Validation<E, B>, (B) -> Validation<E, A>)
+
 /// A partial isomorphism is a partial function that is invertible on the parts it is defined, i.e.
 /// `image(x) = y` if and only `preimage(y) = x`.
 public struct PartialIso<A, B> {
