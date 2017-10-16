@@ -6,7 +6,7 @@ import Prelude
 // todo: move to prelude?
 
 /// A partial isomorphism is a partial function that is invertible on the parts it is defined, i.e.
-/// `image(x) = y` if and only if `preimage(y) = x`.
+/// `image(x) = y` if and only `preimage(y) = x`.
 public struct PartialIso<A, B> {
   public let image: (A) -> B?
   public let preimage: (B) -> A?
