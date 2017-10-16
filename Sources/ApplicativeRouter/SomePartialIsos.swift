@@ -2,25 +2,64 @@ import Foundation
 import Optics
 import Prelude
 
-public let stringToInt = PartialIso<String, Int>(
-  image: Int.init,
-  preimage: String.init
-)
+extension Optional {
+  public enum iso {
+    public static var some: PartialIso<Wrapped, Wrapped?> {
+      return PartialIso<Wrapped, Wrapped?>(
+        image: { .some($0) },
+        preimage: { $0 }
+      )
+    }
+  }
+}
 
-public let stringToNum = PartialIso<String, Double>(
-  image: Double.init,
-  preimage: String.init
-)
+/// Lifts a partial isomorphism `(A) -> B` to one `(A) -> B?`.
+public func opt<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B?> {
+  return f >>> Optional.iso.some
+}
 
-public let anyToString = PartialIso<Any, String>(
-  image: { "\($0)" },
-  preimage: id
-)
+extension PartialIso where A == String, B == Int {
+  public static var int: PartialIso {
+    return .init(
+      image: Int.init,
+      preimage: String.init
+    )
+  }
+}
 
-public let stringToBool = PartialIso<String, Bool>(
-  image: { $0 == "true" || $0 == "1" },
-  preimage: { $0 ? "true" : "false" }
-)
+// TODO: possible to document this in the applicative of Syntax?
+extension PartialIso where A == String, B == Bool {
+  public static var bool: PartialIso {
+    return .init(
+      image: { $0 == "true" || $0 == "1" },
+      preimage: { $0 ? "true" : "false" }
+    )
+  }
+}
+
+extension PartialIso where A == String, B == String {
+  public static var bool: PartialIso {
+    return .id
+  }
+}
+
+extension PartialIso where A == String, B == Double {
+  public static var double: PartialIso {
+    return .init(
+      image: Double.init,
+      preimage: String.init
+    )
+  }
+}
+
+extension PartialIso where A == String , B == String {
+  public static var string: PartialIso {
+    return .init(
+      image: { $0 },
+      preimage: { $0 }
+    )
+  }
+}
 
 public let stringToFormData = PartialIso<String, [String: String]>(
   image: bodyStringToFormData,

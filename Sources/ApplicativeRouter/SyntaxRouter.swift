@@ -1,3 +1,4 @@
+import Either
 import Foundation
 import Prelude
 import Optics
@@ -31,7 +32,7 @@ private struct RequestData: Monoid {
   }
 }
 
-// TODO: should this be generic over any monoid `M` instead of using `_Route` directly?
+// TODO: should this be generic over any monoid `M` instead of using `RequestData` directly?
 // TODO: generic over an error semigroup too?
 public struct Router<A> {
   fileprivate let parse: (RequestData) -> (rest: RequestData, match: A)?
@@ -47,8 +48,7 @@ public struct Router<A> {
   }
 
   public func match(string: String) -> A? {
-    return URL(string: string)
-      .flatMap(match(url:))
+    return URL(string: string).flatMap(match(url:))
   }
 
   public func request(for a: A) -> URLRequest? {
@@ -124,11 +124,12 @@ extension Router where A == Prelude.Unit {
 
 extension Router {
   public static func <|> (lhs: Router, rhs: Router) -> Router {
-    return Router<A>(
+    return .init(
       parse: { lhs.parse($0) ?? rhs.parse($0) },
       print: { lhs.print($0) ?? rhs.print($0) },
-      template: { lhs.template($0) ?? rhs.template($0) }
-    )
+      template: {
+        lhs.template($0) ?? rhs.template($0)
+    })
   }
 }
 
@@ -155,15 +156,13 @@ public func <=> <A> (lhs: String, rhs: PartialIso<String, A>) -> Router<A> {
 public func lit(_ str: String) -> Router<Prelude.Unit> {
   return Router<Prelude.Unit>(
     parse: { route in
-      guard let (_, ps) = uncons(route.path) else { return nil }
-      return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), unit)
+      uncons(route.path).map { _, ps in
+        (.init(method: route.method, path: ps, query: route.query, body: route.body), unit)
+      }
     },
-    print: { a in
-      return RequestData(method: nil, path: [str], query: [:], body: nil)
-    },
-    template: { a in
-      return RequestData(method: nil, path: [str], query: [:], body: nil)
-  })
+    print: { _ in .init(method: nil, path: [str], query: [:], body: nil) },
+    template: { _ in .init(method: nil, path: [str], query: [:], body: nil) }
+  )
 }
 
 /// Parses and consumes a path component and tries to convert it to type `A` using the partial isomorphism
@@ -175,11 +174,16 @@ public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
       return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), v)
   },
     print: { a in
-      return .init(method: nil, path: [f.preimage(a) ?? ""], query: [:], body: nil)
+      .init(method: nil, path: [f.preimage(a) ?? ""], query: [:], body: nil)
   },
     template: { a in
-      return .init(method: nil, path: [":\(typeKey(a))"], query: [:], body: nil)
+      .init(method: nil, path: [":\(typeKey(a))"], query: [:], body: nil)
   })
+}
+
+/// Parses (and does not consume) a query param keyed by `key` as a string.
+public func queryParam(_ key: String) -> Router<String> {
+  return queryParam(key, .id)
 }
 
 /// Parses (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
@@ -196,22 +200,6 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A
     template: { a in
       return RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
   })
-}
-
-public func intQueryParam(_ key: String) -> Router<Int> {
-  return queryParam(key, stringToInt)
-}
-
-public func stringQueryParam(_ key: String) -> Router<String> {
-  return queryParam(key, .id)
-}
-
-public func numQueryParam(_ key: String) -> Router<Double> {
-  return queryParam(key, stringToNum)
-}
-
-public func boolQueryParam(_ key: String) -> Router<Bool> {
-  return queryParam(key, stringToBool)
 }
 
 /// Parses the body data of the request.
@@ -257,16 +245,16 @@ public let _end = Router<Prelude.Unit>(
 
 extension Router {
   /// Parses and consumes a path component as an int.
-  public static var int: Router<Int> { return pathParam(stringToInt) }
+  public static var int: Router<Int> { return pathParam(.int) }
 
   /// Parses and consumes a path component as a bool.
-  public static var bool: Router<Bool> { return pathParam(stringToBool) }
+  public static var bool: Router<Bool> { return pathParam(.bool) }
 
   /// Parses and consumes a path component as a string.
   public static var str: Router<String> { return pathParam(.id) }
 
   /// Parses and consumes a path component as a double.
-  public static var num: Router<Double> { return pathParam(stringToNum) }
+  public static var num: Router<Double> { return pathParam(.double) }
 }
 
 /// Parses the query params to create a value of type `A` via the `Codable` protocol.
@@ -319,6 +307,38 @@ public let patch = method(.patch)
 public let post = method(.post)
 public let put = method(.put)
 
+extension Either {
+  public enum iso {
+    public static var left: PartialIso<L, Either> {
+      return .init(
+        image: { .left($0) },
+        preimage: { $0.left }
+      )
+    }
+    public static var right: PartialIso<R, Either> {
+      return .init(
+        image: { .right($0) },
+        preimage: { $0.right }
+      )
+    }
+  }
+}
+
+// TODO: WOW THIS IS POSSIBLE? IS THIS OFFICIAL SUPPORTED?!
+
+extension Either.iso where L == String, R == Int {
+  public static var int: PartialIso<String, Either<String, Int>> {
+    return PartialIso<String, Either<String, Int>>(
+      image: { Int($0).map(Either.right) ?? .left($0) },
+      preimage: { $0.right.map(String.init) ?? $0.left }
+    )
+  }
+}
+
+public func either<A, B>(_ lhs: Router<A>, _ rhs: Router<B>) -> Router<Either<A, B>> {
+  return lhs.map(Either.iso.left) <|> rhs.map(Either.iso.right)
+}
+
 private func route(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
@@ -337,7 +357,10 @@ private func route(from request: URLRequest) -> RequestData {
 private func request(from route: RequestData) -> URLRequest? {
   var components = URLComponents()
   components.path = route.path.joined(separator: "/")
-  components.queryItems = route.query.map(URLQueryItem.init(name:value:))
+
+  if !route.query.isEmpty {
+    components.queryItems = route.query.map(URLQueryItem.init(name:value:))
+  }
 
   var request = components.url.map { URLRequest(url: $0) }
   request?.httpMethod = route.method?.rawValue
@@ -346,11 +369,18 @@ private func request(from route: RequestData) -> URLRequest? {
 }
 
 private func typeKey<A>(_ a: A) -> String {
+  // todo: convert camel case to snake case?
   let typeString = "\(type(of: a))"
   let typeKey: String
   if typeString.contains("Optional<") {
     typeKey = "optional_\(typeString)"
       .replacingOccurrences(of: "Optional<", with: "")
+      .replacingOccurrences(of: ">", with: "")
+      .lowercased()
+  } else if typeString.contains("Either<") {
+    typeKey = "\(typeString)"
+      .replacingOccurrences(of: "Either<", with: "")
+      .replacingOccurrences(of: ", ", with: "_or_")
       .replacingOccurrences(of: ">", with: "")
       .lowercased()
   } else {

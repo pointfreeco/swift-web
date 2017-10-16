@@ -4,6 +4,9 @@ import Prelude
 //typealias Iso_<S, T, A, B> = ((S) -> A) -> ((B) -> T)
 
 // todo: move to prelude?
+
+/// A partial isomorphism is a partial function that is invertible on the parts it is defined, i.e.
+/// `image(x) = y` if and only if `preimage(y) = x`.
 public struct PartialIso<A, B> {
   public let image: (A) -> B?
   public let preimage: (B) -> A?
@@ -13,10 +16,12 @@ public struct PartialIso<A, B> {
     self.preimage = preimage
   }
 
+  /// Inverts the partial isomorphism.
   public var inverted: PartialIso<B, A> {
     return .init(image: self.preimage, preimage: self.image)
   }
 
+  /// A partial isomorphism between `(A, B)` and `(B, A)`.
   public static var commute: PartialIso<(A, B), (B, A)> {
     return .init(
       image: { ($1, $0) },
@@ -24,56 +29,24 @@ public struct PartialIso<A, B> {
     )
   }
 
+  /// Composes two partial isomorphisms.
   public static func >>> <C> (lhs: PartialIso<A, B>, rhs: PartialIso<B, C>) -> PartialIso<A, C> {
     return .init(
       image: lhs.image >-> rhs.image,
       preimage: rhs.preimage >-> lhs.preimage
     )
   }
-
-  public var optional: PartialIso<A, B?> {
-    return self >>> Optional.iso.some
-  }
 }
 
 extension PartialIso where B == A {
+  /// The identity partial isomorphism.
   public static var id: PartialIso {
     return .init(image: { $0 }, preimage: { $0 })
   }
 }
 
-extension PartialIso where A == String {
-  public static var bool: PartialIso<String, Bool> {
-    return stringToBool
-  }
-  public static var num: PartialIso<String, Double> {
-    return stringToNum
-  }
-  public static var int: PartialIso<String, Int> {
-    return stringToInt
-  }
-  public static var str: PartialIso<String, String> {
-    return .id
-  }
-}
-
-public func parenthesize<A, B, C, D>(_ f: PartialIso<(A, B, C), D>) -> PartialIso<(A, (B, C)), D> {
-  return flatten() >>> f
-}
-
-public func parenthesize<A, B, C, D, E>(_ f: PartialIso<(A, B, C ,D), E>) -> PartialIso<(A, (B, (C, D))), E> {
-  return flatten() >>> f
-}
-
-public func parenthesize<A, B, C>(_ f: PartialIso<(A, B), C>) -> PartialIso<(A, B), C> {
-  return f
-}
-
-public func parenthesize<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B> {
-  return f
-}
-
 extension PartialIso where B == (A, Prelude.Unit) {
+  /// An isomorphism between `A` and `(A, Unit)`.
   public static var unit: PartialIso {
     return .init(
       image: { ($0, Prelude.unit) },
@@ -82,25 +55,30 @@ extension PartialIso where B == (A, Prelude.Unit) {
   }
 }
 
-extension Optional {
-  public enum iso {
-    public static var some: PartialIso<Wrapped, Wrapped?> {
-      return PartialIso<Wrapped, Wrapped?>(
-        image: { $0 },
-        preimage: { $0 }
-      )
-    }
-  }
+/// Converts a partial isomorphism of a flat 1-tuple to one of a right-weighted nested tuple.
+public func parenthesize<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B> {
+  return f
 }
 
-public func opt<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B?> {
-  return f >>> Optional.iso.some
+/// Converts a partial isomorphism of a flat 2-tuple to one of a right-weighted nested tuple.
+public func parenthesize<A, B, C>(_ f: PartialIso<(A, B), C>) -> PartialIso<(A, B), C> {
+  return f
 }
 
-// todo: since we are using the appliciatve `f a -> f b -> f (a, b)` we will often run into
-// right-paranthesized nested tuples e.g. (A, (B, (C, D))), so we will need many overloads of `flatten` to
-// correct this :/
+/// Converts a partial isomorphism of a flat 3-tuple to one of a right-weighted nested tuple.
+public func parenthesize<A, B, C, D>(_ f: PartialIso<(A, B, C), D>) -> PartialIso<(A, (B, C)), D> {
+  return flatten() >>> f
+}
 
+/// Converts a partial isomorphism of a flat 4-tuple to one of a right-weighted nested tuple.
+public func parenthesize<A, B, C, D, E>(_ f: PartialIso<(A, B, C ,D), E>) -> PartialIso<(A, (B, (C, D))), E> {
+  return flatten() >>> f
+}
+
+// TODO: should we just bite the bullet and create our own `TupleN` types and stop using Swift tuples
+// altogether?
+
+/// Flattens a right-weighted nested 3-tuple.
 private func flatten<A, B, C>() -> PartialIso<(A, (B, C)), (A, B, C)> {
   return .init(
     image: { ($0.0, $0.1.0, $0.1.1) },
@@ -108,6 +86,7 @@ private func flatten<A, B, C>() -> PartialIso<(A, (B, C)), (A, B, C)> {
   )
 }
 
+/// Flattens a left-weighted nested 4-tuple.
 private func flatten<A, B, C, D>() -> PartialIso<(A, (B, (C, D))), (A, B, C, D)> {
   return .init(
     image: { ($0.0, $0.1.0, $0.1.1.0, $0.1.1.1) },
