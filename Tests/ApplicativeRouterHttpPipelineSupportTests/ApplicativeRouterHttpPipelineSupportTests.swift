@@ -9,8 +9,8 @@ import XCTest
 class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   func testRoute() {
     let router =
-      Route.home <¢ .get <*| end
-        <|> Route.episode <¢> (.get <* lit("episode") *> .str) <*| end
+      Route.iso.home <¢> get <% _end
+        <|> Route.iso.episode <¢> get %> lit("episode") %> .str <% _end
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       route(router: router)
@@ -36,7 +36,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   }
 
   func testRoute_UnrecognizedWithCustomNotFound() {
-    let router = Route.home <¢ .get <*| end
+    let router = Route.iso.home <¢> get <% _end
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       route(router: router, notFound: notFound(respond(text: "Unrecognized route!")))
@@ -55,4 +55,20 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
 enum Route {
   case home
   case episode(String)
+
+  enum iso {
+    static let home = parenthesize <| PartialIso<Prelude.Unit, Route>(
+      image: const(Route.home),
+      preimage: {
+        if case .home = $0 { return unit }
+        return nil
+    })
+
+    static let episode = parenthesize <| PartialIso<String, Route>(
+      image: Route.episode,
+      preimage: {
+        if case let .episode(result) = $0 { return result }
+        return nil
+    })
+  }
 }

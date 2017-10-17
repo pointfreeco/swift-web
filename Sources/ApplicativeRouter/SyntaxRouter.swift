@@ -254,6 +254,7 @@ extension Router {
   public static var bool: Router<Bool> { return pathParam(.bool) }
 
   /// Parses and consumes a path component as a string.
+  /// TODO: rename to .string
   public static var str: Router<String> { return pathParam(.id) }
 
   /// Parses and consumes a path component as a double.
