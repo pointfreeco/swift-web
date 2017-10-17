@@ -32,6 +32,8 @@ private struct RequestData: Monoid {
   }
 }
 
+// MARK: - Syntax Router
+
 // TODO: should this be generic over any monoid `M` instead of using `RequestData` directly?
 // TODO: generic over an error semigroup too?
 public struct Router<A> {
@@ -90,6 +92,8 @@ extension Router {
 // Apply
 
 extension Router {
+  /// TODO: use `Tuple`?
+  /// Processes with the left and right side routers, and if they succeed returns the pair of their results.
   public static func <%> <B> (lhs: Router, rhs: Router<B>) -> Router<(A, B)> {
     return Router<(A, B)>(
       parse: { str in
@@ -109,12 +113,14 @@ extension Router {
     })
   }
 
+  /// Processes with the left and right side routers, discarding the result of the left side.
   public static func %> (x: Router<Prelude.Unit>, y: Router) -> Router {
     return (PartialIso.commute >>> PartialIso.unit.inverted) <¢> x <%> y
   }
 }
 
 extension Router where A == Prelude.Unit {
+  /// Processes with the left and right routers, discarding the result of the right side.
   public static func <% <B>(x: Router<B>, y: Router) -> Router<B> {
     return PartialIso.unit.inverted <¢> x <%> y
   }
@@ -123,19 +129,20 @@ extension Router where A == Prelude.Unit {
 // Alternative
 
 extension Router {
+  /// Processes with the left side router, and if that fails uses the right side router.
   public static func <|> (lhs: Router, rhs: Router) -> Router {
     return .init(
       parse: { lhs.parse($0) ?? rhs.parse($0) },
       print: { lhs.print($0) ?? rhs.print($0) },
-      template: {
-        lhs.template($0) ?? rhs.template($0)
-    })
+      template: { lhs.template($0) ?? rhs.template($0) }
+    )
   }
 }
 
 // Plus
 
 extension Router {
+  /// A router that always fails and doesn't print anything.
   public static var empty: Router {
     return Router(
       parse: const(nil),
@@ -147,12 +154,7 @@ extension Router {
 
 // Combinators
 
-infix operator <=>: infixr9
-public func <=> <A> (lhs: String, rhs: PartialIso<String, A>) -> Router<A> {
-  return queryParam(lhs, rhs)
-}
-
-/// Parses and consumes a single path component matching the string provided.
+/// Processes and consumes a single path component matching the string provided.
 public func lit(_ str: String) -> Router<Prelude.Unit> {
   return Router<Prelude.Unit>(
     parse: { route in
@@ -165,55 +167,55 @@ public func lit(_ str: String) -> Router<Prelude.Unit> {
   )
 }
 
-/// Parses and consumes a path component and tries to convert it to type `A` using the partial isomorphism
+/// Processes and consumes a path component and tries to convert it to type `A` using the partial isomorphism
 /// supplied.
 public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
   return Router<A>(
     parse: { route in
       guard let (p, ps) = uncons(route.path), let v = f.image(p) else { return nil }
       return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), v)
-  },
+    },
     print: { a in
       .init(method: nil, path: [f.preimage(a) ?? ""], query: [:], body: nil)
-  },
+    },
     template: { a in
       .init(method: nil, path: [":\(typeKey(a))"], query: [:], body: nil)
   })
 }
 
-/// Parses (and does not consume) a query param keyed by `key` as a string.
+/// Processes (and does not consume) a query param keyed by `key` as a string.
 public func queryParam(_ key: String) -> Router<String> {
   return queryParam(key, .id)
 }
 
-/// Parses (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
+/// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
 /// using the partial isomorphism supplied.
 public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
   return .init(
     parse: { route in
       guard let str = route.query[key] else { return nil }
       return f.image(str).map { (route, $0) }
-  },
+    },
     print: { a in
-      return RequestData(method: nil, path: [], query: [key: f.preimage(a) ?? ""], body: nil)
-  },
+      RequestData(method: nil, path: [], query: [key: f.preimage(a) ?? ""], body: nil)
+    },
     template: { a in
-      return RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
+      RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
   })
 }
 
-/// Parses the body data of the request.
+/// Processes the body data of the request.
 public let dataBody = Router<Data>(
   parse: { route in route.body.map { (route, $0) } },
   print: { .init(method: nil, path: [], query: [:], body: $0) },
   template: { .init(method: nil, path: [], query: [:], body: $0) }
 )
 
-/// Parses the body data of the request as a string.
-public let stringBody = dataBody.map(stringToData.inverted)
+/// Processes the body data of the request as a string.
+public let stringBody = dataBody.map(PartialIso.data.inverted)
 
-/// Parses the body data of the request into form data of (key, value) pairs.
-public let formDataBody = stringBody.map(stringToFormData)
+/// Processes the body data of the request into form data of (key, value) pairs.
+public let formDataBody = stringBody.map(.formEncodedFields)
 
 public func formField(_ name: String) -> Router<String> {
   return formDataBody.map(key(name))
@@ -225,19 +227,20 @@ public func formFields(_ names: String...) -> Router<[String: String]> {
 
 public func formDataBody<A: Codable>(_ type: A.Type) -> Router<A> {
   return ApplicativeRouter.formDataBody
-    .map(jsonDictionaryToData >>> PartialIso.codableToDictionary.inverted)
+    .map(jsonDictionaryToData >>> PartialIso.codableToData.inverted)
 }
 
 /// Parses the body data of the request as JSON and then tries to decode the data into a value of type `A`.
 public func jsonBody<A: Codable>(_ type: A.Type) -> Router<A> {
-  return dataBody.map(PartialIso.codableToDictionary.inverted)
+  return dataBody.map(PartialIso.codableToData.inverted)
 }
 
 /// Parses the end of the request data by making sure that all of the path components have been consumed.
 public let _end = Router<Prelude.Unit>(
   parse: { route in
-    guard route.path.isEmpty else { return nil }
-    return (RequestData(method: route.method, path: [], query: [:], body: nil), unit)
+    route.path.isEmpty
+      ? (RequestData(method: route.method, path: [], query: [:], body: nil), unit)
+      : nil
   },
   print: const(.empty),
   template: const(.empty)
@@ -265,7 +268,7 @@ public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
       (try? JSONSerialization.data(withJSONObject: route.query))
         .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
         .map { (route, $0) }
-  },
+    },
     print: { a in
       let params = (try? JSONEncoder().encode(a))
         .flatMap { try? JSONSerialization.jsonObject(with: $0) }
@@ -273,7 +276,7 @@ public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
         .map { $0.mapValues { "\($0)" } }
         ?? [:]
       return RequestData(method: nil, path: [], query: params, body: nil)
-  },
+    },
     template: { a in
       let params = (try? JSONEncoder().encode(a))
         .flatMap { try? JSONSerialization.jsonObject(with: $0) }
@@ -288,15 +291,13 @@ public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
 public func method(_ method: Method) -> Router<Prelude.Unit> {
   return Router(
     parse: { route in
-      guard route.method == method else { return nil }
-      return (route, unit)
-  },
-    print: { _ in
-      return .init(method: method, path: [], query: [:], body: nil)
-  },
-    template: { _ in
-      return .init(method: method, path: [], query: [:], body: nil)
-  })
+      route.method == method
+        ? (route, unit)
+        : nil
+    },
+    print: { _ in  .init(method: method, path: [], query: [:], body: nil) },
+    template: { _ in  .init(method: method, path: [], query: [:], body: nil) }
+  )
 }
 
 public let delete = method(.delete)
@@ -307,37 +308,16 @@ public let patch = method(.patch)
 public let post = method(.post)
 public let put = method(.put)
 
-extension Either {
-  public enum iso {
-    public static var left: PartialIso<L, Either> {
-      return .init(
-        image: { .left($0) },
-        preimage: { $0.left }
-      )
-    }
-    public static var right: PartialIso<R, Either> {
-      return .init(
-        image: { .right($0) },
-        preimage: { $0.right }
-      )
-    }
-  }
+// MARK: - Experimental
+
+// TODO: open for discussion
+infix operator <=>: infixr9
+
+public func <=> <A> (lhs: String, rhs: PartialIso<String, A>) -> Router<A> {
+  return queryParam(lhs, rhs)
 }
 
-// TODO: WOW THIS IS POSSIBLE? IS THIS OFFICIAL SUPPORTED?!
-
-extension Either.iso where L == String, R == Int {
-  public static var int: PartialIso<String, Either<String, Int>> {
-    return PartialIso<String, Either<String, Int>>(
-      image: { Int($0).map(Either.right) ?? .left($0) },
-      preimage: { $0.right.map(String.init) ?? $0.left }
-    )
-  }
-}
-
-public func either<A, B>(_ lhs: Router<A>, _ rhs: Router<B>) -> Router<Either<A, B>> {
-  return lhs.map(Either.iso.left) <|> rhs.map(Either.iso.right)
-}
+// MARK: - Private
 
 private func route(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
@@ -359,7 +339,9 @@ private func request(from route: RequestData) -> URLRequest? {
   components.path = route.path.joined(separator: "/")
 
   if !route.query.isEmpty {
-    components.queryItems = route.query.map(URLQueryItem.init(name:value:))
+    components.queryItems = route.query
+      .sorted { lhs, rhs in lhs.key < rhs.key }
+      .map(URLQueryItem.init(name:value:))
   }
 
   var request = components.url.map { URLRequest(url: $0) }

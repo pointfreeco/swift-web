@@ -1,9 +1,11 @@
+import Either
 import Foundation
 import Optics
 import Prelude
 
 extension Optional {
   public enum iso {
+    /// A partial isomorphism `(A) -> A?` 
     public static var some: PartialIso<Wrapped, Wrapped?> {
       return PartialIso<Wrapped, Wrapped?>(
         image: { .some($0) },
@@ -19,6 +21,7 @@ public func opt<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B?> {
 }
 
 extension PartialIso where A == String, B == Int {
+  /// An isomorphism between strings and integers.
   public static var int: PartialIso {
     return .init(
       image: Int.init,
@@ -28,22 +31,30 @@ extension PartialIso where A == String, B == Int {
 }
 
 // TODO: possible to document this in the applicative of Syntax?
+
 extension PartialIso where A == String, B == Bool {
+  /// An isomorphism between strings and booleans.
   public static var bool: PartialIso {
     return .init(
-      image: { $0 == "true" || $0 == "1" },
+      image: {
+        $0 == "true" || $0 == "1" ? true
+          : $0 == "false" || $0 == "0" ? false
+          : nil
+      },
       preimage: { $0 ? "true" : "false" }
     )
   }
 }
 
 extension PartialIso where A == String, B == String {
-  public static var bool: PartialIso {
+  /// The identity isomorphism between strings.
+  public static var string: PartialIso {
     return .id
   }
 }
 
 extension PartialIso where A == String, B == Double {
+  /// An isomorphism between strings and doubles.
   public static var double: PartialIso {
     return .init(
       image: Double.init,
@@ -52,37 +63,33 @@ extension PartialIso where A == String, B == Double {
   }
 }
 
-extension PartialIso where A == String , B == String {
-  public static var string: PartialIso {
+extension PartialIso where A == String, B == [String: String] {
+  /// An isomorphism between strings and dictionaries using form encoded format.
+  public static var formEncodedFields: PartialIso<String, [String: String]> {
     return .init(
-      image: { $0 },
-      preimage: { $0 }
+      image: formEncodedStringToFields,
+      preimage: fieldsToFormEncodedString
     )
   }
 }
 
-public let stringToFormData = PartialIso<String, [String: String]>(
-  image: bodyStringToFormData,
-  preimage: formDataToBodyString
-)
-
-public let stringToData = PartialIso<String, Data>(
-  image: { Data($0.utf8) },
-  preimage: { String(data: $0, encoding: .utf8) }
-)
+extension PartialIso where A == String, B == Data {
+  /// An isomorphism between strings and data using utf8 encoding.
+  /// TODO: this should prob take encoding as an argument.
+  public static var data: PartialIso<String, Data> {
+    return .init(
+      image: { Data($0.utf8) },
+      preimage: { String(data: $0, encoding: .utf8) }
+    )
+  }
+}
 
 extension PartialIso where A: Codable, B == Data {
-  public static var codableToDictionary: PartialIso<A, Data> {
+  public static var codableToData: PartialIso<A, Data> {
     return .init(
-      image: {
-        (try? JSONEncoder().encode($0))
-          .flatMap { try? JSONSerialization.data(withJSONObject: $0) }
-
-    },
-      preimage: {
-        (try? JSONSerialization.data(withJSONObject: $0))
-          .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
-    })
+      image: { try? JSONEncoder().encode($0) },
+      preimage: { try? JSONDecoder().decode(A.self, from: $0) }
+    )
   }
 }
 
@@ -107,7 +114,16 @@ public func keys<K, V>(_ keys: [K]) -> PartialIso<[K: V], [K: V]> {
   )
 }
 
-private func bodyStringToFormData(_ body: String) -> [String: String] {
+extension PartialIso where A == String, B == Either<String, Int> {
+  public static var intOrString: PartialIso<String, Either<String, Int>> {
+    return PartialIso<String, Either<String, Int>>(
+      image: { Int($0).map(Either.right) ?? .left($0) },
+      preimage: { $0.right.map(String.init) ?? $0.left }
+    )
+  }
+}
+
+private func formEncodedStringToFields(_ body: String) -> [String: String] {
   let pairs = body.split(separator: "&")
     .map {
       $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
@@ -117,7 +133,7 @@ private func bodyStringToFormData(_ body: String) -> [String: String] {
   return [String: String](uniqueKeysWithValues: pairs)
 }
 
-private func formDataToBodyString(_ data: [String: String]) -> String {
+private func fieldsToFormEncodedString(_ data: [String: String]) -> String {
   let t = URLComponents()
     |> \.queryItems .~ data.map(URLQueryItem.init(name:value:))
   return t.query ?? ""

@@ -16,7 +16,7 @@ class SyntaxRouterTests: XCTestCase {
 
   func testPathComponents_IntParam() {
     let request = URLRequest(url: URL(string: "home/episodes/42/comments/2")!)
-    let route = Routes.pathComponents(episodeParam: .right(42), commentId: 2)
+    let route = Routes.pathComponents(param: .right(42), commentId: 2)
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
@@ -28,20 +28,33 @@ class SyntaxRouterTests: XCTestCase {
 
   func testPathComponents_StringParam() {
     let request = URLRequest(url: URL(string: "home/episodes/hello-world/comments/2")!)
-    let route = Routes.pathComponents(episodeParam: .left("hello-world"), commentId: 2)
+    let route = Routes.pathComponents(param: .left("hello-world"), commentId: 2)
+
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: route))
+  }
+
+  func testPostBodyJsonDecodable() {
+    let episode = Episode(
+      title: "Intro to Functions", blurb: "Everything about functions!", length: 300, category: nil
+    )
+    let route = Routes.postBodyJsonDecodable(episode: episode, param: 42)
+    let request = URLRequest(url: URL(string: "episodes/42")!)
+      |> \.httpBody .~ (try? JSONEncoder().encode(episode))
+      |> \.httpMethod .~ "POST"
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
   }
 
   func testSimpleQueryParams() {
-    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?ref=hello&t=122&active=true")!)
+    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&ref=hello&t=122")!)
     let route = Routes.simpleQueryParams(ref: "hello", active: true, t: 122)
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual(
-      "path/to/somewhere/cool?ref=:optional_string&t=:int&active=:bool",
+      "path/to/somewhere/cool?active=:bool&ref=:optional_string&t=:int",
       router.templateUrl(for: route)?.absoluteString
     )
   }

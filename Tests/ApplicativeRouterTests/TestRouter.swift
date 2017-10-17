@@ -1,25 +1,32 @@
 import ApplicativeRouter
+import Deriving
 import Either
 import Prelude
 
 enum Routes {
   case root
-  case pathComponents(episodeParam: Either<String, Int>, commentId: Int)
+  case pathComponents(param: Either<String, Int>, commentId: Int)
+  case postBodyJsonDecodable(episode: Episode, param: Int)
   case simpleQueryParams(ref: String?, active: Bool, t: Int)
 }
 
 let router: Router<Routes> = [
 
+  // /home
   Routes.iso.root
-    <¢> lit("home") <% _end,
+    <¢> get %> lit("home") %> _end,
 
-  // home/episodes/:string_or_int/comments/:int
+  // /home/episodes/:string_or_int/comments/:int
   Routes.iso.pathComponents
-    <¢> lit("home") %> lit("episodes") %> pathParam(Either.iso.int) <%> lit("comments") %> .int <% _end,
+    <¢> get %> lit("home") %> lit("episodes") %> pathParam(.intOrString) <%> lit("comments") %> .int <% _end,
+
+  // POST /episodes/:id
+  Routes.iso.postBodyJsonDecodable
+    <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% _end,
 
   // /path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int
   Routes.iso.simpleQueryParams
-    <¢> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
+    <¢> get %> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
     %> "ref" <=> opt(.string) <%> "active" <=> .bool <%> "t" <=> .int
     <% _end
 
@@ -35,10 +42,13 @@ extension Routes: Equatable {
     case let (.pathComponents(lhs0, lhs1), .pathComponents(rhs0, rhs1)):
       return lhs0 == rhs0 && lhs1 == rhs1
 
+    case let (.postBodyJsonDecodable(lhs), .postBodyJsonDecodable(rhs)):
+      return lhs == rhs
+
     case let (.simpleQueryParams(lhs0, lhs1, lhs2), .simpleQueryParams(rhs0, rhs1, rhs2)):
       return lhs0 == rhs0 && lhs1 == rhs1 && lhs2 == rhs2
 
-    case (.root, _), (.pathComponents, _), (.simpleQueryParams, _):
+    case (.root, _), (.pathComponents, _), (.postBodyJsonDecodable, _), (.simpleQueryParams, _):
       return false
     }
   }
@@ -60,6 +70,13 @@ extension Routes {
         return result
     })
 
+    static let postBodyJsonDecodable = parenthesize <| PartialIso<(Episode, Int), Routes>(
+      image: Routes.postBodyJsonDecodable,
+      preimage: {
+        guard case let .postBodyJsonDecodable(result) = $0 else { return nil }
+        return result
+    })
+
     static let simpleQueryParams = parenthesize <| PartialIso<(String?, Bool, Int), Routes>(
       image: Routes.simpleQueryParams,
       preimage: {
@@ -67,4 +84,11 @@ extension Routes {
         return result
     })
   }
+}
+
+struct Episode: Codable, DerivingEquatable {
+  let title: String
+  let blurb: String
+  let length: Int
+  let category: String?
 }
