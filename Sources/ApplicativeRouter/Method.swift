@@ -1,3 +1,4 @@
+// TODO: should we move this to its own package so both the router and pipeline can use?
 public enum Method: String {
   case get, post, put, patch, delete, options, head
 }

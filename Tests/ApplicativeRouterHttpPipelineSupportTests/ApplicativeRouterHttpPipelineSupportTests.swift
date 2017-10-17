@@ -10,7 +10,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   func testRoute() {
     let router =
       Route.iso.home <¢> get <% _end
-        <|> Route.iso.episode <¢> get %> lit("episode") %> .str <% _end
+        <|> Route.iso.episode <¢> get %> lit("episode") %> .string <% _end
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       route(router: router)
