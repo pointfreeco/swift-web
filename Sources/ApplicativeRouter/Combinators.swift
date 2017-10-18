@@ -140,7 +140,7 @@ public func method(_ method: Method) -> Router<Prelude.Unit> {
   return Router(
     parse: { route in
       route.method == method
-        ? (route, unit)
+        ? (route |> \.method .~ nil, unit)
         : nil
   },
     print: { _ in  .init(method: method, path: [], query: [:], body: nil) },

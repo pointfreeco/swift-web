@@ -2,7 +2,7 @@ import Foundation
 import Prelude
 
 struct RequestData: Monoid {
-  var method: Method? = .get
+  var method: Method? = nil
   var path: [String] = []
   var query: [String: String] = [:]
   var body: Data? = nil
