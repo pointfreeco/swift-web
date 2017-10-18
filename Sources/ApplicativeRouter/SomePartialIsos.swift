@@ -129,7 +129,7 @@ private func formEncodedStringToFields(_ body: String) -> [String: String] {
       $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
         .flatMap(String.init >>> Prelude.get(\.removingPercentEncoding))
     }
-    .map { ($0[0], $0[1]) }
+    .flatMap { tuple <¢> $0.first <*> $0.last }
   return [String: String](uniqueKeysWithValues: pairs)
 }
 
