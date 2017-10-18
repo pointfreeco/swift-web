@@ -138,14 +138,6 @@ private func route(from request: URLRequest) -> RequestData {
 }
 
 private func request(from route: RequestData) -> URLRequest? {
-
-  var request = urlComponents(from: route).url.map { URLRequest(url: $0) }
-  request?.httpMethod = route.method?.rawValue
-  request?.httpBody = route.body
-  return request
-}
-
-private func urlComponents(from route: RequestData) -> URLComponents {
   var components = URLComponents()
   components.path = route.path.joined(separator: "/")
 
@@ -155,5 +147,8 @@ private func urlComponents(from route: RequestData) -> URLComponents {
       .map(URLQueryItem.init(name:value:))
   }
 
-  return components
+  var request = components.url.map { URLRequest(url: $0) }
+  request?.httpMethod = route.method?.rawValue
+  request?.httpBody = route.body
+  return request
 }

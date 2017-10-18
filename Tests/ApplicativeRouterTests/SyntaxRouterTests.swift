@@ -32,21 +32,6 @@ class SyntaxRouterTests: XCTestCase {
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
-    XCTAssertEqual(
-      "home/episodes/:string_or_int/comments/:int",
-      router.templateUrl(for: route)?.absoluteString
-    )
-  }
-
-  func testPostBodyField() {
-    let route = Routes.postBodyField(email: "hello@pointfree.co")
-    let request = URLRequest(url: URL(string: "signup")!)
-      |> \.httpBody .~ Data("email=hello@pointfree.co".utf8)
-      |> \.httpMethod .~ "POST"
-
-    XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: route))
-    XCTAssertEqual("signup", router.templateUrl(for: route)?.absoluteString)
   }
 
   func testPostBodyJsonDecodable() {
