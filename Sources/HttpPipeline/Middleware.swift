@@ -64,8 +64,6 @@ public func redirect<A>(
     return writeStatus(.found)
       >-> headersMiddleware
       >-> writeHeader(.location(location))
-      >-> map(const(nil)) >>> pure
-      >-> closeHeaders
       >-> end
 }
 
