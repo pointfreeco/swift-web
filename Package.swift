@@ -21,14 +21,14 @@ let package = Package(
     .library(name: "MediaType", targets: ["MediaType"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("aab186e")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("6a292e9")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("a8a4849")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("b4081b7")),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.17"))
   ],
   targets: [
-    .target(name: "ApplicativeRouter", dependencies: ["Either", "Prelude"]),
-    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics"]),
+    .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude"]),
+    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Deriving", "Optics"]),
 
     .target(name: "ApplicativeRouterHttpPipelineSupport",
             dependencies: ["ApplicativeRouter", "HttpPipeline", "Prelude"]),
