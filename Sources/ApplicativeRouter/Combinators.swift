@@ -88,7 +88,7 @@ public func jsonBody<A: Codable>(_ type: A.Type) -> Router<A> {
 }
 
 /// Parses the end of the request data by making sure that all of the path components have been consumed.
-public let _end = Router<Prelude.Unit>(
+public let end = Router<Prelude.Unit>(
   parse: { route in
     route.path.isEmpty
       ? (RequestData(method: route.method, path: [], query: [:], body: nil), unit)

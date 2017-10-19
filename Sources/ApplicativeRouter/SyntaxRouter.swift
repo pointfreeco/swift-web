@@ -12,7 +12,7 @@ public struct Router<A> {
   let template: (A) -> RequestData?
 
   public func match(request: URLRequest) -> A? {
-    return (self <% _end).parse(route(from: request))?.match
+    return (self <% end).parse(route(from: request))?.match
   }
 
   public func match(url: URL) -> A? {

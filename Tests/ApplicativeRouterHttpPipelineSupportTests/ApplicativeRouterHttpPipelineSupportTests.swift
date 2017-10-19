@@ -9,8 +9,8 @@ import XCTest
 class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   func testRoute() {
     let router =
-      Route.iso.home <¢> get <% _end
-        <|> Route.iso.episode <¢> get %> lit("episode") %> .string <% _end
+      Route.iso.home <¢> get <% end
+        <|> Route.iso.episode <¢> get %> lit("episode") %> .string <% end
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       route(router: router)
@@ -34,7 +34,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   }
 
   func testRoute_UnrecognizedWithCustomNotFound() {
-    let router = Route.iso.home <¢> get <% _end
+    let router = Route.iso.home <¢> get <% end
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       route(router: router, notFound: notFound(respond(text: "Unrecognized route!")))

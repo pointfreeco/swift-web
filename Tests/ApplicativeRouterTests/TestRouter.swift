@@ -15,25 +15,25 @@ let router: Router<Routes> = [
 
   // /home
   Routes.iso.root
-    <¢> get %> lit("home") %> _end,
+    <¢> get %> lit("home") %> end,
 
   // /home/episodes/:string_or_int/comments/:int
   Routes.iso.pathComponents
-    <¢> get %> lit("home") %> lit("episodes") %> pathParam(.intOrString) <%> lit("comments") %> .int <% _end,
+    <¢> get %> lit("home") %> lit("episodes") %> pathParam(.intOrString) <%> lit("comments") %> .int <% end,
 
   // POST /signup
   Routes.iso.postBodyField
-    <¢> post %> formField("email") <% lit("signup") <% _end,
+    <¢> post %> formField("email") <% lit("signup") <% end,
 
   // POST /episodes/:id
   Routes.iso.postBodyJsonDecodable
-    <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% _end,
+    <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% end,
 
   // /path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int
   Routes.iso.simpleQueryParams
     <¢> get %> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
     %> queryParam("ref", opt(.string)) <%> queryParam("active", .bool) <%> queryParam("t", .int)
-    <% _end
+    <% end
 
   ]
   .reduce(.empty, <|>)
@@ -65,35 +65,33 @@ extension Routes: Equatable {
 
 extension Routes {
   enum iso {
-    static let root = parenthesize <| PartialIso<Prelude.Unit, Routes>(
+    static let root = parenthesize <| PartialIso(
       apply: const(.some(.root)),
-      unapply: {
-        guard case .root = $0 else { return nil }
-        return unit
-    })
+      unapply: { $0 == .root ? unit : nil }
+    )
 
-    static let pathComponents = parenthesize <| PartialIso<(Either<String, Int>, Int), Routes>(
+    static let pathComponents = parenthesize <| PartialIso(
       apply: Routes.pathComponents,
       unapply: {
         guard case let .pathComponents(result) = $0 else { return nil }
         return result
     })
 
-    static let postBodyField = parenthesize <| PartialIso<String, Routes>(
+    static let postBodyField = parenthesize <| PartialIso(
       apply: Routes.postBodyField,
       unapply: {
         guard case let .postBodyField(result) = $0 else { return nil }
         return result
     })
 
-    static let postBodyJsonDecodable = parenthesize <| PartialIso<(Episode, Int), Routes>(
+    static let postBodyJsonDecodable = parenthesize <| PartialIso(
       apply: Routes.postBodyJsonDecodable,
       unapply: {
         guard case let .postBodyJsonDecodable(result) = $0 else { return nil }
         return result
     })
 
-    static let simpleQueryParams = parenthesize <| PartialIso<(String?, Bool, Int), Routes>(
+    static let simpleQueryParams = parenthesize <| PartialIso(
       apply: Routes.simpleQueryParams,
       unapply: {
         guard case let .simpleQueryParams(result) = $0 else { return nil }
