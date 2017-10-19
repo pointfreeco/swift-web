@@ -32,7 +32,7 @@ let router: Router<Routes> = [
   // /path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int
   Routes.iso.simpleQueryParams
     <¢> get %> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
-    %> "ref" <=> opt(.string) <%> "active" <=> .bool <%> "t" <=> .int
+    %> queryParam("ref", opt(.string)) <%> queryParam("active", .bool) <%> queryParam("t", .int)
     <% _end
 
   ]

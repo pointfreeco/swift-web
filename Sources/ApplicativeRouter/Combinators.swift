@@ -69,6 +69,10 @@ public func formField(_ name: String) -> Router<String> {
   return formDataBody.map(key(name))
 }
 
+public func formField<A>(_ name: String, _ f: PartialIso<String, A>) -> Router<A> {
+  return formDataBody.map(key(name)).map(f)
+}
+
 public func formFields(_ names: String...) -> Router<[String: String]> {
   return formDataBody.map(keys(names))
 }
@@ -155,15 +159,6 @@ public let options = method(.options)
 public let patch = method(.patch)
 public let post = method(.post)
 public let put = method(.put)
-
-// MARK: - Experimental
-
-// TODO: open for discussion
-infix operator <=>: infixr9
-
-public func <=> <A> (lhs: String, rhs: PartialIso<String, A>) -> Router<A> {
-  return queryParam(lhs, rhs)
-}
 
 // MARK: - Private
 

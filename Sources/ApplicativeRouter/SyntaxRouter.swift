@@ -139,10 +139,11 @@ private func route(from request: URLRequest) -> RequestData {
 
 private func request(from route: RequestData) -> URLRequest? {
 
-  var request = urlComponents(from: route).url.map { URLRequest(url: $0) }
-  request?.httpMethod = route.method?.rawValue
-  request?.httpBody = route.body
-  return request
+  return urlComponents(from: route).url.map {
+    URLRequest(url: $0)
+      |> \.httpMethod .~ route.method?.rawValue
+      |> \.httpBody .~ route.body
+  }
 }
 
 private func urlComponents(from route: RequestData) -> URLComponents {
