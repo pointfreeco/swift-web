@@ -14,23 +14,21 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       route(router: router)
-        <| (
-          writeStatus(.ok)
-            >>> { $0 |> respond(text: "Recognized route: \($0.data)") }
-    )
+        <| writeStatus(.ok)
+        >-> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/")!))),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/")!))).perform(),
       named: "home"
     )
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!))),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!))).perform(),
       named: "episode"
     )
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))).perform(),
       named: "unrecognized"
     )
   }
@@ -40,13 +38,11 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> =
       route(router: router, notFound: notFound(respond(text: "Unrecognized route!")))
-        <| (
-          writeStatus(.ok)
-            >>> { $0 |> respond(text: "Recognized route: \($0.data)") }
-    )
+        <| writeStatus(.ok)
+        >-> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))).perform(),
       named: "unrecognized"
     )
   }

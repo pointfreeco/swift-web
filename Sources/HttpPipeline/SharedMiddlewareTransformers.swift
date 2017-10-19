@@ -52,8 +52,8 @@ public func basicAuth<A>(
         return conn |>
           (
             writeStatus(.unauthorized)
-              >>> writeHeader(.wwwAuthenticate(.basic(realm: realm)))
-              >>> failure
+              >-> writeHeader(.wwwAuthenticate(.basic(realm: realm)))
+              >-> failure
         )
       }
     }
@@ -62,7 +62,7 @@ public func basicAuth<A>(
 public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
     return writeStatus(.notFound)
-      >>> middleware
+      >-> middleware
 }
 
 public func contentLength<A, B>(
@@ -71,10 +71,11 @@ public func contentLength<A, B>(
   -> Middleware<StatusLineOpen, ResponseEnded, A, B> {
 
     return { conn in
-      let nextConn = middleware(conn)
-      return nextConn
-        |> \.response.headers %~ {
-          $0 + [.contentLength(nextConn.response.body?.count ?? 0)]
+      middleware(conn)
+        .flatMap { conn in
+          conn
+            |> \.response.headers %~ { $0 + [.contentLength(conn.response.body?.count ?? 0)] }
+            |> pure
       }
     }
 }
@@ -97,18 +98,16 @@ public func redirectUnrelatedHosts<A>(
       return { conn in
         conn.request.url
           .filterOptional { !allowedHosts.contains($0.host ?? "") }
-          .flatMap { url in
-            URLComponents(url: url, resolvingAgainstBaseURL: false)
+          .flatMap {
+            URLComponents(url: $0, resolvingAgainstBaseURL: false)
               |> map(\.host .~ canonicalHost)
           }
           .flatMap(get(\.url))
           .map {
             conn
               |> writeStatus(.movedPermanently)
-              |> writeHeader(.location($0.absoluteString))
-              |> map(const(nil))
-              |> closeHeaders
-              |> end
+              >-> writeHeader(.location($0.absoluteString))
+              >-> end
           }
           ?? middleware(conn)
       }
@@ -132,10 +131,8 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
           .map {
             conn
               |> writeStatus(.movedPermanently)
-              |> writeHeader(.location($0.absoluteString))
-              |> map(const(nil))
-              |> closeHeaders
-              |> end
+              >-> writeHeader(.location($0.absoluteString))
+              >-> end
           }
           ?? middleware(conn)
       }
@@ -157,10 +154,8 @@ public func requireHttps<A>(allowedInsecureHosts: [String])
           .map {
             conn
               |> writeStatus(.movedPermanently)
-              |> writeHeader(.location($0.absoluteString))
-              |> map(const(nil))
-              |> closeHeaders
-              |> end
+              >-> writeHeader(.location($0.absoluteString))
+              >-> end
           }
           ?? middleware(conn)
       }

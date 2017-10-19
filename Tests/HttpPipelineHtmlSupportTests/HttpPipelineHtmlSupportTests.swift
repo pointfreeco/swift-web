@@ -8,9 +8,10 @@ class HttpPipelineHtmlSupportTests: XCTestCase {
   func testResponse() {
     let view = View<Prelude.Unit> { _ in p(["Hello world!"]) }
     let pipeline = writeStatus(.ok)
-      >>> respond(view)
+      >-> respond(view)
+
     let conn = connection(from: URLRequest(url: URL(string: "/")!))
-    let response = conn |> pipeline
+    let response = (conn |> pipeline).perform()
 
     XCTAssertEqual(200, response.response.status.rawValue)
     XCTAssertEqual(
