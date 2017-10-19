@@ -15,25 +15,25 @@ let router: Router<Routes> = [
 
   // /home
   Routes.iso.root
-    <¢> get %> lit("home") %> _end,
+    <¢> get %> lit("home") %> end,
 
   // /home/episodes/:string_or_int/comments/:int
   Routes.iso.pathComponents
-    <¢> get %> lit("home") %> lit("episodes") %> pathParam(.intOrString) <%> lit("comments") %> .int <% _end,
+    <¢> get %> lit("home") %> lit("episodes") %> pathParam(.intOrString) <%> lit("comments") %> .int <% end,
 
   // POST /signup
   Routes.iso.postBodyField
-    <¢> post %> formField("email") <% lit("signup") <% _end,
+    <¢> post %> formField("email") <% lit("signup") <% end,
 
   // POST /episodes/:id
   Routes.iso.postBodyJsonDecodable
-    <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% _end,
+    <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% end,
 
   // /path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int
   Routes.iso.simpleQueryParams
     <¢> get %> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
     %> "ref" <=> opt(.string) <%> "active" <=> .bool <%> "t" <=> .int
-    <% _end
+    <% end
 
   ]
   .reduce(.empty, <|>)
