@@ -107,8 +107,6 @@ public func redirectUnrelatedHosts<A>(
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> map(const(nil)) >>> pure
-              >-> closeHeaders
               >-> end
           }
           ?? middleware(conn)
@@ -134,8 +132,6 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> map(const(nil)) >>> pure
-              >-> closeHeaders
               >-> end
           }
           ?? middleware(conn)
@@ -159,8 +155,6 @@ public func requireHttps<A>(allowedInsecureHosts: [String])
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> map(const(nil)) >>> pure
-              >-> closeHeaders
               >-> end
           }
           ?? middleware(conn)
