@@ -8,34 +8,34 @@ import Prelude
 // TODO: Change PartialIso to be Partial<A, B, E: Semigroup>: `((A) -> Validation<E, B>, (B) -> Validation<E, A>)
 
 /// A partial isomorphism is a partial function that is invertible on the parts it is defined, i.e.
-/// `image(x) = y` if and only `preimage(y) = x`.
+/// `apply(x) = y` if and only `unapply(y) = x`.
 public struct PartialIso<A, B> {
-  public let image: (A) -> B?
-  public let preimage: (B) -> A?
+  public let apply: (A) -> B?
+  public let unapply: (B) -> A?
 
-  public init(image: @escaping (A) -> B?, preimage: @escaping (B) -> A?) {
-    self.image = image
-    self.preimage = preimage
+  public init(apply: @escaping (A) -> B?, unapply: @escaping (B) -> A?) {
+    self.apply = apply
+    self.unapply = unapply
   }
 
   /// Inverts the partial isomorphism.
   public var inverted: PartialIso<B, A> {
-    return .init(image: self.preimage, preimage: self.image)
+    return .init(apply: self.unapply, unapply: self.apply)
   }
 
   /// A partial isomorphism between `(A, B)` and `(B, A)`.
   public static var commute: PartialIso<(A, B), (B, A)> {
     return .init(
-      image: { ($1, $0) },
-      preimage: { ($1, $0) }
+      apply: { ($1, $0) },
+      unapply: { ($1, $0) }
     )
   }
 
   /// Composes two partial isomorphisms.
   public static func >>> <C> (lhs: PartialIso<A, B>, rhs: PartialIso<B, C>) -> PartialIso<A, C> {
     return .init(
-      image: lhs.image >-> rhs.image,
-      preimage: rhs.preimage >-> lhs.preimage
+      apply: lhs.apply >-> rhs.apply,
+      unapply: rhs.unapply >-> lhs.unapply
     )
   }
 }
@@ -43,7 +43,7 @@ public struct PartialIso<A, B> {
 extension PartialIso where B == A {
   /// The identity partial isomorphism.
   public static var id: PartialIso {
-    return .init(image: { $0 }, preimage: { $0 })
+    return .init(apply: { $0 }, unapply: { $0 })
   }
 }
 
@@ -51,8 +51,8 @@ extension PartialIso where B == (A, Prelude.Unit) {
   /// An isomorphism between `A` and `(A, Unit)`.
   public static var unit: PartialIso {
     return .init(
-      image: { ($0, Prelude.unit) },
-      preimage: { $0.0 }
+      apply: { ($0, Prelude.unit) },
+      unapply: { $0.0 }
     )
   }
 }
@@ -83,16 +83,16 @@ public func parenthesize<A, B, C, D, E>(_ f: PartialIso<(A, B, C ,D), E>) -> Par
 /// Flattens a right-weighted nested 3-tuple.
 private func flatten<A, B, C>() -> PartialIso<(A, (B, C)), (A, B, C)> {
   return .init(
-    image: { ($0.0, $0.1.0, $0.1.1) },
-    preimage: { ($0, ($1, $2)) }
+    apply: { ($0.0, $0.1.0, $0.1.1) },
+    unapply: { ($0, ($1, $2)) }
   )
 }
 
 /// Flattens a left-weighted nested 4-tuple.
 private func flatten<A, B, C, D>() -> PartialIso<(A, (B, (C, D))), (A, B, C, D)> {
   return .init(
-    image: { ($0.0, $0.1.0, $0.1.1.0, $0.1.1.1) },
-    preimage: { ($0, ($1, ($2, $3))) }
+    apply: { ($0.0, $0.1.0, $0.1.1.0, $0.1.1.1) },
+    unapply: { ($0, ($1, ($2, $3))) }
   )
 }
 

@@ -20,11 +20,11 @@ public func lit(_ str: String) -> Router<Prelude.Unit> {
 public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
   return Router<A>(
     parse: { route in
-      guard let (p, ps) = uncons(route.path), let v = f.image(p) else { return nil }
+      guard let (p, ps) = uncons(route.path), let v = f.apply(p) else { return nil }
       return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), v)
   },
     print: { a in
-      .init(method: nil, path: [f.preimage(a) ?? ""], query: [:], body: nil)
+      .init(method: nil, path: [f.unapply(a) ?? ""], query: [:], body: nil)
   },
     template: { a in
       .init(method: nil, path: [":\(typeKey(a))"], query: [:], body: nil)
@@ -42,10 +42,10 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A
   return .init(
     parse: { route in
       guard let str = route.query[key] else { return nil }
-      return f.image(str).map { (route, $0) }
+      return f.apply(str).map { (route, $0) }
   },
     print: { a in
-      RequestData(method: nil, path: [], query: [key: f.preimage(a) ?? ""], body: nil)
+      RequestData(method: nil, path: [], query: [key: f.unapply(a) ?? ""], body: nil)
   },
     template: { a in
       RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)

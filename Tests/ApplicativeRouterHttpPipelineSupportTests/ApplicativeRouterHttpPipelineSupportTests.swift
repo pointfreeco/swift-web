@@ -58,15 +58,15 @@ enum Route {
 
   enum iso {
     static let home = parenthesize <| PartialIso<Prelude.Unit, Route>(
-      image: const(Route.home),
-      preimage: {
+      apply: const(Route.home),
+      unapply: {
         if case .home = $0 { return unit }
         return nil
     })
 
     static let episode = parenthesize <| PartialIso<String, Route>(
-      image: Route.episode,
-      preimage: {
+      apply: Route.episode,
+      unapply: {
         if case let .episode(result) = $0 { return result }
         return nil
     })

@@ -51,10 +51,10 @@ extension Router {
     return Router<B>(
       parse: { route in
         guard let (rest, match) = rhs.parse(route) else { return nil }
-        return lhs.image(match).map { (rest, $0) }
+        return lhs.apply(match).map { (rest, $0) }
       },
-      print: lhs.preimage >-> rhs.print,
-      template: lhs.preimage >-> rhs.template
+      print: lhs.unapply >-> rhs.print,
+      template: lhs.unapply >-> rhs.template
     )
   }
 }

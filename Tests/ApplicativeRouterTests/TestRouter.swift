@@ -66,36 +66,36 @@ extension Routes: Equatable {
 extension Routes {
   enum iso {
     static let root = parenthesize <| PartialIso<Prelude.Unit, Routes>(
-      image: const(.some(.root)),
-      preimage: {
+      apply: const(.some(.root)),
+      unapply: {
         guard case .root = $0 else { return nil }
         return unit
     })
 
     static let pathComponents = parenthesize <| PartialIso<(Either<String, Int>, Int), Routes>(
-      image: Routes.pathComponents,
-      preimage: {
+      apply: Routes.pathComponents,
+      unapply: {
         guard case let .pathComponents(result) = $0 else { return nil }
         return result
     })
 
     static let postBodyField = parenthesize <| PartialIso<String, Routes>(
-      image: Routes.postBodyField,
-      preimage: {
+      apply: Routes.postBodyField,
+      unapply: {
         guard case let .postBodyField(result) = $0 else { return nil }
         return result
     })
 
     static let postBodyJsonDecodable = parenthesize <| PartialIso<(Episode, Int), Routes>(
-      image: Routes.postBodyJsonDecodable,
-      preimage: {
+      apply: Routes.postBodyJsonDecodable,
+      unapply: {
         guard case let .postBodyJsonDecodable(result) = $0 else { return nil }
         return result
     })
 
     static let simpleQueryParams = parenthesize <| PartialIso<(String?, Bool, Int), Routes>(
-      image: Routes.simpleQueryParams,
-      preimage: {
+      apply: Routes.simpleQueryParams,
+      unapply: {
         guard case let .simpleQueryParams(result) = $0 else { return nil }
         return result
     })
