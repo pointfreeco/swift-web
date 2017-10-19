@@ -47,6 +47,7 @@ public func end(conn: Conn<BodyOpen, Data?>) -> IO<Conn<ResponseEnded, Data?>> {
   )
 }
 
+// TODO: rename to ignoreBody
 public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data?>> {
   return conn
     |> closeHeaders

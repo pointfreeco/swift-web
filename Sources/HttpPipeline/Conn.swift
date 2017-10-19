@@ -36,6 +36,12 @@ public func flatMap<Step, A, B>(_ f: @escaping (A) -> Conn<Step, B>) -> (Conn<St
   return { $0.flatMap(f) }
 }
 
+extension Conn {
+  public static func >>- <B>(_ x: Conn, f: @escaping (Data) -> Conn<Step, B>) -> Conn<Step, B> {
+    return x.flatMap(f)
+  }
+}
+
 public func connection(from request: URLRequest) -> Conn<StatusLineOpen, Prelude.Unit> {
   return .init(
     data: unit,
