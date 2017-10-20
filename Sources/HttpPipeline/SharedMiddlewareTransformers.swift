@@ -102,7 +102,7 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
     return { middleware in
       return { conn in
         conn.request.url
-          .filterOptional { (url: URL) -> Bool in
+          .filterOptional { url in
             // `url.scheme` cannot be trusted on Heroku, instead we need to look at the `X-Forwarded-Proto`
             // header to determine if we are on https or not.
             conn.request.allHTTPHeaderFields?["X-Forwarded-Proto"] != .some("https")
