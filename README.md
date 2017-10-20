@@ -142,7 +142,7 @@ let conn = connection(from: request).map(const(Data?.none))
 
 ## `ApplicativeRouter`
 
-A router built on the principles of “applicative parsing” that is robust, composable and type-safe. Its job is to take the incoming, unstructured `URLRequest` from the browser and turn it into a structured value so that your app can do what it needs to do to produce a response.
+A router built on the principles of “applicatives” that unifies parsing requests and printing routes. It is robust, composable and type-safe. Its job is to take the incoming, unstructured `URLRequest` from the browser and turn it into a structured value so that your app can do what it needs to do to produce a response. Additionally, given a value, it can do the reverse in which it generates a request that can be used in a hyperlink. Most of the ideas for this library were taking from [this paper](http://www.informatik.uni-marburg.de/~rendel/unparse/).
 
 ```swift
 import ApplicativeRouter
@@ -159,20 +159,37 @@ enum Route {
   case signup(UserData?)
 }
 
-let router =
+let router = [
   // Matches: GET /
-  Route.home <¢ .get <*| end
-    // Matches: GET /episode/:str
-    <|> Route.episode <¢> (.get *> lit("episode") *> .str) <*| end
-    // Matches: GET /episodes
-    <|> Route.episodes <¢ (.get *> lit("episodes")) <*| end
-    // Matches: GET /search?query=
-    <|> Route.search <¢> (.get *> lit("search") *> opt(param("query"))) <*| end
-    // Matches: POST /signup
-    <|> Route.signup <¢> (.post *> lit("signup") *> opt(.jsonBody)) <*| end
+  Route.iso.home
+    <¢> .get <% end,
 
-let requestToRoute = URLRequest(url: URL(string: "http://localhost:8000/episode/001-hello-world")!)
-let route = router.match(requestToRoute) // => Route.episode("001-hello-world")
+  // Matches: GET /episode/:str
+  Route.iso.episode
+    <¢> get %> lit("episode") %> pathParam(.string) <% end,
+
+  // Matches: GET /episodes
+  Route.iso.episodes
+    <¢> get %> lit("episodes") <% end,
+
+  // Matches: GET /search?query=:optional_string
+  Route.iso.search
+    <¢> get %> lit("search") %> queryParam("query", opt(.string)) <% end,
+
+  // Matches: POST /signup
+  Route.iso.signup
+    <¢> post %> jsonBody(Episode.self) <%> lit("signup") %> opt(.jsonBody)) <% end,
+  ]
+  .reduce(.empty, <|>)
+
+// Match a route given a request
+let request = URLRequest(url: URL(string: "https://www.pointfree.co/episode/001-hello-world")!)
+let route = router.match(request: request)
+// => Route.episode("001-hello-world")
+
+// Generate a string from a route:
+router.absoluteString(for: .episode("001-hello-world"))
+// => /episode/001-hello-world
 ```
 
 ##  `HttpPipelineHtmlSupport`
