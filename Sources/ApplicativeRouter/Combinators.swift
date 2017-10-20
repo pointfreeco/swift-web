@@ -6,8 +6,11 @@ import Optics
 public func lit(_ str: String) -> Router<Prelude.Unit> {
   return Router<Prelude.Unit>(
     parse: { route in
-      uncons(route.path).map { _, ps in
-        (.init(method: route.method, path: ps, query: route.query, body: route.body), unit)
+      uncons(route.path)
+        .flatMap { p, ps in
+          p == str
+            ? (.init(method: route.method, path: ps, query: route.query, body: route.body), unit)
+            : nil
       }
   },
     print: { _ in .init(method: nil, path: [str], query: [:], body: nil) },
