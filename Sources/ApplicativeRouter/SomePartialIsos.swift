@@ -15,9 +15,18 @@ extension Optional {
   }
 }
 
-/// Lifts a partial isomorphism `(A) -> B` to one `(A) -> B?`.
-public func opt<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A, B?> {
-  return f >>> Optional.iso.some
+/// Lifts a partial isomorphism `(A) -> B` to one `(A?) -> B?`, which means that it never fails since it can
+/// fallback to mapping to `.some(.none)`.
+public func opt<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A?, B?> {
+  return PartialIso<A?, B?>(
+    apply: { $0.flatMap(f.apply) },
+    unapply: { $0.flatMap(f.unapply) }
+  )
+}
+
+/// Lifts a partial isomorphism `(A) -> B` to one `(A?) -> B`.
+public func req<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A?, B> {
+  return Optional.iso.some.inverted >>> f
 }
 
 extension PartialIso where A == String, B == Int {

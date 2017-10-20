@@ -79,4 +79,16 @@ class SyntaxRouterTests: XCTestCase {
       router.templateUrl(for: route)?.absoluteString
     )
   }
+
+  func testSimpleQueryParams_SomeMissing() {
+    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&t=122")!)
+    let route = Routes.simpleQueryParams(ref: nil, active: true, t: 122)
+
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: route))
+    XCTAssertEqual(
+      "path/to/somewhere/cool?active=:bool&ref=:optional_string&t=:int",
+      router.templateUrl(for: route)?.absoluteString
+    )
+  }
 }
