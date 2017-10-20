@@ -14,6 +14,21 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
   }
 
+  func testRequest_WithBaseUrl() {
+    XCTAssertEqual(
+      URLRequest(url: URL(string: "http://www.pointfree.co/home")!),
+      router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))
+    )
+  }
+
+  func testAbsoluteString() {
+    XCTAssertEqual("/home", router.absoluteString(for: .root))
+    XCTAssertEqual(
+      "/home/episodes/intro-to-functions/comments/42",
+      router.absoluteString(for: .pathComponents(param: .left("intro-to-functions"), commentId: 42))
+    )
+  }
+
   func testLitFails() {
     let request = URLRequest(url: URL(string: "foo")!)
 
