@@ -24,11 +24,23 @@ public struct Router<A> {
   }
 
   public func request(for a: A) -> URLRequest? {
-    return self.print(a).flatMap(request(from:))
+    return self.request(for: a, base: nil)
+  }
+
+  public func request(for a: A, base: URL?) -> URLRequest? {
+    return self.print(a).flatMap { ApplicativeRouter.request(from: $0, base: base) }
   }
 
   public func url(for a: A) -> URL? {
     return self.print(a).flatMap(request(from:)).flatMap { $0.url }
+  }
+
+  public func url(for a: A, base: URL?) -> URL? {
+    return self.print(a).flatMap { ApplicativeRouter.request(from: $0, base: base) }.flatMap { $0.url }
+  }
+
+  public func absoluteString(for a: A) -> String {
+    return "/" + (url(for: a)?.absoluteString ?? "")
   }
 
   public func templateRequest(for a: A) -> URLRequest? {
@@ -137,12 +149,18 @@ private func route(from request: URLRequest) -> RequestData {
   return .init(method: method, path: path, query: query, body: request.httpBody)
 }
 
-private func request(from route: RequestData) -> URLRequest? {
+private func request(from data: RequestData) -> URLRequest? {
 
-  return urlComponents(from: route).url.map {
-    URLRequest(url: $0)
-      |> \.httpMethod .~ route.method?.rawValue
-      |> \.httpBody .~ route.body
+  return request(from: data, base: nil)
+}
+
+private func request(from data: RequestData, base: URL?) -> URLRequest? {
+  return urlComponents(from: data)
+    .url(relativeTo: base)
+    .map {
+      URLRequest(url: $0)
+        |> \.httpMethod .~ data.method?.rawValue
+        |> \.httpBody .~ data.body
   }
 }
 

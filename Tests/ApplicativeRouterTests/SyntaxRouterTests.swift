@@ -14,6 +14,21 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
   }
 
+  func testRequest_WithBaseUrl() {
+    XCTAssertEqual(
+      URLRequest(url: URL(string: "http://www.pointfree.co/home")!),
+      router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))
+    )
+  }
+
+  func testAbsoluteString() {
+    XCTAssertEqual("/home", router.absoluteString(for: .root))
+    XCTAssertEqual(
+      "/home/episodes/intro-to-functions/comments/42",
+      router.absoluteString(for: .pathComponents(param: .left("intro-to-functions"), commentId: 42))
+    )
+  }
+
   func testLitFails() {
     let request = URLRequest(url: URL(string: "foo")!)
 
@@ -71,6 +86,18 @@ class SyntaxRouterTests: XCTestCase {
   func testSimpleQueryParams() {
     let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&ref=hello&t=122")!)
     let route = Routes.simpleQueryParams(ref: "hello", active: true, t: 122)
+
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: route))
+    XCTAssertEqual(
+      "path/to/somewhere/cool?active=:bool&ref=:optional_string&t=:int",
+      router.templateUrl(for: route)?.absoluteString
+    )
+  }
+
+  func testSimpleQueryParams_SomeMissing() {
+    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&t=122")!)
+    let route = Routes.simpleQueryParams(ref: nil, active: true, t: 122)
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))

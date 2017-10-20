@@ -34,25 +34,34 @@ public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
   })
 }
 
-/// Processes (and does not consume) a query param keyed by `key` as a string.
-public func queryParam(_ key: String) -> Router<String> {
-  return queryParam(key, .id)
+/// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
+/// using the partial isomorphism supplied.
+///
+/// - Parameters:
+///   - key: The query param key to process.
+///   - f: A partial iso from `String?` to `A`. Note that this partial iso takes optional strings so that
+///        you can decide how to handle params that are not required.
+public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
+  return .init(
+    parse: { route in
+      return f.apply(route.query[key]).map { (route, $0) }
+    },
+    print: { a in
+      var query: [String: String] = [:]
+      if let str = f.unapply(a) {
+        query[key] = str
+      }
+      return RequestData(method: nil, path: [], query: query, body: nil)
+    },
+    template: { a in
+      RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
+  })
 }
 
 /// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
 /// using the partial isomorphism supplied.
 public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
-  return .init(
-    parse: { route in
-      guard let str = route.query[key] else { return nil }
-      return f.apply(str).map { (route, $0) }
-  },
-    print: { a in
-      RequestData(method: nil, path: [], query: [key: f.unapply(a) ?? ""], body: nil)
-  },
-    template: { a in
-      RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
-  })
+  return queryParam(key, req(f))
 }
 
 /// Processes the body data of the request.

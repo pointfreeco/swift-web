@@ -33,8 +33,7 @@ let router: Router<Routes> = [
   Routes.iso.simpleQueryParams
     <¢> get %> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
     %> queryParam("ref", opt(.string)) <%> queryParam("active", .bool) <%> queryParam("t", .int)
-    <% end
-
+    <% end,
   ]
   .reduce(.empty, <|>)
 
