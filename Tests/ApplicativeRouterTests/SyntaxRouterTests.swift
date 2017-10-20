@@ -14,6 +14,12 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
   }
 
+  func testLitFails() {
+    let request = URLRequest(url: URL(string: "foo")!)
+
+    XCTAssertNil(router.match(request: request))
+  }
+
   func testPathComponents_IntParam() {
     let request = URLRequest(url: URL(string: "home/episodes/42/comments/2")!)
     let route = Routes.pathComponents(param: .right(42), commentId: 2)
