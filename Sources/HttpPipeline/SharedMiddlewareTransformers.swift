@@ -3,50 +3,31 @@ import Optics
 import Prelude
 
 /// Wraps basic auth middleware around existing middleware. Provides only the most basic of authentication
-/// where the username and password are static, e.g. we do not look in a database for the user. If
-/// authentication fails a basic "Please authenticate." html page will be rendered.
-///
-/// - Parameters:
-///   - user: The user name to authenticate against.
-///   - password: The password to authenticate against.
-/// - Returns: Transformed middleware
-public func basicAuth<A>(
-  user: String,
-  password: String,
-  realm: String? = nil
-  )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
-
-    return basicAuth(
-      user: user,
-      password: password,
-      realm: realm,
-      failure: respond(text: "Please authenticate.")
-    )
-}
-
-/// Wraps basic auth middleware around existing middleware. Provides only the most basic of authentication
 /// where the username and password are static, e.g. we do not look in a database for the user.
 ///
 /// - Parameters:
 ///   - user: The user name to authenticate against.
 ///   - password: The password to authenticate against.
-///   - failure: The middleware to run in the case that authentication fails.
+///   - realm: The realm.
+///   - protect: An optional predicate that can further control what values of `A` are protected by basic auth.
+///   - failure: An optional middleware to run in the case that authentication fails.
 /// - Returns: Transformed middleware
 public func basicAuth<A>(
   user: String,
   password: String,
   realm: String? = nil,
-  failure: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>
+  protect: @escaping (A) -> Bool = const(true),
+  failure: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?> = respond(text: "Please authenticate.")
   )
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
 
     return { middleware in
       return { conn in
-        if validateBasicAuth(user: user, password: password, request: conn.request) {
-          return middleware(conn)
+        guard protect(conn.data)
+          && !validateBasicAuth(user: user, password: password, request: conn.request)
+          else {
+            return middleware(conn)
         }
 
         return conn |>
@@ -121,7 +102,7 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
     return { middleware in
       return { conn in
         conn.request.url
-          .filterOptional { (url: URL) -> Bool in
+          .filterOptional { url in
             // `url.scheme` cannot be trusted on Heroku, instead we need to look at the `X-Forwarded-Proto`
             // header to determine if we are on https or not.
             conn.request.allHTTPHeaderFields?["X-Forwarded-Proto"] != .some("https")
