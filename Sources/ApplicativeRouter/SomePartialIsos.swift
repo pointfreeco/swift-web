@@ -7,9 +7,9 @@ extension Optional {
   public enum iso {
     /// A partial isomorphism `(A) -> A?` 
     public static var some: PartialIso<Wrapped, Wrapped?> {
-      return PartialIso<Wrapped, Wrapped?>(
-        apply: { .some($0) },
-        unapply: { $0 }
+      return .init(
+        apply: Optional.some,
+        unapply: id
       )
     }
   }
