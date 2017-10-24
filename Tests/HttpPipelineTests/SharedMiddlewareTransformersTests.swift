@@ -172,10 +172,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware = requestLogger(logger: { log.append($0) })
       <| writeStatus(.ok)
       >-> writeHeader(.contentType(.html))
-      >-> closeHeaders
-      >-> map(const(Data())) >>> pure
-      >-> send("<p>Hello, world</p>".data(using: .utf8))
-      >-> end
+      >-> respond(html: "<p>Hello, world</p>")
 
     _ = middleware(conn).perform()
 
