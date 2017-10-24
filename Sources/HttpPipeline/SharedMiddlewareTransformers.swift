@@ -160,6 +160,40 @@ private func makeHttps(url: URL) -> URL? {
     |> flatMap { $0.url }
 }
 
+
+/// Transforms middleware into one that logs the request info that comes through and logs the amount of
+/// time the request took.
+public func requestLogger(
+  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?>
+  )
+  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> {
+    return requestLogger(logger: { print($0) })(middleware)
+}
+
+
+/// Transforms middleware into one that logs the request info that comes through and logs the amount of
+/// time the request took.
+///
+/// - Parameter logger: A function for logging strings.
+public func requestLogger(logger: @escaping (String) -> Void)
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?>)
+  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> {
+
+    return { middleware in
+      return { conn in
+        let startTime = Date().timeIntervalSince1970
+        return middleware(conn).flatMap { b in
+          IO {
+            let endTime = Date().timeIntervalSince1970
+            logger("[Request] \(conn.request.httpMethod ?? "GET") \(conn.request)")
+            logger("[Time]    \(Int((endTime - startTime) * 1000))ms")
+            return b
+          }
+        }
+      }
+    }
+}
+
 // TODO: move to prelude
 extension Optional {
   fileprivate func filterOptional(_ p: (Wrapped) -> Bool) -> Optional {

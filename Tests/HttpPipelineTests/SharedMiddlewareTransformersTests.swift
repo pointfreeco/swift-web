@@ -166,4 +166,19 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!))).perform()
     )
   }
+
+  func testRequestLogger() {
+    var log: [String] = []
+    let middleware = requestLogger(logger: { log.append($0) })
+      <| writeStatus(.ok)
+      >-> writeHeader(.contentType(.html))
+      >-> closeHeaders
+      >-> map(const(Data())) >>> pure
+      >-> send("<p>Hello, world</p>".data(using: .utf8))
+      >-> end
+
+    _ = middleware(conn).perform()
+
+    assertSnapshot(matching: log)
+  }
 }
