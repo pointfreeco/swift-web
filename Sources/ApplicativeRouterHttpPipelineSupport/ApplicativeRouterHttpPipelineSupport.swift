@@ -11,10 +11,10 @@ import Prelude
 ///   - notFound: Middleware to run if a route is not recognized.
 public func route<A, Route>(
   router: Router<Route>,
-  notFound: @escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?> = notFound(respond(text: "don't know that url"))
+  notFound: @escaping Middleware<StatusLineOpen, ResponseEnded, A, Data> = notFound(respond(text: "Not Found"))
   )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Route, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Route, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
     return { middleware in
       return { conn in

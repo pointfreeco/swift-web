@@ -88,7 +88,7 @@ extension PartialIso where A == String, B == Data {
   public static var data: PartialIso<String, Data> {
     return .init(
       apply: { Data($0.utf8) },
-      unapply: { String(data: $0, encoding: .utf8) }
+      unapply: { String(decoding: $0, as: UTF8.self) }
     )
   }
 }
