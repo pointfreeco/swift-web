@@ -164,9 +164,9 @@ private func makeHttps(url: URL) -> URL? {
 /// Transforms middleware into one that logs the request info that comes through and logs the amount of
 /// time the request took.
 public func requestLogger(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?>
+  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>
   )
-  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> {
+  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
     return requestLogger(logger: { print($0) })(middleware)
 }
 
@@ -176,8 +176,8 @@ public func requestLogger(
 ///
 /// - Parameter logger: A function for logging strings.
 public func requestLogger(logger: @escaping (String) -> Void)
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data?> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
 
     return { middleware in
       return { conn in
