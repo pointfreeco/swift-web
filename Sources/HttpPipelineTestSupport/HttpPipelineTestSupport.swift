@@ -27,7 +27,7 @@ extension Response: Snapshot {
 
     if contentMediaType?.application?.isOther == .some(true) || contentMediaType?.isText == .some(true) {
       // todo: use proper encoding when available
-      return top + "\n\n\(self.body.flatMap { String(data: $0, encoding: .utf8) } ?? "")\n"
+      return top + "\n\n\(String(decoding: self.body, as: UTF8.self))\n"
     }
     return top
   }
@@ -65,7 +65,7 @@ extension URLRequest: Snapshot {
       + headers
     let top = lines.joined(separator: "\n")
 
-    let body = self.httpBody.flatMap { String(data: $0, encoding: .utf8) }
+    let body = self.httpBody.map { String(decoding: $0, as: UTF8.self) }
       ?? "(Data, \(self.httpBody?.count ?? 0) bytes)"
 
     return """
