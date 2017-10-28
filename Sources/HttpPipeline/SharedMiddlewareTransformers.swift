@@ -17,10 +17,10 @@ public func basicAuth<A>(
   password: String,
   realm: String? = nil,
   protect: @escaping (A) -> Bool = const(true),
-  failure: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?> = respond(text: "Please authenticate.")
+  failure: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data> = respond(text: "Please authenticate.")
   )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
     return { middleware in
       return { conn in
@@ -40,8 +40,8 @@ public func basicAuth<A>(
     }
 }
 
-public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
     return writeStatus(.notFound)
       >-> middleware
 }
@@ -55,7 +55,7 @@ public func contentLength<A, B>(
       middleware(conn)
         .flatMap { conn in
           conn
-            |> \.response.headers %~ { $0 + [.contentLength(conn.response.body?.count ?? 0)] }
+            |> \.response.headers %~ { $0 + [.contentLength(conn.response.body.count)] }
             |> pure
       }
     }
@@ -72,8 +72,8 @@ public func redirectUnrelatedHosts<A>(
   allowedHosts: [String],
   canonicalHost: String
   )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
     return { middleware in
       return { conn in
@@ -96,8 +96,8 @@ public func redirectUnrelatedHosts<A>(
 }
 
 public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
     return { middleware in
       return { conn in
@@ -121,8 +121,8 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
 }
 
 public func requireHttps<A>(allowedInsecureHosts: [String])
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data?>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data?> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
     return { middleware in
       return { conn in
@@ -148,7 +148,7 @@ public func validateBasicAuth(user: String, password: String, request: URLReques
   let auth = request.allHTTPHeaderFields?.first(where: { $0.key == "Authorization" })?.value ?? ""
 
   let parts = Foundation.Data(base64Encoded: String(auth.dropFirst(6)))
-    .flatMap { String(data: $0, encoding: .utf8) }
+    .map { String(decoding: $0, as: UTF8.self) }
     .map { $0.split(separator: ":").map(String.init) }
 
   return parts?.first == .some(user) && parts?.last == .some(password)

@@ -296,7 +296,7 @@ func properties(_ config: Config, _ xs: [Either<String, (String, String)>]) -> S
         : ""
     case let .right(k, v):
       let pad = config.align
-        ? replicate(width - k.characters.count)(" ")
+        ? replicate(width - k.count)(" ")
         : ""
       return ind + k + pad + ":" + config.sep + v
     }

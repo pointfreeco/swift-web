@@ -1,4 +1,3 @@
-import CommonCrypto
 import Cryptor
 import Foundation
 
@@ -96,7 +95,7 @@ extension ResponseHeader {
   public static func verifiedString(signedCookieValue: String, secret: String)
     -> String? {
       return verifiedData(signedCookieValue: signedCookieValue, secret: secret)
-        .flatMap { String(data: $0, encoding: .utf8) }
+        .map { String(decoding: $0, as: UTF8.self) }
   }
 
   /// Helper function that calls `verifiedData` and then tries to decode the data into an `A`.
