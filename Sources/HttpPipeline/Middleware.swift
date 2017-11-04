@@ -6,6 +6,19 @@ import Either
 
 public typealias Middleware<I, J, A, B, E> = (Conn<I, A>) -> IO<Conn<J, Either<E, B>>>
 
+func throwE<I, E, A>(_ e: E) -> IO<Conn<I, Either<E, A>>> {
+  return pure <<< 
+}
+
+//throwE :: Monad m => e -> ExceptT e m a
+//
+//catchE Source #
+//
+//:: Monad m
+//=> ExceptT e m a             //the inner computation
+//-> (e -> ExceptT e' m a)     //a handler for exceptions in the inner computation
+//-> ExceptT e' m a
+
 public func writeStatus<A, E>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A, E> {
   return pure <<< { conn in
     .init(
@@ -61,21 +74,21 @@ public func end<E>(conn: Conn<BodyOpen, Data>) -> IO<Conn<ResponseEnded, Either<
 }
 
 // TODO: rename to ignoreBody
-public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> {
+public func end<A, E>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Either<E, Data>>> {
   let tmp = conn
     |> closeHeaders
-    >-> map(const(Either<Error, Data>.right(Data()))) >>> pure
+    >-> map(const(Either<E, Data>.right(Data()))) >>> pure
     >-> end
 
   return tmp
 }
 
-public func redirect<A>(
+public func redirect<A, E>(
   to location: String,
-  headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A> = (id >>> pure)
+  headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A, E> = (id >>> pure)
   )
   ->
-  Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+  Middleware<StatusLineOpen, ResponseEnded, A, Data, E> {
 
     return writeStatus(.found)
       >-> headersMiddleware
