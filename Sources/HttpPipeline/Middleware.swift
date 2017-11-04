@@ -2,42 +2,55 @@ import Foundation
 import MediaType
 import Optics
 import Prelude
+import Either
 
-public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> IO<Conn<J, B>>
+public typealias Middleware<I, J, A, B, E> = (Conn<I, A>) -> IO<Conn<J, Either<E, B>>>
 
-public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
+public func writeStatus<A, E>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A, E> {
   return pure <<< { conn in
     .init(
-      data: conn.data,
+      data: pure(conn.data),
       request: conn.request,
       response: conn.response |> \.status .~ status
     )
   }
 }
 
-public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
-  return pure <<< (\.response.headers %~ { $0 + [header] })
+public func writeHeader<A, E>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A, E> {
+  return pure <<< { conn in
+    .init(
+      data: pure(conn.data),
+      request: conn.request,
+      response: conn.response |> \.headers %~ { $0 + [header] }
+    )
+  }
 }
 
-public func writeHeaders<A>(_ headers: [ResponseHeader]) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
-  return pure <<< (\.response.headers %~ { $0 + headers })
+public func writeHeaders<A, E>(_ headers: [ResponseHeader]) -> Middleware<HeadersOpen, HeadersOpen, A, A, E> {
+  return pure <<< { conn in
+    .init(
+      data: pure(conn.data),
+      request: conn.request,
+      response: conn.response |> \.headers %~ { $0 + headers }
+    )
+  }
 }
 
-public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
+public func writeHeader<A, E>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A, E> {
   return writeHeader(.other(name, value))
 }
 
-public func closeHeaders<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<BodyOpen, A>> {
+public func closeHeaders<A, E>(conn: Conn<HeadersOpen, A>) -> IO<Conn<BodyOpen, Either<E, A>>> {
   return pure <| .init(
-    data: conn.data,
+    data: pure(conn.data),
     request: conn.request,
     response: conn.response
   )
 }
 
-public func end(conn: Conn<BodyOpen, Data>) -> IO<Conn<ResponseEnded, Data>> {
+public func end<E>(conn: Conn<BodyOpen, Data>) -> IO<Conn<ResponseEnded, Either<E, Data>>> {
   return pure <| .init(
-    data: conn.data,
+    data: pure(conn.data),
     request: conn.request,
     response: Response(
       status: conn.response.status,
@@ -49,10 +62,12 @@ public func end(conn: Conn<BodyOpen, Data>) -> IO<Conn<ResponseEnded, Data>> {
 
 // TODO: rename to ignoreBody
 public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> {
-  return conn
+  let tmp = conn
     |> closeHeaders
-    >-> map(const(Data())) >>> pure
+    >-> map(const(Either<Error, Data>.right(Data()))) >>> pure
     >-> end
+
+  return tmp
 }
 
 public func redirect<A>(
