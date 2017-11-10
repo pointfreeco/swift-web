@@ -7,8 +7,9 @@ import XCTest
 class HttpPipelineHtmlSupportTests: XCTestCase {
   func testResponse() {
     let view = View<Prelude.Unit> { _ in p(["Hello world!"]) }
-    let pipeline = writeStatus(.ok)
-      >-> respond(view)
+    let pipeline: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
+      writeStatus(.ok)
+        >-> respond(view)
 
     let conn = connection(from: URLRequest(url: URL(string: "/")!))
     let response = (conn |> pipeline).perform()

@@ -38,7 +38,7 @@ extension Conn: Snapshot {
     let indent = "  "
     return """
 ▿ Step
-  \(Step.self)
+  \(I.self)
 
 ▿ Request
 \(prefixLines(with: indent) <| self.request.snapshotFormat)
