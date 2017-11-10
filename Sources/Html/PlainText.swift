@@ -25,11 +25,9 @@ private func plainText(for element: Element) -> String {
     return "\n"
   case "style", "script":
     return ""
-  case "b", "big", "i", "small", "tt", "abbr", "acronym",
-       "cite", "code", "dfn", "em", "kbd", "strong", "samp",
-       "var", "a", "bdo", "br", "img", "map", "object", "q",
-       "script", "span", "sub", "sup", "button", "input", "label",
-       "select", "textarea":
+  case "b", "big", "i", "small", "tt", "abbr", "acronym", "cite", "code", "dfn", "em", "kbd", "strong",
+       "samp", "var", "a", "bdo", "br", "img", "map", "object", "q", "script", "span", "sub", "sup", "button",
+       "input", "label", "select", "textarea":
     return (element.content ?? []).map(plainText).joined()
 
   default:
