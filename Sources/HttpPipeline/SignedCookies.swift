@@ -135,7 +135,7 @@ private func encrypted(text plainText: String, secret: String) -> String? {
 
 private func decrypted(text encryptedText: String, secret: String) -> String? {
   let secretBytes = CryptoUtils.byteArray(fromHex: secret)
-  let iv = [UInt8](repeating: 0, count: secret.count)
+  let iv = [UInt8](repeating: 0, count: secretBytes.count)
   let encryptedTextBytes = CryptoUtils.byteArray(fromHex: encryptedText)
 
   let decryptedText = Cryptor(operation: .decrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv)
