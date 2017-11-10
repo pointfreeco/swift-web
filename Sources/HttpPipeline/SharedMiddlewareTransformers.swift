@@ -88,7 +88,7 @@ public func redirectUnrelatedHosts<E, A>(
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> end
+              >-> ignoreBody
           }
           ?? middleware(conn)
       }
@@ -113,7 +113,7 @@ public func requireHerokuHttps<E, A>(allowedInsecureHosts: [String])
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> end
+              >-> ignoreBody
           }
           ?? middleware(conn)
       }
@@ -136,7 +136,7 @@ public func requireHttps<E, A>(allowedInsecureHosts: [String])
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> end
+              >-> ignoreBody
           }
           ?? middleware(conn)
       }
@@ -163,10 +163,10 @@ private func makeHttps(url: URL) -> URL? {
 
 /// Transforms middleware into one that logs the request info that comes through and logs the amount of
 /// time the request took.
-public func requestLogger<E>(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, E, E, Prelude.Unit, Data>
+public func requestLogger(
+  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data>
   )
-  -> Middleware<StatusLineOpen, ResponseEnded, E, E, Prelude.Unit, Data> {
+  -> Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> {
     return requestLogger(logger: { print($0) })(middleware)
 }
 
@@ -175,9 +175,9 @@ public func requestLogger<E>(
 /// time the request took.
 ///
 /// - Parameter logger: A function for logging strings.
-public func requestLogger<E>(logger: @escaping (String) -> Void)
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, E, E, Prelude.Unit, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, E, E, Prelude.Unit, Data> {
+public func requestLogger(logger: @escaping (String) -> Void)
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> {
 
     return { middleware in
       return { conn in

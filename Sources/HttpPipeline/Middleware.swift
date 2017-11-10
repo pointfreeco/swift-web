@@ -57,7 +57,7 @@ public func end<E>(conn: Conn<BodyOpen, E, Data>) -> IO<Conn<ResponseEnded, E, D
 }
 
 // TODO: rename to ignoreBody
-public func end<E, A>(conn: Conn<HeadersOpen, E, A>) -> IO<Conn<ResponseEnded, E, Data>> {
+public func ignoreBody<E, A>(conn: Conn<HeadersOpen, E, A>) -> IO<Conn<ResponseEnded, E, Data>> {
   return conn
     |> closeHeaders
     >-> map(const(Data())) >>> pure
@@ -74,26 +74,11 @@ public func redirect<E, A>(
     return writeStatus(.found)
       >-> headersMiddleware
       >-> writeHeader(.location(location))
-      >-> end
+      >-> ignoreBody
 }
 
-public func send<E>(_ more: Data) -> Middleware<BodyOpen, BodyOpen, E, E, Data, Data> {
-  return { conn in
-
-    pure <| conn.flatMap { data in
-      let concatenatedData = data + more
-
-      return .init(
-        data: .right(concatenatedData),
-        request: conn.request,
-        response: .init(
-          status: conn.response.status,
-          headers: conn.response.headers,
-          body: concatenatedData
-        )
-      )
-    }
-  }
+public func send<E>(_ data: Data) -> Middleware<BodyOpen, BodyOpen, E, E, Data, Data> {
+  return pure <<< map { $0 + data }
 }
 
 public func respond<E, A>(text: String) -> Middleware<HeadersOpen, ResponseEnded, E, E, A, Data> {
