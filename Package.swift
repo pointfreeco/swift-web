@@ -24,7 +24,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9161df1")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("b4081b7")),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
-    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.17"))
+    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.21"))
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude"]),
