@@ -17,7 +17,7 @@ public func route<E, A, Route>(
   -> Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data> {
 
     return { middleware in
-      return { conn in
+      { conn in
 
         router.match(request: conn.request)
           .map(const >>> conn.map >>> middleware)

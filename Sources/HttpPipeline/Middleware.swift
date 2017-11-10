@@ -16,7 +16,12 @@ public func writeStatus<E, A>(_ status: Status) -> Middleware<StatusLineOpen, He
 }
 
 public func writeHeader<E, A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, E, E, A, A> {
-  return pure <<< (\.response.headers %~ { $0 + [header] })
+  return pure <<< (\.response.headers %~ { hs in
+    print(hs)
+    print(header)
+    print("--")
+    return hs + [header]
+    })
 }
 
 public func writeHeaders<E, A>(_ headers: [ResponseHeader]) -> Middleware<HeadersOpen, HeadersOpen, E, E, A, A> {
@@ -44,12 +49,18 @@ public func end<E>(conn: Conn<BodyOpen, E, Data>) -> IO<Conn<ResponseEnded, E, D
       response: conn.response
     )
   case let .right(data):
+    let headers = conn.response.headers.contains(where: {
+      guard case .contentLength = $0 else { return false }
+      return true
+    })
+      ? conn.response.headers
+      : conn.response.headers + [.contentLength(data.count)]
     return pure <| .init(
       data: conn.data,
       request: conn.request,
       response: .init(
         status: conn.response.status,
-        headers: conn.response.headers,
+        headers: headers,
         body: data
       )
     )
@@ -99,7 +110,6 @@ public func respond<E, A>(body: String, contentType: MediaType)
 
     return map(const(data)) >>> pure
       >-> writeHeader(.contentType(contentType))
-      >-> writeHeader(.contentLength(data.count))
       >-> closeHeaders
       >-> end
 }

@@ -12,15 +12,15 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
       Route.iso.home <¢> get <% end
         <|> Route.iso.episode <¢> get %> lit("episode") %> .string <% end
 
+    func mapData<I, E, A, B>(_ f: @escaping (A) -> B) -> Middleware<I, I, E, E, A, B> {
+      return pure <<< map(f)
+    }
+
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       route(router: router)
         <| writeStatus(.ok)
-
-        >>> map(map { Data("Recognized route: \($0)".utf8) })
-        // FIXME: for snapshot to render body
+        >-> mapData { Data("Recognized route: \($0)".utf8) }
         >-> writeHeader(.contentType(.plain))
-        >-> { $0 |> writeHeader(.contentLength($0.data.right!.count)) }
-
         >-> closeHeaders
         >-> end
 

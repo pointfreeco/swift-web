@@ -46,21 +46,6 @@ public func notFound<E, A>(_ middleware: @escaping Middleware<HeadersOpen, Respo
       >-> middleware
 }
 
-public func contentLength<E, A, B>(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, E, E, A, B>
-  )
-  -> Middleware<StatusLineOpen, ResponseEnded, E, E, A, B> {
-
-    return { conn in
-      middleware(conn)
-        .flatMap { conn in
-          conn
-            |> \.response.headers %~ { $0 + [.contentLength(conn.response.body.count)] }
-            |> pure
-      }
-    }
-}
-
 /// Redirects requests whose hosts are not one of an allowed list. This can be useful for redirecting a
 /// bare domain, e.g. http://pointfree.co, to a `www` domain, e.g. `http://www.pointfree.co`.
 ///
