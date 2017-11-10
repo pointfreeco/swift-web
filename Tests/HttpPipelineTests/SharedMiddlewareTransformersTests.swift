@@ -62,19 +62,6 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: middleware(conn).perform())
   }
 
-  func testContentLengthMiddlewareTransformer() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
-      contentLength
-        <| writeStatus(.ok)
-        >-> writeHeader(.contentType(.html))
-        >-> closeHeaders
-        >-> map(const(Data())) >>> pure
-        >-> send(Data("<p>Hello, world</p>".utf8))
-        >-> end
-
-    assertSnapshot(matching: middleware(conn).perform())
-  }
-
   func testRedirectUnrelatedHosts() {
     let allowedHosts = [
       "www.pointfree.co",
