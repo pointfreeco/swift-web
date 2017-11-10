@@ -36,16 +36,24 @@ public func closeHeaders<E, A>(conn: Conn<HeadersOpen, E, A>) -> IO<Conn<BodyOpe
 }
 
 public func end<E>(conn: Conn<BodyOpen, E, Data>) -> IO<Conn<ResponseEnded, E, Data>> {
-  return pure <| .init(
-    data: conn.data,
-    request: conn.request,
-    response: Response(
-      status: conn.response.status,
-      headers: conn.response.headers,
-      // TODO: handle this. perhaps we should be mapping to `Never` by this point?
-      body: conn.data.right!
+  switch conn.data {
+  case .left:
+    return pure <| .init(
+      data: conn.data,
+      request: conn.request,
+      response: conn.response
     )
-  )
+  case let .right(data):
+    return pure <| .init(
+      data: conn.data,
+      request: conn.request,
+      response: .init(
+        status: conn.response.status,
+        headers: conn.response.headers,
+        body: data
+      )
+    )
+  }
 }
 
 // TODO: rename to ignoreBody
@@ -69,21 +77,22 @@ public func redirect<E, A>(
       >-> end
 }
 
-public func send<E>(_ data: Data) -> Middleware<BodyOpen, BodyOpen, E, E, Data, Data> {
+public func send<E>(_ more: Data) -> Middleware<BodyOpen, BodyOpen, E, E, Data, Data> {
   return { conn in
 
-    let concatenatedData = conn.data.map { $0 + data }
+    pure <| conn.flatMap { data in
+      let concatenatedData = data + more
 
-    return pure <| .init(
-      data: concatenatedData,
-      request: conn.request,
-      response: Response(
-        status: conn.response.status,
-        headers: conn.response.headers,
-        // TODO: jeez gotta handle this too :/
-        body: concatenatedData.right!
+      return .init(
+        data: .right(concatenatedData),
+        request: conn.request,
+        response: .init(
+          status: conn.response.status,
+          headers: conn.response.headers,
+          body: concatenatedData
+        )
       )
-    )
+    }
   }
 }
 
