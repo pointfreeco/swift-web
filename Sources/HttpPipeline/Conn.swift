@@ -32,6 +32,22 @@ extension Conn {
     )
   }
 
+  public func map<B, F>(_ f: (Either<E, A>) -> Either<F, B>) -> Conn<I, F, B> {
+    return Conn<I, F, B>(
+      data: f(self.data),
+      request: self.request,
+      response: self.response
+    )
+  }
+
+  public func bimap<B, F>(_ e2f: (E) -> F, _ a2b: (A) -> B) -> Conn<I, F, B> {
+    return .init(
+      data: self.data.bimap(e2f, a2b),
+      request: self.request,
+      response: self.response
+    )
+  }
+
   public static func <¢> <B>(f: (A) -> B, c: Conn<I, E, A>) -> Conn<I, E, B> {
     return c.map(f)
   }
