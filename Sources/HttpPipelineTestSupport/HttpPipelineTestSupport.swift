@@ -100,7 +100,7 @@ private func prefixLines(with prefix: String) -> (String) -> String {
 
 extension String {
   fileprivate func formattedStatusString() -> String {
-    return self.characters
+    return self
       .lazy
       .map(String.init)
       .reduce("") { (string: String, character: String) -> String in
