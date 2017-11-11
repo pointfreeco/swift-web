@@ -32,17 +32,9 @@ extension Conn {
     )
   }
 
-  public func map<B, F>(_ f: (Either<E, A>) -> Either<F, B>) -> Conn<I, F, B> {
+  public func mapConn<B, F>(_ f: (Either<E, A>) -> Either<F, B>) -> Conn<I, F, B> {
     return Conn<I, F, B>(
       data: f(self.data),
-      request: self.request,
-      response: self.response
-    )
-  }
-
-  public func bimap<B, F>(_ e2f: (E) -> F, _ a2b: (A) -> B) -> Conn<I, F, B> {
-    return .init(
-      data: self.data.bimap(e2f, a2b),
       request: self.request,
       response: self.response
     )
@@ -55,6 +47,14 @@ extension Conn {
 
 public func map<I, E, A, B>(_ f: @escaping (A) -> B) -> (Conn<I, E, A>) -> Conn<I, E, B> {
   return { $0.map(f) }
+}
+
+public func mapConn<I, E, F, A, B>(_ f: @escaping (Either<E, A>) -> Either<F, B>)
+  -> (Conn<I, E, A>)
+  -> Conn<I, F, B> {
+    return { conn in
+      conn.mapConn(f)
+    }
 }
 
 // MARK: - Monad
