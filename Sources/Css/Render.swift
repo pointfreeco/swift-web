@@ -33,7 +33,7 @@ func render(attribute: CssSelector.Attribute) -> String {
   }
 }
 
-func renderSelector(_ config: Config, _ selector: CssSelector) -> String {
+public func renderSelector(_ selector: CssSelector) -> String {
   switch selector {
   case .star:
     return "*"
@@ -48,19 +48,19 @@ func renderSelector(_ config: Config, _ selector: CssSelector) -> String {
   case let .pseudoElem(pseudoElem):
     return "::" + render(pseudoElem: pseudoElem)
   case let .attr(sel, attr):
-    return renderSelector(config, sel) + "[" + render(attribute: attr) + "]"
+    return renderSelector(sel) + "[" + render(attribute: attr) + "]"
   case let .child(l, r):
-    return renderSelector(config, l) + " > " + renderSelector(config, r)
+    return renderSelector(l) + " > " + renderSelector(r)
   case let .sibling(l, r):
-    return renderSelector(config, l) + " ~ " + renderSelector(config, r)
+    return renderSelector(l) + " ~ " + renderSelector(r)
   case let .deep(l, r):
-    return renderSelector(config, l) + " " + renderSelector(config, r)
+    return renderSelector(l) + " " + renderSelector(r)
   case let .adjacent(l, r):
-    return renderSelector(config, l) + " + " + renderSelector(config, r)
+    return renderSelector(l) + " + " + renderSelector(r)
   case let .combined(l, r):
-    return renderSelector(config, l) + renderSelector(config, r)
+    return renderSelector(l) + renderSelector(r)
   case let .union(l, r):
-    return renderSelector(config, l) + ", " + renderSelector(config, r)
+    return renderSelector(l) + ", " + renderSelector(r)
   }
 }
 
@@ -97,7 +97,7 @@ func render(pseudoClass: CssSelector.PseudoClass) -> String {
   case .link:
     return "link"
   case let .not(sel):
-    return "not(" + renderSelector(inline, sel) + ")"
+    return "not(" + renderSelector(sel) + ")"
   case let .nthChild(n):
     return "nth-child(\(n))"
   case let .nthLastChild(n):
@@ -364,7 +364,7 @@ func rule(_ config: Config, _ sel: [App], _ props: [(Key<Unit>, Value)]) -> Stri
 
   let xs = props.flatMap { collect($0.0, $0.1) }
 
-  return renderSelector(config, merger(sel))
+  return renderSelector(merger(sel))
     + config.sep
     + config.lbrace
     + config.newline
