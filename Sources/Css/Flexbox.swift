@@ -145,7 +145,7 @@ public struct FlexWrap: Val, Other {
 }
 
 public func flex(
-  grow: Int,
+  grow: Int? = nil,
   shrink: Int? = nil,
   basis: Size? = nil
   )
@@ -153,7 +153,7 @@ public func flex(
   Stylesheet {
 
     return [
-      .some(key("flex-grow", grow)),
+      grow.map(key("flex-grow")),
       shrink.map(key("flex-shrink")),
       basis.map(key("flex-basis"))
       ]
