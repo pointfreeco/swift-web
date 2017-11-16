@@ -61,6 +61,7 @@ extension URLRequest: Snapshot {
       .map { key, value in "\(key): \(value)" }
       .sorted()
 
+    // NB: `absoluteString` is necessary because of https://github.com/apple/swift-corelibs-foundation/pull/1312
     let lines = ["\(self.httpMethod ?? "GET") \((self.url?.absoluteString).map(String.init(describing:)) ?? "?")"]
       + headers
     let top = lines.joined(separator: "\n")
