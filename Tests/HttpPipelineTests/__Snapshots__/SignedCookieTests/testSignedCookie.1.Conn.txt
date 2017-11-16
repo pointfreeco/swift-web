@@ -8,4 +8,4 @@
 
 ▿ Response
   Status 200 OK
-  Set-Cookie: HttpOnly; session=aGVsbG8td29ybGQ=--4wgeyWTkB2EKsLHYK7Ao1VzjFMXeTLZHXX76XTTOBCw=
+  Set-Cookie: session=aGVsbG8td29ybGQ=--4wgeyWTkB2EKsLHYK7Ao1VzjFMXeTLZHXX76XTTOBCw=; HttpOnly

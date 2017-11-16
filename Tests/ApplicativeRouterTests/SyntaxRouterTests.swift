@@ -26,7 +26,7 @@ class SyntaxRouterTests: XCTestCase {
     assertSnapshot(matching:
       router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
         // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-        |> \.httpMethod .~ "get"
+        |> \.httpMethod .~ "GET"
     )
   }
 

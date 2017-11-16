@@ -115,7 +115,8 @@ public enum ResponseHeader {
       return ("Location", uri)
     case let .setCookie(key: key, value: value, options: options):
       // TODO: escape
-      let headerValue = (["\(key)=\(value)"] + options.map(get(\.description))).sorted().joined(separator: "; ")
+      let headerValue = (["\(key)=\(value)"] + options.map(get(\.description)).sorted())
+        .joined(separator: "; ")
       return ("Set-Cookie", headerValue)
     case let .other(header, value):
       return (header, value)

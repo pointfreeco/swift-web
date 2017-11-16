@@ -12,7 +12,6 @@ class HttpPipelineTests: XCTestCase {
 //    super.setUp()
 //    record = true
 //  }
-
   
   func testPipeline() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
