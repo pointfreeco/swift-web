@@ -8,4 +8,4 @@
 
 ▿ Response
   Status 200 OK
-  Set-Cookie: session=eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=--6nCh0Of4anIuD8+6EgYj+g6hOf4wvwiZr6lDodIc+z0=; HttpOnly
+  Set-Cookie: HttpOnly; session=eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=--6nCh0Of4anIuD8+6EgYj+g6hOf4wvwiZr6lDodIc+z0=

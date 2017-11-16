@@ -11,7 +11,8 @@ public enum ResponseHeader {
   case other(String, String)
   case wwwAuthenticate(Authenticate)
 
-  public enum CookieOption: Hashable, CustomStringConvertible {
+  public enum CookieOption: Hashable, CustomStringConvertible, Comparable {
+
     case domain(String)
     case expires(TimeInterval)
     case httpOnly
@@ -19,6 +20,10 @@ public enum ResponseHeader {
     case path(String)
     case sameSite(SameSite)
     case secure
+
+    public static func <(lhs: ResponseHeader.CookieOption, rhs: ResponseHeader.CookieOption) -> Bool {
+      return lhs.description < rhs.description
+    }
 
     public var description: String {
       switch self {
@@ -110,7 +115,7 @@ public enum ResponseHeader {
       return ("Location", uri)
     case let .setCookie(key: key, value: value, options: options):
       // TODO: escape
-      let headerValue = (["\(key)=\(value)"] + options.map(get(\.description))).joined(separator: "; ")
+      let headerValue = (["\(key)=\(value)"] + options.map(get(\.description))).sorted().joined(separator: "; ")
       return ("Set-Cookie", headerValue)
     case let .other(header, value):
       return (header, value)

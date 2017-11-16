@@ -20,6 +20,46 @@ extension BorderTests {
     ("testBorders", testBorders)
   ]
 }
+extension CssRenderTests {
+  static var allTests: [(String, (CssRenderTests) -> () throws -> Void)] = [
+    ("testRenderSelector_StandardCombinationOfElemIdClassPseudo", testRenderSelector_StandardCombinationOfElemIdClassPseudo),
+    ("testRenderSelector_UsingStringLiterals", testRenderSelector_UsingStringLiterals),
+    ("testRenderSelector_Star", testRenderSelector_Star),
+    ("testRenderSelector_Elem", testRenderSelector_Elem),
+    ("testRenderSelector_Id", testRenderSelector_Id),
+    ("testRenderSelector_Class", testRenderSelector_Class),
+    ("testRenderSelector_PseudoClass", testRenderSelector_PseudoClass),
+    ("testRenderSelector_PseudoElem", testRenderSelector_PseudoElem),
+    ("testRenderSelector_Attr", testRenderSelector_Attr),
+    ("testRenderSelector_AttributeBeginsOperator", testRenderSelector_AttributeBeginsOperator),
+    ("testRenderSelector_AttributeContainsOperator", testRenderSelector_AttributeContainsOperator),
+    ("testRenderSelector_AttributeValOperator", testRenderSelector_AttributeValOperator),
+    ("testRenderSelector_AttributeEndsOperator", testRenderSelector_AttributeEndsOperator),
+    ("testRenderSelector_AttributeSpaceOperator", testRenderSelector_AttributeSpaceOperator),
+    ("testRenderSelector_AttributeHyphenOperator", testRenderSelector_AttributeHyphenOperator),
+    ("testRenderSelector_Child", testRenderSelector_Child),
+    ("testRenderSelector_ChildOperator", testRenderSelector_ChildOperator),
+    ("testRenderSelector_Deep", testRenderSelector_Deep),
+    ("testRenderSelector_DeepOperator", testRenderSelector_DeepOperator),
+    ("testRenderSelector_Adjacent", testRenderSelector_Adjacent),
+    ("testRenderSelector_AdjacentOperator", testRenderSelector_AdjacentOperator),
+    ("testRenderSelector_Sibling", testRenderSelector_Sibling),
+    ("testRenderSelector_SiblingOperator", testRenderSelector_SiblingOperator),
+    ("testRenderSelector_Combined", testRenderSelector_Combined),
+    ("testRenderSelector_CombinedOperator", testRenderSelector_CombinedOperator),
+    ("testRenderSelector_Union", testRenderSelector_Union),
+    ("testRenderSelector_UnionOperator", testRenderSelector_UnionOperator),
+    ("testRenderSelector_NestedCss", testRenderSelector_NestedCss),
+    ("testNestedIds", testNestedIds),
+    ("testRenderAfterContent", testRenderAfterContent),
+    ("testMargins", testMargins),
+    ("testFontInherit", testFontInherit),
+    ("testSubCss", testSubCss),
+    ("testRenderBoxSizing", testRenderBoxSizing),
+    ("testASD", testASD),
+    ("testAllOperatorsTogether", testAllOperatorsTogether)
+  ]
+}
 extension EncodedStringTests {
   static var allTests: [(String, (EncodedStringTests) -> () throws -> Void)] = [
     ("testEscape", testEscape),
@@ -54,6 +94,10 @@ extension HTMLTests {
     ("testScriptTag", testScriptTag),
     ("testPrettyRender", testPrettyRender),
     ("testDocument", testDocument)
+  ]
+}
+extension HtmlRenderTests {
+  static var allTests: [(String, (HtmlRenderTests) -> () throws -> Void)] = [
   ]
 }
 extension HttpPipelineHtmlSupportTests {
@@ -91,46 +135,6 @@ extension PrettyTests {
 extension PropertyTests {
   static var allTests: [(String, (PropertyTests) -> () throws -> Void)] = [
     ("testPrefixed_Monoid", testPrefixed_Monoid)
-  ]
-}
-extension RenderTests {
-  static var allTests: [(String, (RenderTests) -> () throws -> Void)] = [
-    ("testRenderSelector_StandardCombinationOfElemIdClassPseudo", testRenderSelector_StandardCombinationOfElemIdClassPseudo),
-    ("testRenderSelector_UsingStringLiterals", testRenderSelector_UsingStringLiterals),
-    ("testRenderSelector_Star", testRenderSelector_Star),
-    ("testRenderSelector_Elem", testRenderSelector_Elem),
-    ("testRenderSelector_Id", testRenderSelector_Id),
-    ("testRenderSelector_Class", testRenderSelector_Class),
-    ("testRenderSelector_PseudoClass", testRenderSelector_PseudoClass),
-    ("testRenderSelector_PseudoElem", testRenderSelector_PseudoElem),
-    ("testRenderSelector_Attr", testRenderSelector_Attr),
-    ("testRenderSelector_AttributeBeginsOperator", testRenderSelector_AttributeBeginsOperator),
-    ("testRenderSelector_AttributeContainsOperator", testRenderSelector_AttributeContainsOperator),
-    ("testRenderSelector_AttributeValOperator", testRenderSelector_AttributeValOperator),
-    ("testRenderSelector_AttributeEndsOperator", testRenderSelector_AttributeEndsOperator),
-    ("testRenderSelector_AttributeSpaceOperator", testRenderSelector_AttributeSpaceOperator),
-    ("testRenderSelector_AttributeHyphenOperator", testRenderSelector_AttributeHyphenOperator),
-    ("testRenderSelector_Child", testRenderSelector_Child),
-    ("testRenderSelector_ChildOperator", testRenderSelector_ChildOperator),
-    ("testRenderSelector_Deep", testRenderSelector_Deep),
-    ("testRenderSelector_DeepOperator", testRenderSelector_DeepOperator),
-    ("testRenderSelector_Adjacent", testRenderSelector_Adjacent),
-    ("testRenderSelector_AdjacentOperator", testRenderSelector_AdjacentOperator),
-    ("testRenderSelector_Sibling", testRenderSelector_Sibling),
-    ("testRenderSelector_SiblingOperator", testRenderSelector_SiblingOperator),
-    ("testRenderSelector_Combined", testRenderSelector_Combined),
-    ("testRenderSelector_CombinedOperator", testRenderSelector_CombinedOperator),
-    ("testRenderSelector_Union", testRenderSelector_Union),
-    ("testRenderSelector_UnionOperator", testRenderSelector_UnionOperator),
-    ("testRenderSelector_NestedCss", testRenderSelector_NestedCss),
-    ("testNestedIds", testNestedIds),
-    ("testRenderAfterContent", testRenderAfterContent),
-    ("testMargins", testMargins),
-    ("testFontInherit", testFontInherit),
-    ("testSubCss", testSubCss),
-    ("testRenderBoxSizing", testRenderBoxSizing),
-    ("testASD", testASD),
-    ("testAllOperatorsTogether", testAllOperatorsTogether)
   ]
 }
 extension ResetTests {
@@ -208,18 +212,19 @@ XCTMain([
   testCase(ApplicativeRouterHttpPipelineSupportTests.allTests),
   testCase(BackgroundTests.allTests),
   testCase(BorderTests.allTests),
+  testCase(CssRenderTests.allTests),
   testCase(EncodedStringTests.allTests),
   testCase(FlexBoxTests.allTests),
   testCase(FullDocumentTests.allTests),
   testCase(FullStylesheetTests.allTests),
   testCase(HTMLTests.allTests),
+  testCase(HtmlRenderTests.allTests),
   testCase(HttpPipelineHtmlSupportTests.allTests),
   testCase(HttpPipelineTests.allTests),
   testCase(MediaTests.allTests),
   testCase(PlainTextTests.allTests),
   testCase(PrettyTests.allTests),
   testCase(PropertyTests.allTests),
-  testCase(RenderTests.allTests),
   testCase(ResetTests.allTests),
   testCase(SharedMiddlewareTransformersTests.allTests),
   testCase(SignedCookieTests.allTests),

@@ -4,21 +4,38 @@ import Optics
 import Prelude
 import XCTest
 
+//func XCTAssertRequestEqual(_ lhs: URLRequest, _ rhs: URLRequest) {
+//
+//}
+
 class SyntaxRouterTests: XCTestCase {
   func testRoot() {
     let request = URLRequest(url: URL(string: "home")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
     let route = Routes.root
 
     XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: route))
+    XCTAssertEqual(request, router.request(for: route)!)
     XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
   }
 
   func testRequest_WithBaseUrl() {
-    XCTAssertEqual(
-      URLRequest(url: URL(string: "http://www.pointfree.co/home")!),
-      router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))
-    )
+    let lhs = URLRequest(url: URL(string: "http://www.pointfree.co/home")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
+    let rhs = router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
+
+//    dump(lhs)
+//    dump(rhs)
+//    XCTAssertTrue(lhs == rhs)
+//    XCTAssertEqual(lhs, rhs)
+//
+//    XCTAssertEqual(
+//      lhs, rhs
+//    )
   }
 
   func testAbsoluteString() {
@@ -37,6 +54,8 @@ class SyntaxRouterTests: XCTestCase {
 
   func testPathComponents_IntParam() {
     let request = URLRequest(url: URL(string: "home/episodes/42/comments/2")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
     let route = Routes.pathComponents(param: .right(42), commentId: 2)
 
     XCTAssertEqual(route, router.match(request: request))
@@ -49,6 +68,8 @@ class SyntaxRouterTests: XCTestCase {
 
   func testPathComponents_StringParam() {
     let request = URLRequest(url: URL(string: "home/episodes/hello-world/comments/2")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
     let route = Routes.pathComponents(param: .left("hello-world"), commentId: 2)
 
     XCTAssertEqual(route, router.match(request: request))
@@ -63,7 +84,8 @@ class SyntaxRouterTests: XCTestCase {
     let route = Routes.postBodyField(email: "hello@pointfree.co")
     let request = URLRequest(url: URL(string: "signup")!)
       |> \.httpBody .~ Data("email=hello@pointfree.co".utf8)
-      |> \.httpMethod .~ "POST"
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "post"
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
@@ -77,7 +99,8 @@ class SyntaxRouterTests: XCTestCase {
     let route = Routes.postBodyJsonDecodable(episode: episode, param: 42)
     let request = URLRequest(url: URL(string: "episodes/42")!)
       |> \.httpBody .~ (try? JSONEncoder().encode(episode))
-      |> \.httpMethod .~ "POST"
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "post"
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
@@ -85,6 +108,8 @@ class SyntaxRouterTests: XCTestCase {
 
   func testSimpleQueryParams() {
     let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&ref=hello&t=122")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
     let route = Routes.simpleQueryParams(ref: "hello", active: true, t: 122)
 
     XCTAssertEqual(route, router.match(request: request))
@@ -97,6 +122,8 @@ class SyntaxRouterTests: XCTestCase {
 
   func testSimpleQueryParams_SomeMissing() {
     let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&t=122")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
     let route = Routes.simpleQueryParams(ref: nil, active: true, t: 122)
 
     XCTAssertEqual(route, router.match(request: request))

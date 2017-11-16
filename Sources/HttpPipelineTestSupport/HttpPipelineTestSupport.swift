@@ -61,7 +61,7 @@ extension URLRequest: Snapshot {
       .map { key, value in "\(key): \(value)" }
       .sorted()
 
-    let lines = ["\(self.httpMethod ?? "GET") \(self.url.map(String.init(describing:)) ?? "?")"]
+    let lines = ["\(self.httpMethod ?? "GET") \((self.url?.absoluteString).map(String.init(describing:)) ?? "?")"]
       + headers
     let top = lines.joined(separator: "\n")
 
