@@ -16,7 +16,7 @@ class SyntaxRouterTests: XCTestCase {
     let route = Routes.root
 
     XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: route)!)
+    XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
   }
 
