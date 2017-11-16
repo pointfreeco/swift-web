@@ -24,7 +24,7 @@ final class UrlFormEncoderTests: XCTestCase {
           ]
         ]
         )
-        .sortedByFormEncdedKey()
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -38,7 +38,7 @@ final class UrlFormEncoderTests: XCTestCase {
           "empty_object": [:],
           ]
         )
-        .sortedByFormEncdedKey()
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -48,7 +48,7 @@ final class UrlFormEncoderTests: XCTestCase {
         values: ["Functions & Purity", "Monoids", "Applicatives"],
         rootKey: "episodes"
         )
-        .sortedByFormEncdedKey()
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -62,7 +62,7 @@ final class UrlFormEncoderTests: XCTestCase {
         ],
         rootKey: "episodes"
         )
-        .sortedByFormEncdedKey()
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -75,7 +75,7 @@ final class UrlFormEncoderTests: XCTestCase {
 
     assertSnapshot(
       matching: urlFormEncode(value: episode)
-        .sortedByFormEncdedKey()
+        .sortedByFormEncodedKey()
     )
   }
 }
@@ -83,7 +83,7 @@ final class UrlFormEncoderTests: XCTestCase {
 private extension String {
   /// Helper to make sure that form encoded strings are in a well-defined order.
   /// TODO: need a more robust solution since key/value pairs inside this string should be order sensitive.
-  func sortedByFormEncdedKey() -> String {
+  func sortedByFormEncodedKey() -> String {
     return self.split(separator: "&")
       .sorted()
       .joined(separator: "&\n")
