@@ -184,6 +184,8 @@ extension SyntaxRouterTests {
     ("testLitFails", testLitFails),
     ("testPathComponents_IntParam", testPathComponents_IntParam),
     ("testPathComponents_StringParam", testPathComponents_StringParam),
+    ("testPostBodyField", testPostBodyField),
+    ("testPostBodyJsonDecodable", testPostBodyJsonDecodable),
     ("testSimpleQueryParams", testSimpleQueryParams),
     ("testSimpleQueryParams_SomeMissing", testSimpleQueryParams_SomeMissing)
   ]

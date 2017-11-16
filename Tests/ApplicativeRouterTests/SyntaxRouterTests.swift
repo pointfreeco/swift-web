@@ -74,31 +74,43 @@ class SyntaxRouterTests: XCTestCase {
     )
   }
 
-//  func testPostBodyField() {
-//    let route = Routes.postBodyField(email: "hello@pointfree.co")
-//    var request = URLRequest(url: URL(string: "signup")!)
-//      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-//    request.httpMethod = "post"
-//    request.httpBody = "email=hello@pointfree.co".data(using: .utf8)
-//
-//    XCTAssertEqual(route, router.match(request: request))
-//    XCTAssertEqual(request, router.request(for: route))
-//    XCTAssertEqual("signup", router.templateUrl(for: route)?.absoluteString)
-//  }
+  func testPostBodyField() {
+    let route = Routes.postBodyField(email: "hello@pointfree.co")
+    var request = URLRequest(url: URL(string: "signup")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "post"
+      |> \.httpBody .~ "email=hello@pointfree.co".data(using: .utf8)
 
-//  func testPostBodyJsonDecodable() {
-//    let episode = Episode(
-//      title: "Intro to Functions", blurb: "Everything about functions!", length: 300, category: nil
-//    )
-//    let route = Routes.postBodyJsonDecodable(episode: episode, param: 42)
-//    let request = URLRequest(url: URL(string: "episodes/42")!)
-//      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-//      |> \.httpMethod .~ "post"
-//      |> \.httpBody .~ (try? JSONEncoder().encode(episode))
-//
-//    XCTAssertEqual(route, router.match(request: request))
-//    XCTAssertEqual(request, router.request(for: route))
-//  }
+    XCTAssertNotNil(request.httpBody)
+
+    XCTAssertEqual(route, router.match(request: request))
+
+    #if !os(Linux)
+      // NB: Both of these crash with:
+      // Fatal error: Constant strings cannot be deallocated: file Foundation/NSCFString.swift, line 118
+      XCTAssertEqual(request, router.request(for: route))
+      XCTAssertEqual("signup", router.templateUrl(for: route)?.absoluteString)
+    #endif
+  }
+
+  func testPostBodyJsonDecodable() {
+    let episode = Episode(
+      title: "Intro to Functions", blurb: "Everything about functions!", length: 300, category: nil
+    )
+    let route = Routes.postBodyJsonDecodable(episode: episode, param: 42)
+    let request = URLRequest(url: URL(string: "episodes/42")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "post"
+      |> \.httpBody .~ (try? JSONEncoder().encode(episode))
+
+    XCTAssertEqual(route, router.match(request: request))
+
+    #if !os(Linux)
+      // NB: Crashes with:
+      // Fatal error: Constant strings cannot be deallocated: file Foundation/NSCFString.swift, line 118
+      XCTAssertEqual(request, router.request(for: route))
+    #endif
+  }
 
   func testSimpleQueryParams() {
     let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&ref=hello&t=122")!)
