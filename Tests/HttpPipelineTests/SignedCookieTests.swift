@@ -109,6 +109,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     )
   }
 
+  #if !os(Linux)
   func testEncryptedCookie_EncodableValue() {
     let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
     let encryptedCookieValue = """
@@ -146,6 +147,10 @@ cb4db8ac9390ac810837809f11bc6803\
       "Reading signed cookie with wrong credentials returns nil."
     )
   }
+  #else
+  func testEncryptedCookie_EncodableValue() {
+  }
+  #endif
 }
 
 struct Episode: Codable, DerivingEquatable {

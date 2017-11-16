@@ -162,6 +162,8 @@ extension SignedCookieTests {
     ("testSignedCookie", testSignedCookie),
     ("testSignedCookie_EncodableValue", testSignedCookie_EncodableValue),
     ("testEncryptedCookie", testEncryptedCookie),
+    ("testEncryptedCookie_EncodableValue", testEncryptedCookie_EncodableValue),
+    ("testEncryptedCookie_EncodableValue", testEncryptedCookie_EncodableValue),
     ("testEncryptedCookie_EncodableValue", testEncryptedCookie_EncodableValue)
   ]
 }
