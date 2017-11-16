@@ -45,34 +45,36 @@ aGVsbG8td29ybGQ=\
   }
 
   func testSignedCookie_EncodableValue() {
-    let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
-    let episode = Episode(id: 42, name: "All About Functions")
-    let signedCookieValue = """
+    #if !os(Linux)
+      let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
+      let episode = Episode(id: 42, name: "All About Functions")
+      let signedCookieValue = """
 eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 --\
 6nCh0Of4anIuD8+6EgYj+g6hOf4wvwiZr6lDodIc+z0=
 """
 
-    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
-      writeStatus(.ok)
-        >-> writeHeaders(
-          [.setSignedCookie(key: "session", value: episode, secret: secret)]
-            |> catOptionals
-    )
+      let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+        writeStatus(.ok)
+          >-> writeHeaders(
+            [.setSignedCookie(key: "session", value: episode, secret: secret)]
+              |> catOptionals
+      )
 
-    assertSnapshot(matching: middleware(conn).perform())
+      assertSnapshot(matching: middleware(conn).perform())
 
-    XCTAssertEqual(
-      episode,
-      ResponseHeader.verifiedValue(signedCookieValue: signedCookieValue, secret: secret),
-      "Reading signed cookie with proper credentials recovers the value."
-    )
+      XCTAssertEqual(
+        episode,
+        ResponseHeader.verifiedValue(signedCookieValue: signedCookieValue, secret: secret),
+        "Reading signed cookie with proper credentials recovers the value."
+      )
 
-    XCTAssertEqual(
-      Episode?.none,
-      ResponseHeader.verifiedValue(signedCookieValue: signedCookieValue, secret: "deadbeef"),
-      "Reading signed cookie with wrong credentials returns nil."
-    )
+      XCTAssertEqual(
+        Episode?.none,
+        ResponseHeader.verifiedValue(signedCookieValue: signedCookieValue, secret: "deadbeef"),
+        "Reading signed cookie with wrong credentials returns nil."
+      )
+    #endif
   }
 
   func testEncryptedCookie() {
@@ -109,10 +111,10 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     )
   }
 
-  #if !os(Linux)
   func testEncryptedCookie_EncodableValue() {
-    let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
-    let encryptedCookieValue = """
+    #if !os(Linux)
+      let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
+      let encryptedCookieValue = """
 674d4b73680a254d2b881823a221ac05\
 58da40e24cb393d39f4539c9229805eb\
 33873047a29a03a6b5206bdd5be1f391\
@@ -121,36 +123,33 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 cb4db8ac9390ac810837809f11bc6803\
 639d849d1d43ac0082b7e3aaedfd8174
 """
-    let episode = Episode(id: 42, name: "All About Functions")
+      let episode = Episode(id: 42, name: "All About Functions")
 
-    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
-      writeStatus(.ok)
-        >-> writeHeaders(
-          [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true)]
-            |> catOptionals
-    )
+      let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+        writeStatus(.ok)
+          >-> writeHeaders(
+            [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true)]
+              |> catOptionals
+      )
 
-    assertSnapshot(matching: middleware(conn).perform())
+      assertSnapshot(matching: middleware(conn).perform())
 
-    XCTAssertEqual(
-      episode,
-      ResponseHeader.verifiedValue(signedCookieValue: encryptedCookieValue, secret: secret),
-      "Reading signed cookie with proper credentials recovers the value."
-    )
+      XCTAssertEqual(
+        episode,
+        ResponseHeader.verifiedValue(signedCookieValue: encryptedCookieValue, secret: secret),
+        "Reading signed cookie with proper credentials recovers the value."
+      )
 
-    XCTAssertEqual(
-      Episode?.none,
-      ResponseHeader.verifiedValue(
-        signedCookieValue: encryptedCookieValue,
-        secret: "deadbeefdeadbeefdeadbeefdead1234"
-      ),
-      "Reading signed cookie with wrong credentials returns nil."
-    )
+      XCTAssertEqual(
+        Episode?.none,
+        ResponseHeader.verifiedValue(
+          signedCookieValue: encryptedCookieValue,
+          secret: "deadbeefdeadbeefdeadbeefdead1234"
+        ),
+        "Reading signed cookie with wrong credentials returns nil."
+      )
+    #endif
   }
-  #else
-  func testEncryptedCookie_EncodableValue() {
-  }
-  #endif
 }
 
 struct Episode: Codable, DerivingEquatable {
