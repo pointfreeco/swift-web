@@ -4,6 +4,8 @@ import Optics
 import Prelude
 import XCTest
 
+import Foundation
+
 //func XCTAssertRequestEqual(_ lhs: URLRequest, _ rhs: URLRequest) {
 //
 //}
@@ -21,21 +23,14 @@ class SyntaxRouterTests: XCTestCase {
   }
 
   func testRequest_WithBaseUrl() {
-    let lhs = URLRequest(url: URL(string: "http://www.pointfree.co/home")!)
-      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-      |> \.httpMethod .~ "get"
-    let rhs = router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
-      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-      |> \.httpMethod .~ "get"
+    var lhs = URLRequest(url: URL(string: "http://www.pointfree.co/home")!)
+    //lhs.httpMethod = "get"
 
-//    dump(lhs)
-//    dump(rhs)
-//    XCTAssertTrue(lhs == rhs)
-//    XCTAssertEqual(lhs, rhs)
-//
-//    XCTAssertEqual(
-//      lhs, rhs
-//    )
+    let rhs = router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
+
+    //dump(lhs) // comment this out and the test will fail.
+
+    XCTAssertEqual(lhs, rhs)
   }
 
   func testAbsoluteString() {
