@@ -105,6 +105,8 @@ class SyntaxRouterTests: XCTestCase {
 
     XCTAssertEqual(route, router.match(request: request))
 
+    XCTAssertNotNil(request.httpBody)
+
     #if !os(Linux)
       // NB: Crashes with:
       // Fatal error: Constant strings cannot be deallocated: file Foundation/NSCFString.swift, line 118
