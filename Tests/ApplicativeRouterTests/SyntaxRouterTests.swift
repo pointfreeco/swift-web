@@ -22,13 +22,14 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
   }
 
+  // BUG: https://bugs.swift.org/browse/SR-6407
   func testRequest_WithBaseUrl() {
     var lhs = URLRequest(url: URL(string: "http://www.pointfree.co/home")!)
-    //lhs.httpMethod = "get"
+    //lhs.httpMethod = "get" // commenting out this line removes the weird behavior.
 
     let rhs = router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
 
-    //dump(lhs) // comment this out and the test will fail.
+    //dump(lhs) // comment this out and the test will pass.
 
     XCTAssertEqual(lhs, rhs)
   }
