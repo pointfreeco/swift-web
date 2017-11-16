@@ -1,10 +1,12 @@
-import ApplicativeRouter
+@testable import ApplicativeRouter
 import Either
 import Optics
 import Prelude
 import XCTest
 import SnapshotTesting
 import HttpPipelineTestSupport
+
+import Foundation
 
 class SyntaxRouterTests: XCTestCase {
   func testRoot() {
@@ -74,10 +76,10 @@ class SyntaxRouterTests: XCTestCase {
 
   func testPostBodyField() {
     let route = Routes.postBodyField(email: "hello@pointfree.co")
-    let request = URLRequest(url: URL(string: "signup")!)
-      |> \.httpBody .~ Data("email=hello@pointfree.co".utf8)
+    var request = URLRequest(url: URL(string: "signup")!)
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-      |> \.httpMethod .~ "post"
+    request.httpMethod = "post"
+    request.httpBody = "email=hello@pointfree.co".data(using: .utf8)
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
@@ -90,9 +92,9 @@ class SyntaxRouterTests: XCTestCase {
     )
     let route = Routes.postBodyJsonDecodable(episode: episode, param: 42)
     let request = URLRequest(url: URL(string: "episodes/42")!)
-      |> \.httpBody .~ (try? JSONEncoder().encode(episode))
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
       |> \.httpMethod .~ "post"
+      |> \.httpBody .~ (try? JSONEncoder().encode(episode))
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))

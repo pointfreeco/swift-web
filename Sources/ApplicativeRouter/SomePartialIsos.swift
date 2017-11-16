@@ -132,7 +132,7 @@ extension PartialIso where A == String, B == Either<String, Int> {
   }
 }
 
-private func formEncodedStringToFields(_ body: String) -> [String: String] {
+public func formEncodedStringToFields(_ body: String) -> [String: String] {
   let pairs = body.split(separator: "&")
     .map {
       $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
@@ -142,7 +142,7 @@ private func formEncodedStringToFields(_ body: String) -> [String: String] {
   return [String: String](uniqueKeysWithValues: pairs)
 }
 
-private func fieldsToFormEncodedString(_ data: [String: String]) -> String {
+public func fieldsToFormEncodedString(_ data: [String: String]) -> String {
   let t = URLComponents()
     |> \.queryItems .~ data.map(URLQueryItem.init(name:value:))
   return t.query ?? ""
