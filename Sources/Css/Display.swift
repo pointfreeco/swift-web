@@ -1,3 +1,5 @@
+import Prelude
+
 public struct Visibility: Val {
   let visibility: Value
 
@@ -154,3 +156,32 @@ extension VerticalAlignValue: ExpressibleByStringLiteral {
 }
 
 public let verticalAlign: (VerticalAlignValue) -> Stylesheet = key("vertical-align")
+
+public struct Overflow: Val, Other, Auto, Inherit, Hidden, Visible {
+  let overflow: Value
+
+  public func value() -> Value {
+    return self.overflow
+  }
+
+  public static func other(_ other: Value) -> Overflow {
+    return .init(overflow: other)
+  }
+
+  public static let auto: Overflow = .init(overflow: .auto)
+  public static let inherit: Overflow = .init(overflow: .inherit)
+  public static let hidden: Overflow = .init(overflow: .hidden)
+  public static let visible: Overflow = .init(overflow: .visible)
+  public static let scroll: Overflow = .init(overflow: "scroll")
+}
+
+public func overflow(_ overflow: Overflow) -> Stylesheet {
+  return key("overflow")(overflow)
+}
+
+public func overflow(x: Overflow? = nil, y: Overflow? = nil) -> Stylesheet {
+  return [ x.map { key("overflow-x", $0) },
+           y.map { key("overflow-y", $0) } ]
+    |> catOptionals
+    |> concat
+}
