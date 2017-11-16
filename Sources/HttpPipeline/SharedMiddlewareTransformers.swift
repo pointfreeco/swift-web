@@ -185,6 +185,7 @@ public func requestLogger(logger: @escaping (String) -> Void)
         return middleware(conn).flatMap { b in
           IO {
             let endTime = Date().timeIntervalSince1970
+            // NB: `absoluteString` is necessary because of https://github.com/apple/swift-corelibs-foundation/pull/1312
             logger("[Request] \(conn.request.httpMethod ?? "GET") \(conn.request.url?.absoluteString ?? "")")
             logger("[Time]    \(Int((endTime - startTime) * 1000))ms")
             return b

@@ -178,6 +178,14 @@ extension SupportTests {
 }
 extension SyntaxRouterTests {
   static var allTests: [(String, (SyntaxRouterTests) -> () throws -> Void)] = [
+    ("testRoot", testRoot),
+    ("testRequest_WithBaseUrl", testRequest_WithBaseUrl),
+    ("testAbsoluteString", testAbsoluteString),
+    ("testLitFails", testLitFails),
+    ("testPathComponents_IntParam", testPathComponents_IntParam),
+    ("testPathComponents_StringParam", testPathComponents_StringParam),
+    ("testSimpleQueryParams", testSimpleQueryParams),
+    ("testSimpleQueryParams_SomeMissing", testSimpleQueryParams_SomeMissing)
   ]
 }
 extension UrlFormEncoderTests {
