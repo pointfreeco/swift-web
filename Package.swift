@@ -28,7 +28,7 @@ let package = Package(
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude"]),
-    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Deriving", "Optics"]),
+    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Deriving", "Optics", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "ApplicativeRouterHttpPipelineSupport",
             dependencies: ["ApplicativeRouter", "HttpPipeline", "Prelude"]),

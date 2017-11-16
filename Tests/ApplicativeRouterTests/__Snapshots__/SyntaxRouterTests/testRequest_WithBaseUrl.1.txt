@@ -1,0 +1,18 @@
+▿ http://www.pointfree.co/home
+  ▿ url: Optional(http://www.pointfree.co/home)
+    ▿ some: http://www.pointfree.co/home
+      - _url: http://www.pointfree.co/home #0
+        - super: NSObject
+  - cachePolicy: 0
+  - timeoutInterval: 60.0
+  - mainDocumentURL: nil
+  - networkServiceType: __ObjC.NSURLRequest.NetworkServiceType
+  - allowsCellularAccess: true
+  ▿ httpMethod: Optional("GET")
+    - some: "GET"
+  ▿ allHTTPHeaderFields: Optional([:])
+    - some: 0 key/value pairs
+  - httpBody: nil
+  - httpBodyStream: nil
+  - httpShouldHandleCookies: true
+  - httpShouldUsePipelining: false

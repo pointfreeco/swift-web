@@ -3,12 +3,8 @@ import Either
 import Optics
 import Prelude
 import XCTest
-
-import Foundation
-
-//func XCTAssertRequestEqual(_ lhs: URLRequest, _ rhs: URLRequest) {
-//
-//}
+import SnapshotTesting
+import HttpPipelineTestSupport
 
 class SyntaxRouterTests: XCTestCase {
   func testRoot() {
@@ -23,14 +19,15 @@ class SyntaxRouterTests: XCTestCase {
   }
 
   func testRequest_WithBaseUrl() {
-    var lhs = URLRequest(url: URL(string: "http://www.pointfree.co/home")!)
-    //lhs.httpMethod = "get"
-
-    let rhs = router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
-
-    //dump(lhs) // comment this out and the test will fail.
-
-    XCTAssertEqual(lhs, rhs)
+    // BUG: https://bugs.swift.org/browse/SR-6407
+    // NB: Previously we did `XCTAssertEqual` on a left/right side to check that the requests match, but
+    //     due to a weird Swift bug (https://bugs.swift.org/browse/SR-6407) we are switching to a snapshot
+    //     test.
+    assertSnapshot(matching:
+      router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
+        // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+        |> \.httpMethod .~ "get"
+    )
   }
 
   func testAbsoluteString() {
