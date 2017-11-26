@@ -101,7 +101,7 @@ public enum ResponseHeader {
   public var pair: (String, String) {
     switch self {
     case let .allow(methods):
-      return ("Allow", methods.map { $0.description }.joined(separator: ", "))
+      return ("Allow", methods.map(get(\.description)).joined(separator: ", "))
     case let .contentLength(bytes):
       return ("Content-Length", bytes.description)
     case let .contentType(mediaType):
