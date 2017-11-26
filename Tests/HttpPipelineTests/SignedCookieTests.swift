@@ -118,7 +118,7 @@ cb4db8ac9390ac810837809f11bc6803\
 """
     let episode = Episode(id: 42, name: "All About Functions")
 
-    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+    let middleware =
       writeStatus(.ok)
         >-> writeHeaders(
           [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true)]

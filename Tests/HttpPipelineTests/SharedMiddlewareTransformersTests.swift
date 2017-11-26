@@ -9,7 +9,7 @@ private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 
 class SharedMiddlewareTransformersTests: XCTestCase {
   func testBasicAuth_Unauthorized() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -18,7 +18,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Unauthorized_ProtectedPredicate() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       basicAuth(user: "Hello", password: "World", protect: const(false))
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -27,7 +27,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Unauthorized_Realm() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       basicAuth(user: "Hello", password: "World", realm: "Point-Free")
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -36,7 +36,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Unauthorized_CustomFailure() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       basicAuth(
         user: "Hello",
         password: "World",
@@ -49,7 +49,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Authorized() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -63,7 +63,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testContentLengthMiddlewareTransformer() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       contentLength
         <| writeStatus(.ok)
         >-> writeHeader(.contentType(.html))
@@ -83,7 +83,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       "0.0.0.0",
     ]
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       redirectUnrelatedHosts(allowedHosts: allowedHosts, canonicalHost: "www.pointfree.co")
         <| writeStatus(.ok)
         >-> writeHeader(.contentType(.html))
@@ -113,7 +113,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       "0.0.0.0",
       ]
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware =
       requireHerokuHttps(allowedInsecureHosts: allowedInsecureHosts)
         <| writeStatus(.ok)
         >-> writeHeader(.contentType(.html))

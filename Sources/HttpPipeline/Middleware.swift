@@ -15,6 +15,18 @@ public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, Heade
   }
 }
 
+public func writeStatus(_ status: Status)
+  -> Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> {
+
+    return pure <<< { conn in
+      .init(
+        data: conn.data,
+        request: conn.request,
+        response: conn.response |> \.status .~ status
+      )
+    }
+}
+
 public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return pure <<< (\.response.headers %~ { $0 + [header] })
 }
