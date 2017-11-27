@@ -12,10 +12,17 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
       Route.iso.home <¢> get <% end
         <|> Route.iso.episode <¢> get %> lit("episode") %> .string <% end
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    func mapData<I, E, A, B>(_ f: @escaping (A) -> B) -> Middleware<I, I, E, E, A, B> {
+      return pure <<< map(f)
+    }
+
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       route(router: router)
         <| writeStatus(.ok)
-        >-> { $0 |> respond(text: "Recognized route: \($0.data)") }
+        >-> mapData { Data("Recognized route: \($0)".utf8) }
+        >-> writeHeader(.contentType(.plain))
+        >-> closeHeaders
+        >-> end
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/")!))).perform(),
@@ -36,10 +43,17 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   func testRoute_UnrecognizedWithCustomNotFound() {
     let router = Route.iso.home <¢> get <% end
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       route(router: router, notFound: notFound(respond(text: "Unrecognized route!")))
         <| writeStatus(.ok)
-        >-> { $0 |> respond(text: "Recognized route: \($0.data)") }
+
+        >>> map(map { Data("Recognized route: \($0)".utf8) })
+        // FIXME: for snapshot to render body
+        >-> writeHeader(.contentType(.plain))
+        >-> { $0 |> writeHeader(.contentLength($0.data.right!.count)) }
+
+        >-> closeHeaders
+        >-> end
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))).perform(),

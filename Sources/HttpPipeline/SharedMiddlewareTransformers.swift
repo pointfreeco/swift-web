@@ -12,19 +12,19 @@ import Prelude
 ///   - protect: An optional predicate that can further control what values of `A` are protected by basic auth.
 ///   - failure: An optional middleware to run in the case that authentication fails.
 /// - Returns: Transformed middleware
-public func basicAuth<A>(
+public func basicAuth<E, A>(
   user: String,
   password: String,
   realm: String? = nil,
   protect: @escaping (A) -> Bool = const(true),
-  failure: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data> = respond(text: "Please authenticate.")
+  failure: @escaping Middleware<HeadersOpen, ResponseEnded, E, E, A, Data> = respond(text: "Please authenticate.")
   )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data> {
 
     return { middleware in
       return { conn in
-        guard protect(conn.data)
+        guard conn.data.map(protect).right != .some(false)
           && !validateBasicAuth(user: user, password: password, request: conn.request)
           else {
             return middleware(conn)
@@ -40,25 +40,10 @@ public func basicAuth<A>(
     }
 }
 
-public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+public func notFound<E, A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, E, E, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data> {
     return writeStatus(.notFound)
       >-> middleware
-}
-
-public func contentLength<A, B>(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, B>
-  )
-  -> Middleware<StatusLineOpen, ResponseEnded, A, B> {
-
-    return { conn in
-      middleware(conn)
-        .flatMap { conn in
-          conn
-            |> \.response.headers %~ { $0 + [.contentLength(conn.response.body.count)] }
-            |> pure
-      }
-    }
 }
 
 /// Redirects requests whose hosts are not one of an allowed list. This can be useful for redirecting a
@@ -68,12 +53,12 @@ public func contentLength<A, B>(
 ///   - allowedHosts: A list of hosts that are allowed through without redirection.
 ///   - canonicalHost: The canonical host to redirect to if the host is not allowed.
 /// - Returns:
-public func redirectUnrelatedHosts<A>(
+public func redirectUnrelatedHosts<E, A>(
   allowedHosts: [String],
   canonicalHost: String
   )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data> {
 
     return { middleware in
       return { conn in
@@ -88,16 +73,16 @@ public func redirectUnrelatedHosts<A>(
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> end
+              >-> ignoreBody
           }
           ?? middleware(conn)
       }
     }
 }
 
-public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+public func requireHerokuHttps<E, A>(allowedInsecureHosts: [String])
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data> {
 
     return { middleware in
       return { conn in
@@ -113,16 +98,16 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> end
+              >-> ignoreBody
           }
           ?? middleware(conn)
       }
     }
 }
 
-public func requireHttps<A>(allowedInsecureHosts: [String])
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+public func requireHttps<E, A>(allowedInsecureHosts: [String])
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, E, E, A, Data> {
 
     return { middleware in
       return { conn in
@@ -136,7 +121,7 @@ public func requireHttps<A>(allowedInsecureHosts: [String])
             conn
               |> writeStatus(.movedPermanently)
               >-> writeHeader(.location($0.absoluteString))
-              >-> end
+              >-> ignoreBody
           }
           ?? middleware(conn)
       }
@@ -164,9 +149,9 @@ private func makeHttps(url: URL) -> URL? {
 /// Transforms middleware into one that logs the request info that comes through and logs the amount of
 /// time the request took.
 public func requestLogger(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>
+  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data>
   )
-  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
+  -> Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> {
     return requestLogger(logger: { print($0) })(middleware)
 }
 
@@ -176,8 +161,8 @@ public func requestLogger(
 ///
 /// - Parameter logger: A function for logging strings.
 public func requestLogger(logger: @escaping (String) -> Void)
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> {
 
     return { middleware in
       return { conn in

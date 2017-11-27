@@ -9,7 +9,7 @@ private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 
 class SharedMiddlewareTransformersTests: XCTestCase {
   func testBasicAuth_Unauthorized() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -18,7 +18,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Unauthorized_ProtectedPredicate() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", protect: const(false))
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -27,7 +27,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Unauthorized_Realm() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", realm: "Point-Free")
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -36,7 +36,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Unauthorized_CustomFailure() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       basicAuth(
         user: "Hello",
         password: "World",
@@ -49,7 +49,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
   }
 
   func testBasicAuth_Authorized() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
         >-> respond(html: "<p>Hello, world</p>")
@@ -62,19 +62,6 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: middleware(conn).perform())
   }
 
-  func testContentLengthMiddlewareTransformer() {
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
-      contentLength
-        <| writeStatus(.ok)
-        >-> writeHeader(.contentType(.html))
-        >-> closeHeaders
-        >-> map(const(Data())) >>> pure
-        >-> send(Data("<p>Hello, world</p>".utf8))
-        >-> end
-
-    assertSnapshot(matching: middleware(conn).perform())
-  }
-
   func testRedirectUnrelatedHosts() {
     let allowedHosts = [
       "www.pointfree.co",
@@ -83,7 +70,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       "0.0.0.0",
     ]
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       redirectUnrelatedHosts(allowedHosts: allowedHosts, canonicalHost: "www.pointfree.co")
         <| writeStatus(.ok)
         >-> writeHeader(.contentType(.html))
@@ -113,7 +100,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       "0.0.0.0",
       ]
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       requireHerokuHttps(allowedInsecureHosts: allowedInsecureHosts)
         <| writeStatus(.ok)
         >-> writeHeader(.contentType(.html))
@@ -122,7 +109,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >-> send(Data("<p>Hello, world</p>".utf8))
         >-> end
 
-    func securedConnection(from request: URLRequest) -> Conn<StatusLineOpen, Prelude.Unit> {
+    func securedConnection(from request: URLRequest) -> Conn<StatusLineOpen, Never, Prelude.Unit> {
       var result = request
       result.allHTTPHeaderFields = result.allHTTPHeaderFields ?? [:]
       result.allHTTPHeaderFields?["X-Forwarded-Proto"] = "https"
@@ -147,7 +134,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       "0.0.0.0",
       ]
 
-    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Never, Never, Prelude.Unit, Data> =
       requireHttps(allowedInsecureHosts: allowedInsecureHosts)
         <| writeStatus(.ok)
         >-> writeHeader(.contentType(.html))
