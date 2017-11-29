@@ -130,15 +130,15 @@ extension Stylesheet: Monoid {
   }
 }
 
-func key<V: Val>(_ key: Key<V>, _ a: V) -> Stylesheet {
+public func key<V: Val>(_ key: Key<V>, _ a: V) -> Stylesheet {
   return rule(.property(cast(key), a.value()))
 }
 
-func key<V: Val>(_ key: Key<V>) -> (V) -> Stylesheet {
+public func key<V: Val>(_ key: Key<V>) -> (V) -> Stylesheet {
   return { rule(.property(cast(key), $0.value())) }
 }
 
-func prefixed<A: Val>(_ prefixed: Prefixed, _ a: A) -> Stylesheet {
+public func prefixed<A: Val>(_ prefixed: Prefixed, _ a: A) -> Stylesheet {
   return key(Key(prefixed), a.value())
 }
 

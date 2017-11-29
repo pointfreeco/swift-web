@@ -85,6 +85,7 @@ public struct Position: Val, Other, Inherit {
   public static let absolute: Position = "absolute"
   public static let fixed: Position = "fixed"
   public static let relative: Position = "relative"
+  public static let sticky: Position = "sticky"
 }
 
 extension Position: ExpressibleByStringLiteral {
@@ -111,9 +112,11 @@ public struct Display: Val, Other, None, Inherit {
 
   public static let block: Display = "block"
   public static let flex: Display = "flex"
+  public static let inline: Display = "inline"
   public static let inlineFlex: Display = "inline-flex"
   public static let inlineBlock: Display = "inline-block"
   public static let table: Display = "table"
+  public static let tableCell: Display = "table-cell"
 }
 
 extension Display: ExpressibleByStringLiteral {
@@ -184,4 +187,39 @@ public func overflow(x: Overflow? = nil, y: Overflow? = nil) -> Stylesheet {
            y.map { key("overflow-y", $0) } ]
     |> catOptionals
     |> concat
+}
+
+public struct Clip: Val, Other, Auto, Inherit {
+  let clip: Css.Value
+
+  public func value() -> Css.Value {
+    return self.clip
+  }
+
+  public static func other(_ other: Css.Value) -> Clip {
+    return .init(clip: other)
+  }
+
+  public static let auto = Clip(clip: "auto")
+  public static let inherit = Clip(clip: "inherit")
+}
+
+public func clip(_ clip: Clip) -> Stylesheet {
+  return key("clip")(clip)
+}
+
+public func rect(top: Css.Size, right: Css.Size, bottom: Css.Size, left: Css.Size) -> Clip {
+  return Clip(
+    clip: Value(
+      [
+        "rect(",
+        top.value().unValue,
+        right.value().unValue,
+        bottom.value().unValue,
+        left.value().unValue,
+        ")"
+        ]
+        .concat()
+    )
+  )
 }
