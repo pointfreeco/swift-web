@@ -35,7 +35,7 @@ test-ios: xcodeproj
 	set -o pipefail && \
 	xcodebuild test \
 		-scheme Web-Package \
-		-destination platform="iOS Simulator,name=iPhone 8,OS=11.0" \
+		-destination platform="iOS Simulator,name=iPhone 8,OS=11.1" \
 		| xcpretty
 
 test-swift:
