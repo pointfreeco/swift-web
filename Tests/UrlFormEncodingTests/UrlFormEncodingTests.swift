@@ -1,8 +1,6 @@
-import HttpPipeline
-import HttpPipelineTestSupport
-import Optics
 import Prelude
 import SnapshotTesting
+import UrlFormEncoding
 import XCTest
 
 final class UrlFormEncoderTests: XCTestCase {

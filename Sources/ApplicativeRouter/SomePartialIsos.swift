@@ -2,6 +2,7 @@ import Either
 import Foundation
 import Optics
 import Prelude
+import UrlFormEncoding
 
 extension Optional {
   public enum iso {
@@ -143,7 +144,5 @@ private func formEncodedStringToFields(_ body: String) -> [String: String] {
 }
 
 private func fieldsToFormEncodedString(_ data: [String: String]) -> String {
-  let t = URLComponents()
-    |> \.queryItems .~ data.map(URLQueryItem.init(name:value:))
-  return t.query ?? ""
+  return urlFormEncode(value: data)
 }

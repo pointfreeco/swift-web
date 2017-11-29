@@ -1,0 +1,11 @@
+bio=!*'();:@%26%3D+$,/%3F%%23[]%20^&
+favorite_colors[0]=blue&
+favorite_colors[1]=green&
+id=42&
+location[id]=12&
+location[name]=Brooklyn&
+location[neighborhoods][0][id]=2&
+location[neighborhoods][0][name]=Williamsburg&
+location[neighborhoods][1][id]=3&
+location[neighborhoods][1][name]=Bed-Stuy&
+name=Blob%20McBlob
