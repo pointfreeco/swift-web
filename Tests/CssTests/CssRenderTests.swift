@@ -2,7 +2,7 @@ import XCTest
 import Prelude
 import Css
 
-class RenderTests: XCTestCase {
+class CssRenderTests: XCTestCase {
 
   func testRenderSelector_StandardCombinationOfElemIdClassPseudo() {
     let css = (a & .id("hello") & .`class`("world") & .pseudo(.firstChild)) % (

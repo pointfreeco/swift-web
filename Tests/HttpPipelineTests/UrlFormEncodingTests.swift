@@ -23,7 +23,8 @@ final class UrlFormEncoderTests: XCTestCase {
             ]
           ]
         ]
-        ).replacingOccurrences(of: "&", with: "&\n")
+        )
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -36,7 +37,8 @@ final class UrlFormEncoderTests: XCTestCase {
           "empty_array": [],
           "empty_object": [:],
           ]
-        ).replacingOccurrences(of: "&", with: "&\n")
+        )
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -46,7 +48,7 @@ final class UrlFormEncoderTests: XCTestCase {
         values: ["Functions & Purity", "Monoids", "Applicatives"],
         rootKey: "episodes"
         )
-        .replacingOccurrences(of: "&", with: "&\n")
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -60,7 +62,7 @@ final class UrlFormEncoderTests: XCTestCase {
         ],
         rootKey: "episodes"
         )
-        .replacingOccurrences(of: "&", with: "&\n")
+        .sortedByFormEncodedKey()
     )
   }
 
@@ -72,8 +74,19 @@ final class UrlFormEncoderTests: XCTestCase {
     )
 
     assertSnapshot(
-      matching: urlFormEncode(value: episode).replacingOccurrences(of: "&", with: "&\n")
+      matching: urlFormEncode(value: episode)
+        .sortedByFormEncodedKey()
     )
+  }
+}
+
+private extension String {
+  /// Helper to make sure that form encoded strings are in a well-defined order.
+  /// TODO: need a more robust solution since key/value pairs inside this string should be order sensitive.
+  func sortedByFormEncodedKey() -> String {
+    return self.split(separator: "&")
+      .sorted()
+      .joined(separator: "&\n")
   }
 }
 

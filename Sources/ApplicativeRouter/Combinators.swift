@@ -75,22 +75,22 @@ public let dataBody = Router<Data>(
 public let stringBody = dataBody.map(PartialIso.data.inverted)
 
 /// Processes the body data of the request into form data of (key, value) pairs.
-public let formDataBody = stringBody.map(.formEncodedFields)
+public let formEncodedBodyFields = stringBody.map(.formEncodedFields)
 
 public func formField(_ name: String) -> Router<String> {
-  return formDataBody.map(key(name))
+  return formEncodedBodyFields.map(key(name))
 }
 
 public func formField<A>(_ name: String, _ f: PartialIso<String, A>) -> Router<A> {
-  return formDataBody.map(key(name)).map(f)
+  return formEncodedBodyFields.map(key(name)).map(f)
 }
 
 public func formFields(_ names: String...) -> Router<[String: String]> {
-  return formDataBody.map(keys(names))
+  return formEncodedBodyFields.map(keys(names))
 }
 
 public func formDataBody<A: Codable>(_ type: A.Type) -> Router<A> {
-  return ApplicativeRouter.formDataBody
+  return ApplicativeRouter.formEncodedBodyFields
     .map(jsonDictionaryToData >>> PartialIso.codableToData.inverted)
 }
 

@@ -11,6 +11,7 @@
   Content-Length: 19
   Content-Type: text/html; charset=utf8
   Set-Cookie: foo=bar; Domain=www.pointfree.co
+  Set-Cookie: foo=bar; Domain=www.pointfree.co; HttpOnly; Secure
   Set-Cookie: foo=bar; Expires=Fri, 13 Feb 2009 23:31:30 GMT
   Set-Cookie: foo=bar; HttpOnly
   Set-Cookie: foo=bar; Max-Age=3600
@@ -18,6 +19,5 @@
   Set-Cookie: foo=bar; SameSite=Lax
   Set-Cookie: foo=bar; SameSite=String
   Set-Cookie: foo=bar; Secure
-  Set-Cookie: foo=bar; Secure; Domain=www.pointfree.co; HttpOnly
 
   <p>Hello, world</p>

@@ -12,7 +12,7 @@ public struct Router<A> {
   let template: (A) -> RequestData?
 
   public func match(request: URLRequest) -> A? {
-    return (self <% end).parse(route(from: request))?.match
+    return (self <% end).parse(requestData(from: request))?.match
   }
 
   public func match(url: URL) -> A? {
@@ -134,7 +134,7 @@ extension Router {
   }
 }
 
-private func route(from request: URLRequest) -> RequestData {
+private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let components = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })
