@@ -21,8 +21,8 @@ let package = Package(
     .library(name: "MediaType", targets: ["MediaType"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("1d002b4")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("d9e4781")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("7bb13df")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("c510e7d")),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.3.0")),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.21"))
   ],
