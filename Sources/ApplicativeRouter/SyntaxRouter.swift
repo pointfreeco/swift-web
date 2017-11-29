@@ -134,7 +134,7 @@ extension Router {
   }
 }
 
-func requestData(from request: URLRequest) -> RequestData {
+private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let components = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })

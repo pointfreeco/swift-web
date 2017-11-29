@@ -1,12 +1,10 @@
-@testable import ApplicativeRouter
+import ApplicativeRouter
 import Either
 import Optics
 import Prelude
 import XCTest
 import SnapshotTesting
 import HttpPipelineTestSupport
-
-import Foundation
 
 class SyntaxRouterTests: XCTestCase {
   func testRoot() {
