@@ -1,6 +1,0 @@
-blurb=Everything%20you%20wanted%20to%20know%20about%20functions.&
-categories[0]=Functions&
-categories[1]=Composition&
-categories[2]=Curry&
-id=100&
-title=Introduction%20to%20Functions

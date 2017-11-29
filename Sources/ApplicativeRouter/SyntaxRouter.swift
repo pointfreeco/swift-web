@@ -171,9 +171,7 @@ private func urlComponents(from route: RequestData) -> URLComponents {
   if !route.query.isEmpty {
     components.queryItems = route.query
       .sorted { lhs, rhs in lhs.key < rhs.key }
-      // NB: Doing point free here causes this runtime crash: https://bugs.swift.org/browse/SR-6398
-//      .map { URLQueryItem(name: $0, value: $1) }
-    .map(URLQueryItem.init(name:value:))
+      .map(URLQueryItem.init(name:value:))
   }
 
   return components
