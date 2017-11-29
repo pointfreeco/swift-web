@@ -55,11 +55,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
             |> catOptionals
     )
 
-    #if os(Linux)
-      assertSnapshot(matching: middleware(conn).perform(), named: "linux")
-    #else
-      assertSnapshot(matching: middleware(conn).perform(), named: "macos")
-    #endif
+    assertSnapshot(matching: middleware(conn).perform())
 
     XCTAssertEqual(
       episode,
@@ -128,11 +124,7 @@ cb4db8ac9390ac810837809f11bc6803\
             |> catOptionals
     )
 
-    #if os(Linux)
-      assertSnapshot(matching: middleware(conn).perform(), named: "linux")
-    #else
-      assertSnapshot(matching: middleware(conn).perform(), named: "macos")
-    #endif
+    assertSnapshot(matching: middleware(conn).perform())
 
     XCTAssertEqual(
       episode,
