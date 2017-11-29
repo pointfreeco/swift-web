@@ -34,6 +34,7 @@ public struct FontStyle: Val, Inherit {
   }
 
   public static let inherit = FontStyle(style: .inherit)
+  public static let italic = FontStyle(style: "italic")
 }
 
 public struct FontWeight: Val, Inherit, Initial, Normal {
