@@ -1,0 +1,11 @@
+▿ Step
+  HeadersOpen
+
+▿ Request
+  GET /
+
+  (Data, 0 bytes)
+
+▿ Response
+  Status 200 OK
+  Set-Cookie: session=eyJuYW1lIjoiQWxsIEFib3V0IEZ1bmN0aW9ucyIsImlkIjo0Mn0=--BZ+ijKqD990BYrch0bKy/2gMakD664WOGDofVkn2F+I=; HttpOnly
