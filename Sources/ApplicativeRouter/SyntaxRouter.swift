@@ -137,12 +137,11 @@ extension Router {
 private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
-  var query = [String: String]()
-
   guard let url = request.url else {
     return .init(method: method, path: [], query: [:], body: request.httpBody)
   }
 
+  var query: [String: String] = [:]
   url.query?.split(separator: "&").forEach {
     let pair = $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
     query[pair[0].removingPercentEncoding ?? ""] = pair[1].removingPercentEncoding ?? ""
