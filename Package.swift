@@ -19,6 +19,7 @@ let package = Package(
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
     .library(name: "MediaType", targets: ["MediaType"]),
+    .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("7bb13df")),
@@ -27,7 +28,7 @@ let package = Package(
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.21"))
   ],
   targets: [
-    .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude"]),
+    .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude", "UrlFormEncoding"]),
     .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Deriving", "Optics", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "ApplicativeRouterHttpPipelineSupport",
@@ -65,5 +66,8 @@ let package = Package(
     .target(name: "HttpPipelineTestSupport", dependencies: ["HttpPipeline", "MediaType", "SnapshotTesting"]),
 
     .target(name: "MediaType", dependencies: []),
+
+    .target(name: "UrlFormEncoding", dependencies: ["Prelude"]),
+    .testTarget(name: "UrlFormEncodingTests", dependencies: ["UrlFormEncoding", "SnapshotTesting"]),
   ]
 )

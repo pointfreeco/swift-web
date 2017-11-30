@@ -80,15 +80,9 @@ class SyntaxRouterTests: XCTestCase {
       |> \.httpBody .~ "email=hello@pointfree.co".data(using: .utf8)
 
     XCTAssertNotNil(request.httpBody)
-
     XCTAssertEqual(route, router.match(request: request))
-
-    #if !os(Linux)
-      // NB: Both of these crash with:
-      // Fatal error: Constant strings cannot be deallocated: file Foundation/NSCFString.swift, line 118
-      XCTAssertEqual(request, router.request(for: route))
-      XCTAssertEqual("signup", router.templateUrl(for: route)?.absoluteString)
-    #endif
+    XCTAssertEqual(request, router.request(for: route))
+    XCTAssertEqual("signup", router.templateUrl(for: route)?.absoluteString)
   }
 
   func testPostBodyJsonDecodable() {
@@ -102,14 +96,8 @@ class SyntaxRouterTests: XCTestCase {
       |> \.httpBody .~ (try? JSONEncoder().encode(episode))
 
     XCTAssertEqual(route, router.match(request: request))
-
     XCTAssertNotNil(request.httpBody)
-
-    #if !os(Linux)
-      // NB: Crashes with:
-      // Fatal error: Constant strings cannot be deallocated: file Foundation/NSCFString.swift, line 118
-      XCTAssertEqual(request, router.request(for: route))
-    #endif
+    XCTAssertEqual(request, router.request(for: route))
   }
 
   func testSimpleQueryParams() {
