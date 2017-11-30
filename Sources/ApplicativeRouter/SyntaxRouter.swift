@@ -137,14 +137,18 @@ extension Router {
 private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
-  guard let components = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })
-    else { return .init(method: method, path: [], query: [:], body: request.httpBody) }
-
-  let path = components.path.components(separatedBy: "/")
-    |> mapOptional { $0.isEmpty ? nil : $0 }
+  guard let url = request.url else {
+    return .init(method: method, path: [], query: [:], body: request.httpBody)
+  }
 
   var query: [String: String] = [:]
-  components.queryItems?.forEach { query[$0.name] = $0.value ?? "" }
+  url.query?.split(separator: "&").forEach {
+    let pair = $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+    query[String(pair[0]).removingPercentEncoding ?? ""] = String(pair[1]).removingPercentEncoding ?? ""
+  }
+
+  let path = url.path.components(separatedBy: "/")
+    |> mapOptional { $0.isEmpty ? nil : $0 }
 
   return .init(method: method, path: path, query: query, body: request.httpBody)
 }
