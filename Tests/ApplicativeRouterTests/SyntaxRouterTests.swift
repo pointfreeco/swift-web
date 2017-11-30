@@ -127,4 +127,17 @@ class SyntaxRouterTests: XCTestCase {
       router.templateUrl(for: route)?.absoluteString
     )
   }
+
+  func testFailure() {
+    let urlString = "http://localhost:8080/foo?bar=&bar=baz"
+    let url = URL(string: urlString)!
+
+    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+
+    var query = [String: String]()
+    components?.queryItems?.forEach {
+      query[$0.name] = $0.value ?? ""
+    }
+    XCTAssertEqual(["bar": "baz"], query)
+  }
 }
