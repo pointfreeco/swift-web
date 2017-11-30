@@ -144,7 +144,7 @@ private func requestData(from request: URLRequest) -> RequestData {
   var query: [String: String] = [:]
   url.query?.split(separator: "&").forEach {
     let pair = $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-    query[pair[0].removingPercentEncoding ?? ""] = pair[1].removingPercentEncoding ?? ""
+    query[String(pair[0]).removingPercentEncoding ?? ""] = String(pair[1]).removingPercentEncoding ?? ""
   }
 
   let path = url.path.components(separatedBy: "/")
