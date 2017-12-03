@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<playground version='6.0' target-platform='macos' display-mode='raw'>
+<playground version='6.0' target-platform='macos' display-mode='raw' executeOnSourceChanges='false'>
     <pages>
-        <page name='New-Router'/>
-        <page name='Untitled Page'/>
+        <page name='Html'/>
+        <page name='Css'/>
+        <page name='HttpPipeline'/>
     </pages>
 </playground>
