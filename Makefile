@@ -16,9 +16,8 @@ xcodeproj:
 bootstrap: common-crypto-mm xcodeproj
 
 common-crypto-mm:
-	-@mkdir "$(COMMON_CRYPTO_PATH)" || true
-	-@touch "$(COMMON_CRYPTO_MODULE_PATH)" || true
-	-@echo "$$COMMON_CRYPTO_MODULE_MAP" > "$(COMMON_CRYPTO_MODULE_PATH)"
+	-@mkdir -p "$(COMMON_CRYPTO_PATH)"
+	-@echo "$$COMMON_CRYPTO_MODULE_MAP" > "$(COMMON_CRYPTO_MODULE_MAP_PATH)"
 
 linux-main:
 	sourcery \
@@ -54,7 +53,7 @@ test-all: test-linux test-mac test-ios
 SDK_PATH = $(shell xcrun --show-sdk-path)
 FRAMEWORKS_PATH = $(SDK_PATH)/System/Library/Frameworks
 COMMON_CRYPTO_PATH = $(FRAMEWORKS_PATH)/CommonCrypto.framework
-COMMON_CRYPTO_MODULE_PATH = $(COMMON_CRYPTO_PATH)/module.map
+COMMON_CRYPTO_MODULE_MAP_PATH = $(COMMON_CRYPTO_PATH)/module.map
 define COMMON_CRYPTO_MODULE_MAP
 module CommonCrypto [system] {
   header "$(SDK_PATH)/usr/include/CommonCrypto/CommonCrypto.h"
