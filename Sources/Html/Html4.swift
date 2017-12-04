@@ -26,11 +26,11 @@ public func border<T>(_ value: Int) -> Attribute<T> {
   return .init("border", value)
 }
 
-public func cellpadding<T>(_ value: Int) -> Attribute<T> {
+public func cellpadding(_ value: Int) -> Attribute<Element.Table> {
   return .init("cellpadding", value)
 }
 
-public func cellspacing<T>(_ value: Int) -> Attribute<T> {
+public func cellspacing(_ value: Int) -> Attribute<Element.Table> {
   return .init("cellspacing", value)
 }
 
