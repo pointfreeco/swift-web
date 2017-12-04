@@ -159,9 +159,6 @@ private func request(from data: RequestData) -> URLRequest? {
 }
 
 private func request(from data: RequestData, base: URL?) -> URLRequest? {
-
-
-
   // Due to this bug https://bugs.swift.org/browse/SR-6527, if `URLComponents` doesn't contain any path or
   // query information, it will failure to create a `URL`.
   return
