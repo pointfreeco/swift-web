@@ -52,7 +52,7 @@ extension Element {
   public enum H6 {}
   public enum Head {}
   public enum Header {}
-  public enum Html {}
+  public enum Html: HasXmlns {}
   public enum I {}
   public enum Iframe: HasHeight, HasName, HasSrc, HasWidth {}
   public enum Img: HasAlt, HasCrossorigin, HasHeight, HasSrc, HasSrcset, HasWidth {}
@@ -168,7 +168,7 @@ public func audio(
   _ transparent: [Node] = [])
   -> Node {
 
-    return node("audio", attribs, content.map(get(\.node)) + transparent)
+    return node("audio", attribs, content.map(^\.node) + transparent)
 }
 
 public func audio(_ content: [ChildOf<Element.Audio>], _ transparent: [Node] = []) -> Node {
@@ -269,7 +269,7 @@ public func col(_ attribs: [Attribute<Element.Col>]) -> ChildOf<Element.Colgroup
 public func colgroup(_ attribs: [Attribute<Element.Colgroup>], _ content: [ChildOf<Element.Colgroup>])
   -> ChildOf<Element.Table> {
 
-    return .init(node("colgroup", attribs, content.map(get(\.node))))
+    return .init(node("colgroup", attribs, content.map(^\.node)))
 }
 
 public func colgroup(_ content: [ChildOf<Element.Colgroup>]) -> ChildOf<Element.Table> {
@@ -318,7 +318,7 @@ public func div(_ content: [Node]) -> Node {
 }
 
 public func dl(_ attribs: [Attribute<Element.Dl>], _ content: [ChildOf<Element.Dl>]) -> Node {
-  return node("dl", attribs, content.map(get(\.node)))
+  return node("dl", attribs, content.map(^\.node))
 }
 
 public func dl(_ content: [ChildOf<Element.Dl>]) -> Node {
@@ -364,7 +364,7 @@ public func figcaption(_ content: [Node]) -> ChildOf<Element.Figure> {
 }
 
 public func figure(_ attribs: [Attribute<Element.Figure>], _ content: [ChildOf<Element.Figure>]) -> Node {
-  return node("figure", attribs, content.map(get(\.node)))
+  return node("figure", attribs, content.map(^\.node))
 }
 
 public func figure(_ content: [ChildOf<Element.Figure>]) -> Node {
@@ -436,7 +436,7 @@ public func h6(_ content: [Node]) -> Node {
 }
 
 public func head(_ content: [ChildOf<Element.Head>]) -> ChildOf<Element.Html> {
-  return .init(node("head", content.map(get(\.node))))
+  return .init(node("head", content.map(^\.node)))
 }
 
 public func header(_ attribs: [Attribute<Element.Header>], _ content: [Node]) -> Node {
@@ -450,7 +450,7 @@ public func header(_ content: [Node]) -> Node {
 public let hr: Node = node("hr", nil)
 
 public func html(_ attribs: [Attribute<Element.Html>], _ content: [ChildOf<Element.Html>]) -> Node {
-  return node("html", attribs, content.map(get(\.node)))
+  return node("html", attribs, content.map(^\.node))
 }
 
 public func html(_ content: [ChildOf<Element.Html>]) -> Node {
@@ -536,7 +536,7 @@ public func main(_ content: [Node]) -> Node {
 public func map(name: String, _ attribs: [Attribute<Element.Map>], _ content: [ChildOf<Element.Map>])
   -> Node {
 
-    return node("map", [Html.name(name)] + attribs, content.map(get(\.node)))
+    return node("map", [Html.name(name)] + attribs, content.map(^\.node))
 }
 
 public func map(name: String, _ content: [ChildOf<Element.Map>]) -> Node {
@@ -687,11 +687,11 @@ public func nav(_ content: [Node]) -> Node {
 
 // TODO: Required attribute "data" or "type"
 public func object(_ attribs: [Attribute<Element.Object>], _ content: [ChildOf<Element.Object>]) -> Node {
-  return node("object", attribs, content.map(get(\.node)))
+  return node("object", attribs, content.map(^\.node))
 }
 
 public func ol(_ attribs: [Attribute<Element.Ol>], _ content: [ChildOf<Element.Ol>]) -> Node {
-  return node("ol", attribs, content.map(get(\.node)))
+  return node("ol", attribs, content.map(^\.node))
 }
 
 public func ol(_ content: [ChildOf<Element.Ol>]) -> Node {
@@ -700,7 +700,7 @@ public func ol(_ content: [ChildOf<Element.Ol>]) -> Node {
 
 public func optgroup(_ attribs: [Attribute<Element.Optgroup>], _ content: [ChildOf<Element.Optgroup>])
   -> Node {
-    return node("optgroup", attribs, content.map(get(\.node)))
+    return node("optgroup", attribs, content.map(^\.node))
 }
 
 public func optgroup(_ content: [ChildOf<Element.Optgroup>]) -> Node {
@@ -744,7 +744,7 @@ public func picture(
   _ imgAttribs: [Attribute<Element.Img>] = [])
   -> Node {
 
-    return node("picture", attribs, content.map(get(\.node)) + [img(src: src, alt: alt, imgAttribs)])
+    return node("picture", attribs, content.map(^\.node) + [img(src: src, alt: alt, imgAttribs)])
 }
 
 public func picture(
@@ -822,7 +822,7 @@ public func section(_ content: [Node]) -> Node {
 }
 
 public func select(_ attribs: [Attribute<Element.Select>], _ content: [ChildOf<Element.Select>]) -> Node {
-  return node("select", attribs, content.map(get(\.node)))
+  return node("select", attribs, content.map(^\.node))
 }
 
 public func select(_ content: [ChildOf<Element.Select>]) -> Node {
@@ -906,11 +906,11 @@ public func svg(_ content: StaticString) -> Node {
   return node("svg", [.text(EncodedString(content))])
 }
 
-public func table(_ attribs: [Attribute<Element.Table>], _ content: [Node]) -> Node {
-  return node("table", attribs, content)
+public func table(_ attribs: [Attribute<Element.Table>], _ content: [ChildOf<Element.Table>]) -> Node {
+  return node("table", attribs, content.map(^\.node))
 }
 
-public func table(_ content: [Node]) -> Node {
+public func table(_ content: [ChildOf<Element.Table>]) -> Node {
   return table([], content)
 }
 
@@ -975,11 +975,11 @@ public func title(_ string: String) -> ChildOf<Element.Head> {
   return .init(node("title", [text(string)]))
 }
 
-public func tr<T: ContainsTr>(_ attribs: [Attribute<Element.Tr>], _ content: [Node]) -> ChildOf<T> {
-  return .init(node("tr", attribs, content))
+public func tr<T: ContainsTr>(_ attribs: [Attribute<Element.Tr>], _ content: [ChildOf<Element.Tr>]) -> ChildOf<T> {
+  return .init(node("tr", attribs, content.map(^\.node)))
 }
 
-public func tr<T: ContainsTr>(_ content: [Node]) -> ChildOf<T> {
+public func tr<T: ContainsTr>(_ content: [ChildOf<Element.Tr>]) -> ChildOf<T> {
   return tr([], content)
 }
 
@@ -996,7 +996,7 @@ public func u(_ content: [Node]) -> Node {
 }
 
 public func ul(_ attribs: [Attribute<Element.Ul>], _ content: [ChildOf<Element.Ul>]) -> Node {
-  return node("ul", attribs, content.map(get(\.node)))
+  return node("ul", attribs, content.map(^\.node))
 }
 
 public func ul(_ content: [ChildOf<Element.Ul>]) -> Node {
@@ -1017,7 +1017,7 @@ public func video(
   _ transparent: [Node] = [])
   -> Node {
 
-    return node("video", attribs, content.map(get(\.node)) + transparent)
+    return node("video", attribs, content.map(^\.node) + transparent)
 }
 
 public func video(_ content: [ChildOf<Element.Video>], _ transparent: [Node]) -> Node {

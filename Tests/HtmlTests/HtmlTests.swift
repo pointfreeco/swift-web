@@ -3,6 +3,7 @@ import Html
 import HtmlCssSupport
 import HtmlPrettyPrint
 import Prelude
+import SnapshotTesting
 import XCTest
 
 class HTMLTests: XCTestCase {
@@ -177,5 +178,32 @@ class HTMLTests: XCTestCase {
     ])
 
     XCTAssertEqual("<!DOCTYPE html><html><head><title>Title</title></head></html>", Html.render(doc))
+  }
+
+  func testTables() {
+    let doc = html([xmlns("http://www.w3.org/1999/xhtml")], [
+      head([
+        meta([httpEquiv(.contentType), content("text/html; charset=UTF-8")]),
+        title(""),
+        style("")
+        ]),
+      body([
+        table([border(0), cellpadding(0), cellspacing(0), height(.pct(100)), width(.pct(100)), id("bodyTable")], [
+          tr([
+            td([align(.center), valign(.top)], [
+              table([border(0), cellpadding(20), cellspacing(0), width(.px(600)), id("emailContainer")], [
+                tr([
+                  td([align(.center), valign(.top)], [
+                    "This is where my content goes."
+                    ])
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ])
+      ])
+
+    assertSnapshot(matching: doc)
   }
 }
