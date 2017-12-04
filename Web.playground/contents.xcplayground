@@ -4,5 +4,6 @@
         <page name='Html'/>
         <page name='Css'/>
         <page name='HttpPipeline'/>
+        <page name='ApplicativeRouter'/>
     </pages>
 </playground>
