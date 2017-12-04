@@ -93,7 +93,8 @@ extension HTMLTests {
     ("testHtmlInput", testHtmlInput),
     ("testScriptTag", testScriptTag),
     ("testPrettyRender", testPrettyRender),
-    ("testDocument", testDocument)
+    ("testDocument", testDocument),
+    ("testTables", testTables)
   ]
 }
 extension HtmlRenderTests {
@@ -178,6 +179,7 @@ extension SupportTests {
 }
 extension SyntaxRouterTests {
   static var allTests: [(String, (SyntaxRouterTests) -> () throws -> Void)] = [
+    ("testHome", testHome),
     ("testRoot", testRoot),
     ("testRequest_WithBaseUrl", testRequest_WithBaseUrl),
     ("testAbsoluteString", testAbsoluteString),

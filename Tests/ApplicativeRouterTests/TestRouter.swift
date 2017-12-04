@@ -4,6 +4,7 @@ import Either
 import Prelude
 
 enum Routes {
+  case home
   case root
   case pathComponents(param: Either<String, Int>, commentId: Int)
   case postBodyField(email: String)
@@ -14,8 +15,12 @@ enum Routes {
 let router: Router<Routes> = [
 
   // /home
-  Routes.iso.root
+  Routes.iso.home
     <¢> get %> lit("home") %> end,
+
+  // /
+  Routes.iso.root
+    <¢> get %> end,
 
   // /home/episodes/:string_or_int/comments/:int
   Routes.iso.pathComponents
@@ -40,7 +45,7 @@ let router: Router<Routes> = [
 extension Routes: Equatable {
   static func ==(lhs: Routes, rhs: Routes) -> Bool {
     switch (lhs, rhs) {
-    case (.root, .root):
+    case (.home, .home), (.root, .root):
       return true
 
     case let (.pathComponents(lhs0, lhs1), .pathComponents(rhs0, rhs1)):
@@ -55,7 +60,7 @@ extension Routes: Equatable {
     case let (.simpleQueryParams(lhs0, lhs1, lhs2), .simpleQueryParams(rhs0, rhs1, rhs2)):
       return lhs0 == rhs0 && lhs1 == rhs1 && lhs2 == rhs2
 
-    case (.root, _), (.pathComponents, _), (.postBodyField, _), (.postBodyJsonDecodable, _),
+    case (.home, _), (.root, _), (.pathComponents, _), (.postBodyField, _), (.postBodyJsonDecodable, _),
          (.simpleQueryParams, _):
       return false
     }
@@ -64,6 +69,11 @@ extension Routes: Equatable {
 
 extension Routes {
   enum iso {
+    static let home = parenthesize <| PartialIso(
+      apply: const(.some(.home)),
+      unapply: { $0 == .home ? unit : nil }
+    )
+
     static let root = parenthesize <| PartialIso(
       apply: const(.some(.root)),
       unapply: { $0 == .root ? unit : nil }

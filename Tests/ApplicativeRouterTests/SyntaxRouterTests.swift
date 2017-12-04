@@ -7,15 +7,27 @@ import SnapshotTesting
 import HttpPipelineTestSupport
 
 class SyntaxRouterTests: XCTestCase {
-  func testRoot() {
+  func testHome() {
     let request = URLRequest(url: URL(string: "home")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
+    let route = Routes.home
+
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: route))
+    XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
+  }
+
+  func testRoot() {
+    let baseUrl = URL(string: "https://www.pointfree.co")!
+    let request = URLRequest(url: baseUrl)
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
       |> \.httpMethod .~ "get"
     let route = Routes.root
 
     XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: route))
-    XCTAssertEqual("home", router.templateUrl(for: route)?.absoluteString)
+    XCTAssertEqual(request, router.request(for: route, base: baseUrl))
+    XCTAssertEqual("/", router.templateUrl(for: route)?.absoluteString)
   }
 
   func testRequest_WithBaseUrl() {
@@ -24,14 +36,14 @@ class SyntaxRouterTests: XCTestCase {
     //     due to a weird Swift bug (https://bugs.swift.org/browse/SR-6407) we are switching to a snapshot
     //     test.
     assertSnapshot(matching:
-      router.request(for: .root, base: URL(string: "http://www.pointfree.co/"))!
+      router.request(for: .home, base: URL(string: "http://www.pointfree.co/"))!
         // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
         |> \.httpMethod .~ "GET"
     )
   }
 
   func testAbsoluteString() {
-    XCTAssertEqual("/home", router.absoluteString(for: .root))
+    XCTAssertEqual("/home", router.absoluteString(for: .home))
     XCTAssertEqual(
       "/home/episodes/intro-to-functions/comments/42",
       router.absoluteString(for: .pathComponents(param: .left("intro-to-functions"), commentId: 42))

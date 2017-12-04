@@ -159,12 +159,19 @@ private func request(from data: RequestData) -> URLRequest? {
 }
 
 private func request(from data: RequestData, base: URL?) -> URLRequest? {
-  return urlComponents(from: data)
-    .url(relativeTo: base)
-    .map {
-      URLRequest(url: $0)
-        |> \.httpMethod .~ data.method?.rawValue
-        |> \.httpBody .~ data.body
+  // Due to this bug https://bugs.swift.org/browse/SR-6527, if `URLComponents` doesn't contain any path or
+  // query information, it will fail to create a `URL`. We have to guard against that case and just return
+  // the base url.
+  return
+    (
+      data.path.isEmpty && data.query.isEmpty
+        ? (base ?? URL(string: "/"))
+        : urlComponents(from: data).url(relativeTo: base)
+      )
+      .map {
+        URLRequest(url: $0)
+          |> \.httpMethod .~ data.method?.rawValue
+          |> \.httpBody .~ data.body
   }
 }
 
