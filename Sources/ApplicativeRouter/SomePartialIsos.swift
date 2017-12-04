@@ -146,3 +146,12 @@ private func formEncodedStringToFields(_ body: String) -> [String: String] {
 private func fieldsToFormEncodedString(_ data: [String: String]) -> String {
   return urlFormEncode(value: data)
 }
+
+extension PartialIso where A == String, B: RawRepresentable, B.RawValue == String {
+  public static var rawRepresentable: PartialIso {
+    return .init(
+      apply: B.init(rawValue:),
+      unapply: ^\.rawValue
+    )
+  }
+}
