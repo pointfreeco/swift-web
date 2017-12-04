@@ -159,8 +159,9 @@ private func request(from data: RequestData) -> URLRequest? {
 }
 
 private func request(from data: RequestData, base: URL?) -> URLRequest? {
-  return urlComponents(from: data)
-    .url(relativeTo: base)
+  return
+    // https://bugs.swift.org/browse/SR-6527
+    (urlComponents(from: data).url(relativeTo: base) ?? base ?? URL(string: "/"))
     .map {
       URLRequest(url: $0)
         |> \.httpMethod .~ data.method?.rawValue
