@@ -16,8 +16,8 @@ xcodeproj:
 bootstrap: common-crypto-mm xcodeproj
 
 common-crypto-mm:
-	-@mkdir -p "$(COMMON_CRYPTO_PATH)"
-	-@echo "$$COMMON_CRYPTO_MODULE_MAP" > "$(COMMON_CRYPTO_MODULE_MAP_PATH)"
+	-@sudo mkdir -p "$(COMMON_CRYPTO_PATH)"
+	-@echo "$$COMMON_CRYPTO_MODULE_MAP" | sudo tee "$(COMMON_CRYPTO_MODULE_MAP_PATH)" > /dev/null
 
 linux-main:
 	sourcery \
