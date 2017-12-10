@@ -1,6 +1,14 @@
 import Css
 import Html
 
+public func `for`<T: HasFor>(_ idSelector: CssSelector) -> Attribute<T> {
+  return .init("for", idSelector.idString ?? "")
+}
+
+public func id<T>(_ idSelector: CssSelector) -> Attribute<T> {
+  return .init("id", idSelector.idString ?? "")
+}
+
 public func style<T>(_ style: Stylesheet) -> Attribute<T> {
   return .init("style", style)
 }

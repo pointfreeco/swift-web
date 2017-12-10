@@ -240,3 +240,15 @@ infix operator ~: infixr6
 public func ~ (lhs: CssSelector, rhs: CssSelector) -> CssSelector {
   return .sibling(lhs, rhs)
 }
+
+extension CssSelector {
+  public var idString: String? {
+    switch self {
+    case .star, .elem, .class, .pseudo, .pseudoElem, .attr, .child, .sibling, .deep, .adjacent, .combined,
+         .union:
+      return nil
+    case let .id(id):
+      return id
+    }
+  }
+}

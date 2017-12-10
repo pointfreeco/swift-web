@@ -475,6 +475,14 @@ public func placeholder<T: HasPlaceholder>(_ value: String) -> Attribute<T> {
   return .init("placeholder", value)
 }
 
+public func playsInline(_ value: Bool) -> Attribute<Element.Video> {
+  return .init("playsinline", value)
+}
+
+public func poster(_ value: String) -> Attribute<Element.Video> {
+  return .init("poster", value)
+}
+
 public enum Preload: String, Value {
   case auto
   case metadata
