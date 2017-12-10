@@ -60,7 +60,7 @@ public func document(_ content: [Node]) -> Node {
 }
 
 public func node<T>(_ name: StaticString, _ attribs: [Attribute<T>], _ content: [Node]?) -> Node {
-  return .element(.init(name: String(describing: name), attribs: attribs.map(get(\.attrib)), content: content))
+  return .element(.init(name: String(describing: name), attribs: attribs.map(^\.attrib), content: content))
 }
 
 public func node(_ name: StaticString, _ content: [Node]?) -> Node {
