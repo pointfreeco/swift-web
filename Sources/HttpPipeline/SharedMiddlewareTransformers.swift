@@ -83,7 +83,7 @@ public func redirectUnrelatedHosts<A>(
             URLComponents(url: $0, resolvingAgainstBaseURL: false)
               |> map(\.host .~ canonicalHost)
           }
-          .flatMap(get(\.url))
+          .flatMap(^\.url)
           .map {
             conn
               |> writeStatus(.movedPermanently)

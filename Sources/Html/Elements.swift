@@ -662,7 +662,7 @@ extension ViewportWidth: ExpressibleByIntegerLiteral {
 }
 
 public func meta(viewport props: NonEmptyArray<Viewport>) -> ChildOf<Element.Head> {
-  return meta([name(.viewport), content(Array(props).map(get(\.description)).joined(separator: ","))])
+  return meta([name(.viewport), content(Array(props).map(^\.description).joined(separator: ","))])
 }
 
 public func meta(viewport prop: Viewport, _ props: Viewport...) -> ChildOf<Element.Head> {

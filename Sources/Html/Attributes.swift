@@ -575,7 +575,7 @@ public enum Sandbox: String {
   case allowTopNavigation = "allow-top-navigation"
 }
 public func sandbox(_ value: [Sandbox]) -> Attribute<Element.Iframe> {
-  return .init("sandbox", value.map(get(\.rawValue)).joined(separator: " "))
+  return .init("sandbox", value.map(^\.rawValue).joined(separator: " "))
 }
 
 public enum Scope: String, Value {

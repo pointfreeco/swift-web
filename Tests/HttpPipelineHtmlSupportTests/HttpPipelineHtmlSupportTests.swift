@@ -16,7 +16,7 @@ class HttpPipelineHtmlSupportTests: XCTestCase {
     XCTAssertEqual(200, response.response.status.rawValue)
     XCTAssertEqual(
       ["Content-Type: text/html; charset=utf8", "Content-Length: 19"],
-      response.response.headers.map(get(\.description))
+      response.response.headers.map(^\.description)
     )
     XCTAssertEqual("<p>Hello world!</p>", String(decoding: response.response.body, as: UTF8.self))
   }

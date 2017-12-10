@@ -137,7 +137,7 @@ private func formEncodedStringToFields(_ body: String) -> [String: String] {
   let pairs = body.split(separator: "&")
     .map {
       $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-        .flatMap(String.init >>> Prelude.get(\.removingPercentEncoding))
+        .flatMap(String.init >>> ^\.removingPercentEncoding)
     }
     .flatMap { tuple <¢> $0.first <*> $0.last }
   return [String: String](uniqueKeysWithValues: pairs)

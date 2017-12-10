@@ -106,7 +106,7 @@ public enum ResponseHeader {
   public var pair: (String, String) {
     switch self {
     case let .allow(methods):
-      return ("Allow", methods.map(get(\.description)).joined(separator: ", "))
+      return ("Allow", methods.map(^\.description).joined(separator: ", "))
     case let .contentLength(bytes):
       return ("Content-Length", bytes.description)
     case let .contentType(mediaType):
@@ -115,7 +115,7 @@ public enum ResponseHeader {
       return ("Location", uri)
     case let .setCookie(key: key, value: value, options: options):
       // TODO: escape
-      let headerValue = (["\(key)=\(value)"] + options.map(get(\.description)).sorted())
+      let headerValue = (["\(key)=\(value)"] + options.map(^\.description).sorted())
         .joined(separator: "; ")
       return ("Set-Cookie", headerValue)
     case let .other(header, value):

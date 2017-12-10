@@ -283,7 +283,7 @@ func imp(_ config: Config) -> (String) -> String {
 
 func properties(_ config: Config, _ xs: [Either<String, (String, String)>]) -> String {
 
-  let width = 1 + (rights(xs).map(first >>> get(\.count)).max() ?? 0)
+  let width = 1 + (rights(xs).map(first >>> ^\.count).max() ?? 0)
   let ind = config.indentation
   let new = config.newline
   let finalSemi = config.finalSemicolon ? ";" : ""

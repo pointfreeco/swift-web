@@ -327,7 +327,7 @@ public enum AriaRelevant: String, Value {
   case text
 }
 public func ariaRelevant<T>(_ value: [AriaRelevant]) -> Attribute<T> {
-  return .init("aria-relevant", value.map(get(\.rawValue)).joined(separator: " "))
+  return .init("aria-relevant", value.map(^\.rawValue).joined(separator: " "))
 }
 
 public func ariaRequired<T>(_ value: Bool) -> Attribute<T> {
