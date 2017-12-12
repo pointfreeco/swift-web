@@ -3,7 +3,7 @@
 
 import XCTest
 
-@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
+@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormDecoderTests; @testable import UrlFormEncodingTests;
 extension ApplicativeRouterHttpPipelineSupportTests {
   static var allTests: [(String, (ApplicativeRouterHttpPipelineSupportTests) -> () throws -> Void)] = [
     ("testRoute", testRoute),
@@ -192,6 +192,17 @@ extension SyntaxRouterTests {
     ("testSimpleQueryParams_SomeMissing", testSimpleQueryParams_SomeMissing)
   ]
 }
+extension UrlFormDecoderTests {
+  static var allTests: [(String, (UrlFormDecoderTests) -> () throws -> Void)] = [
+    ("testDefaultStrategyAccumulatePairs", testDefaultStrategyAccumulatePairs),
+    ("testBrackets", testBrackets),
+    ("testBracketsWithIndices", testBracketsWithIndices),
+    ("testDataDecodingWithBase64", testDataDecodingWithBase64),
+    ("testDateDecodingWithSecondsSince1970", testDateDecodingWithSecondsSince1970),
+    ("testDateDecodingWithMillisecondsSince1970", testDateDecodingWithMillisecondsSince1970),
+    ("testDateDecodingWithIso8601", testDateDecodingWithIso8601)
+  ]
+}
 extension UrlFormEncoderTests {
   static var allTests: [(String, (UrlFormEncoderTests) -> () throws -> Void)] = [
     ("testEncoding_DeepObject", testEncoding_DeepObject),
@@ -233,6 +244,7 @@ XCTMain([
   testCase(SizeTests.allTests),
   testCase(SupportTests.allTests),
   testCase(SyntaxRouterTests.allTests),
+  testCase(UrlFormDecoderTests.allTests),
   testCase(UrlFormEncoderTests.allTests),
   testCase(ViewTests.allTests),
 ])
