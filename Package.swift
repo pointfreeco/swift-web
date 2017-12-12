@@ -67,7 +67,7 @@ let package = Package(
 
     .target(name: "MediaType", dependencies: []),
 
-    .target(name: "UrlFormEncoding", dependencies: ["Prelude"]),
+    .target(name: "UrlFormEncoding", dependencies: ["Prelude", "Optics"]),
     .testTarget(name: "UrlFormEncodingTests", dependencies: ["UrlFormEncoding", "SnapshotTesting"]),
   ]
 )
