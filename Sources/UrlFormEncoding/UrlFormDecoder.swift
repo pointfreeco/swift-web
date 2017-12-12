@@ -550,12 +550,9 @@ extension UrlFormDecoder.UnkeyedContainer.Key: CodingKey {
   }
 }
 
-private let iso8601: (DateFormatter) -> DateFormatter = {
-  $0.calendar = Calendar(identifier: .iso8601)
-  $0.locale = Locale(identifier: "en_US_POSIX")
-  $0.timeZone = TimeZone(abbreviation: "UTC")
-  return $0
-}
+private let iso8601 = ((\DateFormatter.calendar) .~ Calendar(identifier: .iso8601))
+  >>> ((\DateFormatter.locale) .~ Locale(identifier: "en_US_POSIX"))
+  >>> ((\DateFormatter.timeZone) .~ TimeZone(abbreviation: "UTC"))
 
 private let iso8601DateFormatter = DateFormatter()
   |> iso8601
