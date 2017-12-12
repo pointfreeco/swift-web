@@ -513,7 +513,7 @@ public final class UrlFormDecoder: Decoder {
   public struct ParsingStrategy {
     let strategy: (String) -> [String: Any]
 
-    public static let accumulatePairs = ParsingStrategy { query in
+    public static let accumulatePairs = custom { query in
       var params: [String: Any] = [:]
       for (name, value) in pairs(query) {
         var values = params[name] as? [Any] ?? []
@@ -523,11 +523,11 @@ public final class UrlFormDecoder: Decoder {
       return params
     }
 
-    public static let brackets = ParsingStrategy.custom(parse(isArray: ^\.isEmpty))
+    public static let brackets = custom(parse(isArray: ^\.isEmpty))
 
-    public static let bracketsWithIndices = ParsingStrategy.custom(parse(isArray: { Int($0) != nil }))
+    public static let bracketsWithIndices = custom(parse(isArray: { Int($0) != nil }))
 
-    public static let custom = ParsingStrategy.init
+    public static let custom = `init`
   }
 }
 
