@@ -1,0 +1,9 @@
+▿ Foo #1 in UrlFormEncodingTests.UrlFormDecoderTests.testBrackets() throws -> ()
+  - helloWorld: "a greeting for you"
+  - port: 8080
+  - bar: nil
+  ▿ bars: 2 elements
+    ▿ Bar #1 in UrlFormEncodingTests.UrlFormDecoderTests.testBrackets() throws -> ()
+      - baz: 1
+    ▿ Bar #1 in UrlFormEncodingTests.UrlFormDecoderTests.testBrackets() throws -> ()
+      - baz: 2
