@@ -618,7 +618,7 @@ private func pairs(_ query: String) -> [(String, String)] {
     .split(separator: "&")
     .map { (pairString: Substring) -> (name: String, value: String) in
       let pairArray = pairString.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-        .flatMap { $0.removingPercentEncoding }
+        .flatMap { String($0).removingPercentEncoding }
       return (pairArray[0], pairArray.count == 2 ? pairArray[1] : "")
     }
     .sorted { $0.name < $1.name }
