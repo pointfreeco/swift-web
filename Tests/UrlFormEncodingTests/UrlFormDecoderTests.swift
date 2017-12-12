@@ -100,7 +100,7 @@ final class UrlFormDecoderTests: XCTestCase {
       let date: Date
     }
 
-    decoder.dateDecodingStrategy = .secondsSince1970
+    decoder.dateDecodingStrategy = .millisecondsSince1970
     assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=1513049223123".utf8)))
   }
 
