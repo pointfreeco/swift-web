@@ -8,8 +8,7 @@ imports = \
 	@testable import HtmlPrettyPrintTests; \
 	@testable import HttpPipelineTests; \
 	@testable import HttpPipelineHtmlSupportTests; \
-	@testable import UrlFormDecoderTests; \
-	@testable import UrlFormEncodingTests; 
+	@testable import UrlFormEncodingTests;
 
 xcodeproj:
 	swift package generate-xcodeproj

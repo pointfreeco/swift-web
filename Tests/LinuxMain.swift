@@ -3,7 +3,7 @@
 
 import XCTest
 
-@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormDecoderTests; @testable import UrlFormEncodingTests;
+@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
 extension ApplicativeRouterHttpPipelineSupportTests {
   static var allTests: [(String, (ApplicativeRouterHttpPipelineSupportTests) -> () throws -> Void)] = [
     ("testRoute", testRoute),
