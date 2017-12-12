@@ -118,16 +118,16 @@ final class UrlFormDecoderTests: XCTestCase {
     )
   }
 
-  func testDateDecodingWithFormatted() throws {
-    struct MyDate: Decodable {
-      let date: Date
-    }
-
-    let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "en_US")
-    formatter.setLocalizedDateFormatFromTemplate("MMMMdyyyy")
-
-    decoder.dateDecodingStrategy = .formatted(formatter)
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=December%2031,%202017".utf8)))
-  }
+//  func testDateDecodingWithFormatted() throws {
+//    struct MyDate: Decodable {
+//      let date: Date
+//    }
+//
+//    let formatter = DateFormatter()
+//    formatter.locale = Locale(identifier: "en_US")
+//    formatter.setLocalizedDateFormatFromTemplate("MMMMdyyyy")
+//
+//    decoder.dateDecodingStrategy = .formatted(formatter)
+//    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=December%2031,%202017".utf8)))
+//  }
 }
