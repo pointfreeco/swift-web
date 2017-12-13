@@ -194,6 +194,7 @@ extension SyntaxRouterTests {
 }
 extension UrlFormDecoderTests {
   static var allTests: [(String, (UrlFormDecoderTests) -> () throws -> Void)] = [
+    ("testOptionality", testOptionality),
     ("testDefaultStrategyAccumulatePairs", testDefaultStrategyAccumulatePairs),
     ("testBrackets", testBrackets),
     ("testBracketsWithIndices", testBracketsWithIndices),

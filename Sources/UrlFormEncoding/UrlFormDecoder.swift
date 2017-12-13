@@ -238,7 +238,6 @@ public final class UrlFormDecoder: Decoder {
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
-        print(1)
         guard let container = self.container[key.stringValue] as? [String: Any] else {
           throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
         }
@@ -250,7 +249,6 @@ public final class UrlFormDecoder: Decoder {
     func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
       self.decoder.codingPath.append(key)
       defer { self.decoder.codingPath.removeLast() }
-      print(2)
       guard let container = self.container[key.stringValue] as? [Any] else {
         throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
       }
@@ -266,7 +264,6 @@ public final class UrlFormDecoder: Decoder {
     func superDecoder(forKey key: Key) throws -> Decoder {
       self.decoder.codingPath.append(key)
       defer { self.decoder.codingPath.removeLast() }
-      print(3)
       guard let container = self.container[key.stringValue] else {
         throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
       }
@@ -395,6 +392,7 @@ public final class UrlFormDecoder: Decoder {
       where NestedKey: CodingKey {
 
         guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
+        self.codingPath.append(Key(index: self.currentIndex))
         defer { self.codingPath.removeLast() }
         guard let container = self.container[self.currentIndex] as? [String: Any] else {
           throw Error.decodingError("Expected value at \(self.currentIndex), got nil", self.codingPath)
@@ -407,6 +405,7 @@ public final class UrlFormDecoder: Decoder {
 
     mutating func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
       guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
+      self.codingPath.append(Key(index: self.currentIndex))
       defer { self.codingPath.removeLast() }
       guard let container = self.container[self.currentIndex] as? [Any] else {
         throw Error.decodingError("Expected value at \(self.currentIndex), got nil", self.codingPath)
@@ -419,6 +418,7 @@ public final class UrlFormDecoder: Decoder {
 
     mutating func superDecoder() throws -> Decoder {
       guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
+      self.codingPath.append(Key(index: self.currentIndex))
       defer { self.codingPath.removeLast() }
       let container = self.container[self.currentIndex]
       self.currentIndex += 1
