@@ -192,6 +192,17 @@ extension SyntaxRouterTests {
     ("testSimpleQueryParams_SomeMissing", testSimpleQueryParams_SomeMissing)
   ]
 }
+extension UrlFormDecoderTests {
+  static var allTests: [(String, (UrlFormDecoderTests) -> () throws -> Void)] = [
+    ("testDefaultStrategyAccumulatePairs", testDefaultStrategyAccumulatePairs),
+    ("testBrackets", testBrackets),
+    ("testBracketsWithIndices", testBracketsWithIndices),
+    ("testDataDecodingWithBase64", testDataDecodingWithBase64),
+    ("testDateDecodingWithSecondsSince1970", testDateDecodingWithSecondsSince1970),
+    ("testDateDecodingWithMillisecondsSince1970", testDateDecodingWithMillisecondsSince1970),
+    ("testDateDecodingWithIso8601", testDateDecodingWithIso8601)
+  ]
+}
 extension UrlFormEncoderTests {
   static var allTests: [(String, (UrlFormEncoderTests) -> () throws -> Void)] = [
     ("testEncoding_DeepObject", testEncoding_DeepObject),
@@ -233,6 +244,7 @@ XCTMain([
   testCase(SizeTests.allTests),
   testCase(SupportTests.allTests),
   testCase(SyntaxRouterTests.allTests),
+  testCase(UrlFormDecoderTests.allTests),
   testCase(UrlFormEncoderTests.allTests),
   testCase(ViewTests.allTests),
 ])
