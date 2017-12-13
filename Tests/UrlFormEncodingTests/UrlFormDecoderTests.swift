@@ -6,6 +6,14 @@ import XCTest
 final class UrlFormDecoderTests: XCTestCase {
   let decoder = UrlFormDecoder()
 
+  func testOptionality() throws {
+    struct Foo: Decodable {
+      let x: Int?
+    }
+
+    XCTAssertNil(try decoder.decode(Foo.self, from: Data()).x)
+  }
+
   func testDefaultStrategyAccumulatePairs() throws {
     struct Foo: Decodable {
       let x: Int
@@ -26,22 +34,32 @@ final class UrlFormDecoderTests: XCTestCase {
       let port: Int
       let bar: Bar?
       let bars: [Bar]
+      let barses: [[Bar]]
 
       private enum CodingKeys: String, CodingKey {
         case helloWorld = "hello world"
         case port
         case bar
         case bars
+        case barses
       }
     }
 
     let data = Data(
       """
-      hello%20world=a%20greeting%20for%20you&port=8080&bars[][baz]=1&bars[][baz]=2&bar=&k&
+      hello%20world=a%20greeting%20for%20you&\
+      port=8080&\
+      bars[][baz]=1&\
+      bars[][baz]=2&\
+      bar=&\
+      barses[][][baz]=3&\
+      barses[][][baz]=4&\
+      k&&
       """.utf8
     )
 
     decoder.parsingStrategy = .brackets
+
     assertSnapshot(matching: try decoder.decode(Foo.self, from: data))
   }
 
@@ -71,6 +89,7 @@ final class UrlFormDecoderTests: XCTestCase {
     )
 
     decoder.parsingStrategy = .bracketsWithIndices
+
     assertSnapshot(matching: try decoder.decode(Foo.self, from: data))
   }
 
@@ -80,6 +99,7 @@ final class UrlFormDecoderTests: XCTestCase {
     }
 
     decoder.dataDecodingStrategy = .base64
+
     XCTAssertEqual(
       "OOPs",
       String(decoding: try decoder.decode(MyData.self, from: Data("data=T09Qcw==".utf8)).data, as: UTF8.self)
@@ -92,6 +112,7 @@ final class UrlFormDecoderTests: XCTestCase {
     }
 
     decoder.dateDecodingStrategy = .secondsSince1970
+
     assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=1513049223".utf8)))
   }
 
@@ -101,6 +122,7 @@ final class UrlFormDecoderTests: XCTestCase {
     }
 
     decoder.dateDecodingStrategy = .millisecondsSince1970
+
     assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=1513049223123".utf8)))
   }
 
@@ -110,6 +132,7 @@ final class UrlFormDecoderTests: XCTestCase {
     }
 
     decoder.dateDecodingStrategy = .iso8601
+
     assertSnapshot(
       matching: try decoder.decode(MyDate.self, from: Data("date=2017-12-11T20:36:00.000-05:00".utf8))
     )

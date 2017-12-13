@@ -525,7 +525,7 @@ public final class UrlFormDecoder: Decoder {
 
     public static let brackets = custom(parse(isArray: ^\.isEmpty))
 
-    public static let bracketsWithIndices = custom(parse(isArray: { Int($0) != nil }))
+    public static let bracketsWithIndices = custom(parse(isArray: { Int($0) != nil }, sort: true))
 
     public static let custom = `init`
   }
@@ -562,32 +562,45 @@ private let iso8601DateFormatterWithoutMilliseconds = DateFormatter()
   |> iso8601
   |> \.dateFormat .~ "yyyy-MM-dd'T'HH:mm:ssXXXXX"
 
-private func parse(isArray: @escaping (String) -> Bool) -> (String) -> [String: Any] {
-  func parseHelp(_ params: inout [String: Any], _ path: [String], _ value: Any) {
+private func parse(isArray: @escaping (String) -> Bool, sort: Bool = false) -> (String) -> [String: Any] {
+  func parseHelp(dictionary params: inout [String: Any], _ path: [String], _ value: Any) {
     let key = path[0]
 
     if path.count == 1 {
       params[key] = value
-    } else if path.count == 2 && isArray(path[1]) {
+    } else if path.count == 2, isArray(path[1]) {
       var values = params[key] as? [Any] ?? []
       values.append(value)
       params[key] = values
     } else if isArray(path[1]) {
-      var (values, nested) = (params[key] as? [Any] ?? [], [:] as [String: Any])
-      parseHelp(&nested, Array(path[2...]), value)
-      values.append(nested)
+      var values = params[key] as? [Any] ?? []
+      parseHelp(array: &values, Array(path[1...]), value)
       params[key] = values
     } else {
       var values = params[key] as? [String: Any] ?? [:]
-      parseHelp(&values, Array(path[1...]), value)
+      parseHelp(dictionary: &values, Array(path[1...]), value)
       params[key] = values
+    }
+  }
+
+  func parseHelp(array values: inout [Any], _ path: [String], _ value: Any) {
+    if path.count == 1 {
+      values.append(value)
+    } else if isArray(path[1]) {
+      var nestedValues: [Any] = []
+      parseHelp(array: &nestedValues, Array(path[1...]), value)
+      values.append(nestedValues)
+    } else {
+      var params: [String: Any] = [:]
+      parseHelp(dictionary: &params, Array(path[1...]), value)
+      values.append(params)
     }
   }
 
   return { query in
     var params: [String: Any] = [:]
 
-    for (name, value) in pairs(query) {
+    for (name, value) in pairs(query, sort: sort) {
       let result = name.reduce(into: (path: [] as [String], current: "")) { result, char in
         switch char {
         case "[":
@@ -603,22 +616,23 @@ private func parse(isArray: @escaping (String) -> Bool) -> (String) -> [String: 
         }
       }
       let path = result.current.isEmpty ? result.path : result.path + [result.current]
-      parseHelp(&params, path.isEmpty ? [""] : path, value)
+      parseHelp(dictionary: &params, path.isEmpty ? [""] : path, value)
     }
 
     return params
   }
 }
 
-private func pairs(_ query: String) -> [(String, String)] {
-  return query
+private func pairs(_ query: String, sort: Bool = false) -> [(String, String)] {
+  let pairs = query
     .split(separator: "&")
     .map { (pairString: Substring) -> (name: String, value: String) in
       let pairArray = pairString.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
         .flatMap { String($0).removingPercentEncoding }
       return (pairArray[0], pairArray.count == 2 ? pairArray[1] : "")
     }
-    .sorted { $0.name < $1.name }
+
+  return sort ? pairs.sorted { $0.name < $1.name } : pairs
 }
 
 private func singleton(_ value: Any) -> String? {
