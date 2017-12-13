@@ -21,7 +21,7 @@ public final class UrlFormDecoder: Decoder {
     let container: [String: Any]
     switch self.parsingStrategy {
     case .accumulateValues:
-      container = accumulatePairs(query)
+      container = accumulateValues(query)
     case let .custom(strategy):
       container = strategy(query)
     }
@@ -698,7 +698,7 @@ private func pairs(_ query: String, sort: Bool = false) -> [(String, String)] {
   return sort ? pairs.sorted { $0.name < $1.name } : pairs
 }
 
-private func accumulatePairs(_ query: String) -> [String: Any] {
+private func accumulateValues(_ query: String) -> [String: Any] {
   var params: [String: Any] = [:]
   for (name, value) in pairs(query) {
     var values = params[name] as? [Any] ?? []
