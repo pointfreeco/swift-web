@@ -10,7 +10,7 @@ public final class UrlFormDecoder: Decoder {
   public private(set) var codingPath: [CodingKey] = []
   public var dataDecodingStrategy: DataDecodingStrategy = .deferredToData
   public var dateDecodingStrategy: DateDecodingStrategy = .deferredToDate
-  public var parsingStrategy: ParsingStrategy = .accumulatePairs
+  public var parsingStrategy: ParsingStrategy = .accumulateValues
   public let userInfo: [CodingUserInfoKey: Any] = [:]
 
   public init() {
@@ -20,7 +20,7 @@ public final class UrlFormDecoder: Decoder {
     let query = String(decoding: data, as: UTF8.self)
     let container: [String: Any]
     switch self.parsingStrategy {
-    case .accumulatePairs:
+    case .accumulateValues:
       container = accumulatePairs(query)
     case let .custom(strategy):
       container = strategy(query)
@@ -32,7 +32,7 @@ public final class UrlFormDecoder: Decoder {
 
   private func unbox(_ value: Any) -> String? {
     switch self.parsingStrategy {
-    case .accumulatePairs:
+    case .accumulateValues:
       return value as? String ?? (value as? [String])?.last
     case .custom:
       return value as? String
@@ -527,12 +527,69 @@ public final class UrlFormDecoder: Decoder {
   }
 
   public enum ParsingStrategy {
-    case accumulatePairs
+    /// A parsing strategy that accumulates values when multiple keys are provided.
+    ///
+    ///     ids=1&ids=2
+    ///     // Parsed as ["ids": ["1", "2"]]
+    ///
+    /// The decoder will
+    ///
+    /// - Note: This parsing strategy is "flat" and cannot decode deeper structures.
+    case accumulateValues
+    
+    // TODO: We should really be using a more type-safe container here to avoid all this `Any` nonsense.
+    // Something like:
+    //
+    //     enum Container {
+    //       case keyed([String: Container])
+    //       case unkeyed([Container])
+    //       case singleValue(String)
+    //     }
+    /// A parsing strategy that uses a custom function to produce a structure for decoding.
+    ///
+    /// The custom function takes a query string and produces a keyed container for decoding. A container is
+    /// of type `[String: Any]`, where `Any` can recursively be one of `[String: Any]`, `[Any]`, or `String`.
+    /// Every "leaf" of this structure must end with `String` for decoding to work without error (the decoder
+    /// is responsible for converting these strings into other types).
     case custom((String) -> [String: Any])
 
+    /// A parsing strategy that uses keys with a bracketed suffix to produce nested structures.
     ///
+    /// Keyed, nested structures name each key in brackets.
+    ///
+    ///     user[name]=Blob&user[email]=blob@pointfree.co
+    ///     // Parsed as ["user": ["name": "Blob", "email": "blob@pointfree.co"]]
+    ///
+    /// Unkeyed, nested structures leave the brackets empty and accumulate single values.
+    ///
+    ///     ids[]=1&ids[]=2
+    ///     // Parsed as ["ids": ["1", "2"]]
+    ///
+    /// Series of brackets can create deeply-nested structures.
+    ///
+    ///     user[pets][][id]=1&user[pets][][id]=2
+    ///     // Parsed as ["user": ["pets": [["id": "1"], ["id": "2"]]]]
+    ///
+    /// - Note: Unkeyed brackets do not specify collection indices, so they cannot accumulate complex
+    ///   structures by using multiple keys. See `bracketsWithIndices` as an alternative parsing strategy.
     public static let brackets = custom(parse(isArray: ^\.isEmpty))
 
+    /// A parsing strategy that uses keys with a bracketed suffix to produce nested structures.
+    ///
+    /// Keyed, nested structures name each key in brackets.
+    ///
+    ///     user[name]=Blob&user[email]=blob@pointfree.co
+    ///     // Parsed as ["user": ["name": "Blob", "email": "blob@pointfree.co"]]
+    ///
+    /// Unkeyed, nested structures name each collection index in brackets and accumulate values.
+    ///
+    ///     ids[1]=2&ids[0]=1
+    ///     // Parsed as ["ids": ["1", "2"]]
+    ///
+    /// Series of brackets can create deeply-nested structures that accumulate over multiple keys.
+    ///
+    ///     user[pets][0][id]=1&user[pets][0][name]=Fido
+    ///     // Parsed as ["user": ["pets": [["id": "1"], ["name": "Fido"]]]]
     public static let bracketsWithIndices = custom(parse(isArray: { Int($0) != nil }, sort: true))
   }
 }
