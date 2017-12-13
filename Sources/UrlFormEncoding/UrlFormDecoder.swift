@@ -17,14 +17,30 @@ public final class UrlFormDecoder: Decoder {
   }
 
   public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
-    let container = self.parsingStrategy.strategy(String(decoding: data, as: UTF8.self))
+    let query = String(decoding: data, as: UTF8.self)
+    let container: [String: Any]
+    switch self.parsingStrategy {
+    case .accumulatePairs:
+      container = accumulatePairs(query)
+    case let .custom(strategy):
+      container = strategy(query)
+    }
     self.containers.append(container)
     defer { self.containers.removeLast() }
     return try T(from: self)
   }
 
+  private func unbox(_ value: Any) -> String? {
+    switch self.parsingStrategy {
+    case .accumulatePairs:
+      return value as? String ?? (value as? [String])?.last
+    case .custom:
+      return value as? String
+    }
+  }
+
   private func unbox(_ value: Any, as type: Data.Type) throws -> Data {
-    guard let string = singleton(value) else {
+    guard let string = unbox(value) else {
       throw Error.decodingError("Expected string data, got \(value)", self.codingPath)
     }
 
@@ -45,7 +61,7 @@ public final class UrlFormDecoder: Decoder {
   }
 
   private func unbox(_ value: Any, as type: Date.Type) throws -> Date {
-    guard let string = singleton(value) else {
+    guard let string = unbox(value) else {
       throw Error.decodingError("Expected string date, got \(value)", self.codingPath)
     }
 
@@ -129,7 +145,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     private func checked<T>(_ key: Key, _ block: (String) throws -> T) throws -> T {
-      guard let value = self.container[key.stringValue].flatMap(singleton) else {
+      guard let value = self.container[key.stringValue].flatMap(self.decoder.unbox) else {
         throw Error.decodingError("Expected \(T.self) at \(key), got nil", self.codingPath)
       }
       return try block(value)
@@ -288,7 +304,7 @@ public final class UrlFormDecoder: Decoder {
       guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
       self.codingPath.append(Key(index: self.currentIndex))
       defer { self.codingPath.removeLast() }
-      guard let container = singleton(self.container[self.currentIndex]) else {
+      guard let container = self.decoder.unbox(self.container[self.currentIndex]) else {
         throw Error.decodingError("Expected \(T.self) at \(self.currentIndex), got nil", self.codingPath)
       }
       let value = try block(container)
@@ -510,24 +526,14 @@ public final class UrlFormDecoder: Decoder {
     case custom((String) -> Date?)
   }
 
-  public struct ParsingStrategy {
-    let strategy: (String) -> [String: Any]
+  public enum ParsingStrategy {
+    case accumulatePairs
+    case custom((String) -> [String: Any])
 
-    public static let accumulatePairs = custom { query in
-      var params: [String: Any] = [:]
-      for (name, value) in pairs(query) {
-        var values = params[name] as? [Any] ?? []
-        values.append(value)
-        params[name] = values
-      }
-      return params
-    }
-
+    ///
     public static let brackets = custom(parse(isArray: ^\.isEmpty))
 
     public static let bracketsWithIndices = custom(parse(isArray: { Int($0) != nil }, sort: true))
-
-    public static let custom = `init`
   }
 }
 
@@ -635,6 +641,12 @@ private func pairs(_ query: String, sort: Bool = false) -> [(String, String)] {
   return sort ? pairs.sorted { $0.name < $1.name } : pairs
 }
 
-private func singleton(_ value: Any) -> String? {
-  return value as? String ?? (value as? [String])?.last
+private func accumulatePairs(_ query: String) -> [String: Any] {
+  var params: [String: Any] = [:]
+  for (name, value) in pairs(query) {
+    var values = params[name] as? [Any] ?? []
+    values.append(value)
+    params[name] = values
+  }
+  return params
 }
