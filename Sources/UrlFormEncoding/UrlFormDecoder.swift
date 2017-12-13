@@ -10,21 +10,37 @@ public final class UrlFormDecoder: Decoder {
   public private(set) var codingPath: [CodingKey] = []
   public var dataDecodingStrategy: DataDecodingStrategy = .deferredToData
   public var dateDecodingStrategy: DateDecodingStrategy = .deferredToDate
-  public var parsingStrategy: ParsingStrategy = .accumulatePairs
+  public var parsingStrategy: ParsingStrategy = .accumulateValues
   public let userInfo: [CodingUserInfoKey: Any] = [:]
 
   public init() {
   }
 
   public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
-    let container = self.parsingStrategy.strategy(String(decoding: data, as: UTF8.self))
+    let query = String(decoding: data, as: UTF8.self)
+    let container: [String: Any]
+    switch self.parsingStrategy {
+    case .accumulateValues:
+      container = accumulateValues(query)
+    case let .custom(strategy):
+      container = strategy(query)
+    }
     self.containers.append(container)
     defer { self.containers.removeLast() }
     return try T(from: self)
   }
 
+  private func unbox(_ value: Any) -> String? {
+    switch self.parsingStrategy {
+    case .accumulateValues:
+      return value as? String ?? (value as? [String])?.last
+    case .custom:
+      return value as? String
+    }
+  }
+
   private func unbox(_ value: Any, as type: Data.Type) throws -> Data {
-    guard let string = singleton(value) else {
+    guard let string = unbox(value) else {
       throw Error.decodingError("Expected string data, got \(value)", self.codingPath)
     }
 
@@ -45,7 +61,7 @@ public final class UrlFormDecoder: Decoder {
   }
 
   private func unbox(_ value: Any, as type: Date.Type) throws -> Date {
-    guard let string = singleton(value) else {
+    guard let string = unbox(value) else {
       throw Error.decodingError("Expected string date, got \(value)", self.codingPath)
     }
 
@@ -129,7 +145,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     private func checked<T>(_ key: Key, _ block: (String) throws -> T) throws -> T {
-      guard let value = self.container[key.stringValue].flatMap(singleton) else {
+      guard let value = self.container[key.stringValue].flatMap(self.decoder.unbox) else {
         throw Error.decodingError("Expected \(T.self) at \(key), got nil", self.codingPath)
       }
       return try block(value)
@@ -222,7 +238,6 @@ public final class UrlFormDecoder: Decoder {
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
-        print(1)
         guard let container = self.container[key.stringValue] as? [String: Any] else {
           throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
         }
@@ -234,7 +249,6 @@ public final class UrlFormDecoder: Decoder {
     func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
       self.decoder.codingPath.append(key)
       defer { self.decoder.codingPath.removeLast() }
-      print(2)
       guard let container = self.container[key.stringValue] as? [Any] else {
         throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
       }
@@ -250,7 +264,6 @@ public final class UrlFormDecoder: Decoder {
     func superDecoder(forKey key: Key) throws -> Decoder {
       self.decoder.codingPath.append(key)
       defer { self.decoder.codingPath.removeLast() }
-      print(3)
       guard let container = self.container[key.stringValue] else {
         throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
       }
@@ -288,7 +301,7 @@ public final class UrlFormDecoder: Decoder {
       guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
       self.codingPath.append(Key(index: self.currentIndex))
       defer { self.codingPath.removeLast() }
-      guard let container = singleton(self.container[self.currentIndex]) else {
+      guard let container = self.decoder.unbox(self.container[self.currentIndex]) else {
         throw Error.decodingError("Expected \(T.self) at \(self.currentIndex), got nil", self.codingPath)
       }
       let value = try block(container)
@@ -379,6 +392,7 @@ public final class UrlFormDecoder: Decoder {
       where NestedKey: CodingKey {
 
         guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
+        self.codingPath.append(Key(index: self.currentIndex))
         defer { self.codingPath.removeLast() }
         guard let container = self.container[self.currentIndex] as? [String: Any] else {
           throw Error.decodingError("Expected value at \(self.currentIndex), got nil", self.codingPath)
@@ -391,6 +405,7 @@ public final class UrlFormDecoder: Decoder {
 
     mutating func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
       guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
+      self.codingPath.append(Key(index: self.currentIndex))
       defer { self.codingPath.removeLast() }
       guard let container = self.container[self.currentIndex] as? [Any] else {
         throw Error.decodingError("Expected value at \(self.currentIndex), got nil", self.codingPath)
@@ -403,6 +418,7 @@ public final class UrlFormDecoder: Decoder {
 
     mutating func superDecoder() throws -> Decoder {
       guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
+      self.codingPath.append(Key(index: self.currentIndex))
       defer { self.codingPath.removeLast() }
       let container = self.container[self.currentIndex]
       self.currentIndex += 1
@@ -510,24 +526,71 @@ public final class UrlFormDecoder: Decoder {
     case custom((String) -> Date?)
   }
 
-  public struct ParsingStrategy {
-    let strategy: (String) -> [String: Any]
+  public enum ParsingStrategy {
+    /// A parsing strategy that accumulates values when multiple keys are provided.
+    ///
+    ///     ids=1&ids=2
+    ///     // Parsed as ["ids": ["1", "2"]]
+    ///
+    /// The decoder will
+    ///
+    /// - Note: This parsing strategy is "flat" and cannot decode deeper structures.
+    case accumulateValues
+    
+    // TODO: We should really be using a more type-safe container here to avoid all this `Any` nonsense.
+    // Something like:
+    //
+    //     enum Container {
+    //       case keyed([String: Container])
+    //       case unkeyed([Container])
+    //       case singleValue(String)
+    //     }
+    /// A parsing strategy that uses a custom function to produce a structure for decoding.
+    ///
+    /// The custom function takes a query string and produces a keyed container for decoding. A container is
+    /// of type `[String: Any]`, where `Any` can recursively be one of `[String: Any]`, `[Any]`, or `String`.
+    /// Every "leaf" of this structure must end with `String` for decoding to work without error (the decoder
+    /// is responsible for converting these strings into other types).
+    case custom((String) -> [String: Any])
 
-    public static let accumulatePairs = custom { query in
-      var params: [String: Any] = [:]
-      for (name, value) in pairs(query) {
-        var values = params[name] as? [Any] ?? []
-        values.append(value)
-        params[name] = values
-      }
-      return params
-    }
-
+    /// A parsing strategy that uses keys with a bracketed suffix to produce nested structures.
+    ///
+    /// Keyed, nested structures name each key in brackets.
+    ///
+    ///     user[name]=Blob&user[email]=blob@pointfree.co
+    ///     // Parsed as ["user": ["name": "Blob", "email": "blob@pointfree.co"]]
+    ///
+    /// Unkeyed, nested structures leave the brackets empty and accumulate single values.
+    ///
+    ///     ids[]=1&ids[]=2
+    ///     // Parsed as ["ids": ["1", "2"]]
+    ///
+    /// Series of brackets can create deeply-nested structures.
+    ///
+    ///     user[pets][][id]=1&user[pets][][id]=2
+    ///     // Parsed as ["user": ["pets": [["id": "1"], ["id": "2"]]]]
+    ///
+    /// - Note: Unkeyed brackets do not specify collection indices, so they cannot accumulate complex
+    ///   structures by using multiple keys. See `bracketsWithIndices` as an alternative parsing strategy.
     public static let brackets = custom(parse(isArray: ^\.isEmpty))
 
+    /// A parsing strategy that uses keys with a bracketed suffix to produce nested structures.
+    ///
+    /// Keyed, nested structures name each key in brackets.
+    ///
+    ///     user[name]=Blob&user[email]=blob@pointfree.co
+    ///     // Parsed as ["user": ["name": "Blob", "email": "blob@pointfree.co"]]
+    ///
+    /// Unkeyed, nested structures name each collection index in brackets and accumulate values.
+    ///
+    ///     ids[1]=2&ids[0]=1
+    ///     // Parsed as ["ids": ["1", "2"]]
+    ///
+    /// Series of brackets can create deeply-nested structures that accumulate over multiple keys.
+    ///
+    ///     user[pets][0][id]=1&user[pets][0][name]=Fido
+    ///     // Parsed as ["user": ["pets": [["id": "1"], ["name": "Fido"]]]]
     public static let bracketsWithIndices = custom(parse(isArray: { Int($0) != nil }, sort: true))
-
-    public static let custom = `init`
   }
 }
 
@@ -635,6 +698,12 @@ private func pairs(_ query: String, sort: Bool = false) -> [(String, String)] {
   return sort ? pairs.sorted { $0.name < $1.name } : pairs
 }
 
-private func singleton(_ value: Any) -> String? {
-  return value as? String ?? (value as? [String])?.last
+private func accumulateValues(_ query: String) -> [String: Any] {
+  var params: [String: Any] = [:]
+  for (name, value) in pairs(query) {
+    var values = params[name] as? [Any] ?? []
+    values.append(value)
+    params[name] = values
+  }
+  return params
 }
