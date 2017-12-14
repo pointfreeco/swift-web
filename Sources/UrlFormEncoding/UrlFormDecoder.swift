@@ -683,20 +683,24 @@ private func parse(isArray: @escaping (String) -> Bool, sort: Bool = false) -> (
         }
       }
       let path = result.current.isEmpty ? result.path : result.path + [result.current]
-      parseHelp(dictionary: &params, path.isEmpty ? [""] : path, value)
+      parseHelp(dictionary: &params, path.isEmpty ? [""] : path, value ?? "")
     }
 
     return params
   }
 }
 
-private func pairs(_ query: String, sort: Bool = false) -> [(String, String)] {
+public func parse(query: String) -> [(String, String?)] {
+  return pairs(query)
+}
+
+public func pairs(_ query: String, sort: Bool = false) -> [(String, String?)] {
   let pairs = query
     .split(separator: "&")
-    .map { (pairString: Substring) -> (name: String, value: String) in
+    .map { (pairString: Substring) -> (name: String, value: String?) in
       let pairArray = pairString.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
         .flatMap { String($0).removingPercentEncoding }
-      return (pairArray[0], pairArray.count == 2 ? pairArray[1] : "")
+      return (pairArray[0], pairArray.count == 2 ? pairArray[1] : nil)
     }
 
   return sort ? pairs.sorted { $0.name < $1.name } : pairs
@@ -706,7 +710,7 @@ private func accumulateValues(_ query: String) -> [String: Any] {
   var params: [String: Any] = [:]
   for (name, value) in pairs(query) {
     var values = params[name] as? [Any] ?? []
-    values.append(value)
+    values.append(value ?? "")
     params[name] = values
   }
   return params

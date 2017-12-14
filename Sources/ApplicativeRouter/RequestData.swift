@@ -1,5 +1,6 @@
 import Foundation
 import Prelude
+import UrlFormEncoding
 
 struct RequestData: Monoid {
   var method: Method? = nil
@@ -21,5 +22,17 @@ struct RequestData: Monoid {
       // todo: is coalescing enough or should we be appending?
       body: lhs.body ?? rhs.body
     )
+  }
+
+  // TODO: optimize
+  var params: [String: String] {
+    return self.query
+      .map {
+        parse(query: $0)
+          .reduce(into: [:]) { params, pair in
+            params[pair.0] = pair.1 ?? ""
+        }
+      }
+      ?? [:]
   }
 }
