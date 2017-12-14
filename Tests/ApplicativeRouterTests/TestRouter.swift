@@ -3,6 +3,10 @@ import Deriving
 import Either
 import Prelude
 
+struct SubscribeData: Codable {
+  let plan: Int
+}
+
 enum Routes {
   case home
   case root
@@ -10,19 +14,20 @@ enum Routes {
   case postBodyField(email: String)
   case postBodyJsonDecodable(episode: Episode, param: Int)
   case simpleQueryParams(ref: String?, active: Bool, t: Int)
+  case codableQueryParams(SubscribeData)
 }
 
 let router: Router<Routes> = [
 
-  // /home
+  // GET /home
   Routes.iso.home
     <¢> get %> lit("home") %> end,
 
-  // /
+  // GET /
   Routes.iso.root
     <¢> get %> end,
 
-  // /home/episodes/:string_or_int/comments/:int
+  // GET /home/episodes/:string_or_int/comments/:int
   Routes.iso.pathComponents
     <¢> get %> lit("home") %> lit("episodes") %> pathParam(.intOrString) <%> lit("comments") %> .int <% end,
 
@@ -34,10 +39,15 @@ let router: Router<Routes> = [
   Routes.iso.postBodyJsonDecodable
     <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% end,
 
-  // /path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int
+  // GET /path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int
   Routes.iso.simpleQueryParams
     <¢> get %> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
     %> queryParam("ref", opt(.string)) <%> queryParam("active", .bool) <%> queryParam("t", .int)
+    <% end,
+
+  // GET /subscribe?plan=:int&token=:int
+  Routes.iso.codableQueryParams
+    <¢> get %> lit("subscribe") %> queryParams(SubscribeData.self)
     <% end,
   ]
   .reduce(.empty, <|>)
@@ -60,8 +70,11 @@ extension Routes: Equatable {
     case let (.simpleQueryParams(lhs0, lhs1, lhs2), .simpleQueryParams(rhs0, rhs1, rhs2)):
       return lhs0 == rhs0 && lhs1 == rhs1 && lhs2 == rhs2
 
+    case let (.codableQueryParams(lhs), .codableQueryParams(rhs)):
+      return lhs.plan == rhs.plan
+
     case (.home, _), (.root, _), (.pathComponents, _), (.postBodyField, _), (.postBodyJsonDecodable, _),
-         (.simpleQueryParams, _):
+         (.simpleQueryParams, _), (.codableQueryParams, _):
       return false
     }
   }
@@ -104,6 +117,13 @@ extension Routes {
       apply: Routes.simpleQueryParams,
       unapply: {
         guard case let .simpleQueryParams(result) = $0 else { return nil }
+        return result
+    })
+
+    static let codableQueryParams = parenthesize <| PartialIso(
+      apply: Routes.codableQueryParams,
+      unapply: {
+        guard case let .codableQueryParams(result) = $0 else { return nil }
         return result
     })
   }
