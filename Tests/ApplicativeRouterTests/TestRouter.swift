@@ -36,7 +36,7 @@ let router: Router<Routes> = [
   Routes.iso.postBodyField
     <¢> post %> formField("email") <% lit("signup") <% end,
 
-  // POST /subscribe?plan=:int
+  // POST /subscribe
   Routes.iso.postBodyFormData
     <¢> post %> lit("subscribe") %> formDataBody(SubscribeData.self) <% end,
 
