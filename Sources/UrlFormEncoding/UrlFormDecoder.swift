@@ -540,7 +540,7 @@ public final class UrlFormDecoder: Decoder {
     ///
     /// - Note: This parsing strategy is "flat" and cannot decode nested structures.
     case accumulateValues
-    
+
     // TODO: We should really be using a more type-safe container here to avoid all this `Any` nonsense.
     // Something like:
     //
