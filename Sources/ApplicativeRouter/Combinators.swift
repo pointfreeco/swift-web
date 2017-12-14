@@ -13,8 +13,8 @@ public func lit(_ str: String) -> Router<Prelude.Unit> {
             : nil
       }
   },
-    print: { _ in .init(method: nil, path: [str], query: [:], body: nil) },
-    template: { _ in .init(method: nil, path: [str], query: [:], body: nil) }
+    print: { _ in .init(method: nil, path: [str], query: nil, body: nil) },
+    template: { _ in .init(method: nil, path: [str], query: nil, body: nil) }
   )
 }
 
@@ -27,48 +27,48 @@ public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
       return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), v)
   },
     print: { a in
-      .init(method: nil, path: [f.unapply(a) ?? ""], query: [:], body: nil)
+      .init(method: nil, path: [f.unapply(a) ?? ""], query: nil, body: nil)
   },
     template: { a in
-      .init(method: nil, path: [":\(typeKey(a))"], query: [:], body: nil)
+      .init(method: nil, path: [":\(typeKey(a))"], query: nil, body: nil)
   })
 }
 
-/// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
-/// using the partial isomorphism supplied.
-///
-/// - Parameters:
-///   - key: The query param key to process.
-///   - f: A partial iso from `String?` to `A`. Note that this partial iso takes optional strings so that
-///        you can decide how to handle params that are not required.
-public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
-  return .init(
-    parse: { route in
-      return f.apply(route.query[key]).map { (route, $0) }
-    },
-    print: { a in
-      var query: [String: String] = [:]
-      if let str = f.unapply(a) {
-        query[key] = str
-      }
-      return RequestData(method: nil, path: [], query: query, body: nil)
-    },
-    template: { a in
-      RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
-  })
-}
-
-/// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
-/// using the partial isomorphism supplied.
-public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
-  return queryParam(key, req(f))
-}
+///// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
+///// using the partial isomorphism supplied.
+/////
+///// - Parameters:
+/////   - key: The query param key to process.
+/////   - f: A partial iso from `String?` to `A`. Note that this partial iso takes optional strings so that
+/////        you can decide how to handle params that are not required.
+//public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
+//  return .init(
+//    parse: { route in
+//      return f.apply(route.query[key]).map { (route, $0) }
+//    },
+//    print: { a in
+//      var query: [String: String] = [:]
+//      if let str = f.unapply(a) {
+//        query[key] = str
+//      }
+//      return RequestData(method: nil, path: [], query: query, body: nil)
+//    },
+//    template: { a in
+//      RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
+//  })
+//}
+//
+///// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
+///// using the partial isomorphism supplied.
+//public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
+//  return queryParam(key, req(f))
+//}
 
 /// Processes the body data of the request.
 public let dataBody = Router<Data>(
   parse: { route in route.body.map { (route, $0) } },
-  print: { .init(method: nil, path: [], query: [:], body: $0) },
-  template: { .init(method: nil, path: [], query: [:], body: $0) }
+  print: { .init(method: nil, path: [], query: nil, body: $0) },
+  template: { .init(method: nil, path: [], query: nil, body: $0) }
 )
 
 /// Processes the body data of the request as a string.
@@ -103,7 +103,7 @@ public func jsonBody<A: Codable>(_ type: A.Type) -> Router<A> {
 public let end = Router<Prelude.Unit>(
   parse: { route in
     route.path.isEmpty
-      ? (RequestData(method: route.method, path: [], query: [:], body: nil), unit)
+      ? (RequestData(method: route.method, path: [], query: nil, body: nil), unit)
       : nil
 },
   print: const(.empty),
@@ -124,32 +124,32 @@ extension Router {
   public static var num: Router<Double> { return pathParam(.double) }
 }
 
-/// Parses the query params to create a value of type `A` via the `Codable` protocol.
-/// TODO: this only works for types `A` with string fields. Is it possible to improve that?
-public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
-  return .init(
-    parse: { route in
-      (try? JSONSerialization.data(withJSONObject: route.query))
-        .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
-        .map { (route, $0) }
-  },
-    print: { a in
-      let params = (try? JSONEncoder().encode(a))
-        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
-        .flatMap { $0 as? [String: Any] }
-        .map { $0.mapValues { "\($0)" } }
-        ?? [:]
-      return RequestData(method: nil, path: [], query: params, body: nil)
-  },
-    template: { a in
-      let params = (try? JSONEncoder().encode(a))
-        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
-        .flatMap { $0 as? [String: Any] }
-        .map { $0.mapValues { _ in ":string" } }
-        ?? [:]
-      return RequestData(method: nil, path: [], query: params, body: nil)
-  })
-}
+///// Parses the query params to create a value of type `A` via the `Codable` protocol.
+///// TODO: this only works for types `A` with string fields. Is it possible to improve that?
+//public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
+//  return .init(
+//    parse: { route in
+//      (try? JSONSerialization.data(withJSONObject: route.query))
+//        .flatMap { try? JSONDecoder().decode(A.self, from: $0) }
+//        .map { (route, $0) }
+//  },
+//    print: { a in
+//      let params = (try? JSONEncoder().encode(a))
+//        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+//        .flatMap { $0 as? [String: Any] }
+//        .map { $0.mapValues { "\($0)" } }
+//        ?? [:]
+//      return RequestData(method: nil, path: [], query: params, body: nil)
+//  },
+//    template: { a in
+//      let params = (try? JSONEncoder().encode(a))
+//        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+//        .flatMap { $0 as? [String: Any] }
+//        .map { $0.mapValues { _ in ":string" } }
+//        ?? [:]
+//      return RequestData(method: nil, path: [], query: params, body: nil)
+//  })
+//}
 
 /// Parses the HTTP method verb of the request.
 public func method(_ method: Method) -> Router<Prelude.Unit> {
@@ -159,8 +159,8 @@ public func method(_ method: Method) -> Router<Prelude.Unit> {
         ? (route |> \.method .~ nil, unit)
         : nil
   },
-    print: { _ in  .init(method: method, path: [], query: [:], body: nil) },
-    template: { _ in  .init(method: method, path: [], query: [:], body: nil) }
+    print: { _ in  .init(method: method, path: [], query: nil, body: nil) },
+    template: { _ in  .init(method: method, path: [], query: nil, body: nil) }
   )
 }
 

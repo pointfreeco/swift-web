@@ -532,17 +532,21 @@ public final class UrlFormDecoder: Decoder {
     ///     ids=1&ids=2
     ///     // Parsed as ["ids": ["1", "2"]]
     ///
-    /// The decoder will
+    /// Wherever the decoder expects a single value (rather than an array), it will use the _last_ value
+    /// given.
     ///
-    /// - Note: This parsing strategy is "flat" and cannot decode deeper structures.
+    ///     try decoder.decode(User.self, from: Data("name=Blob&name=Clob".utf8))
+    ///     // return User(name: "Clob")
+    ///
+    /// - Note: This parsing strategy is "flat" and cannot decode nested structures.
     case accumulateValues
     
     // TODO: We should really be using a more type-safe container here to avoid all this `Any` nonsense.
     // Something like:
     //
-    //     enum Container {
-    //       case keyed([String: Container])
-    //       case unkeyed([Container])
+    //     public enum Container {
+    //       indirect case keyed([String: Container])
+    //       indirect case unkeyed([Container])
     //       case singleValue(String)
     //     }
     /// A parsing strategy that uses a custom function to produce a structure for decoding.
