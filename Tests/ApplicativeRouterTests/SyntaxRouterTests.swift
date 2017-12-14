@@ -148,9 +148,16 @@ class SyntaxRouterTests: XCTestCase {
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
-    XCTAssertEqual(
-      "subscribe?plan=:__nscfnumber", // FIXME
-      router.templateUrl(for: route)?.absoluteString
-    )
+    #if os(Linux)
+      XCTAssertEqual(
+        "subscribe?plan=:int",
+        router.templateUrl(for: route)?.absoluteString
+      )
+    #else
+      XCTAssertEqual(
+        "subscribe?plan=:__nscfnumber", // FIXME
+        router.templateUrl(for: route)?.absoluteString
+      )
+    #endif
   }
 }

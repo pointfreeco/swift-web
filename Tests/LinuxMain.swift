@@ -189,7 +189,8 @@ extension SyntaxRouterTests {
     ("testPostBodyField", testPostBodyField),
     ("testPostBodyJsonDecodable", testPostBodyJsonDecodable),
     ("testSimpleQueryParams", testSimpleQueryParams),
-    ("testSimpleQueryParams_SomeMissing", testSimpleQueryParams_SomeMissing)
+    ("testSimpleQueryParams_SomeMissing", testSimpleQueryParams_SomeMissing),
+    ("testCodableQueryParams", testCodableQueryParams)
   ]
 }
 extension UrlFormDecoderTests {

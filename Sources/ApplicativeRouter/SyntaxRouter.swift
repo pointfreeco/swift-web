@@ -171,7 +171,8 @@ private func request(from data: RequestData, base: URL?) -> URLRequest? {
 }
 
 private func urlComponents(from route: RequestData) -> URLComponents {
-  return URLComponents()
-    |> \.path .~ route.path.joined(separator: "/")
-    |> \.query .~ route.query
+  var components = URLComponents()
+  components.path = route.path.joined(separator: "/")
+  components.query = route.query
+  return components
 }
