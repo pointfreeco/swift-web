@@ -75,7 +75,7 @@ extension PartialIso where A == String, B == Double {
 
 extension PartialIso where A == String, B == [String: String] {
   /// An isomorphism between strings and dictionaries using form encoded format.
-  public static var formEncodedFields: PartialIso<String, [String: String]> {
+  public static var formEncodedFields: PartialIso {
     return .init(
       apply: formEncodedStringToFields,
       unapply: fieldsToFormEncodedString

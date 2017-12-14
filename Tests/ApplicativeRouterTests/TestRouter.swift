@@ -12,6 +12,7 @@ enum Routes {
   case root
   case pathComponents(param: Either<String, Int>, commentId: Int)
   case postBodyField(email: String)
+  case postBodyFormData(SubscribeData)
   case postBodyJsonDecodable(episode: Episode, param: Int)
   case simpleQueryParams(ref: String?, active: Bool, t: Int)
   case codableQueryParams(SubscribeData)
@@ -35,6 +36,10 @@ let router: Router<Routes> = [
   Routes.iso.postBodyField
     <¢> post %> formField("email") <% lit("signup") <% end,
 
+  // POST /subscribe?plan=:int
+  Routes.iso.postBodyFormData
+    <¢> post %> lit("subscribe") %> formDataBody(SubscribeData.self) <% end,
+
   // POST /episodes/:id
   Routes.iso.postBodyJsonDecodable
     <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% end,
@@ -45,7 +50,7 @@ let router: Router<Routes> = [
     %> queryParam("ref", opt(.string)) <%> queryParam("active", .bool) <%> queryParam("t", .int)
     <% end,
 
-  // GET /subscribe?plan=:int&token=:int
+  // GET /subscribe?plan=:int
   Routes.iso.codableQueryParams
     <¢> get %> lit("subscribe") %> queryParams(SubscribeData.self)
     <% end,
@@ -63,6 +68,9 @@ extension Routes: Equatable {
 
     case let (.postBodyField(lhs), .postBodyField(rhs)):
       return lhs == rhs
+
+    case let (.postBodyFormData(lhs), .postBodyFormData(rhs)):
+      return lhs.plan == rhs.plan
 
     case let (.postBodyJsonDecodable(lhs), .postBodyJsonDecodable(rhs)):
       return lhs == rhs
@@ -103,6 +111,13 @@ extension Routes {
       apply: Routes.postBodyField,
       unapply: {
         guard case let .postBodyField(result) = $0 else { return nil }
+        return result
+    })
+
+    static let postBodyFormData = parenthesize <| PartialIso(
+      apply: Routes.postBodyFormData,
+      unapply: {
+        guard case let .postBodyFormData(result) = $0 else { return nil }
         return result
     })
 
