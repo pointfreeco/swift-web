@@ -72,6 +72,31 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A
   return queryParam(key, req(f))
 }
 
+/// Parses the query params to create a value of type `A` via the `Codable` protocol.
+public func queryParams<A: Codable>(_ type: A.Type, decoder: UrlFormDecoder = .init())
+  -> Router<A> {
+
+    return .init(
+      parse: { route in
+        route.query.flatMap { try? decoder.decode(A.self, from: Data($0.utf8)) }
+          .map { (route, $0) }
+    },
+      print: { a in
+        let params = (try? JSONEncoder().encode(a))
+          .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+          .flatMap { $0 as? [String: Any] }
+          .map { $0.map { "\($0)=\($1)" }.joined(separator: "&") }
+        return RequestData(method: nil, path: [], query: params, body: nil)
+    },
+      template: { a in
+        let params = (try? JSONEncoder().encode(a))
+          .flatMap { try? JSONSerialization.jsonObject(with: $0) } // FIXME: build/use a UrlFormEncoder
+          .flatMap { $0 as? [String: Any] }
+          .map { $0.map { k, v in "\(k)=:\(typeKey(v))" }.joined(separator: "&") }
+        return RequestData(method: nil, path: [], query: params, body: nil)
+    })
+}
+
 /// Processes the body data of the request.
 public let dataBody = Router<Data>(
   parse: { route in route.body.map { (route, $0) } },
@@ -97,9 +122,26 @@ public func formFields(_ names: String...) -> Router<[String: String]> {
   return formEncodedBodyFields.map(keys(names))
 }
 
-public func formDataBody<A: Codable>(_ type: A.Type) -> Router<A> {
-  return ApplicativeRouter.formEncodedBodyFields
-    .map(jsonDictionaryToData >>> PartialIso.codableToData.inverted)
+public func formDataBody<A: Codable>(_ type: A.Type, decoder: UrlFormDecoder = .init()) -> Router<A> {
+  return .init(
+    parse: { route in
+      route.body.flatMap { try? decoder.decode(A.self, from: $0) }
+        .map { (route, $0) }
+  },
+    print: { a in
+      let body = (try? JSONEncoder().encode(a))
+        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
+        .flatMap { $0 as? [String: Any] }
+        .map { Data($0.map { "\($0)=\($1)" }.joined(separator: "&").utf8) }
+      return RequestData(method: nil, path: [], query: nil, body: body)
+  },
+    template: { a in
+      let body = (try? JSONEncoder().encode(a))
+        .flatMap { try? JSONSerialization.jsonObject(with: $0) } // FIXME: build/use a UrlFormEncoder
+        .flatMap { $0 as? [String: Any] }
+        .map { Data($0.map { k, v in "\(k)=:\(typeKey(v))" }.joined(separator: "&").utf8) }
+      return RequestData(method: nil, path: [], query: nil, body: body)
+  })
 }
 
 /// Parses the body data of the request as JSON and then tries to decode the data into a value of type `A`.
@@ -130,31 +172,6 @@ extension Router {
 
   /// Parses and consumes a path component as a double.
   public static var num: Router<Double> { return pathParam(.double) }
-}
-
-/// Parses the query params to create a value of type `A` via the `Codable` protocol.
-public func queryParams<A: Codable>(_ type: A.Type, decoder: UrlFormDecoder = .init())
-  -> Router<A> {
-
-    return .init(
-      parse: { route in
-        route.query.flatMap { try? decoder.decode(A.self, from: Data($0.utf8)) }
-          .map { (route, $0) }
-    },
-      print: { a in
-        let params = (try? JSONEncoder().encode(a))
-          .flatMap { try? JSONSerialization.jsonObject(with: $0) }
-          .flatMap { $0 as? [String: Any] }
-          .map { $0.map { "\($0)=\($1)" }.joined(separator: "&") }
-        return RequestData(method: nil, path: [], query: params, body: nil)
-    },
-      template: { a in
-        let params = (try? JSONEncoder().encode(a))
-          .flatMap { try? JSONSerialization.jsonObject(with: $0) } // FIXME: build/use a UrlFormEncoder
-          .flatMap { $0 as? [String: Any] }
-          .map { $0.map { k, v in "\(k)=:\(typeKey(v))" }.joined(separator: "&") }
-        return RequestData(method: nil, path: [], query: params, body: nil)
-    })
 }
 
 /// Parses the HTTP method verb of the request.
