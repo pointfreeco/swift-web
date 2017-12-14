@@ -206,4 +206,12 @@ class HTMLTests: XCTestCase {
 
     assertSnapshot(matching: doc)
   }
+
+  func testBooleanAttributes() {
+    let uncheckedInput = input([id("not-checked"), checked(false)])
+    XCTAssertEqual("<input id=\"not-checked\">", render(uncheckedInput))
+
+    let checkedInput = input([id("checked"), checked(true)])
+    XCTAssertEqual("<input id=\"checked\" checked>", render(checkedInput))
+  }
 }

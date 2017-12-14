@@ -85,6 +85,13 @@ public func comment<T>(_ content: StaticString) -> ChildOf<T> {
 
 extension Value {
   public func render(with key: String) -> EncodedString? {
+
+    if let boolValue = self as? Bool {
+      return boolValue
+        ? Html.encode(key)
+        : nil
+    }
+
     return self.renderedValue().map { Html.encode("\(key)=") + quote($0) } ?? Html.encode(key)
   }
 
