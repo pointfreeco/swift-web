@@ -16,10 +16,6 @@ public final class UrlFormDecoder: Decoder {
   public init() {
   }
 
-//  public func decode<T: Decodable>(_ type: T?.Type, from data: Data) throws -> T? {
-//    return try? decode(T.self, from: data)
-//  }
-
   public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
     let query = String(decoding: data, as: UTF8.self)
     let container: Container
