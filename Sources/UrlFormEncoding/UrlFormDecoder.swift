@@ -585,12 +585,9 @@ public final class UrlFormDecoder: Decoder {
     /// - Note: This parsing strategy is "flat" and cannot decode nested structures.
     case accumulateValues
 
-    /// A parsing strategy that uses a custom function to produce a structure for decoding.
+    /// A parsing strategy that uses a custom function to produce a container for decoding.
     ///
-    /// The custom function takes a query string and produces a keyed container for decoding. A container is
-    /// of type `[String: Any]`, where `Any` can recursively be one of `[String: Any]`, `[Any]`, or `String`.
-    /// Every "leaf" of this structure must end with `String` for decoding to work without error (the decoder
-    /// is responsible for converting these strings into other types).
+    /// The custom function takes a query string and produces a container for decoding.
     case custom((String) -> Container)
 
     /// A parsing strategy that uses keys with a bracketed suffix to produce nested structures.
