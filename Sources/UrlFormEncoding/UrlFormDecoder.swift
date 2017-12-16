@@ -3,8 +3,8 @@ import Optics
 import Prelude
 
 public final class UrlFormDecoder: Decoder {
-  private(set) var containers: [Any] = []
-  private var container: Any {
+  private(set) var containers: [Container] = []
+  private var container: Container {
     return containers.last!
   }
   public private(set) var codingPath: [CodingKey] = []
@@ -16,9 +16,13 @@ public final class UrlFormDecoder: Decoder {
   public init() {
   }
 
+//  public func decode<T: Decodable>(_ type: T?.Type, from data: Data) throws -> T? {
+//    return try? decode(T.self, from: data)
+//  }
+
   public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
     let query = String(decoding: data, as: UTF8.self)
-    let container: [String: Any]
+    let container: Container
     switch self.parsingStrategy {
     case .accumulateValues:
       container = accumulateValues(query)
@@ -30,16 +34,16 @@ public final class UrlFormDecoder: Decoder {
     return try T(from: self)
   }
 
-  private func unbox(_ value: Any) -> String? {
+  private func unbox(_ container: Container) -> String? {
     switch self.parsingStrategy {
     case .accumulateValues:
-      return value as? String ?? (value as? [String])?.last
+      return container.values?.last?.value
     case .custom:
-      return value as? String
+      return container.value
     }
   }
 
-  private func unbox(_ value: Any, as type: Data.Type) throws -> Data {
+  private func unbox(_ value: Container, as type: Data.Type) throws -> Data {
     guard let string = unbox(value) else {
       throw Error.decodingError("Expected string data, got \(value)", self.codingPath)
     }
@@ -60,7 +64,7 @@ public final class UrlFormDecoder: Decoder {
     }
   }
 
-  private func unbox(_ value: Any, as type: Date.Type) throws -> Date {
+  private func unbox(_ value: Container, as type: Date.Type) throws -> Date {
     guard let string = unbox(value) else {
       throw Error.decodingError("Expected string date, got \(value)", self.codingPath)
     }
@@ -98,7 +102,7 @@ public final class UrlFormDecoder: Decoder {
     }
   }
 
-  private func unbox<T: Decodable>(_ value: Any, as type: T.Type) throws -> T {
+  private func unbox<T: Decodable>(_ value: Container, as type: T.Type) throws -> T {
     if type == Data.self {
       return try self.unbox(value, as: Data.self) as! T
     } else if type == Date.self {
@@ -112,14 +116,14 @@ public final class UrlFormDecoder: Decoder {
     -> KeyedDecodingContainer<Key>
     where Key: CodingKey {
 
-      guard let container = self.container as? [String: Any] else {
+      guard case let .keyed(container) = self.container else {
         throw Error.decodingError("Expected keyed container, got \(self.container)", self.codingPath)
       }
       return .init(KeyedContainer(decoder: self, container: container))
   }
 
   public func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-    guard let container = self.container as? [Any] else {
+    guard case let .unkeyed(container) = self.container else {
       throw Error.decodingError("Expected unkeyed container, got \(self.container)", self.codingPath)
     }
     return UnkeyedContainer(decoder: self, container: container, codingPath: self.codingPath)
@@ -135,7 +139,7 @@ public final class UrlFormDecoder: Decoder {
 
   struct KeyedContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
     private(set) var decoder: UrlFormDecoder
-    let container: [String: Any]
+    let container: [String: Container]
 
     var codingPath: [CodingKey] {
       return self.decoder.codingPath
@@ -238,10 +242,10 @@ public final class UrlFormDecoder: Decoder {
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
-        guard let container = self.container[key.stringValue] as? [String: Any] else {
+        guard case let .keyed(container)? = self.container[key.stringValue] else {
           throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
         }
-        self.decoder.containers.append(container)
+        self.decoder.containers.append(.keyed(container)) // FIXME?
         defer { self.decoder.containers.removeLast() }
         return .init(KeyedContainer<NestedKey>(decoder: self.decoder, container: container))
     }
@@ -249,10 +253,10 @@ public final class UrlFormDecoder: Decoder {
     func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
       self.decoder.codingPath.append(key)
       defer { self.decoder.codingPath.removeLast() }
-      guard let container = self.container[key.stringValue] as? [Any] else {
+      guard case let .unkeyed(container)? = self.container[key.stringValue] else {
         throw Error.decodingError("Expected value at \(key), got nil", self.codingPath)
       }
-      self.decoder.containers.append(container)
+      self.decoder.containers.append(.unkeyed(container)) // FIXME?
       defer { self.decoder.containers.removeLast() }
       return UnkeyedContainer(decoder: self.decoder, container: container, codingPath: self.codingPath)
     }
@@ -280,7 +284,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     let decoder: UrlFormDecoder
-    let container: [Any]
+    let container: [Container]
 
     private(set) var codingPath: [CodingKey]
     var count: Int? {
@@ -291,7 +295,7 @@ public final class UrlFormDecoder: Decoder {
     }
     private(set) var currentIndex: Int = 0
 
-    init(decoder: UrlFormDecoder, container: [Any], codingPath: [CodingKey]) {
+    init(decoder: UrlFormDecoder, container: [Container], codingPath: [CodingKey]) {
       self.decoder = decoder
       self.container = container
       self.codingPath = codingPath
@@ -394,11 +398,11 @@ public final class UrlFormDecoder: Decoder {
         guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
         self.codingPath.append(Key(index: self.currentIndex))
         defer { self.codingPath.removeLast() }
-        guard let container = self.container[self.currentIndex] as? [String: Any] else {
+        guard case let .keyed(container) = self.container[self.currentIndex] else {
           throw Error.decodingError("Expected value at \(self.currentIndex), got nil", self.codingPath)
         }
         self.currentIndex += 1
-        self.decoder.containers.append(container)
+        self.decoder.containers.append(.keyed(container)) // FIXME?
         defer { self.decoder.containers.removeLast() }
         return .init(KeyedContainer(decoder: self.decoder, container: container))
     }
@@ -407,11 +411,11 @@ public final class UrlFormDecoder: Decoder {
       guard !self.isAtEnd else { throw Error.decodingError("Unkeyed container is at end", self.codingPath) }
       self.codingPath.append(Key(index: self.currentIndex))
       defer { self.codingPath.removeLast() }
-      guard let container = self.container[self.currentIndex] as? [Any] else {
+      guard case let .unkeyed(container) = self.container[self.currentIndex] else {
         throw Error.decodingError("Expected value at \(self.currentIndex), got nil", self.codingPath)
       }
       self.currentIndex += 1
-      self.decoder.containers.append(container)
+      self.decoder.containers.append(.unkeyed(container)) // FIXME?
       defer { self.decoder.containers.removeLast() }
       return UnkeyedContainer(decoder: self.decoder, container: container, codingPath: self.codingPath)
     }
@@ -431,13 +435,13 @@ public final class UrlFormDecoder: Decoder {
 
   struct SingleValueContainer: SingleValueDecodingContainer {
     let decoder: UrlFormDecoder
-    let container: Any
+    let container: Container
 
     let codingPath: [CodingKey] = []
 
     private func unwrap<T>(_ block: (String) -> T?, _ line: UInt = #line) throws -> T {
       guard
-        let container = self.container as? String,
+        case let .singleValue(container) = self.container,
         let value = block(container)
         else { throw Error.decodingError("Expected \(T.self), got nil", self.codingPath) }
 
@@ -445,7 +449,12 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decodeNil() -> Bool {
-      return (self.container as? String)?.isEmpty ?? true
+      switch self.container {
+      case let .singleValue(string):
+        return string.isEmpty
+      default:
+        return false
+      }
     }
 
     func decode(_ type: Bool.Type) throws -> Bool {
@@ -526,6 +535,39 @@ public final class UrlFormDecoder: Decoder {
     case custom((String) -> Date?)
   }
 
+  public enum Container {
+    indirect case keyed([String: Container])
+    indirect case unkeyed([Container])
+    case singleValue(String)
+
+    var params: [String: Container]? {
+      switch self {
+      case let .keyed(params):
+        return params
+      case .unkeyed, .singleValue:
+        return nil
+      }
+    }
+
+    var values: [Container]? {
+      switch self {
+      case let .unkeyed(values):
+        return values
+      case .keyed, .singleValue:
+        return nil
+      }
+    }
+
+    var value: String? {
+      switch self {
+      case let .singleValue(value):
+        return value
+      case .keyed, .unkeyed:
+        return nil
+      }
+    }
+  }
+
   public enum ParsingStrategy {
     /// A parsing strategy that accumulates values when multiple keys are provided.
     ///
@@ -541,21 +583,13 @@ public final class UrlFormDecoder: Decoder {
     /// - Note: This parsing strategy is "flat" and cannot decode nested structures.
     case accumulateValues
 
-    // TODO: We should really be using a more type-safe container here to avoid all this `Any` nonsense.
-    // Something like:
-    //
-    //     public enum Container {
-    //       indirect case keyed([String: Container])
-    //       indirect case unkeyed([Container])
-    //       case singleValue(String)
-    //     }
     /// A parsing strategy that uses a custom function to produce a structure for decoding.
     ///
     /// The custom function takes a query string and produces a keyed container for decoding. A container is
     /// of type `[String: Any]`, where `Any` can recursively be one of `[String: Any]`, `[Any]`, or `String`.
     /// Every "leaf" of this structure must end with `String` for decoding to work without error (the decoder
     /// is responsible for converting these strings into other types).
-    case custom((String) -> [String: Any])
+    case custom((String) -> Container)
 
     /// A parsing strategy that uses keys with a bracketed suffix to produce nested structures.
     ///
@@ -629,89 +663,95 @@ private let iso8601DateFormatterWithoutMilliseconds = DateFormatter()
   |> iso8601
   |> \.dateFormat .~ "yyyy-MM-dd'T'HH:mm:ssXXXXX"
 
-private func parse(isArray: @escaping (String) -> Bool, sort: Bool = false) -> (String) -> [String: Any] {
-  func parseHelp(dictionary params: inout [String: Any], _ path: [String], _ value: Any) {
-    let key = path[0]
+private func parse(isArray: @escaping (String) -> Bool, sort: Bool = false) -> (String)
+  -> UrlFormDecoder.Container {
 
-    if path.count == 1 {
-      params[key] = value
-    } else if path.count == 2, isArray(path[1]) {
-      var values = params[key] as? [Any] ?? []
-      values.append(value)
-      params[key] = values
-    } else if isArray(path[1]) {
-      var values = params[key] as? [Any] ?? []
-      parseHelp(array: &values, Array(path[1...]), value)
-      params[key] = values
-    } else {
-      var values = params[key] as? [String: Any] ?? [:]
-      parseHelp(dictionary: &values, Array(path[1...]), value)
-      params[key] = values
+    func parseHelp(_ container: inout UrlFormDecoder.Container, _ path: [String], _ value: String) {
+      switch container {
+      case var .keyed(params):
+        let key = path[0]
+        if path.count == 1 {
+          params[key] = .singleValue(value)
+        } else if path.count == 2, isArray(path[1]) {
+          var values = params[key]?.values ?? []
+          values.append(.singleValue(value))
+          params[key] = .unkeyed(values)
+        } else if isArray(path[1]) {
+          var values = UrlFormDecoder.Container.unkeyed(params[key]?.values ?? [])
+          parseHelp(&values, Array(path[1...]), value)
+          params[key] = values
+        } else {
+          var values = UrlFormDecoder.Container.keyed(params[key]?.params ?? [:])
+          parseHelp(&values, Array(path[1...]), value)
+          params[key] = values
+        }
+        container = .keyed(params)
+      case var .unkeyed(values):
+        if path.count == 1 {
+          values.append(.singleValue(value))
+        } else if isArray(path[1]) {
+          var nestedValues = UrlFormDecoder.Container.unkeyed([])
+          parseHelp(&nestedValues, Array(path[1...]), value)
+          values.append(nestedValues)
+        } else {
+          var params = UrlFormDecoder.Container.keyed([:])
+          parseHelp(&params, Array(path[1...]), value)
+          values.append(params)
+        }
+        container = .unkeyed(values)
+      case .singleValue:
+        fatalError()
+      }
     }
-  }
 
-  func parseHelp(array values: inout [Any], _ path: [String], _ value: Any) {
-    if path.count == 1 {
-      values.append(value)
-    } else if isArray(path[1]) {
-      var nestedValues: [Any] = []
-      parseHelp(array: &nestedValues, Array(path[1...]), value)
-      values.append(nestedValues)
-    } else {
-      var params: [String: Any] = [:]
-      parseHelp(dictionary: &params, Array(path[1...]), value)
-      values.append(params)
-    }
-  }
+    return { query in
+      var params = UrlFormDecoder.Container.keyed([:])
 
-  return { query in
-    var params: [String: Any] = [:]
-
-    for (name, value) in pairs(query, sort: sort) {
-      let result = name.reduce(into: (path: [] as [String], current: "")) { result, char in
-        switch char {
-        case "[":
-          if result.path.isEmpty {
+      for (name, value) in pairs(query, sort: sort) {
+        let result = name.reduce(into: (path: [] as [String], current: "")) { result, char in
+          switch char {
+          case "[":
+            if result.path.isEmpty {
+              result.path.append(result.current)
+              result.current.removeAll()
+            }
+          case "]":
             result.path.append(result.current)
             result.current.removeAll()
+          default:
+            result.current.append(char)
           }
-        case "]":
-          result.path.append(result.current)
-          result.current.removeAll()
-        default:
-          result.current.append(char)
         }
+        let path = result.current.isEmpty ? result.path : result.path + [result.current]
+        parseHelp(&params, path.isEmpty ? [""] : path, value ?? "")
       }
-      let path = result.current.isEmpty ? result.path : result.path + [result.current]
-      parseHelp(dictionary: &params, path.isEmpty ? [""] : path, value ?? "")
-    }
 
-    return params
-  }
+      return params
+    }
 }
 
 public func parse(query: String) -> [(String, String?)] {
   return pairs(query)
 }
 
-public func pairs(_ query: String, sort: Bool = false) -> [(String, String?)] {
+private func pairs(_ query: String, sort: Bool = false) -> [(String, String?)] {
   let pairs = query
     .split(separator: "&")
     .map { (pairString: Substring) -> (name: String, value: String?) in
       let pairArray = pairString.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-        .flatMap { String($0).removingPercentEncoding }
+        .flatMap(String.init >>> ^\.removingPercentEncoding)
       return (pairArray[0], pairArray.count == 2 ? pairArray[1] : nil)
     }
 
   return sort ? pairs.sorted { $0.name < $1.name } : pairs
 }
 
-private func accumulateValues(_ query: String) -> [String: Any] {
-  var params: [String: Any] = [:]
+private func accumulateValues(_ query: String) -> UrlFormDecoder.Container {
+  var params: [String: UrlFormDecoder.Container] = [:]
   for (name, value) in pairs(query) {
-    var values = params[name] as? [Any] ?? []
-    values.append(value ?? "")
-    params[name] = values
+    var values = params[name]?.values ?? []
+    values.append(.singleValue(value ?? ""))
+    params[name] = .unkeyed(values)
   }
-  return params
+  return .keyed(params)
 }
