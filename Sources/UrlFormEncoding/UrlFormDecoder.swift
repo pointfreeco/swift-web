@@ -270,6 +270,9 @@ public final class UrlFormDecoder: Decoder {
       let decoder = UrlFormDecoder()
       decoder.containers = [container]
       decoder.codingPath = self.codingPath
+      decoder.dataDecodingStrategy = self.decoder.dataDecodingStrategy
+      decoder.dateDecodingStrategy = self.decoder.dateDecodingStrategy
+      decoder.parsingStrategy = self.decoder.parsingStrategy
       return decoder
     }
   }
@@ -425,6 +428,9 @@ public final class UrlFormDecoder: Decoder {
       let decoder = UrlFormDecoder()
       decoder.containers = [container]
       decoder.codingPath = self.codingPath
+      decoder.dataDecodingStrategy = self.decoder.dataDecodingStrategy
+      decoder.dateDecodingStrategy = self.decoder.dateDecodingStrategy
+      decoder.parsingStrategy = self.decoder.parsingStrategy
       return decoder
     }
   }
