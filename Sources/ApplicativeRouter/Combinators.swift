@@ -78,7 +78,7 @@ public func queryParams<A: Codable>(_ type: A.Type, decoder: UrlFormDecoder = .i
 
     return .init(
       parse: { route in
-        route.query.flatMap { try? decoder.decode(A.self, from: Data($0.utf8)) }
+        (try? decoder.decode(A.self, from: route.query.map(^\.utf8 >>> Data.init) ?? .init()))
           .map { (route, $0) }
     },
       print: { a in
