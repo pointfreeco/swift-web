@@ -86,19 +86,33 @@ extension PartialIso where A == String, B == [String: String] {
 extension PartialIso where A == String, B == Data {
   /// An isomorphism between strings and data using utf8 encoding.
   /// TODO: this should prob take encoding as an argument.
-  public static var data: PartialIso<String, Data> {
+  public static var data: PartialIso {
     return .init(
-      apply: { Data($0.utf8) },
+      apply: ^\.utf8 >>> Data.init,
       unapply: { String(decoding: $0, as: UTF8.self) }
     )
   }
 }
 
 extension PartialIso where A: Codable, B == Data {
-  public static var codableToData: PartialIso<A, Data> {
+  public static func codableToJsonData(
+    _ type: A.Type,
+    encoder: JSONEncoder = .init(),
+    decoder: JSONDecoder = .init()
+    )
+    -> PartialIso {
+
+      return .init(
+        apply: { try? encoder.encode($0) },
+        unapply: { try? decoder.decode(type, from: $0) }
+      )
+  }
+
+  /// FIXME: build/use UrlFormEncoder
+  public static func codableToFormData(_ type: A.Type, decoder: UrlFormDecoder = .init()) -> PartialIso {
     return .init(
-      apply: { try? JSONEncoder().encode($0) },
-      unapply: { try? JSONDecoder().decode(A.self, from: $0) }
+      apply: urlFormEncode(value:) >>> ^\.utf8 >>> Data.init,
+      unapply: { try? decoder.decode(type, from: $0) }
     )
   }
 }

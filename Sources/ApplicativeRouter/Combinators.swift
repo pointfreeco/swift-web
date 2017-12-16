@@ -122,31 +122,19 @@ public func formFields(_ names: String...) -> Router<[String: String]> {
   return formEncodedBodyFields.map(keys(names))
 }
 
-public func formDataBody<A: Codable>(_ type: A.Type, decoder: UrlFormDecoder = .init()) -> Router<A> {
-  return .init(
-    parse: { route in
-      route.body.flatMap { try? decoder.decode(A.self, from: $0) }
-        .map { (route, $0) }
-  },
-    print: { a in
-      let body = (try? JSONEncoder().encode(a))
-        .flatMap { try? JSONSerialization.jsonObject(with: $0) }
-        .flatMap { $0 as? [String: Any] }
-        .map { Data($0.map { "\($0)=\($1)" }.joined(separator: "&").utf8) }
-      return RequestData(method: nil, path: [], query: nil, body: body)
-  },
-    template: { a in
-      let body = (try? JSONEncoder().encode(a))
-        .flatMap { try? JSONSerialization.jsonObject(with: $0) } // FIXME: build/use a UrlFormEncoder
-        .flatMap { $0 as? [String: Any] }
-        .map { Data($0.map { k, v in "\(k)=:\(typeKey(v))" }.joined(separator: "&").utf8) }
-      return RequestData(method: nil, path: [], query: nil, body: body)
-  })
+public func formBody<A: Codable>(_ type: A.Type, decoder: UrlFormDecoder = .init()) -> Router<A> {
+  return dataBody.map(PartialIso.codableToFormData(type, decoder: decoder).inverted)
 }
 
 /// Parses the body data of the request as JSON and then tries to decode the data into a value of type `A`.
-public func jsonBody<A: Codable>(_ type: A.Type) -> Router<A> {
-  return dataBody.map(PartialIso.codableToData.inverted)
+public func jsonBody<A: Codable>(
+  _ type: A.Type,
+  encoder: JSONEncoder = .init(),
+  decoder: JSONDecoder = .init()
+  )
+  -> Router<A> {
+
+    return dataBody.map(PartialIso.codableToJsonData(type, encoder: encoder, decoder: decoder).inverted)
 }
 
 /// Parses the end of the request data by making sure that all of the path components have been consumed.

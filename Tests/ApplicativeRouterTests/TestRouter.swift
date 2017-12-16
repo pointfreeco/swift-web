@@ -38,7 +38,7 @@ let router: Router<Routes> = [
 
   // POST /subscribe
   Routes.iso.postBodyFormData
-    <¢> post %> lit("subscribe") %> formDataBody(SubscribeData.self) <% end,
+    <¢> post %> lit("subscribe") %> formBody(SubscribeData.self) <% end,
 
   // POST /episodes/:id
   Routes.iso.postBodyJsonDecodable
