@@ -163,7 +163,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decodeNil(forKey key: Key) throws -> Bool {
-      return try self.checked(key, ^\.isEmpty)
+      return self.container[key.stringValue].flatMap(self.decoder.unbox).map(^\.isEmpty) ?? true
     }
 
     func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
@@ -445,7 +445,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decodeNil() -> Bool {
-      return (self.container as? String)?.isEmpty ?? false
+      return (self.container as? String)?.isEmpty ?? true
     }
 
     func decode(_ type: Bool.Type) throws -> Bool {
