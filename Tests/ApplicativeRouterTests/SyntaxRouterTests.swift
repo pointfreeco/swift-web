@@ -161,6 +161,16 @@ class SyntaxRouterTests: XCTestCase {
     #endif
   }
 
+  func testCodableQueryParamsOptionality() {
+    let request = URLRequest(url: URL(string: "subscribe")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
+    let route = Routes.codableQueryParams(nil)
+
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: route))
+  }
+
   func testCodableFormDataPostBody() {
     let request = URLRequest(url: URL(string: "subscribe")!)
       |> \.httpMethod .~ "post"

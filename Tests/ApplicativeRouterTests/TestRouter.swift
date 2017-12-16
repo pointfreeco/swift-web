@@ -15,7 +15,7 @@ enum Routes {
   case postBodyFormData(SubscribeData)
   case postBodyJsonDecodable(episode: Episode, param: Int)
   case simpleQueryParams(ref: String?, active: Bool, t: Int)
-  case codableQueryParams(SubscribeData)
+  case codableQueryParams(SubscribeData?)
 }
 
 let router: Router<Routes> = [
@@ -52,7 +52,7 @@ let router: Router<Routes> = [
 
   // GET /subscribe?plan=:int
   Routes.iso.codableQueryParams
-    <¢> get %> lit("subscribe") %> queryParams(SubscribeData.self)
+    <¢> get %> lit("subscribe") %> queryParams(SubscribeData?.self)
     <% end,
   ]
   .reduce(.empty, <|>)
@@ -79,7 +79,7 @@ extension Routes: Equatable {
       return lhs0 == rhs0 && lhs1 == rhs1 && lhs2 == rhs2
 
     case let (.codableQueryParams(lhs), .codableQueryParams(rhs)):
-      return lhs.plan == rhs.plan
+      return lhs?.plan == rhs?.plan
 
     case (.home, _), (.root, _), (.pathComponents, _), (.postBodyField, _), (.postBodyJsonDecodable, _),
          (.simpleQueryParams, _), (.codableQueryParams, _):
