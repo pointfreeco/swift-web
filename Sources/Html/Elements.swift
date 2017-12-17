@@ -473,8 +473,13 @@ public func img(src: String, alt: String, _ attribs: [Attribute<Element.Img>]) -
   return node("img", [Html.src(src), Html.alt(alt)] + attribs, nil)
 }
 
-public func img(base64: String, mediaType: MediaType, alt: String, _ attribs: [Attribute<Element.Img>]) -> Node {
-  return node("img", [Html.src("data:\(mediaType);base64, \(base64)"), Html.alt(alt)] + attribs, nil)
+public func img(base64: String, mediaType: MediaType, alt: String, _ attribs: [Attribute<Element.Img>])
+  -> Node {
+
+    return node("img", [
+      Html.alt(alt),
+      Html.src("data:" + mediaType.description + ";base64, " + base64),
+      ] + attribs,nil)
 }
 
 public func input(_ attribs: [Attribute<Element.Input>]) -> Node {
@@ -608,7 +613,7 @@ extension Viewport: CustomStringConvertible {
   public var description: String {
     switch self {
     case let .height(px):
-      return "height=\(px.description)"
+      return "height=" + px.description
     case let .initialScale(scale):
       return "initial-scale=\(scale)"
     case let .maximumScale(scale):
@@ -618,7 +623,7 @@ extension Viewport: CustomStringConvertible {
     case let .userScalable(isUserScalable):
       return "user-scalable=\(isUserScalable ? "yes" : "no")"
     case let .width(px):
-      return "width=\(px.description)"
+      return "width=" + px.description
     }
   }
 }

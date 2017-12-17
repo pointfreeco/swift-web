@@ -115,7 +115,7 @@ public enum ResponseHeader {
       return ("Location", uri)
     case let .setCookie(key: key, value: value, options: options):
       // TODO: escape
-      let headerValue = (["\(key)=\(value)"] + options.map(^\.description).sorted())
+      let headerValue = ([key + "=" + value] + options.map(^\.description).sorted())
         .joined(separator: "; ")
       return ("Set-Cookie", headerValue)
     case let .other(header, value):
@@ -123,7 +123,7 @@ public enum ResponseHeader {
     case let .wwwAuthenticate(authenticate):
       switch authenticate {
       case let .basic(realm: realm):
-        return ("WWW-Authenticate", "Basic" + (realm.map { " realm=\"\($0)\"" } ?? ""))
+        return ("WWW-Authenticate", "Basic" + (realm.map { " realm=\"" + $0 + "\"" } ?? ""))
       }
     }
   }

@@ -23,7 +23,7 @@ extension ResponseHeader {
       let encodedValue = data.base64EncodedString()
       guard let computedDigest = digest(value: encodedValue, secret: secret) else { return nil }
 
-      let signedValue = "\(encodedValue)--\(computedDigest)"
+      let signedValue = encodedValue + "--" + computedDigest
       guard let finalValue = encrypt ? encrypted(text: signedValue, secret: secret) : signedValue
         else { return nil }
 

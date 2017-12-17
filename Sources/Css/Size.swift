@@ -30,27 +30,27 @@ indirect public enum Size: Val, Auto, Normal, Inherit, None, Other {
   public static let normal = Size.otherSize(.normal)
 
   public static func pct(_ d: Double) -> Size {
-    return .simple("\(trunc(d))%")
+    return .simple(trunc(d) + "%")
   }
 
   public static func px(_ d: Double) -> Size {
-    return .simple("\(trunc(d))px")
+    return .simple(trunc(d) + "px")
   }
 
   public static func rem(_ d: Double) -> Size {
-    return .simple("\(trunc(d))rem")
+    return .simple(trunc(d) + "rem")
   }
 
   public static func em(_ d: Double) -> Size {
-    return .simple("\(trunc(d))em")
+    return .simple(trunc(d) + "em")
   }
 
   public static func unitless(_ d: Double) -> Size {
-    return .simple("\(trunc(d))")
+    return .simple(trunc(d))
   }
 
   public static func pt(_ d: Double) -> Size {
-    return .simple("\(trunc(d))pt")
+    return .simple(trunc(d) + "pt")
   }
 }
 

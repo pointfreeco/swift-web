@@ -85,17 +85,7 @@ public func comment<T>(_ content: StaticString) -> ChildOf<T> {
 
 extension Value {
   public func render(with key: String) -> EncodedString? {
-    return self.renderedValue().map { Html.encode("\(key)=") + quote($0) } ?? Html.encode(key)
-  }
-
-  public func renderedValue() -> EncodedString? {
-    return Html.encode("\(self)")
-  }
-}
-
-extension Value where Self: CustomStringConvertible {
-  public func renderedValue() -> EncodedString? {
-    return Html.encode(self.description)
+    return self.renderedValue().map { Html.encode(key + "=") + quote($0) } ?? Html.encode(key)
   }
 }
 
@@ -106,11 +96,29 @@ extension Value where Self: RawRepresentable, Self.RawValue: Value {
 }
 
 extension Bool: Value {
+  public func render(with key: String) -> EncodedString? {
+    return self ? Html.encode(key) : nil
+  }
+
   public func renderedValue() -> EncodedString? {
     return nil
   }
 }
 
-extension Double: Value {}
-extension Int: Value {}
-extension String: Value {}
+extension Double: Value {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(String(self))
+  }
+}
+
+extension Int: Value {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(String(self))
+  }
+}
+
+extension String: Value {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self)
+  }
+}
