@@ -31,7 +31,11 @@ public func autoplay<T: HasAutoplay>(_ value: Bool) -> Attribute<T> {
   return .init("autoplay", value)
 }
 
-extension Charset: Value {}
+extension Charset: Value {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self.rawValue)
+  }
+}
 public protocol HasCharset {}
 public func charset<T: HasCharset>(_ value: Charset) -> Attribute<T> {
   return .init("charset", value)
@@ -498,53 +502,28 @@ public func readonly<T: HasReadonly>(_ value: Bool) -> Attribute<T> {
   return .init("readonly", value)
 }
 
-public enum Rel: CustomStringConvertible, Value {
-  case alternate
-  case author
-  case bookmark
-  case help
-  case icon
-  case license
-  case next
-  case nofollow
-  case noreferrer
-  case prev
-  case search
-  case stylesheet
-  case tag
-  case other(String)
+public struct Rel: Value {
+  let value: String
 
-  public var description: String {
-    switch self {
-    case .alternate:
-      return "alternate"
-    case .author:
-      return "author"
-    case .bookmark:
-      return "bookmark"
-    case .help:
-      return "help"
-    case .icon:
-      return "icon"
-    case .license:
-      return "license"
-    case .next:
-      return "next"
-    case .nofollow:
-      return "nofollow"
-    case .noreferrer:
-      return "noreferrer"
-    case .prev:
-      return "prev"
-    case .search:
-      return "search"
-    case .stylesheet:
-      return "stylesheet"
-    case .tag:
-      return "tag"
-    case let .other(string):
-      return string
-    }
+  public static let alternate = value("alternate")
+  public static let author = value("author")
+  public static let bookmark = value("bookmark")
+  public static let help = value("help")
+  public static let icon = value("icon")
+  public static let license = value("license")
+  public static let next = value("next")
+  public static let nofollow = value("nofollow")
+  public static let prev = value("prev")
+  public static let search = value("search")
+  public static let stylesheet = value("stylesheet")
+  public static let tag = value("tag")
+
+  public static func value(_ value: String) -> Rel {
+    return .init(value: value)
+  }
+
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self.value)
   }
 }
 public protocol HasRel {}
@@ -614,17 +593,19 @@ public func srclang(_ value: Language) -> Attribute<Element.Track> {
   return .init("srclang", value)
 }
 
-public enum Size: CustomStringConvertible, Value {
+public enum Size: Value {
   case w(Int)
   case x(Int)
 
-  public var description: String {
+  public func renderedValue() -> EncodedString? {
+    let value: String
     switch self {
     case let .w(n):
-      return "\(n)w"
+      value = "\(n)w"
     case let .x(n):
-      return "\(n)x"
+      value = "\(n)x"
     }
+    return Html.encode(value)
   }
 }
 public protocol HasSrcset {}
@@ -648,26 +629,20 @@ public func tabindex<T>(_ value: Int) -> Attribute<T> {
   return .init("tabindex", value)
 }
 
-public enum Target: Value, CustomStringConvertible {
-  case blank
-  case `self`
-  case parent
-  case top
-  case frame(named: String)
+public struct Target: Value {
+  let frame: String
 
-  public var description: String {
-    switch self {
-    case .blank:
-      return "_blank"
-    case .self:
-      return "_self"
-    case .parent:
-      return "_parent"
-    case .top:
-      return "_top"
-    case .frame(let name):
-      return name
-    }
+  public static let blank = named("_blank")
+  public static let `self` = named("_self")
+  public static let parent = named("parent")
+  public static let top = named("top")
+
+  public static func named(_ frame: String) -> Target {
+    return .init(frame: frame)
+  }
+
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self.frame)
   }
 }
 public protocol HasTarget {}
@@ -696,7 +671,11 @@ public func translate<T>(_ value: Translate) -> Attribute<T> {
   return .init("translate", value)
 }
 
-extension MediaType: Value {}
+extension MediaType: Value {
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self.description)
+  }
+}
 public protocol HasMediaType {}
 public func type<T: HasMediaType>(_ value: MediaType) -> Attribute<T> {
   return .init("type", value)

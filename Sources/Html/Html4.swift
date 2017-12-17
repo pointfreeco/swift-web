@@ -1,14 +1,16 @@
-public enum Html4Size: Value, CustomStringConvertible {
+public enum Html4Size: Value {
   case px(Int)
   case pct(Int)
 
-  public var description: String {
+  public func renderedValue() -> EncodedString? {
+    let value: String
     switch self {
     case let .px(size):
-      return "\(size)"
+      value = "\(size)"
     case let .pct(size):
-      return "\(size)%"
+      value = "\(size)%"
     }
+    return Html.encode(value)
   }
 }
 

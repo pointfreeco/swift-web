@@ -5,6 +5,12 @@ import Prelude
 import SnapshotTesting
 import XCTest
 
+extension Application {
+  var isOther: Bool {
+    return !["javascript", "json", "xml", "x-www-form-url-encoded"].contains(self.rawValue)
+  }
+}
+
 extension Response: Snapshot {
   public typealias Format = String
 
