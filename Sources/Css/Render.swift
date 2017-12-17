@@ -89,7 +89,7 @@ func render(pseudoClass: CssSelector.PseudoClass) -> String {
   case .invalid:
     return "invalid"
   case let .lang(str):
-    return "lang(\(str))"
+    return "lang(" + str + ")"
   case .lastChild:
     return "last-child"
   case .lastOfType:
@@ -278,7 +278,7 @@ func render(element: CssSelector.Element) -> String {
 }
 
 func imp(_ config: Config) -> (String) -> String {
-  return { str in "@import url(\(str));\(config.newline)" }
+  return { str in "@import url(" + str + ";" + config.newline }
 }
 
 func properties(_ config: Config, _ xs: [Either<String, (String, String)>]) -> String {

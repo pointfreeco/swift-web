@@ -593,24 +593,26 @@ public func srclang(_ value: Language) -> Attribute<Element.Track> {
   return .init("srclang", value)
 }
 
-public enum Size: Value {
+public enum Size: CustomStringConvertible, Value {
   case w(Int)
   case x(Int)
 
-  public func renderedValue() -> EncodedString? {
-    let value: String
+  public var description: String {
     switch self {
     case let .w(n):
-      value = "\(n)w"
+      return "\(n)w"
     case let .x(n):
-      value = "\(n)x"
+      return "\(n)x"
     }
-    return Html.encode(value)
+  }
+
+  public func renderedValue() -> EncodedString? {
+    return Html.encode(self.description)
   }
 }
 public protocol HasSrcset {}
 public func srcset<T: HasSrcset>(_ value: [String: Size]) -> Attribute<T> {
-  return .init("srcset", value.map { url, size in "\(url) \(size)" }.joined(separator: ", "))
+  return .init("srcset", value.map { url, size in url + " " + size.description }.joined(separator: ", "))
 }
 
 public func srcset(_ value: String) -> Attribute<Element.Source> {
