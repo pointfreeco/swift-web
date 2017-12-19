@@ -60,8 +60,8 @@ private func print(params: [String: String]) -> String {
   return params
     .flatMap {
       curry { $0 + "=" + $1 }
-        <¢> $0.addingPercentEncoding(withAllowedCharacters: .urlQueryParamAllowed)
-        <*> $1.addingPercentEncoding(withAllowedCharacters: .urlQueryParamAllowed)
+        <¢> $0//.addingPercentEncoding(withAllowedCharacters: .urlQueryParamAllowed)
+        <*> $1//.addingPercentEncoding(withAllowedCharacters: .urlQueryParamAllowed)
     }
     .joined(separator: "&")
 }

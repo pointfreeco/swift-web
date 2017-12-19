@@ -16,6 +16,7 @@ enum Routes {
   case postBodyJsonDecodable(episode: Episode, param: Int)
   case simpleQueryParams(ref: String?, active: Bool, t: Int)
   case codableQueryParams(SubscribeData)
+  case redirect(String)
 }
 
 let router: Router<Routes> = [
@@ -54,6 +55,9 @@ let router: Router<Routes> = [
   Routes.iso.codableQueryParams
     <¢> get %> lit("subscribe") %> queryParams(SubscribeData.self)
     <% end,
+
+  Routes.iso.redirect
+    <¢> get %> lit("somewhere") %> queryParam("redirect", .string) <% end
   ]
   .reduce(.empty, <|>)
 
@@ -81,8 +85,11 @@ extension Routes: Equatable {
     case let (.codableQueryParams(lhs), .codableQueryParams(rhs)):
       return lhs.plan == rhs.plan
 
+    case let (.redirect(lhs), .redirect(rhs)):
+      return lhs == rhs
+
     case (.home, _), (.root, _), (.pathComponents, _), (.postBodyField, _), (.postBodyJsonDecodable, _),
-         (.simpleQueryParams, _), (.codableQueryParams, _):
+         (.simpleQueryParams, _), (.codableQueryParams, _), (.redirect, _):
       return false
     }
   }
@@ -139,6 +146,13 @@ extension Routes {
       apply: Routes.codableQueryParams,
       unapply: {
         guard case let .codableQueryParams(result) = $0 else { return nil }
+        return result
+    })
+
+    static let redirect = parenthesize <| PartialIso(
+      apply: Routes.redirect,
+      unapply: {
+        guard case let .redirect(result) = $0 else { return nil }
         return result
     })
   }

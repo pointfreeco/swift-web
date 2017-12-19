@@ -173,6 +173,12 @@ private func request(from data: RequestData, base: URL?) -> URLRequest? {
 private func urlComponents(from route: RequestData) -> URLComponents {
   var components = URLComponents()
   components.path = route.path.joined(separator: "/")
-  components.query = route.query
+
+  if !route.params.isEmpty {
+    components.queryItems = route.params
+      .sorted { lhs, rhs in lhs.key < rhs.key }
+      .map(URLQueryItem.init(name:value:))
+  }
+
   return components
 }
