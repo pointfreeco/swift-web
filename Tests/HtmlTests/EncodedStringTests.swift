@@ -48,4 +48,11 @@ class EncodedStringTests: XCTestCase {
       render(node)
     )
   }
+
+  func testUnsafeUnencodedString() {
+    XCTAssertEqual(
+      "<p>Point&#8209;Free</p>",
+      render(p(["Point", .text(unsafeUnencodedString("&#8209;")), "Free"]))
+    )
+  }
 }
