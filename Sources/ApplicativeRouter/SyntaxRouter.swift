@@ -1,7 +1,6 @@
 import Foundation
 import Prelude
 import Optics
-import UrlFormEncoding
 
 // MARK: - Syntax Router
 
@@ -137,16 +136,21 @@ extension Router {
 
 private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
-  return request.url
-    .map {
-      .init(
-        method: method,
-        path: $0.path.split(separator: "/").map(String.init),
-        query: $0.query,
-        body: request.httpBody
-      )
-    }
-    ?? .init(method: method, path: [], query: nil, body: request.httpBody)
+
+  guard let url = request.url else {
+    return .init(method: method, path: [], query: [:], body: request.httpBody)
+  }
+
+  var query: [String: String] = [:]
+  url.query?.split(separator: "&").forEach {
+    let pair = $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+    query[String(pair[0]).removingPercentEncoding ?? ""] = String(pair[1]).removingPercentEncoding ?? ""
+  }
+
+  let path = url.path.components(separatedBy: "/")
+    |> mapOptional { $0.isEmpty ? nil : $0 }
+
+  return .init(method: method, path: path, query: query, body: request.httpBody)
 }
 
 private func request(from data: RequestData) -> URLRequest? {
@@ -158,15 +162,16 @@ private func request(from data: RequestData, base: URL?) -> URLRequest? {
   // Due to this bug https://bugs.swift.org/browse/SR-6527, if `URLComponents` doesn't contain any path or
   // query information, it will fail to create a `URL`. We have to guard against that case and just return
   // the base url.
-  return (
-    data.path.isEmpty && data.query?.isEmpty ?? true
-      ? (base ?? URL(string: "/"))
-      : urlComponents(from: data).url(relativeTo: base)
-    )
-    .map {
-      URLRequest(url: $0)
-        |> \.httpMethod .~ data.method?.rawValue
-        |> \.httpBody .~ data.body
+  return
+    (
+      data.path.isEmpty && data.query.isEmpty
+        ? (base ?? URL(string: "/"))
+        : urlComponents(from: data).url(relativeTo: base)
+      )
+      .map {
+        URLRequest(url: $0)
+          |> \.httpMethod .~ data.method?.rawValue
+          |> \.httpBody .~ data.body
   }
 }
 
@@ -174,8 +179,8 @@ private func urlComponents(from route: RequestData) -> URLComponents {
   var components = URLComponents()
   components.path = route.path.joined(separator: "/")
 
-  if !route.params.isEmpty {
-    components.queryItems = route.params
+  if !route.query.isEmpty {
+    components.queryItems = route.query
       .sorted { lhs, rhs in lhs.key < rhs.key }
       .map(URLQueryItem.init(name:value:))
   }

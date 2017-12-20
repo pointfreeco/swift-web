@@ -576,13 +576,9 @@ public final class UrlFormDecoder: Decoder {
     ///     ids=1&ids=2
     ///     // Parsed as ["ids": ["1", "2"]]
     ///
-    /// Wherever the decoder expects a single value (rather than an array), it will use the _last_ value
-    /// given.
+    /// The decoder will
     ///
-    ///     try decoder.decode(User.self, from: Data("name=Blob&name=Clob".utf8))
-    ///     // return User(name: "Clob")
-    ///
-    /// - Note: This parsing strategy is "flat" and cannot decode nested structures.
+    /// - Note: This parsing strategy is "flat" and cannot decode deeper structures.
     case accumulateValues
 
     /// A parsing strategy that uses a custom function to produce a container for decoding.
