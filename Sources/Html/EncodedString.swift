@@ -24,6 +24,10 @@ extension EncodedString: Monoid {
   }
 }
 
+public func unsafeUnencodedString(_ string: String) -> EncodedString {
+  return EncodedString(string)
+}
+
 public func quote(_ string: EncodedString) -> EncodedString {
   return .init("\"" + string.string + "\"")
 }
