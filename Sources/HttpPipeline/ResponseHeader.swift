@@ -138,5 +138,6 @@ private let expiresDateFormatter: DateFormatter = { () -> DateFormatter in
   let formatter = DateFormatter()
   formatter.timeZone = TimeZone(abbreviation: "UTC")
   formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss zzz"
+  formatter.string(from: Date())
   return formatter
 }()

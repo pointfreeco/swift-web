@@ -113,7 +113,7 @@ class SyntaxRouterTests: XCTestCase {
   }
 
   func testSimpleQueryParams() {
-    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?ref=hello&active=true&t=122")!)
+    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&ref=hello&t=122")!)
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
       |> \.httpMethod .~ "get"
     let route = Routes.simpleQueryParams(ref: "hello", active: true, t: 122)
@@ -121,7 +121,7 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual(
-      "path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int",
+      "path/to/somewhere/cool?active=:bool&ref=:optional_string&t=:int",
       router.templateUrl(for: route)?.absoluteString
     )
   }
@@ -135,32 +135,32 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual(
-      "path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int",
+      "path/to/somewhere/cool?active=:bool&ref=:optional_string&t=:int",
       router.templateUrl(for: route)?.absoluteString
     )
   }
 
-  func testCodableQueryParams() {
-    let request = URLRequest(url: URL(string: "subscribe?plan=1")!)
-      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-      |> \.httpMethod .~ "get"
-    let route = Routes.codableQueryParams(SubscribeData(plan: 1))
-
-    XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: route))
-    #if os(Linux)
-      XCTAssertEqual(
-        "subscribe?plan=:int",
-        router.templateUrl(for: route)?.absoluteString
-      )
-    #else
-      XCTAssertEqual(
-        "subscribe?plan=:__nscfnumber", // FIXME
-        router.templateUrl(for: route)?.absoluteString
-      )
-    #endif
-  }
-
+//  func testCodableQueryParams() {
+//    let request = URLRequest(url: URL(string: "subscribe?plan=1")!)
+//      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+//      |> \.httpMethod .~ "get"
+//    let route = Routes.codableQueryParams(SubscribeData(plan: 1))
+//
+//    XCTAssertEqual(route, router.match(request: request))
+//    XCTAssertEqual(request, router.request(for: route))
+//    #if os(Linux)
+//      XCTAssertEqual(
+//        "subscribe?plan=:int",
+//        router.templateUrl(for: route)?.absoluteString
+//      )
+//    #else
+//      XCTAssertEqual(
+//        "subscribe?plan=:__nscfnumber", // FIXME
+//        router.templateUrl(for: route)?.absoluteString
+//      )
+//    #endif
+//  }
+//
   // FIXME: Make work!
 //  func testCodableQueryParamsOptionality() {
 //    let request = URLRequest(url: URL(string: "subscribe")!)
@@ -183,6 +183,13 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual(
       "subscribe",
       router.templateUrl(for: route)?.absoluteString
+    )
+  }
+
+  func testRedirect() {
+    XCTAssertEqual(
+      "/somewhere?redirect=http://localhost:8080/home?redirect%3Dhttp://localhost:8080/home",
+      router.absoluteString(for: .redirect("http://localhost:8080/home?redirect=http://localhost:8080/home"))
     )
   }
 }
