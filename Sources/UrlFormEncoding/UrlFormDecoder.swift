@@ -576,7 +576,8 @@ public final class UrlFormDecoder: Decoder {
     ///     ids=1&ids=2
     ///     // Parsed as ["ids": ["1", "2"]]
     ///
-    /// The decoder will
+    /// Wherever the decoder expects a single value (rather than an array), it will use the _last_ value
+    /// given.
     ///
     /// - Note: This parsing strategy is "flat" and cannot decode deeper structures.
     case accumulateValues
