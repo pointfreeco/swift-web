@@ -747,3 +747,35 @@ public enum Wrap: String, Value {
 public func wrap(_ value: Wrap) -> Attribute<Element.Textarea> {
   return .init("wrap", value)
 }
+
+public protocol HasPlaysInline {}
+public func playsInline<T: HasPlaysInline>(_ value: Bool) -> Attribute<T> {
+  return .init("playsinline", value)
+}
+
+public protocol HasPoster {}
+public func poster<T: HasPoster>(_ value: String) -> Attribute<T> {
+  return .init("poster", value)
+}
+
+public func min<T: HasMin>(_ value: Int) -> Attribute<T> {
+  return .init("min", value)
+}
+
+public func max<T: HasMax>(_ value: Int) -> Attribute<T> {
+  return .init("max", value)
+}
+
+public protocol HasIntValue {}
+public func value<T: HasIntValue>(_ value: Int) -> Attribute<T> {
+  return .init("value", value)
+}
+
+public protocol HasOnClick {}
+public func onclick<T: HasOnClick>(javascript: StaticString) -> Attribute<T> {
+  return .init("onclick", "javascript:\(javascript)")
+}
+
+public func data<T>(_ name: StaticString, _ value: String) -> Attribute<T> {
+  return .init("data-\(name)", value)
+}

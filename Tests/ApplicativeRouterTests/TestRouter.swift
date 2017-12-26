@@ -1,6 +1,7 @@
 import ApplicativeRouter
 import Deriving
 import Either
+import Foundation
 import Prelude
 
 struct SubscribeData: Codable {
@@ -17,10 +18,14 @@ enum Routes {
   case simpleQueryParams(ref: String?, active: Bool, t: Int)
   case codableQueryParams(SubscribeData)
   case redirect(String)
+  case nested(Nested)
+
+  enum Nested {
+    case uuid(UUID)
+  }
 }
 
 let router: Router<Routes> = [
-
   // /home
   Routes.iso.home
     <¢> get %> lit("home") %> end,
@@ -57,7 +62,10 @@ let router: Router<Routes> = [
     <% end,
 
   Routes.iso.redirect
-    <¢> get %> lit("somewhere") %> queryParam("redirect", .string) <% end
+    <¢> get %> lit("somewhere") %> queryParam("redirect", .string) <% end,
+
+  Routes.iso.nested <<< Routes.Nested.iso.uuid
+    <¢> get %> lit("uuid") %> pathParam(.uuid) <% end,
   ]
   .reduce(.empty, <|>)
 
@@ -88,9 +96,21 @@ extension Routes: Equatable {
     case let (.redirect(lhs), .redirect(rhs)):
       return lhs == rhs
 
+    case let (.nested(lhs), .nested(rhs)):
+      return lhs == rhs
+
     case (.home, _), (.root, _), (.pathComponents, _), (.postBodyField, _), (.postBodyJsonDecodable, _),
-         (.simpleQueryParams, _), (.codableQueryParams, _), (.redirect, _):
+         (.simpleQueryParams, _), (.codableQueryParams, _), (.redirect, _), (.nested, _):
       return false
+    }
+  }
+}
+
+extension Routes.Nested: Equatable {
+  static func ==(lhs: Routes.Nested, rhs: Routes.Nested) -> Bool {
+    switch (lhs, rhs) {
+    case let (.uuid(lhs), .uuid(rhs)):
+      return lhs == rhs
     }
   }
 }
@@ -153,6 +173,24 @@ extension Routes {
       apply: Routes.redirect,
       unapply: {
         guard case let .redirect(result) = $0 else { return nil }
+        return result
+    })
+
+    static let nested = parenthesize <| PartialIso(
+      apply: Routes.nested,
+      unapply: {
+        guard case let .nested(result) = $0 else { return nil }
+        return result
+    })
+  }
+}
+
+extension Routes.Nested {
+  enum iso {
+    static let uuid = parenthesize <| PartialIso(
+      apply: Routes.Nested.uuid,
+      unapply: {
+        guard case let .uuid(result) = $0 else { return nil }
         return result
     })
   }

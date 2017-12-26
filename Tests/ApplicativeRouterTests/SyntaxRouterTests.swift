@@ -192,4 +192,15 @@ class SyntaxRouterTests: XCTestCase {
       router.absoluteString(for: .redirect("http://localhost:8080/home?redirect=http://localhost:8080/home"))
     )
   }
+
+  func testUUID() {
+    let request = URLRequest(url: URL(string: "uuid/DEADBEEF-DEAD-BEEF-DEAD-BEEFDEADBEEF")!)
+      // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
+      |> \.httpMethod .~ "get"
+    let route = Routes.nested(.uuid(UUID(uuidString: "DEADBEEF-DEAD-BEEF-DEAD-BEEFDEADBEEF")!))
+
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: route))
+    XCTAssertEqual("uuid/:uuid", router.templateUrl(for: route)?.absoluteString)
+  }
 }

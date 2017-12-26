@@ -165,6 +165,28 @@ public enum CssSelector {
 }
 
 extension CssSelector {
+  public var id: String? {
+    switch self {
+    case .star, .elem, .class, .pseudo, .pseudoElem, .attr, .child, .sibling, .deep, .adjacent, .combined,
+         .union:
+      return nil
+    case let .id(id):
+      return id
+    }
+  }
+
+  public var elem: Element? {
+    switch self {
+    case .star, .id, .class, .pseudo, .pseudoElem, .attr, .child, .sibling, .deep, .adjacent, .combined,
+         .union:
+      return nil
+    case let .elem(elem):
+      return elem
+    }
+  }
+}
+
+extension CssSelector {
   public subscript(index: Attribute) -> CssSelector {
     return .attr(self, index)
   }

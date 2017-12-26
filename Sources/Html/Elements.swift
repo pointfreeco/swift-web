@@ -9,7 +9,7 @@ public protocol ContainsTr {}
 public protocol ContainsTrack {}
 
 extension Element {
-  public enum A: HasHref, HasRel, HasTarget {}
+  public enum A: HasHref, HasRel, HasTarget, HasOnClick {}
   public enum Abbr {}
   public enum Address {}
   public enum Area: HasAlt, HasHref, HasRel, HasTarget {}
@@ -53,12 +53,13 @@ extension Element {
   public enum Head {}
   public enum Header {}
   public enum Html: HasXmlns {}
+  public enum Hr {}
   public enum I {}
   public enum Iframe: HasHeight, HasName, HasSrc, HasWidth {}
   public enum Img: HasAlt, HasCrossorigin, HasHeight, HasSrc, HasSrcset, HasWidth {}
   public enum Input: HasAlt, HasAutofocus, HasDisabled, HasDoubleValue, HasForm, HasHeight, HasMax,
     HasMaxlength, HasMin, HasMinlength, HasMultiple, HasName, HasPlaceholder, HasReadonly, HasRequired,
-    HasSrc, HasStringValue, HasWidth {}
+    HasSrc, HasStringValue, HasWidth, HasIntValue {}
   public enum Ins: HasCite, HasDatetime {}
   public enum Kbd {}
   public enum Label: HasFor, HasForm {}
@@ -115,7 +116,7 @@ extension Element {
   public enum Ul: ContainsList {}
   public enum Var {}
   public enum Video: ContainsAVSource, ContainsTrack, HasAutoplay, HasControls, HasHeight, HasLoop, HasMuted,
-    HasPreload, HasSrc, HasWidth {}
+    HasPreload, HasSrc, HasWidth, HasPlaysInline, HasPoster {}
 }
 
 public func a(_ attribs: [Attribute<Element.A>], _ content: [Node]) -> Node {
@@ -1030,3 +1031,7 @@ public func video(_ content: [ChildOf<Element.Video>], _ transparent: [Node]) ->
 }
 
 public let wbr: Node = node("wbr", nil)
+
+public func hr(_ attribs: [Attribute<Element.Hr>]) -> Node {
+  return node("hr", attribs, nil)
+}

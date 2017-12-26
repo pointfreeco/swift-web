@@ -5,6 +5,15 @@ import Prelude
 
 public typealias Middleware<I, J, A, B> = (Conn<I, A>) -> IO<Conn<J, B>>
 
+public func >¢< <A, B, C, I, J>(
+  lhs: @escaping (A) -> C,
+  rhs: @escaping Middleware<I, J, C, B>
+  )
+  -> Middleware<I, J, A, B> {
+
+    return map(lhs) >>> rhs
+}
+
 public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, HeadersOpen, A, A> {
   return pure <<< { conn in
     .init(

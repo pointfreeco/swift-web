@@ -169,3 +169,12 @@ extension PartialIso where A == String, B: RawRepresentable, B.RawValue == Strin
     )
   }
 }
+
+extension PartialIso where A == String, B == UUID {
+  public static var uuid: PartialIso<String, UUID> {
+    return PartialIso(
+      apply: UUID.init(uuidString:),
+      unapply: ^\.uuidString
+    )
+  }
+}
