@@ -39,8 +39,8 @@ public struct Router<A> {
     return self.print(a).flatMap { ApplicativeRouter.request(from: $0, base: base) }.flatMap { $0.url }
   }
 
-  public func absoluteString(for a: A) -> String {
-    return "/" + (url(for: a)?.absoluteString ?? "")
+  public func absoluteString(for a: A) -> String? {
+    return url(for: a).map { "/" + $0.absoluteString }
   }
 
   public func templateRequest(for a: A) -> URLRequest? {
