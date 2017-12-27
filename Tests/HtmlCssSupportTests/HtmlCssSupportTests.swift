@@ -20,7 +20,15 @@ class SupportTests: XCTestCase {
 
   func testStyleElement() {
     let css = body % color(.red)
-    let document = html([head([style(css)])])
+    let selector: CssSelector = .class("p1") | .class("m2")
+    let document = html([
+      head([
+        style(css)
+        ]),
+      body([
+        p([HtmlCssSupport.`class`([selector]), style(color(.blue))], ["Hellow world"])
+        ])
+      ])
 
     XCTAssertEqual(
       """
@@ -30,6 +38,11 @@ class SupportTests: XCTestCase {
       body{color:#ff0000}
     </style>
   </head>
+  <body>
+    <p class="p1 m2" style="color:#0000ff;">
+      Hellow world
+    </p>
+  </body>
 </html>
 """,
       prettyPrint(node: document)

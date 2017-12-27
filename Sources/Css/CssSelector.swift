@@ -68,6 +68,7 @@ public enum CssSelector {
     case b
     case blockquote
     case body
+    case button
     case canvas
     case caption
     case cite
@@ -92,6 +93,7 @@ public enum CssSelector {
     case h6
     case header
     case hgroup
+    case hr
     case html
     case i
     case iframe
@@ -100,20 +102,27 @@ public enum CssSelector {
     case label
     case legend
     case li
+    case main
     case menu
     case nav
     case ol
+    case optgroup
     case other(String)
     case p
     case pre
     case q
     case section
+    case select
     case span
     case strong
+    case sub
     case summary
+    case sup
+    case svg
     case table
     case tbody
     case td
+    case textarea
     case tfoot
     case th
     case thead
@@ -261,16 +270,4 @@ public func & (lhs: CssSelector, rhs: CssSelector) -> CssSelector {
 infix operator ~: infixr6
 public func ~ (lhs: CssSelector, rhs: CssSelector) -> CssSelector {
   return .sibling(lhs, rhs)
-}
-
-extension CssSelector {
-  public var idString: String? {
-    switch self {
-    case .star, .elem, .class, .pseudo, .pseudoElem, .attr, .child, .sibling, .deep, .adjacent, .combined,
-         .union:
-      return nil
-    case let .id(id):
-      return id
-    }
-  }
 }

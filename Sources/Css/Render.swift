@@ -274,6 +274,24 @@ func render(element: CssSelector.Element) -> String {
     return "ul"
   case .video:
     return "video"
+  case .main:
+    return "main"
+  case .hr:
+    return "hr"
+  case .sub:
+    return "sub"
+  case .sup:
+    return "sup"
+  case .svg:
+    return "svg"
+  case .button:
+    return "button"
+  case .optgroup:
+    return "optgroup"
+  case .select:
+    return "select"
+  case .textarea:
+    return "textarea"
   }
 }
 
@@ -432,5 +450,22 @@ func render(feature: Feature) -> String {
     return feature.key
   case let .some(v):
     return "(" + feature.key + ": " + plain(v.unValue) + ")"
+  }
+}
+
+public func renderedClassAttribute(classes: [CssSelector]) -> String {
+  return classes
+    .map(renderedClassAttribute(class:))
+    .joined(separator: " ")
+}
+
+private func renderedClassAttribute(class selector: CssSelector) -> String {
+  switch selector {
+  case .star, .elem, .id, .pseudo, .pseudoElem, .attr, .child, .sibling, .deep, .adjacent, .combined:
+    return ""
+  case let .class(str):
+    return str
+  case let .union(lhs, rhs):
+    return renderedClassAttribute(class: lhs) + " " + renderedClassAttribute(class: rhs)
   }
 }

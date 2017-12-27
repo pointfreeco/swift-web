@@ -223,3 +223,11 @@ public func rect(top: Css.Size, right: Css.Size, bottom: Css.Size, left: Css.Siz
     )
   )
 }
+
+public func opacity(_ value: Double) -> Stylesheet {
+  return key("opacity")(value)
+}
+
+public func zIndex(_ n: Int) -> Stylesheet {
+  return key("z-index", "\(n)")
+}

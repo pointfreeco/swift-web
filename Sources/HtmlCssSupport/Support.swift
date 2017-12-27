@@ -2,11 +2,11 @@ import Css
 import Html
 
 public func `for`<T: HasFor>(_ idSelector: CssSelector) -> Attribute<T> {
-  return .init("for", idSelector.idString ?? "")
+  return .init("for", idSelector.id ?? "")
 }
 
 public func id<T>(_ idSelector: CssSelector) -> Attribute<T> {
-  return .init("id", idSelector.idString ?? "")
+  return .init("id", idSelector.id ?? "")
 }
 
 public func style<T>(_ style: Stylesheet) -> Attribute<T> {
@@ -29,4 +29,11 @@ extension Stylesheet: Html.Value {
   public func renderedValue() -> EncodedString? {
     return encode(Css.render(config: inline, css: self))
   }
+}
+
+public func `class`<T>(_ selectors: [CssSelector]) -> Attribute<T> {
+  return .init(
+    "class",
+    renderedClassAttribute(classes: selectors)
+  )
 }

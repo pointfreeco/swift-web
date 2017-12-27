@@ -53,3 +53,7 @@ public func valign<T>(_ value: VerticalAlignment) -> Attribute<T> {
 public func width<T>(_ value: Html4Size) -> Attribute<T> {
   return .init("width", value)
 }
+
+public func bgcolor<T>(_ value: String) -> Attribute<T> {
+  return .init("bgcolor", value)
+}

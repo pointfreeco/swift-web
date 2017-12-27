@@ -178,3 +178,12 @@ extension PartialIso where A == String, B == UUID {
     )
   }
 }
+
+extension PartialIso where B: TaggedProtocol, A == B.A {
+  public static var tagged: PartialIso<B.A, B> {
+    return PartialIso(
+      apply: B.init(unwrap:),
+      unapply: ^\.unwrap
+    )
+  }
+}
