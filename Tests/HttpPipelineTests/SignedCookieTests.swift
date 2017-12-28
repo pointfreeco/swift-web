@@ -28,13 +28,13 @@ aGVsbG8td29ybGQ=\
 
     XCTAssertEqual(
       "hello-world",
-      ResponseHeader.verifiedString(signedCookieValue: signedCookieValue, secret: secret),
+      Response.Header.verifiedString(signedCookieValue: signedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       nil,
-      ResponseHeader.verifiedString(signedCookieValue: signedCookieValue, secret: "deadbeef"),
+      Response.Header.verifiedString(signedCookieValue: signedCookieValue, secret: "deadbeef"),
       "Reading signed cookie with wrong credentials returns nil."
     )
   }
@@ -61,13 +61,13 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 
     XCTAssertEqual(
       episode,
-      ResponseHeader.verifiedValue(signedCookieValue: signedCookieValue, secret: secret),
+      Response.Header.verifiedValue(signedCookieValue: signedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       Episode?.none,
-      ResponseHeader.verifiedValue(signedCookieValue: signedCookieValue, secret: "deadbeef"),
+      Response.Header.verifiedValue(signedCookieValue: signedCookieValue, secret: "deadbeef"),
       "Reading signed cookie with wrong credentials returns nil."
     )
   }
@@ -92,13 +92,13 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 
     XCTAssertEqual(
       "hello-world",
-      ResponseHeader.verifiedString(signedCookieValue: encryptedCookieValue, secret: secret),
+      Response.Header.verifiedString(signedCookieValue: encryptedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       nil,
-      ResponseHeader.verifiedString(
+      Response.Header.verifiedString(
         signedCookieValue: encryptedCookieValue,
         secret: "deadbeefdeadbeefdeadbeefdead1234"
       ),
@@ -132,13 +132,13 @@ cb4db8ac9390ac810837809f11bc6803\
 
     XCTAssertEqual(
       episode,
-      ResponseHeader.verifiedValue(signedCookieValue: encryptedCookieValue, secret: secret),
+      Response.Header.verifiedValue(signedCookieValue: encryptedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       Episode?.none,
-      ResponseHeader.verifiedValue(
+      Response.Header.verifiedValue(
         signedCookieValue: encryptedCookieValue,
         secret: "deadbeefdeadbeefdeadbeefdead1234"
       ),

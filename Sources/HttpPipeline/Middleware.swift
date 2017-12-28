@@ -15,16 +15,16 @@ public func writeStatus<A>(_ status: Status) -> Middleware<StatusLineOpen, Heade
   }
 }
 
-public func writeHeader<A>(_ header: ResponseHeader) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
+public func writeHeader<A>(_ header: Response.Header) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return pure <<< (\.response.headers %~ { $0 + [header] })
 }
 
-public func writeHeaders<A>(_ headers: [ResponseHeader]) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
+public func writeHeaders<A>(_ headers: [Response.Header]) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return pure <<< (\.response.headers %~ { $0 + headers })
 }
 
 public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
-  return writeHeader(.other(name, value))
+  return writeHeader(.init(name, value))
 }
 
 public func closeHeaders<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<BodyOpen, A>> {
