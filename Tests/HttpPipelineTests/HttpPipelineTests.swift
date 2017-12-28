@@ -64,7 +64,7 @@ class HttpPipelineTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >-> writeHeader(.setCookie("foo", "bar", [.domain("www.pointfree.co")]))
-        >-> writeHeader(.setCookie("foo", "bar", [.expires(1234567890)]))
+        >-> writeHeader(.setCookie("foo", "bar", [.expires(Date(timeIntervalSince1970: 1234567890))]))
         >-> writeHeader(.setCookie("foo", "bar", [.httpOnly]))
         >-> writeHeader(.setCookie("foo", "bar", [.maxAge(3600)]))
         >-> writeHeader(.setCookie("foo", "bar", [.path("/path/to/some/where")]))

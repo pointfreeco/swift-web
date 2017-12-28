@@ -54,7 +54,7 @@ public struct Response {
 
     public enum CookieOption: Hashable, CustomStringConvertible, Comparable {
       case domain(String)
-      case expires(TimeInterval)
+      case expires(Date)
       case httpOnly
       case maxAge(Int)
       case path(String)
@@ -69,8 +69,8 @@ public struct Response {
         switch self {
         case let .domain(domain):
           return "Domain=" + domain
-        case let .expires(time):
-          return "Expires=" + expiresDateFormatter.string(from: .init(timeIntervalSince1970: time))
+        case let .expires(date):
+          return "Expires=" + expiresDateFormatter.string(from: date)
         case .httpOnly:
           return "HttpOnly"
         case let .maxAge(maxAge):
@@ -129,7 +129,7 @@ public struct Response {
     }
 
     public static func clearCookie(_ name: String) -> Header {
-      return .setCookie(name, "", [CookieOption.maxAge(0), .expires(0)])
+      return .setCookie(name, "", [.maxAge(0), .expires(Date(timeIntervalSince1970: 0))])
     }
 
     public var description: String {
