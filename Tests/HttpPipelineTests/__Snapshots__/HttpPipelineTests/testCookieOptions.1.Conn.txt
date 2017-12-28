@@ -17,7 +17,7 @@
   Set-Cookie: foo=bar; Max-Age=3600
   Set-Cookie: foo=bar; Path=/path/to/some/where
   Set-Cookie: foo=bar; SameSite=Lax
-  Set-Cookie: foo=bar; SameSite=String
+  Set-Cookie: foo=bar; SameSite=Strict
   Set-Cookie: foo=bar; Secure
 
   <p>Hello, world</p>

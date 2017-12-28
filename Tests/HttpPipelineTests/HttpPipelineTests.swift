@@ -52,9 +52,9 @@ class HttpPipelineTests: XCTestCase {
   func testCookies() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
-        >-> writeHeader(.setCookie(key: "user_id", value: "123456", options: []))
-        >-> writeHeader(.setCookie(key: "lang", value: "es", options: []))
-        >-> writeHeader(.clearCookie(key: "test"))
+        >-> writeHeader(.setCookie("user_id", "123456"))
+        >-> writeHeader(.setCookie("lang", "es"))
+        >-> writeHeader(.clearCookie("test"))
         >-> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn).perform())
@@ -63,16 +63,16 @@ class HttpPipelineTests: XCTestCase {
   func testCookieOptions() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.domain("www.pointfree.co")]))
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.expires(1234567890)]))
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.httpOnly]))
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.maxAge(3600)]))
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.path("/path/to/some/where")]))
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.sameSite(.lax)]))
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.sameSite(.strict)]))
-        >-> writeHeader(.setCookie(key: "foo", value: "bar", options: [.secure]))
+        >-> writeHeader(.setCookie("foo", "bar", [.domain("www.pointfree.co")]))
+        >-> writeHeader(.setCookie("foo", "bar", [.expires(Date(timeIntervalSince1970: 1234567890))]))
+        >-> writeHeader(.setCookie("foo", "bar", [.httpOnly]))
+        >-> writeHeader(.setCookie("foo", "bar", [.maxAge(3600)]))
+        >-> writeHeader(.setCookie("foo", "bar", [.path("/path/to/some/where")]))
+        >-> writeHeader(.setCookie("foo", "bar", [.sameSite(.lax)]))
+        >-> writeHeader(.setCookie("foo", "bar", [.sameSite(.strict)]))
+        >-> writeHeader(.setCookie("foo", "bar", [.secure]))
         >-> writeHeader(
-          .setCookie(key: "foo", value: "bar", options: [.domain("www.pointfree.co"), .httpOnly, .secure])
+          .setCookie("foo", "bar", [.domain("www.pointfree.co"), .httpOnly, .secure])
         )
         >-> respond(html: "<p>Hello, world</p>")
 

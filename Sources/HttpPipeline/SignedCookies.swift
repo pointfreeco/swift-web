@@ -1,7 +1,7 @@
 import Cryptor
 import Foundation
 
-extension ResponseHeader {
+extension Response.Header {
   /// Computes a signed cookie.
   ///
   /// - Parameters:
@@ -18,7 +18,7 @@ extension ResponseHeader {
     secret: String,
     encrypt: Bool = false
     )
-    -> ResponseHeader? {
+    -> Response.Header? {
 
       let encodedValue = data.base64EncodedString()
       guard let computedDigest = digest(value: encodedValue, secret: secret) else { return nil }
@@ -27,7 +27,7 @@ extension ResponseHeader {
       guard let finalValue = encrypt ? encrypted(text: signedValue, secret: secret) : signedValue
         else { return nil }
 
-      return .some(.setCookie(key: key, value: finalValue, options: options.union([.httpOnly])))
+      return .some(.setCookie(key, finalValue, options.union([.httpOnly])))
   }
 
   /// A helper for creating a signed cookie of a string value.
@@ -39,7 +39,7 @@ extension ResponseHeader {
     secret: String,
     encrypt: Bool = false
     )
-    -> ResponseHeader? {
+    -> Response.Header? {
 
       return setSignedCookie(
         key: key, data: Data(value.utf8), options: options, secret: secret, encrypt: encrypt
@@ -55,7 +55,7 @@ extension ResponseHeader {
     secret: String,
     encrypt: Bool = false
     )
-    -> ResponseHeader? {
+    -> Response.Header? {
 
       return (try? JSONEncoder().encode(value))
         .flatMap { setSignedCookie(key: key, data: $0, options: options, secret: secret, encrypt: encrypt) }

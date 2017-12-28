@@ -23,15 +23,12 @@ extension Response: Snapshot {
       + self.headers.map { $0.description }.sorted()
     let top = lines.joined(separator: "\n")
 
-    let contentMediaType: MediaType? = self.headers
-      .flatMap {
-        if case let .contentType(mediaType) = $0 {
-          return mediaType
-        }
-        return nil
-    }.first
+    let isApplicationOrText = self.headers
+      .first(where: { $0.name == "Content-Type" })
+      .map { $0.value.hasPrefix("application/") || $0.value.hasPrefix("text/") }
+      ?? false
 
-    if contentMediaType?.application?.isOther == .some(true) || contentMediaType?.isText == .some(true) {
+    if isApplicationOrText {
       // todo: use proper encoding when available
       return top + "\n\n\(String(decoding: self.body, as: UTF8.self))\n"
     }
