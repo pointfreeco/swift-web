@@ -57,12 +57,13 @@ public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> 
 
 public func redirect<A>(
   to location: String,
+  status: Status = .found,
   headersMiddleware: @escaping Middleware<HeadersOpen, HeadersOpen, A, A> = (id >>> pure)
   )
   ->
   Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
-    return writeStatus(.found)
+    return writeStatus(status)
       >-> headersMiddleware
       >-> writeHeader(.location(location))
       >-> end

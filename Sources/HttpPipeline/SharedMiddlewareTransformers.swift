@@ -84,12 +84,7 @@ public func redirectUnrelatedHosts<A>(
               |> map(\.host .~ canonicalHost)
           }
           .flatMap(^\.url)
-          .map {
-            conn
-              |> writeStatus(.movedPermanently)
-              >-> writeHeader(.location($0.absoluteString))
-              >-> end
-          }
+          .map { conn |> redirect(to: $0.absoluteString, status: .movedPermanently) }
           ?? middleware(conn)
       }
     }
@@ -109,12 +104,7 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
               && !allowedInsecureHosts.contains(url.host ?? "")
           }
           .flatMap(makeHttps)
-          .map {
-            conn
-              |> writeStatus(.movedPermanently)
-              >-> writeHeader(.location($0.absoluteString))
-              >-> end
-          }
+          .map { conn |> redirect(to: $0.absoluteString, status: .movedPermanently) }
           ?? middleware(conn)
       }
     }
@@ -132,12 +122,7 @@ public func requireHttps<A>(allowedInsecureHosts: [String])
               && !allowedInsecureHosts.contains(url.host ?? "")
           }
           .flatMap(makeHttps)
-          .map {
-            conn
-              |> writeStatus(.movedPermanently)
-              >-> writeHeader(.location($0.absoluteString))
-              >-> end
-          }
+          .map { conn |> redirect(to: $0.absoluteString, status: .movedPermanently) }
           ?? middleware(conn)
       }
     }

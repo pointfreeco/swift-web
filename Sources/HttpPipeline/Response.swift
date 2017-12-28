@@ -1,5 +1,6 @@
 import Foundation
 import MediaType
+import Optics
 import Prelude
 
 public struct Response {
@@ -138,9 +139,6 @@ public struct Response {
   }
 }
 
-private let expiresDateFormatter: DateFormatter = { () -> DateFormatter in
-  let formatter = DateFormatter()
-  formatter.timeZone = TimeZone(abbreviation: "UTC")
-  formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss zzz"
-  return formatter
-}()
+private let expiresDateFormatter = DateFormatter()
+  |> \.dateFormat .~ "EEE, d MMM yyyy HH:mm:ss zzz"
+  |> \.timeZone .~ TimeZone(abbreviation: "UTC")
