@@ -589,8 +589,8 @@ public func meta(generator: String) -> ChildOf<Element.Head> {
 }
 
 public func meta(keywords: [String]) -> ChildOf<Element.Head> {
-  let keywords = keywords.map { $0.replacingOccurrences(of: ",", with: "&#44;") }.joined(separator: ",")
-  return meta([name(.keywords), content(keywords)])
+  let sanitizedKeywords = keywords.map { $0.replacingOccurrences(of: ",", with: "&#44;") }
+  return meta([name(.keywords), content(sanitizedKeywords.joined(separator: ","))])
 }
 
 public func meta(name: String, content: String) -> ChildOf<Element.Head> {

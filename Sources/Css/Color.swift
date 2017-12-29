@@ -7,8 +7,8 @@ public enum Color: Val, Auto, Inherit, None {
   public func value() -> Value {
     switch self {
     case let .rgba(red, green, blue, alpha):
-      let formatted = alpha == 1.0
-        ? "#" + phex(red) + phex(green) + phex(blue)
+      let formatted: String = alpha == 1.0
+        ? "#\(phex(red))\(phex(green))\(phex(blue))"
         : "rgba(\(red),\(green),\(blue),\(alpha))"
       return .init(.plain(formatted))
     case let .other(value):

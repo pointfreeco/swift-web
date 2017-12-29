@@ -11,7 +11,7 @@ imports = \
 	@testable import UrlFormEncodingTests;
 
 xcodeproj:
-	swift package generate-xcodeproj
+	swift package generate-xcodeproj --xcconfig-overrides Development.xcconfig
 
 bootstrap: common-crypto-mm xcodeproj
 
