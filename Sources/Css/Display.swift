@@ -214,8 +214,11 @@ public func rect(top: Css.Size, right: Css.Size, bottom: Css.Size, left: Css.Siz
       [
         "rect(",
         top.value().unValue,
+        ",",
         right.value().unValue,
+        ",",
         bottom.value().unValue,
+        ",",
         left.value().unValue,
         ")"
         ]

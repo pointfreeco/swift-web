@@ -105,18 +105,14 @@ extension Response.Header {
   }
 }
 
-private func digest(value: String, secret: String) -> String? {
+public func digest(value: String, secret: String) -> String? {
   let keyBytes = CryptoUtils.byteArray(fromHex: secret)
   let valueBytes = CryptoUtils.byteArray(from: value)
   let digestBytes = HMAC(using: .sha256, key: keyBytes).update(byteArray: valueBytes)?.final()
   return digestBytes.map { Data(bytes: $0).base64EncodedString() }
 }
 
-private func base64DecodedData(string: String) -> Data? {
-  return Data(base64Encoded: Data(string.utf8))
-}
-
-private func encrypted(text plainText: String, secret: String) -> String? {
+public func encrypted(text plainText: String, secret: String) -> String? {
   let secretBytes = CryptoUtils.byteArray(fromHex: secret)
   let iv = [UInt8](repeating: 0, count: secretBytes.count)
   let plainTextBytes = CryptoUtils.byteArray(from: plainText)
@@ -133,7 +129,7 @@ private func encrypted(text plainText: String, secret: String) -> String? {
   return cipherText.map { CryptoUtils.hexString(from: $0) }
 }
 
-private func decrypted(text encryptedText: String, secret: String) -> String? {
+public func decrypted(text encryptedText: String, secret: String) -> String? {
   let secretBytes = CryptoUtils.byteArray(fromHex: secret)
   let iv = [UInt8](repeating: 0, count: secretBytes.count)
   let encryptedTextBytes = CryptoUtils.byteArray(fromHex: encryptedText)
@@ -145,4 +141,8 @@ private func decrypted(text encryptedText: String, secret: String) -> String? {
   return decryptedText
     .map { Data($0.filter { $0 != 0 }) }
     .flatMap { String.init(data: $0, encoding: .utf8) }
+}
+
+private func base64DecodedData(string: String) -> Data? {
+  return Data(base64Encoded: Data(string.utf8))
 }
