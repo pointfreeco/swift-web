@@ -33,7 +33,7 @@ public func req<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A?, B> {
 extension PartialIso where A == String, B == Int {
   /// An isomorphism between strings and integers.
   public static var int: PartialIso {
-    return .init(
+    return PartialIso(
       apply: Int.init,
       unapply: String.init
     )
@@ -66,7 +66,7 @@ extension PartialIso where A == String, B == String {
 extension PartialIso where A == String, B == Double {
   /// An isomorphism between strings and doubles.
   public static var double: PartialIso {
-    return .init(
+    return PartialIso(
       apply: Double.init,
       unapply: String.init
     )
@@ -148,12 +148,7 @@ extension PartialIso where A == String, B == Either<String, Int> {
 }
 
 private func formEncodedStringToFields(_ body: String) -> [String: String] {
-  let pairs = body.split(separator: "&")
-    .map {
-      $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-        .flatMap(String.init >>> ^\.removingPercentEncoding)
-    }
-    .flatMap { tuple <¢> $0.first <*> $0.last }
+  let pairs = parse(query: body).map { ($0, $1 ?? "") }
   return [String: String](uniqueKeysWithValues: pairs)
 }
 

@@ -50,7 +50,7 @@ public func render(_ node: Node, config: Config = compact) -> String {
         }?.joined()
 
       return renderedChildren
-        .map { children in
+        .map { children -> String in
           indentation + "<\(element.name)\(attribs)>"
             + config.newline
             + children

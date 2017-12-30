@@ -1,6 +1,7 @@
 import Foundation
 import Prelude
 import Optics
+import UrlFormEncoding
 
 // MARK: - Syntax Router
 
@@ -141,11 +142,8 @@ private func requestData(from request: URLRequest) -> RequestData {
     return .init(method: method, path: [], query: [:], body: request.httpBody)
   }
 
-  var query: [String: String] = [:]
-  url.query?.split(separator: "&").forEach {
-    let pair = $0.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-    query[String(pair[0]).removingPercentEncoding ?? ""] = String(pair[1]).removingPercentEncoding ?? ""
-  }
+  let pairs = parse(query: url.query ?? "").map { ($0, $1 ?? "") }
+  let query = [String: String](uniqueKeysWithValues: pairs)
 
   let path = url.path.components(separatedBy: "/")
     |> mapOptional { $0.isEmpty ? nil : $0 }

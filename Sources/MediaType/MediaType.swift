@@ -45,9 +45,11 @@ public enum MediaType: CustomStringConvertible {
     case let .model(model):
       return "model/" + model
     case let .multipart(multipart, boundary):
-      return "multipart/" + multipart.rawValue + (boundary.map { "; boundary=" + $0 } ?? "")
+      let boundaryString = boundary.map { "; boundary=" + $0 } ?? ""
+      return "multipart/" + multipart.rawValue + boundaryString
     case let .text(text, charset):
-      return "text/" + text.rawValue + (charset.map { "; charset=" + $0.rawValue } ?? "")
+      let charsetString = charset.map { "; charset=" + $0.rawValue } ?? ""
+      return "text/" + text.rawValue + charsetString
     }
   }
 }

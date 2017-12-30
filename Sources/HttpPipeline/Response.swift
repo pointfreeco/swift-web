@@ -44,8 +44,9 @@ public struct Response {
 
     public static func wwwAuthenticate(_ authenticate: Authenticate) -> Header {
       switch authenticate {
-      case let .basic(realm: realm):
-        return .init("WWW-Authenticate", "Basic" + (realm.map { " realm=\"" + $0 + "\"" } ?? ""))
+      case let .basic(realm):
+        let realmString = realm.map { " realm=\"" + $0 + "\"" } ?? ""
+        return .init("WWW-Authenticate", "Basic" + realmString)
       }
     }
 
