@@ -1,6 +1,6 @@
 import Prelude
 
-indirect public enum Size: Val, Auto, Normal, Inherit, None, Other {
+indirect public enum Size: Val, Auto, Initial, Inherit, Other {
   case simple(String)
   case sum(Size, Size)
   case diff(Size, Size)
@@ -25,9 +25,8 @@ indirect public enum Size: Val, Auto, Normal, Inherit, None, Other {
   }
 
   public static let auto = Size.otherSize(.auto)
+  public static let initial = Size.otherSize(.initial)
   public static let inherit = Size.otherSize(.inherit)
-  public static let none = Size.otherSize(.none)
-  public static let normal = Size.otherSize(.normal)
 
   public static func pct(_ d: Double) -> Size {
     return .simple(trunc(d) + "%")

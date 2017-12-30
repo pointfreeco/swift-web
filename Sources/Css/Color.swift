@@ -16,10 +16,8 @@ public enum Color: Val, Inherit, Initial {
     }
   }
 
-  public static let auto: Color = .other(.auto)
   public static let inherit: Color = .other(.inherit)
   public static let initial: Color = .other(.initial)
-  public static let none: Color = .other(.none)
   public static let transparent: Color = .other("transparent")
 
   public static func rgb(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> Color {

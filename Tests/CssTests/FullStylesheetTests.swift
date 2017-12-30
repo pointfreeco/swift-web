@@ -22,8 +22,8 @@ class FullStylesheetTests: XCTestCase {
     )
     <> input % (
       outlineStyle(all: .none)
-        <> outlineWidth(all: .none)
-        <> outlineColor(all: .none)
+        <> outlineWidth(all: 0)
+        <> outlineColor(all: .transparent)
     )
     <> input["type"=="submit"] % (
       boxShadow(stroke: .inset, hShadow: .px(1), vShadow: .px(1), color: .rgba(0, 0, 0, 1))
