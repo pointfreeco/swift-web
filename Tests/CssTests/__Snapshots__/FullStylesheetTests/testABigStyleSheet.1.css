@@ -17,8 +17,8 @@ ul li:first-child {
 
 input {
   outline-style : none;
-  outline-width : none;
-  outline-color : none;
+  outline-width : 0;
+  outline-color : transparent;
 }
 
 input[type="submit"] {

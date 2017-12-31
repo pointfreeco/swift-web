@@ -423,4 +423,13 @@ body {
       render(config: compact, css: css)
     )
   }
+
+  func testClipRect() {
+    let css = ".hide" % clip(rect(top: .px(1), right: .px(1), bottom: .px(1), left: .px(1)))
+
+    XCTAssertEqual(
+      ".hide{clip:rect(1px,1px,1px,1px)}",
+      render(config: compact, css: css)
+    )
+  }
 }

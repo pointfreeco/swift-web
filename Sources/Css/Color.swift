@@ -1,6 +1,6 @@
 import Prelude
 
-public enum Color: Val, Auto, Inherit, None {
+public enum Color: Val, Inherit, Initial {
   case rgba(UInt8, UInt8, UInt8, Float)
   case other(Value)
 
@@ -16,10 +16,9 @@ public enum Color: Val, Auto, Inherit, None {
     }
   }
 
-  public static let auto: Color = .other(.auto)
   public static let inherit: Color = .other(.inherit)
-  public static let none: Color = .other(.none)
-  public static let transparent = Color.other("transparent")
+  public static let initial: Color = .other(.initial)
+  public static let transparent: Color = .other("transparent")
 
   public static func rgb(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> Color {
     return .rgba(red, green, blue, 1.0)
