@@ -112,7 +112,14 @@ public func digest(value: String, secret: String) -> String? {
   return digestBytes.map { Data(bytes: $0).base64EncodedString() }
 }
 
+private let nonHexCharacterSet = CharacterSet(charactersIn: "0123456789abcdefABCDEF").inverted
+
 public func encrypted(text plainText: String, secret: String) -> String? {
+  // NB: Cryptor fatalErrros if secret isn't 32 characters long.
+  guard secret.count == 32 else { return nil }
+  // NB: Cryptor fatalErrors if secret contains non-hex digits.
+  guard secret.rangeOfCharacter(from: nonHexCharacterSet) == nil else { return nil }
+
   let secretBytes = CryptoUtils.byteArray(fromHex: secret)
   let iv = [UInt8](repeating: 0, count: secretBytes.count)
   let plainTextBytes = CryptoUtils.byteArray(from: plainText)
@@ -130,6 +137,15 @@ public func encrypted(text plainText: String, secret: String) -> String? {
 }
 
 public func decrypted(text encryptedText: String, secret: String) -> String? {
+  // NB: Cryptor fatalErrros if secret isn't 32 characters long.
+  guard secret.count == 32 else { return nil }
+  // NB: Cryptor fatalErrors if secret contains non-hex digits.
+  guard secret.rangeOfCharacter(from: nonHexCharacterSet) == nil else { return nil }
+  // NB: Cryptor fatalErrors if `encryptedText` contains non-hex digits.
+  guard encryptedText.rangeOfCharacter(from: nonHexCharacterSet) == nil else { return nil }
+  // NB: Cryptor fatalErrros if `encryptedText` has an odd number of characters.
+  guard encryptedText.count % 2 == 0 else { return nil }
+  
   let secretBytes = CryptoUtils.byteArray(fromHex: secret)
   let iv = [UInt8](repeating: 0, count: secretBytes.count)
   let encryptedTextBytes = CryptoUtils.byteArray(fromHex: encryptedText)

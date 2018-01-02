@@ -70,6 +70,13 @@ extension EncodedStringTests {
     ("testUnsafeUnencodedString", testUnsafeUnencodedString)
   ]
 }
+extension EncryptionTests {
+  static var allTests: [(String, (EncryptionTests) -> () throws -> Void)] = [
+    ("testEncrypt", testEncrypt),
+    ("testDecrypt", testDecrypt),
+    ("testDigest", testDigest)
+  ]
+}
 extension FlexBoxTests {
   static var allTests: [(String, (FlexBoxTests) -> () throws -> Void)] = [
     ("testFlexBox", testFlexBox)
@@ -234,6 +241,7 @@ XCTMain([
   testCase(BorderTests.allTests),
   testCase(CssRenderTests.allTests),
   testCase(EncodedStringTests.allTests),
+  testCase(EncryptionTests.allTests),
   testCase(FlexBoxTests.allTests),
   testCase(FullDocumentTests.allTests),
   testCase(FullStylesheetTests.allTests),
