@@ -57,7 +57,8 @@ extension CssRenderTests {
     ("testSubCss", testSubCss),
     ("testRenderBoxSizing", testRenderBoxSizing),
     ("testASD", testASD),
-    ("testAllOperatorsTogether", testAllOperatorsTogether)
+    ("testAllOperatorsTogether", testAllOperatorsTogether),
+    ("testClipRect", testClipRect)
   ]
 }
 extension EncodedStringTests {
@@ -65,7 +66,8 @@ extension EncodedStringTests {
     ("testEscape", testEscape),
     ("testDoesntEscapeInStyleTag", testDoesntEscapeInStyleTag),
     ("testDoesntEscapeInScript", testDoesntEscapeInScript),
-    ("testEscapesAttributeValues", testEscapesAttributeValues)
+    ("testEscapesAttributeValues", testEscapesAttributeValues),
+    ("testUnsafeUnencodedString", testUnsafeUnencodedString)
   ]
 }
 extension FlexBoxTests {
@@ -94,7 +96,8 @@ extension HTMLTests {
     ("testScriptTag", testScriptTag),
     ("testPrettyRender", testPrettyRender),
     ("testDocument", testDocument),
-    ("testTables", testTables)
+    ("testTables", testTables),
+    ("testBooleanAttributes", testBooleanAttributes)
   ]
 }
 extension HtmlRenderTests {
@@ -190,12 +193,14 @@ extension SyntaxRouterTests {
     ("testPostBodyJsonDecodable", testPostBodyJsonDecodable),
     ("testSimpleQueryParams", testSimpleQueryParams),
     ("testSimpleQueryParams_SomeMissing", testSimpleQueryParams_SomeMissing),
-    ("testCodableFormDataPostBody", testCodableFormDataPostBody)
+    ("testCodableFormDataPostBody", testCodableFormDataPostBody),
+    ("testRedirect", testRedirect)
   ]
 }
 extension UrlFormDecoderTests {
   static var allTests: [(String, (UrlFormDecoderTests) -> () throws -> Void)] = [
     ("testOptionality", testOptionality),
+    ("testPlusses", testPlusses),
     ("testDefaultStrategyAccumulatePairs", testDefaultStrategyAccumulatePairs),
     ("testBrackets", testBrackets),
     ("testBracketsWithIndices", testBracketsWithIndices),
