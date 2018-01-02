@@ -147,7 +147,7 @@ cb4db8ac9390ac810837809f11bc6803\
   }
 }
 
-struct Episode: Codable, DerivingEquatable {
+private struct Episode: Codable, DerivingEquatable {
   let id: Int
   let name: String
 }
