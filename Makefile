@@ -12,6 +12,7 @@ imports = \
 
 xcodeproj:
 	swift package generate-xcodeproj --xcconfig-overrides Development.xcconfig
+	xed .
 
 bootstrap: common-crypto-mm xcodeproj
 
