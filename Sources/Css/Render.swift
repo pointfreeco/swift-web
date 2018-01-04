@@ -10,7 +10,7 @@ public func render(config: Config, css: Stylesheet) -> String {
 }
 
 func render(config: Config, _ sel: [App], _ css: Stylesheet) -> String {
-  return rules(config, sel, runS(css))
+  return renderRules(config, sel, runS(css))
 }
 
 func render(attrModifier: CssSelector.Attribute.Modifier) -> String {
@@ -358,7 +358,7 @@ func merger(_ xs: [App]) -> CssSelector {
   }
 }
 
-func rule(_ config: Config, _ sel: [App], _ props: [(Key<Unit>, Value)]) -> String {
+public func renderRule(_ config: Config, _ sel: [App], _ props: [(Key<Unit>, Value)]) -> String {
 
   guard !props.isEmpty else { return "" }
 
@@ -373,12 +373,12 @@ func rule(_ config: Config, _ sel: [App], _ props: [(Key<Unit>, Value)]) -> Stri
     + config.newline
 }
 
-func rules(_ config: Config, _ sel: [App], _ rs: [Rule]) -> String {
+func renderRules(_ config: Config, _ sel: [App], _ rs: [Rule]) -> String {
 
-  let _property = rule(config, sel, rs.flatMap { $0.property })
+  let _property = renderRule(config, sel, rs.flatMap { $0.property })
   let _import = foldMap(imp(config))(rs.flatMap { $0.`import` })
   let _face = foldMap(face(config))(rs.flatMap { $0.face })
-  let _nested = foldMap({ ab in rules(config, [ab.0] + sel, ab.1)})(rs.flatMap { $0.nested })
+  let _nested = foldMap({ ab in renderRules(config, [ab.0] + sel, ab.1)})(rs.flatMap { $0.nested })
 
   let _query = foldMap({ ab in query(config, ab.0, sel, ab.1)})(rs.flatMap({ $0.query }))
 
@@ -392,7 +392,7 @@ func rules(_ config: Config, _ sel: [App], _ rs: [Rule]) -> String {
 }
 
 func face(_ config: Config) -> ([Rule]) -> String {
-  return { rs in "@font-face" + rules(config, [], rs) }
+  return { rs in "@font-face" + renderRules(config, [], rs) }
 }
 
 func query(_ config: Config, _ query: MediaQuery, _ sel: [App], _ rs: [Rule]) -> String {
@@ -400,7 +400,7 @@ func query(_ config: Config, _ query: MediaQuery, _ sel: [App], _ rs: [Rule]) ->
     + config.sep
     + config.lbrace
     + config.newline
-    + rules(config, sel, rs)
+    + renderRules(config, sel, rs)
     + config.rbrace
     + config.newline
 }
