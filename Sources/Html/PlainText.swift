@@ -15,6 +15,14 @@ public func plainText(for node: Node) -> String {
     return document.map(plainText).joined()
       .replacingOccurrences(of: "\n\n+", with: "\n\n", options: .regularExpression)
   case let .element(element):
+    guard element
+      .attribs
+      .first(where: { $0.key == "style" })?
+      .value
+      .renderedValue()?
+      .string
+      .range(of: "\\bdisplay:\\s*none\\b", options: .regularExpression) == nil else { return "" }
+
     return plainText(for: element)
   case let .text(text):
     return unencode(text)
@@ -59,6 +67,8 @@ private func plainText(for element: Element) -> String {
     return element.content.map(plainText).map { "##### \($0)\n\n" } ?? ""
   case "h6":
     return element.content.map(plainText).map { "###### \($0)\n\n" } ?? ""
+  case "head", "script", "style":
+    return ""
   case "ol":
     return element.content
       .map {
@@ -71,8 +81,6 @@ private func plainText(for element: Element) -> String {
     return element.content.map(plainText).map { "\"\($0)\"" } ?? ""
   case "sub", "sup":
     return element.content.map(plainText).map { "[\($0)]" } ?? ""
-  case "script", "style":
-    return ""
   case "ul":
     return element.content
       .map { $0.map { "  - \(plainText(for: $0))" }.joined(separator: "\n") + "\n" }

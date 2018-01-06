@@ -51,4 +51,7 @@ public func unencode(_ encoded: EncodedString) -> String {
     .replacingOccurrences(of: "&gt;", with: ">")
     .replacingOccurrences(of: "&quot;", with: "\"")
     .replacingOccurrences(of: "&#39;", with: "'")
+    // FIXME: more thorough encoding/unencoding solution
+    .replacingOccurrences(of: "&nbsp;", with: " ")
+    .replacingOccurrences(of: "&#8209;", with: "-")
 }

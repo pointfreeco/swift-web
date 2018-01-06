@@ -7,10 +7,12 @@ class PlainTextTests: XCTestCase {
     let doc = document([
       html([
         head([
+          title("Hello!"),
           style("h1{color: red}"),
-          script("alert(\"hello!\");")
           ]),
         body([
+          p([style("display:none")], ["Hide me pls!"]),
+          p([style(" display: none !important; ")], ["And me!"]),
           h1(["Welcome!"]),
           p(["Welcome to you & who has come here before."]),
           p([
@@ -41,7 +43,8 @@ class PlainTextTests: XCTestCase {
             ]),
           blockquote([
             "Code to the interface you wish you had, not the interface you were given."
-            ])
+            ]),
+          script("alert(\"hello!\");"),
           ]),
         ])
       ])
