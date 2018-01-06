@@ -21,7 +21,7 @@ public func plainText(for node: Node) -> String {
       .value
       .renderedValue()?
       .string
-      .range(of: "\\bdisplay:none\\b", options: .regularExpression) == nil else { return "" }
+      .range(of: "\\bdisplay:\s*none\\b", options: .regularExpression) == nil else { return "" }
 
     return plainText(for: element)
   case let .text(text):
