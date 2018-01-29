@@ -28,6 +28,7 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route, base: baseUrl))
     XCTAssertEqual("/", router.templateUrl(for: route)?.absoluteString)
+    XCTAssertEqual("/", router.absoluteString(for: .root))
   }
 
   func testRequest_WithBaseUrl() {
