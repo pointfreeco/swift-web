@@ -41,7 +41,8 @@ public struct Router<A> {
   }
 
   public func absoluteString(for a: A) -> String? {
-    return url(for: a).map { "/" + $0.absoluteString }
+    return (self.url(for: a)?.absoluteString)
+      .map { $0 == "/" ? "/" : "/" + $0 }
   }
 
   public func templateRequest(for a: A) -> URLRequest? {
