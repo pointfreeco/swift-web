@@ -2,6 +2,34 @@ import Foundation
 import Optics
 import Prelude
 
+public func filterMap<A, B>(
+  _ f: @escaping (A) -> IO<B?>,
+  or notFoundMiddleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>
+  )
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, B, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+
+    return { middleware in
+      { conn in
+
+        f(conn.data).flatMap { result in
+          result.map(middleware <<< conn.map <<< const)
+            ?? notFoundMiddleware(conn)
+        }
+      }
+    }
+}
+
+public func filter<A>(
+  _ p: @escaping (A) -> Bool,
+  or notFoundMiddleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>
+  )
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+
+    return filterMap({ p($0) ? $0 : nil } >>> pure, or: notFoundMiddleware)
+}
+
 /// Wraps basic auth middleware around existing middleware. Provides only the most basic of authentication
 /// where the username and password are static, e.g. we do not look in a database for the user.
 ///
@@ -46,17 +74,31 @@ public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, Response
       >-> middleware
 }
 
-public func contentLength<A, B>(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, B>
+/// Redirects requests whose hosts are not one of an allowed list. This can be useful for redirecting a
+/// bare domain, e.g. http://pointfree.co, to a `www` domain, e.g. `http://www.pointfree.co`.
+///
+/// - Parameters:
+///   - isAllowedHost: A predicate used to allow hosts.
+///   - canonicalHost: The canonical host to redirect to if the host is not allowed.
+/// - Returns:
+public func redirectUnrelatedHosts<A>(
+  isAllowedHost: @escaping (String) -> Bool,
+  canonicalHost: String
   )
-  -> Middleware<StatusLineOpen, ResponseEnded, A, B> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
-    return { conn in
-      middleware(conn)
-        .flatMap { conn in
-          conn
-            |> \.response.headers %~ { $0 + [.contentLength(conn.response.body.count)] }
-            |> pure
+    return { middleware in
+      { conn in
+        conn.request.url
+          .filterOptional { !isAllowedHost($0.host ?? "") }
+          .flatMap {
+            URLComponents(url: $0, resolvingAgainstBaseURL: false)
+              |> map(\.host .~ canonicalHost)
+          }
+          .flatMap(^\.url)
+          .map { conn |> redirect(to: $0.absoluteString, status: .movedPermanently) }
+          ?? middleware(conn)
       }
     }
 }
@@ -75,19 +117,7 @@ public func redirectUnrelatedHosts<A>(
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
-    return { middleware in
-      { conn in
-        conn.request.url
-          .filterOptional { !allowedHosts.contains($0.host ?? "") }
-          .flatMap {
-            URLComponents(url: $0, resolvingAgainstBaseURL: false)
-              |> map(\.host .~ canonicalHost)
-          }
-          .flatMap(^\.url)
-          .map { conn |> redirect(to: $0.absoluteString, status: .movedPermanently) }
-          ?? middleware(conn)
-      }
-    }
+    return redirectUnrelatedHosts(isAllowedHost: allowedHosts.contains, canonicalHost: canonicalHost)
 }
 
 public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
@@ -142,9 +172,8 @@ public func validateBasicAuth(user: String, password: String, request: URLReques
 private func makeHttps(url: URL) -> URL? {
   return URLComponents(url: url, resolvingAgainstBaseURL: false)
     |> map(\.scheme .~ "https")
-    |> flatMap { $0.url }
+    |> flatMap(^\.url)
 }
-
 
 /// Transforms middleware into one that logs the request info that comes through and logs the amount of
 /// time the request took.
@@ -154,7 +183,6 @@ public func requestLogger(
   -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
     return requestLogger(logger: { print($0) })(middleware)
 }
-
 
 /// Transforms middleware into one that logs the request info that comes through and logs the amount of
 /// time the request took.

@@ -38,6 +38,14 @@ public struct PartialIso<A, B> {
       unapply: rhs.unapply >-> lhs.unapply
     )
   }
+
+  /// Backwards composes two partial isomorphisms.
+  public static func <<< <C> (lhs: PartialIso<B, C>, rhs: PartialIso<A, B>) -> PartialIso<A, C> {
+    return .init(
+      apply: rhs.apply >-> lhs.apply,
+      unapply: lhs.unapply >-> rhs.unapply
+    )
+  }
 }
 
 extension PartialIso where B == A {

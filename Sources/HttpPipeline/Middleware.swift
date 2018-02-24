@@ -55,6 +55,13 @@ public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> 
     >-> end
 }
 
+public func head<A>(_ status: HttpPipeline.Status)
+  -> (Conn<StatusLineOpen, A>)
+  -> IO<Conn<ResponseEnded, Data>> {
+
+    return writeStatus(status) >-> end
+}
+
 public func redirect<A>(
   to location: String,
   status: Status = .found,

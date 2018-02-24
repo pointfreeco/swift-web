@@ -112,10 +112,17 @@ public func digest(value: String, secret: String) -> String? {
   return digestBytes.map { Data(bytes: $0).base64EncodedString() }
 }
 
+public func hexDigest(value: String, asciiSecret: String) -> String? {
+  let keyBytes = CryptoUtils.byteArray(from: asciiSecret)
+  let valueBytes = CryptoUtils.byteArray(from: value)
+  let digestBytes = HMAC(using: .sha256, key: keyBytes).update(byteArray: valueBytes)?.final()
+  return digestBytes.map { $0.map { String(format: "%02x", $0) }.joined() }
+}
+
 private let nonHexCharacterSet = CharacterSet(charactersIn: "0123456789abcdefABCDEF").inverted
 
 public func encrypted(text plainText: String, secret: String) -> String? {
-  // NB: Cryptor fatalErrros if secret isn't 32 characters long.
+  // NB: Cryptor fatalErrors if secret isn't 32 characters long.
   guard secret.count == 32 else { return nil }
   // NB: Cryptor fatalErrors if secret contains non-hex digits.
   guard secret.rangeOfCharacter(from: nonHexCharacterSet) == nil else { return nil }
