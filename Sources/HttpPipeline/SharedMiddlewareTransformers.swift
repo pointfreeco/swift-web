@@ -2,12 +2,12 @@ import Foundation
 import Optics
 import Prelude
 
-public func filterMap<A, B>(
+public func filterMap<A, B, C>(
   _ f: @escaping (A) -> IO<B?>,
-  or notFoundMiddleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>
+  or notFoundMiddleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, C>
   )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, B, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, B, C>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, C> {
 
     return { middleware in
       { conn in
@@ -20,12 +20,12 @@ public func filterMap<A, B>(
     }
 }
 
-public func filter<A>(
+public func filter<A, B>(
   _ p: @escaping (A) -> Bool,
-  or notFoundMiddleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>
+  or notFoundMiddleware: @escaping Middleware<StatusLineOpen, ResponseEnded, A, B>
   )
-  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
-  -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
+  -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, B>)
+  -> Middleware<StatusLineOpen, ResponseEnded, A, B> {
 
     return filterMap({ p($0) ? $0 : nil } >>> pure, or: notFoundMiddleware)
 }
@@ -91,7 +91,7 @@ public func redirectUnrelatedHosts<A>(
     return { middleware in
       { conn in
         conn.request.url
-          .filterOptional { !isAllowedHost($0.host ?? "") }
+          .filter { !isAllowedHost($0.host ?? "") }
           .flatMap {
             URLComponents(url: $0, resolvingAgainstBaseURL: false)
               |> map(\.host .~ canonicalHost)
@@ -127,7 +127,7 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
     return { middleware in
       return { conn in
         conn.request.url
-          .filterOptional { url in
+          .filter { url in
             // `url.scheme` cannot be trusted on Heroku, instead we need to look at the `X-Forwarded-Proto`
             // header to determine if we are on https or not.
             conn.request.allHTTPHeaderFields?["X-Forwarded-Proto"] != .some("https")
@@ -147,7 +147,7 @@ public func requireHttps<A>(allowedInsecureHosts: [String])
     return { middleware in
       return { conn in
         conn.request.url
-          .filterOptional { (url: URL) -> Bool in
+          .filter { (url: URL) -> Bool in
             url.scheme != .some("https")
               && !allowedInsecureHosts.contains(url.host ?? "")
           }
@@ -206,11 +206,4 @@ public func requestLogger(logger: @escaping (String) -> Void)
         }
       }
     }
-}
-
-// TODO: move to prelude
-extension Optional {
-  fileprivate func filterOptional(_ p: (Wrapped) -> Bool) -> Optional {
-    return self.flatMap { p($0) ? $0 : nil }
-  }
 }
