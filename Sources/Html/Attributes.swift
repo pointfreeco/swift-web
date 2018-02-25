@@ -85,6 +85,10 @@ public func crossorigin<T: HasCrossorigin>(_ value: Crossorigin) -> Attribute<T>
   return .init("crossorigin", value)
 }
 
+public func data<T>(_ name: StaticString, _ value: String) -> Attribute<T> {
+  return .init("data-\(name)", value)
+}
+
 private let iso8601DateFormatter: DateFormatter = {
   let formatter = DateFormatter()
   formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -170,9 +174,17 @@ public func hidden<T>(_ value: Bool) -> Attribute<T> {
   return .init("hidden", value)
 }
 
+public func hr(_ attribs: [Attribute<Element.Hr>]) -> Node {
+  return node("hr", attribs, nil)
+}
+
 public protocol HasHref {}
 public func href<T: HasHref>(_ value: String) -> Attribute<T> {
   return .init("href", value)
+}
+
+public func mailto<T: HasHref>(_ address: String) -> Attribute<T> {
+  return href("mailto:" + address)
 }
 
 public enum HttpEquiv: String, Value {
@@ -406,6 +418,10 @@ public func max<T: HasMax>(_ value: Double) -> Attribute<T> {
   return .init("max", value)
 }
 
+public func max<T: HasMax>(_ value: Int) -> Attribute<T> {
+  return .init("max", value)
+}
+
 public protocol HasMaxlength {}
 public func maxlength<T>(_ value: Int) -> Attribute<T> {
   return .init("maxlength", value)
@@ -426,6 +442,10 @@ public func method(_ value: Method) -> Attribute<Element.Form> {
 
 public protocol HasMin {}
 public func min<T: HasMin>(_ value: Double) -> Attribute<T> {
+  return .init("min", value)
+}
+
+public func min<T: HasMin>(_ value: Int) -> Attribute<T> {
   return .init("min", value)
 }
 
@@ -466,6 +486,40 @@ public func novalidate(_ value: Bool) -> Attribute<Element.Form> {
   return .init("novalidate", value)
 }
 
+public protocol HasOnchange {}
+public func onchange<T: HasOnchange>(_ javascript: StaticString) -> Attribute<T> {
+  return .init("onchange", "javascript:\(javascript)")
+}
+
+public func onchange<T: HasOnchange>(unsafeJavascript: String) -> Attribute<T> {
+  return .init("onchange", "javascript:\(unsafeJavascript)")
+}
+
+public func onclick<T>(_ javascript: StaticString) -> Attribute<T> {
+  return .init("onclick", "javascript:\(javascript)")
+}
+
+public func onclick<T>(unsafeJavascript: String) -> Attribute<T> {
+  return .init("onclick", "javascript:\(unsafeJavascript)")
+}
+
+public func onkeypress<T>(_ javascript: StaticString) -> Attribute<T> {
+  return .init("onkeypress", "\(javascript)")
+}
+
+public func onkeypress<T>(unsafeJavascript: String) -> Attribute<T> {
+  return .init("onkeypress", "\(unsafeJavascript)")
+}
+
+public protocol HasOnsubmit {}
+public func onsubmit<T: HasOnsubmit>(javascript: String) -> Attribute<T> {
+  return .init("onsubmit", "\(javascript)")
+}
+public func onsubmit<T: HasOnsubmit>(unsafeJavascript: String) -> Attribute<T> {
+  return .init("onsubmit", "\(unsafeJavascript)")
+}
+
+
 public func open(_ value: Bool) -> Attribute<Element.Details> {
   return .init("open", value)
 }
@@ -479,7 +533,8 @@ public func placeholder<T: HasPlaceholder>(_ value: String) -> Attribute<T> {
   return .init("placeholder", value)
 }
 
-public func playsInline(_ value: Bool) -> Attribute<Element.Video> {
+public protocol HasPlaysinline {}
+public func playsinline<T: HasPlaysinline>(_ value: Bool) -> Attribute<T> {
   return .init("playsinline", value)
 }
 
@@ -569,6 +624,10 @@ public func scope(_ value: Bool) -> Attribute<Element.Th> {
 
 public func selected(_ value: Bool) -> Attribute<Element.Option> {
   return .init("selected", value)
+}
+
+public func sizes<T>(_ value: String) -> Attribute<T> {
+  return .init("sizes", value)
 }
 
 public protocol HasSpan {}
@@ -720,13 +779,18 @@ public func type(_ value: InputType) -> Attribute<Element.Input> {
   return .init("type", value)
 }
 
-public protocol HasStringValue {}
-public func value<T: HasStringValue>(_ value: String) -> Attribute<T> {
+public protocol HasDoubleValue {}
+public func value<T: HasDoubleValue>(_ value: Double) -> Attribute<T> {
   return .init("value", value)
 }
 
-public protocol HasDoubleValue {}
-public func value<T: HasDoubleValue>(_ value: Double) -> Attribute<T> {
+public protocol HasIntValue {}
+public func value<T: HasIntValue>(_ value: Int) -> Attribute<T> {
+  return .init("value", value)
+}
+
+public protocol HasStringValue {}
+public func value<T: HasStringValue>(_ value: String) -> Attribute<T> {
   return .init("value", value)
 }
 

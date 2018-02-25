@@ -15,8 +15,7 @@ extension Element {
   public enum Area: HasAlt, HasHref, HasRel, HasTarget {}
   public enum Article {}
   public enum Aside {}
-  public enum Audio: ContainsAVSource, ContainsTrack, HasAutoplay, HasControls, HasLoop, HasMuted, HasPreload,
-    HasSrc {}
+  public enum Audio: ContainsAVSource, ContainsTrack, HasAutoplay, HasControls, HasLoop, HasMuted, HasPlaysinline, HasPreload, HasSrc {}
   public enum B {}
   public enum Base: HasHref, HasTarget {}
   public enum Bdi {}
@@ -43,7 +42,7 @@ extension Element {
   public enum Figcaption {}
   public enum Figure {}
   public enum Footer {}
-  public enum Form: HasName {}
+  public enum Form: HasName, HasOnsubmit {}
   public enum H1 {}
   public enum H2 {}
   public enum H3 {}
@@ -52,13 +51,12 @@ extension Element {
   public enum H6 {}
   public enum Head {}
   public enum Header {}
+  public enum Hr {}
   public enum Html: HasXmlns {}
   public enum I {}
   public enum Iframe: HasHeight, HasName, HasSrc, HasWidth {}
   public enum Img: HasAlt, HasCrossorigin, HasHeight, HasSrc, HasSrcset, HasWidth {}
-  public enum Input: HasAlt, HasAutofocus, HasDisabled, HasDoubleValue, HasForm, HasHeight, HasMax,
-    HasMaxlength, HasMin, HasMinlength, HasMultiple, HasName, HasPlaceholder, HasReadonly, HasRequired,
-    HasSrc, HasStringValue, HasWidth {}
+  public enum Input: HasAlt, HasAutofocus, HasDisabled, HasDoubleValue, HasForm, HasHeight, HasIntValue, HasMax, HasMaxlength, HasMin, HasMinlength, HasMultiple, HasName, HasOnchange, HasPlaceholder, HasReadonly, HasRequired, HasSrc, HasStringValue, HasWidth {}
   public enum Ins: HasCite, HasDatetime {}
   public enum Kbd {}
   public enum Label: HasFor, HasForm {}
@@ -89,8 +87,7 @@ extension Element {
   public enum Samp {}
   public enum Script: HasCharset, HasCrossorigin, HasSrc, HasMediaType {}
   public enum Section {}
-  public enum Select:
-    ContainsOptions, HasAutofocus, HasDisabled, HasForm, HasMultiple, HasName, HasRequired {}
+  public enum Select: ContainsOptions, HasAutofocus, HasDisabled, HasForm, HasMultiple, HasName, HasOnchange, HasRequired {}
   public enum Small {}
   public enum Source: HasSrc, HasSrcset, HasMediaType {}
   public enum Span {}
@@ -103,8 +100,7 @@ extension Element {
   public enum Table: ContainsTr {}
   public enum Tbody: ContainsTr {}
   public enum Td: HasColspan, HasHeaders, HasRowspan {}
-  public enum Textarea: HasAutofocus, HasDisabled, HasForm, HasMaxlength, HasMinlength, HasName,
-    HasPlaceholder, HasReadonly, HasRequired {}
+  public enum Textarea: HasAutofocus, HasDisabled, HasForm, HasMaxlength, HasMinlength, HasName, HasOnchange, HasPlaceholder, HasReadonly, HasRequired {}
   public enum Tfoot {}
   public enum Time: HasDatetime {}
   public enum Track: HasSrc {}
@@ -114,8 +110,7 @@ extension Element {
   public enum U {}
   public enum Ul: ContainsList {}
   public enum Var {}
-  public enum Video: ContainsAVSource, ContainsTrack, HasAutoplay, HasControls, HasHeight, HasLoop, HasMuted,
-    HasPreload, HasSrc, HasWidth {}
+  public enum Video: ContainsAVSource, ContainsTrack, HasAutoplay, HasControls, HasHeight, HasLoop, HasMuted, HasPlaysinline, HasPreload, HasSrc, HasWidth {}
 }
 
 public func a(_ attribs: [Attribute<Element.A>], _ content: [Node]) -> Node {

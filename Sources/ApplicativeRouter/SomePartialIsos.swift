@@ -156,11 +156,43 @@ private func fieldsToFormEncodedString(_ data: [String: String]) -> String {
   return urlFormEncode(value: data)
 }
 
-extension PartialIso where A == String, B: RawRepresentable, B.RawValue == String {
+extension PartialIso where B: RawRepresentable, B.RawValue == A {
   public static var rawRepresentable: PartialIso {
     return .init(
       apply: B.init(rawValue:),
       unapply: ^\.rawValue
+    )
+  }
+}
+
+public protocol TaggedType {
+  // FIXME: Swift 4.1
+  associatedtype _Tag
+  associatedtype _A
+
+  var unwrap: _A { get }
+  init(unwrap: _A)
+}
+
+extension Tagged: TaggedType {
+  public typealias _Tag = Tag
+  public typealias _A = A
+}
+
+extension PartialIso where A: Codable, B: TaggedType, A == B._A {
+  public static var tagged: PartialIso<B._A, B> {
+    return PartialIso(
+      apply: B.init(unwrap:),
+      unapply: ^\.unwrap
+    )
+  }
+}
+
+extension PartialIso where A == String, B == UUID {
+  public static var uuid: PartialIso<String, UUID> {
+    return PartialIso(
+      apply: UUID.init(uuidString:),
+      unapply: ^\.uuidString
     )
   }
 }
