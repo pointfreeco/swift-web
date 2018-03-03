@@ -589,10 +589,11 @@ public func rel<T: HasRel>(_ value: Rel) -> Attribute<T> {
 }
 
 public enum As: String {
-  case script
-  case font
-  case video
   case image
+  case font
+  case script
+  case style
+  case video
 }
 public protocol HasAs {}
 public func `as`<T: HasAs>(_ value: As) -> Attribute<T> {
