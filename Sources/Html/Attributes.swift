@@ -586,6 +586,17 @@ public func rel<T: HasRel>(_ value: Rel) -> Attribute<T> {
   return .init("rel", value)
 }
 
+public enum As: String {
+  case script
+  case font
+  case video
+  case image
+}
+public protocol HasAs {}
+public func `as`<T: HasAs>(_ value: As) -> Attribute<T> {
+  return .init("as", value.rawValue)
+}
+
 public protocol HasRequired {}
 public func required<T: HasRequired>(_ value: Bool) -> Attribute<T> {
   return .init("required", value)

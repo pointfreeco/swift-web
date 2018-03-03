@@ -85,7 +85,7 @@ extension Element {
   public enum Ruby {}
   public enum S {}
   public enum Samp {}
-  public enum Script: HasCharset, HasCrossorigin, HasSrc, HasMediaType {}
+  public enum Script: HasCharset, HasCrossorigin, HasRel, HasSrc, HasMediaType {}
   public enum Section {}
   public enum Select: ContainsOptions, HasAutofocus, HasDisabled, HasForm, HasMultiple, HasName, HasOnchange, HasRequired {}
   public enum Small {}
