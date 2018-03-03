@@ -568,6 +568,8 @@ public struct Rel: Value {
   public static let license = value("license")
   public static let next = value("next")
   public static let nofollow = value("nofollow")
+  public static let prefetch = value("prefetch")
+  public static let preload = value("preload")
   public static let prev = value("prev")
   public static let search = value("search")
   public static let stylesheet = value("stylesheet")
