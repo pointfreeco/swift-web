@@ -144,7 +144,7 @@ private func requestData(from request: URLRequest) -> RequestData {
   }
 
   let pairs = parse(query: url.query ?? "").map { ($0, $1 ?? "") }
-  let query = [String: String](uniqueKeysWithValues: pairs)
+  let query = [String: String](pairs, uniquingKeysWith: { $1 })
 
   let path = url.path.components(separatedBy: "/")
     |> mapOptional { $0.isEmpty ? nil : $0 }
