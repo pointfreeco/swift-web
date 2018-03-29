@@ -1,16 +1,16 @@
 import Prelude
 
-public typealias View<D> = FunctionM<D, [Node]>
+public typealias View<D> = Func<D, [Node]>
 
 extension View {
-  public func view(_ data: A) -> M {
+  public func view(_ data: A) -> B {
     return self.call(data)
   }
 }
 
 // MARK: Helpers
 
-extension View where M == [Node] {
+extension View where B == [Node] {
   public func rendered(with data: A) -> String {
     return self.rendered(with: data, config: compact)
   }
@@ -20,20 +20,10 @@ extension View where M == [Node] {
   }
 
   public init(_ call: @escaping (A) -> Node) {
-    self.call = call >>> pure
+    self.init(call >>> pure)
   }
 
   public init(_ node: Node) {
-    self.call = const([node])
-  }
-}
-
-extension View where A == (), M == [Node] {
-  public init(_ call: @escaping (A) -> Node) {
-    self.call = call >>> pure
-  }
-
-  public init(_ node: Node) {
-    self.call = const([node])
+    self.init(const([node]))
   }
 }
