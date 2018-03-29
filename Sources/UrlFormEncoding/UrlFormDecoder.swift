@@ -141,7 +141,7 @@ public final class UrlFormDecoder: Decoder {
       return self.decoder.codingPath
     }
     var allKeys: [Key] {
-      return self.container.keys.flatMap(Key.init(stringValue:))
+      return self.container.keys.compactMap(Key.init(stringValue:))
     }
 
     private func checked<T>(_ key: Key, _ block: (String) throws -> T) throws -> T {
@@ -735,7 +735,7 @@ private func pairs(_ query: String, sort: Bool = false) -> [(String, String?)] {
     .split(separator: "&")
     .map { (pairString: Substring) -> (name: String, value: String?) in
       let pairArray = pairString.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-        .flatMap(
+        .compactMap(
           String.init
             >>> { $0.replacingOccurrences(of: "+", with: " ") }
             >>> ^\.removingPercentEncoding
