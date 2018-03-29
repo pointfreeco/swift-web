@@ -375,12 +375,12 @@ public func renderRule(_ config: Config, _ sel: [App], _ props: [(Key<Unit>, Val
 
 func renderRules(_ config: Config, _ sel: [App], _ rs: [Rule]) -> String {
 
-  let _property = renderRule(config, sel, rs.flatMap { $0.property })
-  let _import = foldMap(imp(config))(rs.flatMap { $0.`import` })
-  let _face = foldMap(face(config))(rs.flatMap { $0.face })
-  let _nested = foldMap({ ab in renderRules(config, [ab.0] + sel, ab.1)})(rs.flatMap { $0.nested })
+  let _property = renderRule(config, sel, rs.compactMap { $0.property })
+  let _import = foldMap(imp(config))(rs.compactMap { $0.`import` })
+  let _face = foldMap(face(config))(rs.compactMap { $0.face })
+  let _nested = foldMap({ ab in renderRules(config, [ab.0] + sel, ab.1)})(rs.compactMap { $0.nested })
 
-  let _query = foldMap({ ab in query(config, ab.0, sel, ab.1)})(rs.flatMap({ $0.query }))
+  let _query = foldMap({ ab in query(config, ab.0, sel, ab.1)})(rs.compactMap({ $0.query }))
 
   return _property
     + config.newline
