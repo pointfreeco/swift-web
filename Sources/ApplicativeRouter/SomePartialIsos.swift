@@ -166,7 +166,6 @@ extension PartialIso where B: RawRepresentable, B.RawValue == A {
 }
 
 public protocol TaggedType {
-  // FIXME: Swift 4.1
   associatedtype _Tag
   associatedtype _A
 
@@ -179,7 +178,7 @@ extension Tagged: TaggedType {
   public typealias _A = A
 }
 
-extension PartialIso where A: Codable, B: TaggedType, A == B._A {
+extension PartialIso where B: TaggedType, A == B._A {
   public static var tagged: PartialIso<B._A, B> {
     return PartialIso(
       apply: B.init(unwrap:),
