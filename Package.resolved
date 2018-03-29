@@ -11,21 +11,21 @@
         }
       },
       {
-        "package": "CommonCrypto",
-        "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
-        "state": {
-          "branch": null,
-          "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
-          "version": "0.1.5"
-        }
-      },
-      {
         "package": "Cryptor",
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
           "branch": null,
           "revision": "1de800d80f22a930e617f7c551a692475f92a23d",
           "version": "0.8.22"
+        }
+      },
+      {
+        "package": "CommonCrypto",
+        "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
+        "state": {
+          "branch": null,
+          "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
+          "version": "0.1.5"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/trill-lang/FileCheck.git",
         "state": {
           "branch": null,
-          "revision": "1c966580c83cf2e41be802992d46fe2edfc5c95f",
-          "version": "0.0.5"
+          "revision": "34ea75a35780396a2cfa5019ec799879b48dd960",
+          "version": "0.0.6"
         }
       },
       {
@@ -59,8 +59,8 @@
         "package": "Prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
-          "branch": "45bb2cc",
-          "revision": "45bb2cc25ee7c79ecc23b56465b058f4f462158f",
+          "branch": "c13eb31",
+          "revision": "c13eb314928ca4b808bafdf32df2520225d9d0d3",
           "version": null
         }
       },

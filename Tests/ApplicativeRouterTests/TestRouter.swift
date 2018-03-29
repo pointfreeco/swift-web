@@ -88,8 +88,7 @@ extension Routes: Equatable {
     case let (.redirect(lhs), .redirect(rhs)):
       return lhs == rhs
 
-    case (.home, _), (.root, _), (.pathComponents, _), (.postBodyField, _), (.postBodyJsonDecodable, _),
-         (.simpleQueryParams, _), (.codableQueryParams, _), (.redirect, _):
+    default:
       return false
     }
   }
