@@ -34,7 +34,7 @@ public func render(_ node: Node, config: Config = compact) -> String {
     case let .element(element):
       let _attribs = element.attribs
         .map { attrib in attrib.value.render(with: attrib.key)?.string }
-        .flatMap { $0 }
+        .compactMap { $0 }
         .joined(separator: " ")
       let attribs = _attribs.isEmpty ? "" : " " + _attribs
 
