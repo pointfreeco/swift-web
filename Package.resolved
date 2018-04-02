@@ -77,8 +77,8 @@
         "package": "Prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
-          "branch": "777966e",
-          "revision": "777966eb58e7d6e17d4ba24bf05f6d7165c310c2",
+          "branch": "d844de6",
+          "revision": "d844de6c250de65df51030b204e751c0d05d9bd8",
           "version": null
         }
       },

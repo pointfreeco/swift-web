@@ -16,13 +16,14 @@ let package = Package(
     .library(name: "HtmlTestSupport", targets: ["HtmlTestSupport"]),
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
+    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
     .library(name: "MediaType", targets: ["MediaType"]),
     .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("777966e")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("d844de6")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("c510e7d")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.0.0"),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.4.1")),
@@ -30,7 +31,7 @@ let package = Package(
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude", "UrlFormEncoding"]),
-    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Deriving", "Optics", "SnapshotTesting", "HttpPipelineTestSupport"]),
+    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "ApplicativeRouterHttpPipelineSupport",
             dependencies: ["ApplicativeRouter", "HttpPipeline", "Prelude"]),
@@ -58,8 +59,10 @@ let package = Package(
 
     .target(name: "HttpPipeline",
             dependencies: ["Cryptor", "MediaType", "NIO", "NIOHTTP1", "Prelude", "Optics"]),
+    .target(name: "HttpPipelineExample",
+            dependencies: ["HttpPipeline", "HttpPipelineHtmlSupport"]),
     .testTarget(name: "HttpPipelineTests",
-                dependencies: ["Deriving", "HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
+                dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
