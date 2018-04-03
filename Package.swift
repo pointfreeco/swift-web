@@ -29,7 +29,7 @@ let package = Package(
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude", "UrlFormEncoding"]),
-    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Deriving", "Optics", "SnapshotTesting", "HttpPipelineTestSupport"]),
+    .testTarget(name: "ApplicativeRouterTests", dependencies: ["ApplicativeRouter", "Optics", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "ApplicativeRouterHttpPipelineSupport",
             dependencies: ["ApplicativeRouter", "HttpPipeline", "Prelude"]),
@@ -58,7 +58,7 @@ let package = Package(
     .target(name: "HttpPipeline",
             dependencies: ["Cryptor", "MediaType", "Prelude", "Optics"]),
     .testTarget(name: "HttpPipelineTests",
-                dependencies: ["Deriving", "HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
+                dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),

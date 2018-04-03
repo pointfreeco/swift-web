@@ -11,21 +11,21 @@
         }
       },
       {
-        "package": "Cryptor",
-        "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
-        "state": {
-          "branch": null,
-          "revision": "1de800d80f22a930e617f7c551a692475f92a23d",
-          "version": "0.8.22"
-        }
-      },
-      {
         "package": "CommonCrypto",
         "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
         "state": {
           "branch": null,
           "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
           "version": "0.1.5"
+        }
+      },
+      {
+        "package": "Cryptor",
+        "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
+        "state": {
+          "branch": null,
+          "revision": "1de800d80f22a930e617f7c551a692475f92a23d",
+          "version": "0.8.22"
         }
       },
       {
@@ -59,8 +59,8 @@
         "package": "Prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
-          "branch": "777966e",
-          "revision": "777966eb58e7d6e17d4ba24bf05f6d7165c310c2",
+          "branch": "a3cd883",
+          "revision": "a3cd883f3181a46019c2956f66373855a19b7f36",
           "version": null
         }
       },
@@ -68,8 +68,8 @@
         "package": "SnapshotTesting",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
         "state": {
-          "branch": "c510e7d",
-          "revision": "c510e7d14831ade9b786428a732b06ac2ee71de1",
+          "branch": "0a86107",
+          "revision": "0a86107bae064e8429413dbedde1be1218fb683c",
           "version": null
         }
       },
