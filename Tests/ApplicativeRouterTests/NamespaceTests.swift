@@ -69,13 +69,14 @@ private let flatRouter: Router<MainRoute> =
 
 private let namespacedRouter: Router<MainRoute> =
   lit("page")
-    %> (
-      .page <<< .index
-        <¢> get %> lit("index") %> end
-
-        <|> .page <<< .show
-        <¢> get %> lit("show") %> .int <% end
-)
+    %> namespacedRouters.reduce(.empty, <|>)
+let namespacedRouters: [Router<MainRoute>] = [
+  .page <<< .index
+    <¢> get %> lit("index") %> end,
+  
+  .page <<< .show
+    <¢> get %> lit("show") %> .int <% end
+]
 
 class NamespaceTests: XCTestCase {
   func testNamespace() {
