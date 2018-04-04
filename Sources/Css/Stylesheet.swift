@@ -130,6 +130,13 @@ extension Stylesheet: Monoid {
   }
 }
 
+extension Stylesheet: ExpressibleByArrayLiteral {
+  public init(arrayLiteral: Stylesheet...) {
+    let rules: [[Rule]] = arrayLiteral.map { $0.rules }
+    self.init(rules.dropFirst().reduce(rules[0]) { $0 <> $1 })
+  }
+}
+
 public func key<V: Val>(_ key: Key<V>, _ a: V) -> Stylesheet {
   return rule(.property(cast(key), a.value()))
 }
