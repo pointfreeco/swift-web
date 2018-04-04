@@ -56,26 +56,31 @@ An embedded domain specific language (EDSL) in Swift for modeling HTML documents
 ```swift
 import Html
 
-let document = html(
-  [
-    body(
-      [
-        p(["Hello world!"]),
-        p(["Goodbye!"]),
-        a([href("/")], ["Home"])
-      ]
-    )
-  ]
-)
+let doc = document([
+  html([
+    body([
+      p(["Hello world!"]),
+      p(["Goodbye!"]),
+      a([href("/")], ["Home"])
+      ])
+    ])
+  ])
 
-render(document, config: pretty)
+render(doc, config: pretty)
 ```
 ```html
+<!DOCTYPE html>
 <html>
   <body>
-    <p>Hello world!</p>
-    <p>Goodbye!</p>
-    <a href="/">Home</a>
+    <p>
+      Hello world!
+    </p>
+    <p>
+      Goodbye!
+    </p>
+    <a href="/">
+      Home
+    </a>
   </body>
 </html>
 ```
@@ -251,12 +256,11 @@ import HtmlCssSupport
 let anchorStyle = color(.red)
   <> textTransform(.capitalize)
 
-let styledDocument = p(
-  [
-    "Go back ",
-    a([style(anchorStyle)], ["Home"])
-  ]
-)
+let styledDocument = p([
+  "Go back ",
+  a([style(anchorStyle)], ["Home"])
+  ])
+
 print(render(styledDocument, config: pretty))
 ```
 ```html
@@ -277,25 +281,19 @@ The library not only takes care of adding newlines for tags so that the DOM stru
 ```swift
 import HtmlPrettyPrint
 
-let doc: Node = .document(
-  [
-    html(
-      [
-        body(
-          [
-            comment("This is gonna be a long comment. Let's see what happens!"),
-            div(
-              [
-                div([ id("some-long-id"), Html.class("foo bar baz") ], ["hello world"]),
-                img(src: "cat.jpg", alt: "", [ id("cat"), Html.class("cat") ])
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ]
-)
+let doc = document([
+  html([
+    body([
+      comment("This is gonna be a long comment. Let's see what happens!"),
+      div([
+        div(
+          [id("some-long-id"), Html.class("foo bar baz")],
+          ["hello world"]),
+        img(src: "cat.jpg", alt: "", [id("cat"), Html.class("cat")])
+        ])
+      ])
+    ])
+  ])
 
 prettyPrint(node: doc, pageWidth: 40)
 ```
