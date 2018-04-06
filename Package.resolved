@@ -11,21 +11,21 @@
         }
       },
       {
-        "package": "Cryptor",
-        "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
-        "state": {
-          "branch": null,
-          "revision": "1de800d80f22a930e617f7c551a692475f92a23d",
-          "version": "0.8.22"
-        }
-      },
-      {
         "package": "CommonCrypto",
         "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
         "state": {
           "branch": null,
           "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
           "version": "0.1.5"
+        }
+      },
+      {
+        "package": "Cryptor",
+        "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
+        "state": {
+          "branch": null,
+          "revision": "1de800d80f22a930e617f7c551a692475f92a23d",
+          "version": "0.8.22"
         }
       },
       {
@@ -56,29 +56,11 @@
         }
       },
       {
-        "package": "swift-nio",
-        "repositoryURL": "https://github.com/apple/swift-nio.git",
-        "state": {
-          "branch": null,
-          "revision": "a0b7f646fba61402da384b3202f54c27debb5e13",
-          "version": "1.3.1"
-        }
-      },
-      {
-        "package": "swift-nio-zlib-support",
-        "repositoryURL": "https://github.com/apple/swift-nio-zlib-support.git",
-        "state": {
-          "branch": null,
-          "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
-          "version": "1.0.0"
-        }
-      },
-      {
         "package": "Prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
-          "branch": "d844de6",
-          "revision": "d844de6c250de65df51030b204e751c0d05d9bd8",
+          "branch": "a3cd883",
+          "revision": "a3cd883f3181a46019c2956f66373855a19b7f36",
           "version": null
         }
       },
@@ -86,8 +68,8 @@
         "package": "SnapshotTesting",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
         "state": {
-          "branch": "c510e7d",
-          "revision": "c510e7d14831ade9b786428a732b06ac2ee71de1",
+          "branch": "0a86107",
+          "revision": "0a86107bae064e8429413dbedde1be1218fb683c",
           "version": null
         }
       },
@@ -107,6 +89,24 @@
           "branch": null,
           "revision": "140f1510ecb8597970c58c5a41a32bda72310d31",
           "version": "0.6.0"
+        }
+      },
+      {
+        "package": "swift-nio",
+        "repositoryURL": "https://github.com/apple/swift-nio.git",
+        "state": {
+          "branch": null,
+          "revision": "a0b7f646fba61402da384b3202f54c27debb5e13",
+          "version": "1.3.1"
+        }
+      },
+      {
+        "package": "swift-nio-zlib-support",
+        "repositoryURL": "https://github.com/apple/swift-nio-zlib-support.git",
+        "state": {
+          "branch": null,
+          "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
+          "version": "1.0.0"
         }
       }
     ]

@@ -1,4 +1,3 @@
-import Deriving
 import HttpPipeline
 import HttpPipelineTestSupport
 import Optics
@@ -147,7 +146,7 @@ cb4db8ac9390ac810837809f11bc6803\
   }
 }
 
-private struct Episode: Codable, DerivingEquatable {
+private struct Episode: Codable, Equatable {
   let id: Int
   let name: String
 }

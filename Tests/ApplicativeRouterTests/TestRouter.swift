@@ -1,5 +1,4 @@
 import ApplicativeRouter
-import Deriving
 import Either
 import Prelude
 
@@ -157,7 +156,7 @@ extension Routes {
   }
 }
 
-struct Episode: Codable, DerivingEquatable {
+struct Episode: Codable, Equatable {
   let title: String
   let blurb: String
   let length: Int
