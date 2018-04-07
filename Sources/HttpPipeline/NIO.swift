@@ -63,12 +63,11 @@ private final class Handler: ChannelInboundHandler {
         }
         return req
       }
-    case let .body(bodyPart):
-      self.request = self.request.flatMap { req -> URLRequest? in
-        req.value(forHTTPHeaderField: "Content-Length")
-          .flatMap(Int.init)
-          .flatMap { bodyPart.getBytes(at: 0, length: $0) }
-          .map { req |> \.httpBody .~ Data($0) }
+    case var .body(bodyPart):
+      self.request = self.request |> map <<< \.httpBody %~ {
+        var data = $0 ?? .init()
+        bodyPart.readBytes(length: bodyPart.readableBytes).do { data.append(Data($0)) }
+        return data
       }
     case .end:
       guard let req = self.request else {
