@@ -6,7 +6,8 @@ import Prelude
 
 public func run(
   _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>,
-  on port: Int = 8080
+  on port: Int = 8080,
+  gzip: Bool = false
   ) {
 
   do {
@@ -16,9 +17,12 @@ public func run(
       .serverChannelOption(ChannelOptions.backlog, value: 256)
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
-        channel.pipeline.configureHTTPServerPipeline()
-          .then { channel.pipeline.add(handler: HTTPResponseCompressor()) }
-          .then { channel.pipeline.add(handler: Handler(middleware)) }
+        channel.pipeline.configureHTTPServerPipeline().then {
+          let handlers: [ChannelHandler] = gzip
+            ? [HTTPResponseCompressor(), Handler(middleware)]
+            : [Handler(middleware)]
+          return channel.pipeline.addHandlers(handlers, first: false)
+        }
       }
       .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
       .childChannelOption(reuseAddrOpt, value: 1)
