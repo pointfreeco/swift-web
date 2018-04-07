@@ -16,14 +16,16 @@ let package = Package(
     .library(name: "HtmlTestSupport", targets: ["HtmlTestSupport"]),
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
+//    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
     .library(name: "MediaType", targets: ["MediaType"]),
     .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
-  ],
+    ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("a3cd883")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("0a86107")),
+    .package(url: "https://github.com/apple/swift-nio.git", from: "1.0.0"),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.4.1")),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.22"))
   ],
@@ -56,7 +58,9 @@ let package = Package(
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HttpPipeline",
-            dependencies: ["Cryptor", "MediaType", "Prelude", "Optics"]),
+            dependencies: ["Cryptor", "MediaType", "NIO", "NIOHTTP1", "Prelude", "Optics"]),
+//    .target(name: "HttpPipelineExample",
+//            dependencies: ["HttpPipeline", "HttpPipelineHtmlSupport"]),
     .testTarget(name: "HttpPipelineTests",
                 dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
@@ -69,5 +73,5 @@ let package = Package(
 
     .target(name: "UrlFormEncoding", dependencies: ["Prelude", "Optics"]),
     .testTarget(name: "UrlFormEncodingTests", dependencies: ["UrlFormEncoding", "SnapshotTesting"]),
-  ]
+    ]
 )

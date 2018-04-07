@@ -14,11 +14,15 @@ xcodeproj:
 	swift package generate-xcodeproj --xcconfig-overrides Development.xcconfig
 	xed .
 
-bootstrap: common-crypto-mm xcodeproj
+bootstrap: common-crypto-mm xcodeproj xcodeproj-mm
 
 common-crypto-mm:
 	-@sudo mkdir -p "$(COMMON_CRYPTO_PATH)"
 	-@echo "$$COMMON_CRYPTO_MODULE_MAP" | sudo tee "$(COMMON_CRYPTO_MODULE_MAP_PATH)" > /dev/null
+
+xcodeproj-mm:
+	-@ls Web.xcodeproj/GeneratedModuleMap | xargs -n1 -I '{}' sudo mkdir -p "$(FRAMEWORKS_PATH)/{}.framework"
+	-@ls Web.xcodeproj/GeneratedModuleMap | xargs -n1 -I '{}' sudo cp "./Web.xcodeproj/GeneratedModuleMap/{}/module.modulemap" "$(FRAMEWORKS_PATH)/{}.framework/module.map"
 
 linux-main:
 	sourcery \
