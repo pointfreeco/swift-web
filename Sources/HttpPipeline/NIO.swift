@@ -135,9 +135,3 @@ private func method(from method: HTTPMethod) -> String {
   case let .RAW(value): return value
   }
 }
-
-private func headers(from headers: HTTPHeaders) -> [String: String] {
-  return headers.reduce(into: [:]) { headers, pair in
-    headers[pair.name] = pair.value
-  }
-}
