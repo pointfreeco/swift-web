@@ -24,7 +24,9 @@ public func run(
       .childChannelOption(reuseAddrOpt, value: 1)
       .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
 
-    let serverChannel = try bootstrap.bind(host: "0.0.0.0", port: port).wait()
+    let host = "0.0.0.0"
+    let serverChannel = try bootstrap.bind(host: host, port: port).wait()
+    print("Listening on \(host):\(port)...")
     try serverChannel.closeFuture.wait()
     try group.syncShutdownGracefully()
   } catch {
