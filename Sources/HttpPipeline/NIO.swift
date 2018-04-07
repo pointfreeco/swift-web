@@ -16,9 +16,9 @@ public func run(
       .serverChannelOption(ChannelOptions.backlog, value: 256)
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
-        channel.pipeline.configureHTTPServerPipeline().then {
-          channel.pipeline.add(handler: Handler(middleware))
-        }
+        channel.pipeline.configureHTTPServerPipeline()
+          .then { channel.pipeline.add(handler: HTTPResponseCompressor()) }
+          .then { channel.pipeline.add(handler: Handler(middleware)) }
       }
       .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
       .childChannelOption(reuseAddrOpt, value: 1)
@@ -48,9 +48,14 @@ private final class Handler: ChannelInboundHandler {
     switch reqPart {
     case let .head(header):
       self.request = URL(string: header.uri).map {
-        URLRequest(url: $0)
+        var req = URLRequest(url: $0)
           |> \.httpMethod .~ method(from: header.method)
           |> \.allHTTPHeaderFields .~ header.headers.reduce(into: [:]) { $0[$1.name] = $1.value }
+        let proto = req.value(forHTTPHeaderField: "X-Forwarded-Proto") ?? "http"
+        req.url = req.value(forHTTPHeaderField: "Host").flatMap {
+          URL(string: proto + "://" + $0 + header.uri)
+        }
+        return req
       }
     case let .body(bodyPart):
       self.request = self.request.flatMap { req -> URLRequest? in
