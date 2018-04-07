@@ -64,7 +64,7 @@ private final class Handler: ChannelInboundHandler {
         return req
       }
     case var .body(bodyPart):
-      self.request = self.request |> (map <<< \.httpBody) %~ {
+      self.request = self.request |> map <<< \.httpBody %~ {
         var data = $0 ?? .init()
         bodyPart.readBytes(length: bodyPart.readableBytes).do { data.append(Data($0)) }
         return data
