@@ -94,7 +94,7 @@ public func redirectUnrelatedHosts<A>(
           .filter { !isAllowedHost($0.host ?? "") }
           .flatMap {
             URLComponents(url: $0, resolvingAgainstBaseURL: false)
-              |> map(\.host .~ canonicalHost)
+              |> map(^\.host .~ canonicalHost)
           }
           .flatMap(^\.url)
           .map { conn |> redirect(to: $0.absoluteString, status: .movedPermanently) }
@@ -171,7 +171,7 @@ public func validateBasicAuth(user: String, password: String, request: URLReques
 
 private func makeHttps(url: URL) -> URL? {
   return URLComponents(url: url, resolvingAgainstBaseURL: false)
-    |> map(\.scheme .~ "https")
+    |> map(^\.scheme .~ "https")
     |> flatMap(^\.url)
 }
 

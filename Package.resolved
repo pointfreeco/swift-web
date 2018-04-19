@@ -75,10 +75,10 @@
       },
       {
         "package": "Prelude",
-        "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
+        "repositoryURL": "/Users/stephen/Developer/pointfreeco/swift-prelude",
         "state": {
-          "branch": "b811904",
-          "revision": "b8119040be900fbe6b32fd5c76be89bce7fd05b5",
+          "branch": "optics-lite",
+          "revision": "b4a447fdb3084993a1e515999679ec9ab03b494a",
           "version": null
         }
       },
