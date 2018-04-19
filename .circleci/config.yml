@@ -13,6 +13,10 @@ jobs:
           command: system_profiler SPSoftwareDataType
 
       - run:
+          name: Print Devices
+          command: instruments -s devices
+
+      - run:
           name: Run iOS tests
           command: make test-ios
           environment:
