@@ -39,7 +39,7 @@ let package = Package(
     .testTarget(name: "ApplicativeRouterHttpPipelineSupportTests",
                 dependencies: ["ApplicativeRouterHttpPipelineSupport", "HttpPipelineTestSupport", "SnapshotTesting"]),
 
-    .target(name: "Css", dependencies: ["Either", "Prelude"]),
+    .target(name: "Css", dependencies: ["Either", "Optics", "Prelude"]),
     .testTarget(name: "CssTests", dependencies: ["Css", "CssTestSupport"]),
 
     .target(name: "CssReset", dependencies: ["Css"]),
