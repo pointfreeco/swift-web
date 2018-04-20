@@ -7,9 +7,9 @@ import XCTest
 
 class ViewTests: XCTestCase {
   func testSemigroupAssociativity() {
-    let a = View<()>(span(["a"]))
-    let b = View<()>(span(["b"]))
-    let c = View<()>(span(["c"]))
+    let a = View<()>(const(pure(span(["a"]))))
+    let b = View<()>(const(pure(span(["b"]))))
+    let c = View<()>(const(pure(span(["c"]))))
 
     XCTAssertEqual(
       ((a <> b) <> c).rendered(with: ()),
@@ -21,8 +21,8 @@ class ViewTests: XCTestCase {
     let greeting = View<Int> {
       [p([text("Welcome to Point Free! We have \($0) episodes for you to watch!")])]
     }
-    let header = View<()>(h1(["Point Free"]))
-    let footer = View<()>(p(["© Point Free LLC, 2017"]))
+    let header = View<()>(const(pure(h1(["Point Free"]))))
+    let footer = View<()>(const(pure(p(["© Point Free LLC, 2017"]))))
 
     let main = header
       .contramap { _ in () }
@@ -71,9 +71,11 @@ class ViewTests: XCTestCase {
   func testProfunctor() {
     // Renders some css into a span, and styles the span with that css.
     let styledSpan = View { (css: Stylesheet) in
-      span(
-        [ style <| css ],
-        [ .text(encode(render(config: compact, css: css))) ]
+      pure(
+        span(
+          [style(css)],
+          [.text(encode(render(config: compact, css: css)))]
+        )
       )
     }
 

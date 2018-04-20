@@ -18,12 +18,4 @@ extension View where B == [Node] {
   public func rendered(with data: A, config: Config) -> String {
     return render(self.view(data), config: config)
   }
-
-  public init(_ call: @escaping (A) -> Node) {
-    self.init(call >>> pure)
-  }
-
-  public init(_ node: Node) {
-    self.init(const([node]))
-  }
 }
