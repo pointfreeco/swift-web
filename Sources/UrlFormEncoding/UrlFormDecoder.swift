@@ -647,17 +647,17 @@ extension UrlFormDecoder.UnkeyedContainer.Key: CodingKey {
   }
 }
 
-private let iso8601 = ((^\DateFormatter.calendar) .~ Calendar(identifier: .iso8601))
-  <> ((^\DateFormatter.locale) .~ Locale(identifier: "en_US_POSIX"))
-  <> ((^\DateFormatter.timeZone) .~ TimeZone(abbreviation: "UTC"))
+private let iso8601 = set(^\DateFormatter.calendar, Calendar(identifier: .iso8601))
+  <> set(^\DateFormatter.locale, Locale(identifier: "en_US_POSIX"))
+  <> set(^\DateFormatter.timeZone, TimeZone(abbreviation: "UTC"))
 
 private let iso8601DateFormatter = DateFormatter()
   |> iso8601
-  |> ^\.dateFormat .~ "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+  <> set(^\.dateFormat, "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX")
 
 private let iso8601DateFormatterWithoutMilliseconds = DateFormatter()
   |> iso8601
-  |> ^\.dateFormat .~ "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+  <> set(^\.dateFormat, "yyyy-MM-dd'T'HH:mm:ssXXXXX")
 
 private func parse(isArray: @escaping (String) -> Bool, sort: Bool = false) -> (String)
   -> UrlFormDecoder.Container {

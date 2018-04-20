@@ -169,8 +169,8 @@ private func request(from data: RequestData, base: URL?) -> URLRequest? {
       )
       .map {
         URLRequest(url: $0)
-          |> ^\.httpMethod .~ data.method?.rawValue
-          |> ^\.httpBody .~ data.body
+          |> set(^\.httpMethod, data.method?.rawValue)
+          <> set(^\.httpBody, data.body)
   }
 }
 

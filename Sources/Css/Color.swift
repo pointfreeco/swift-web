@@ -1,3 +1,4 @@
+import Optics
 import Prelude
 
 public enum Color: Val, Inherit, Initial {
@@ -288,19 +289,19 @@ public extension Color {
 }
 
 public func darken(_ by: Float) -> (Color) -> Color {
-  return over(\Color.lightness) <| { $0.map { $0 * (1 - by) } }
+  return over(^\Color.lightness) { $0.map { $0 * (1 - by) } }
 }
 
 public func lighten(_ by: Float) -> (Color) -> Color {
-  return over(\Color.lightness) <| { $0.map { $0 * (1 + by) } }
+  return over(^\Color.lightness) { $0.map { $0 * (1 + by) } }
 }
 
 public func saturate(_ by: Float) -> (Color) -> Color {
-  return over(\Color.saturation) <| { $0.map { $0 * (1 + by) } }
+  return over(^\Color.saturation) { $0.map { $0 * (1 + by) } }
 }
 
 public func desaturate(_ by: Float) -> (Color) -> Color {
-  return over(\Color.saturation) <| { $0.map { $0 * (1 - by) } }
+  return over(^\Color.saturation) { $0.map { $0 * (1 - by) } }
 }
 
 private func rgb2hsl(_ r: UInt8, _ g: UInt8, _ b: UInt8) -> (hue: Int, saturation: Float, lightness: Float) {

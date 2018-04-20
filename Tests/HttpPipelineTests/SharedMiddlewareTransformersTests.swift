@@ -56,7 +56,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
 
     let conn = connection(
       from: URLRequest(url: URL(string: "/")!)
-        |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
+        |> set(^\.allHTTPHeaderFields , ["Authorization": "Basic SGVsbG86V29ybGQ="])
     )
 
     assertSnapshot(matching: middleware(conn).perform())

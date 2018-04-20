@@ -55,8 +55,8 @@ private final class Handler: ChannelInboundHandler {
     case let .head(header):
       self.request = URL(string: header.uri).map {
         var req = URLRequest(url: $0)
-          |> ^\.httpMethod .~ method(from: header.method)
-          |> ^\.allHTTPHeaderFields .~ header.headers.reduce(into: [:]) { $0[$1.name] = $1.value }
+          |> set(^\.httpMethod, method(from: header.method))
+          |> set(^\.allHTTPHeaderFields, header.headers.reduce(into: [:]) { $0[$1.name] = $1.value })
         let proto = req.value(forHTTPHeaderField: "X-Forwarded-Proto") ?? "http"
         req.url = req.value(forHTTPHeaderField: "Host").flatMap {
           URL(string: proto + "://" + $0 + header.uri)
@@ -64,7 +64,7 @@ private final class Handler: ChannelInboundHandler {
         return req
       }
     case var .body(bodyPart):
-      self.request = self.request |> map <<< ^\.httpBody %~ {
+      self.request = self.request |> over(map <<< ^\.httpBody) {
         var data = $0 ?? .init()
         bodyPart.readBytes(length: bodyPart.readableBytes).do { data.append(Data($0)) }
         return data
