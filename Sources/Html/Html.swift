@@ -18,6 +18,30 @@ extension Node: ExpressibleByStringLiteral {
   }
 }
 
+extension Node: Sequence {
+  public func makeIterator() -> AnyIterator<Node> {
+    var stack = [self]
+
+    return AnyIterator<Node> {
+      guard let next = stack.popLast() else {
+        return nil
+      }
+      switch next {
+      case .comment, .text:
+        return next
+      case  .element(let element):
+        if let content = element.content {
+          stack.append(contentsOf: content.reversed())
+        }
+        return next
+      case .document(let nodes):
+        stack.append(contentsOf: nodes.reversed())
+        return next
+      }
+    }
+  }
+}
+
 public struct ChildOf<T> {
   public let node: Node
 

@@ -214,4 +214,40 @@ class HTMLTests: XCTestCase {
     let checkedInput = input([id("checked"), checked(true)])
     XCTAssertEqual("<input id=\"checked\" checked>", render(checkedInput))
   }
+
+  func testSequenceConformance() {
+    let doc = document([
+      html([
+        head([
+          title("Title")
+        ]),
+        body([
+          comment("Comment")
+        ])
+      ])
+    ])
+
+    let descriptions = doc.map { (node) -> String in
+      switch node {
+      case .comment(let content):
+        return "comment: \(content.string)"
+      case .document:
+        return "document"
+      case .element(let elem):
+        return "element: \(elem.name)"
+      case .text(let content):
+        return "text: \(content.string)"
+      }
+    }
+
+    XCTAssertEqual(descriptions, [
+      "document",
+      "element: html",
+      "element: head",
+      "element: title",
+      "text: Title",
+      "element: body",
+      "comment: Comment"
+    ])
+  }
 }
