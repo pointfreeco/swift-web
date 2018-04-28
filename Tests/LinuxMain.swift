@@ -104,7 +104,8 @@ extension HTMLTests {
     ("testPrettyRender", testPrettyRender),
     ("testDocument", testDocument),
     ("testTables", testTables),
-    ("testBooleanAttributes", testBooleanAttributes)
+    ("testBooleanAttributes", testBooleanAttributes),
+    ("testSequenceConformance", testSequenceConformance)
   ]
 }
 extension HtmlRenderTests {
