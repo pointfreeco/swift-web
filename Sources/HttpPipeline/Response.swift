@@ -142,4 +142,5 @@ public struct Response {
 
 private let expiresDateFormatter = DateFormatter()
   |> \.dateFormat .~ "EEE, d MMM yyyy HH:mm:ss zzz"
+  |> \.locale .~ Locale(identifier: "en_US_POSIX")
   |> \.timeZone .~ TimeZone(abbreviation: "UTC")
