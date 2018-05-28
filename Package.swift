@@ -23,8 +23,8 @@ let package = Package(
     .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("b811904")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("0a86107")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("3b521bd")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("08c0976")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.0.0"),
     .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.4.1")),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.22"))

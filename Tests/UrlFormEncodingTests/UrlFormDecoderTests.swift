@@ -136,8 +136,9 @@ final class UrlFormDecoderTests: XCTestCase {
     }
 
     decoder.dateDecodingStrategy = .millisecondsSince1970
+    let interval = "\(Int(Date(timeIntervalSinceReferenceDate: 0).timeIntervalSince1970))000"
 
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=1513049223123".utf8)))
+    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)))
   }
 
   func testDateDecodingWithIso8601() throws {
