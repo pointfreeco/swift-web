@@ -1,4 +1,4 @@
-▿ Foo #1 in UrlFormEncodingTests.UrlFormDecoderTests.testDefaultStrategyAccumulatePairs() throws -> ()
+▿ Foo
   - x: 1
   ▿ ys: 1 element
     - 1

@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "91ef938c60061784ba8734a73d61b7810494f9b3",
-          "version": "1.5.0"
+          "revision": "77dc77b9b5cdddfb3c385c5ee6cb74153d284967",
+          "version": "1.7.2"
         }
       },
       {
@@ -77,8 +77,8 @@
         "package": "Prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
-          "branch": "b811904",
-          "revision": "b8119040be900fbe6b32fd5c76be89bce7fd05b5",
+          "branch": "8d597b0",
+          "revision": "8d597b051935dc7d63ec7cb6edefbeac07a73a94",
           "version": null
         }
       },
@@ -86,8 +86,8 @@
         "package": "SnapshotTesting",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
         "state": {
-          "branch": "0a86107",
-          "revision": "0a86107bae064e8429413dbedde1be1218fb683c",
+          "branch": "2a0edb4",
+          "revision": "2a0edb4355793040ea1a80d580b42d1c651332c0",
           "version": null
         }
       },

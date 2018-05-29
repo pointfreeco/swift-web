@@ -126,8 +126,9 @@ final class UrlFormDecoderTests: XCTestCase {
     }
 
     decoder.dateDecodingStrategy = .secondsSince1970
+    let interval = Int(Date(timeIntervalSinceReferenceDate: 0).timeIntervalSince1970)
 
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=1513049223".utf8)))
+    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)))
   }
 
   func testDateDecodingWithMillisecondsSince1970() throws {
@@ -136,22 +137,22 @@ final class UrlFormDecoderTests: XCTestCase {
     }
 
     decoder.dateDecodingStrategy = .millisecondsSince1970
+    let interval = "\(Int(Date(timeIntervalSinceReferenceDate: 0).timeIntervalSince1970))000"
 
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=1513049223123".utf8)))
+    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)))
   }
 
   func testDateDecodingWithIso8601() throws {
     struct MyDate: Decodable {
       let date: Date
     }
-
     decoder.dateDecodingStrategy = .iso8601
 
     assertSnapshot(
-      matching: try decoder.decode(MyDate.self, from: Data("date=2017-12-11T20:36:00.000-05:00".utf8))
+      matching: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00.000-00:00".utf8))
     )
     assertSnapshot(
-      matching: try decoder.decode(MyDate.self, from: Data("date=2017-12-11T20:36:00-05:00".utf8))
+      matching: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00-00:00".utf8))
     )
   }
 
