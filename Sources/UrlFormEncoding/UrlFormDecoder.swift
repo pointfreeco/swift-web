@@ -649,7 +649,7 @@ extension UrlFormDecoder.UnkeyedContainer.Key: CodingKey {
 
 private let iso8601 = ((\DateFormatter.calendar) .~ Calendar(identifier: .iso8601))
   >>> ((\DateFormatter.locale) .~ Locale(identifier: "en_US_POSIX"))
-  >>> ((\DateFormatter.timeZone) .~ TimeZone(abbreviation: "UTC"))
+  >>> ((\DateFormatter.timeZone) .~ TimeZone(abbreviation: "GMT"))
 
 private let iso8601DateFormatter = DateFormatter()
   |> iso8601
