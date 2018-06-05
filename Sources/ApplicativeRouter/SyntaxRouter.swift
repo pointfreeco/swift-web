@@ -67,8 +67,8 @@ extension Router {
         guard let (rest, match) = rhs.parse(route) else { return nil }
         return lhs.apply(match).map { (rest, $0) }
       },
-      print: lhs.unapply >-> rhs.print,
-      template: lhs.unapply >-> rhs.template
+      print: lhs.unapply >=> rhs.print,
+      template: lhs.unapply >=> rhs.template
     )
   }
 }

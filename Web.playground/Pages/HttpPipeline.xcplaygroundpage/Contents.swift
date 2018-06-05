@@ -15,9 +15,9 @@ let doc = document([
 
 let middleware =
   writeStatus(.ok)
-    >-> writeHeader(.contentType(.html))
-    >-> closeHeaders
-    >-> send(Data(render(doc).utf8))
+    >=> writeHeader(.contentType(.html))
+    >=> closeHeaders
+    >=> send(Data(render(doc).utf8))
 
 let request = URLRequest(url: URL(string: "/")!)
 let conn = connection(from: request).map(const(Data()))

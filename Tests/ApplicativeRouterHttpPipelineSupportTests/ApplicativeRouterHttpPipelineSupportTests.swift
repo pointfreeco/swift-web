@@ -15,7 +15,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       route(router: router)
         <| writeStatus(.ok)
-        >-> { $0 |> respond(text: "Recognized route: \($0.data)") }
+        >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/")!))).perform(),
@@ -39,7 +39,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       route(router: router, notFound: notFound(respond(text: "Unrecognized route!")))
         <| writeStatus(.ok)
-        >-> { $0 |> respond(text: "Recognized route: \($0.data)") }
+        >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))).perform(),

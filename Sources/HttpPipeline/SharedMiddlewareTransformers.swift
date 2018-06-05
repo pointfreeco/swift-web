@@ -61,8 +61,8 @@ public func basicAuth<A>(
         return conn |>
           (
             writeStatus(.unauthorized)
-              >-> writeHeader(.wwwAuthenticate(.basic(realm: realm)))
-              >-> failure
+              >=> writeHeader(.wwwAuthenticate(.basic(realm: realm)))
+              >=> failure
         )
       }
     }
@@ -71,7 +71,7 @@ public func basicAuth<A>(
 public func notFound<A>(_ middleware: @escaping Middleware<HeadersOpen, ResponseEnded, A, Data>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
     return writeStatus(.notFound)
-      >-> middleware
+      >=> middleware
 }
 
 /// Redirects requests whose hosts are not one of an allowed list. This can be useful for redirecting a
