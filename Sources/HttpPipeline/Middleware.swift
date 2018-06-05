@@ -51,15 +51,15 @@ public func end(conn: Conn<BodyOpen, Data>) -> IO<Conn<ResponseEnded, Data>> {
 public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> {
   return conn
     |> closeHeaders
-    >-> map(const(Data())) >>> pure
-    >-> end
+    >=> map(const(Data())) >>> pure
+    >=> end
 }
 
 public func head<A>(_ status: HttpPipeline.Status)
   -> (Conn<StatusLineOpen, A>)
   -> IO<Conn<ResponseEnded, Data>> {
 
-    return writeStatus(status) >-> end
+    return writeStatus(status) >=> end
 }
 
 public func redirect<A>(
@@ -71,9 +71,9 @@ public func redirect<A>(
   Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
     return writeStatus(status)
-      >-> headersMiddleware
-      >-> writeHeader(.location(location))
-      >-> end
+      >=> headersMiddleware
+      >=> writeHeader(.location(location))
+      >=> end
 }
 
 public func send(_ data: Data) -> Middleware<BodyOpen, BodyOpen, Data, Data> {
@@ -111,8 +111,8 @@ public func respond<A>(body: String, contentType: MediaType)
     let data = Data(body.utf8)
 
     return map(const(data)) >>> pure
-      >-> writeHeader(.contentType(contentType))
-      >-> writeHeader(.contentLength(data.count))
-      >-> closeHeaders
-      >-> end
+      >=> writeHeader(.contentType(contentType))
+      >=> writeHeader(.contentLength(data.count))
+      >=> closeHeaders
+      >=> end
 }

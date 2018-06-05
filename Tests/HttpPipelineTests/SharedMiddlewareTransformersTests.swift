@@ -12,7 +12,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
-        >-> respond(html: "<p>Hello, world</p>")
+        >=> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn).perform())
   }
@@ -21,7 +21,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", protect: const(false))
         <| writeStatus(.ok)
-        >-> respond(html: "<p>Hello, world</p>")
+        >=> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn).perform())
   }
@@ -30,7 +30,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", realm: "Point-Free")
         <| writeStatus(.ok)
-        >-> respond(html: "<p>Hello, world</p>")
+        >=> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn).perform())
   }
@@ -43,7 +43,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         failure: respond(text: "Custom authentication page!")
         )
         <| writeStatus(.ok)
-        >-> respond(html: "<p>Hello, world</p>")
+        >=> respond(html: "<p>Hello, world</p>")
 
     assertSnapshot(matching: middleware(conn).perform())
   }
@@ -52,7 +52,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
-        >-> respond(html: "<p>Hello, world</p>")
+        >=> respond(html: "<p>Hello, world</p>")
 
     let conn = connection(
       from: URLRequest(url: URL(string: "/")!)
@@ -73,11 +73,11 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       redirectUnrelatedHosts(allowedHosts: allowedHosts, canonicalHost: "www.pointfree.co")
         <| writeStatus(.ok)
-        >-> writeHeader(.contentType(.html))
-        >-> closeHeaders
-        >-> map(const(Data())) >>> pure
-        >-> send(Data("<p>Hello, world</p>".utf8))
-        >-> end
+        >=> writeHeader(.contentType(.html))
+        >=> closeHeaders
+        >=> map(const(Data())) >>> pure
+        >=> send(Data("<p>Hello, world</p>".utf8))
+        >=> end
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!))).perform()
@@ -103,11 +103,11 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       requireHerokuHttps(allowedInsecureHosts: allowedInsecureHosts)
         <| writeStatus(.ok)
-        >-> writeHeader(.contentType(.html))
-        >-> closeHeaders
-        >-> map(const(Data())) >>> pure
-        >-> send(Data("<p>Hello, world</p>".utf8))
-        >-> end
+        >=> writeHeader(.contentType(.html))
+        >=> closeHeaders
+        >=> map(const(Data())) >>> pure
+        >=> send(Data("<p>Hello, world</p>".utf8))
+        >=> end
 
     func securedConnection(from request: URLRequest) -> Conn<StatusLineOpen, Prelude.Unit> {
       var result = request
@@ -137,11 +137,11 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       requireHttps(allowedInsecureHosts: allowedInsecureHosts)
         <| writeStatus(.ok)
-        >-> writeHeader(.contentType(.html))
-        >-> closeHeaders
-        >-> map(const(Data())) >>> pure
-        >-> send(Data("<p>Hello, world</p>".utf8))
-        >-> end
+        >=> writeHeader(.contentType(.html))
+        >=> closeHeaders
+        >=> map(const(Data())) >>> pure
+        >=> send(Data("<p>Hello, world</p>".utf8))
+        >=> end
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))).perform()
@@ -158,8 +158,8 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     var log: [String] = []
     let middleware = requestLogger(logger: { log.append($0) })
       <| writeStatus(.ok)
-      >-> writeHeader(.contentType(.html))
-      >-> respond(html: "<p>Hello, world</p>")
+      >=> writeHeader(.contentType(.html))
+      >=> respond(html: "<p>Hello, world</p>")
 
     _ = middleware(conn).perform()
 

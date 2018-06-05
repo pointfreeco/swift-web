@@ -34,16 +34,16 @@ public struct PartialIso<A, B> {
   /// Composes two partial isomorphisms.
   public static func >>> <C> (lhs: PartialIso<A, B>, rhs: PartialIso<B, C>) -> PartialIso<A, C> {
     return .init(
-      apply: lhs.apply >-> rhs.apply,
-      unapply: rhs.unapply >-> lhs.unapply
+      apply: lhs.apply >=> rhs.apply,
+      unapply: rhs.unapply >=> lhs.unapply
     )
   }
 
   /// Backwards composes two partial isomorphisms.
   public static func <<< <C> (lhs: PartialIso<B, C>, rhs: PartialIso<A, B>) -> PartialIso<A, C> {
     return .init(
-      apply: rhs.apply >-> lhs.apply,
-      unapply: lhs.unapply >-> rhs.unapply
+      apply: rhs.apply >=> lhs.apply,
+      unapply: lhs.unapply >=> rhs.unapply
     )
   }
 }

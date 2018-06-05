@@ -46,10 +46,6 @@ extension Conn {
   public func flatMap<B>(_ f: (A) -> Conn<Step, B>) -> Conn<Step, B> {
     return f(self.data)
   }
-
-  public static func >>- <B>(_ x: Conn, f: @escaping (A) -> Conn<Step, B>) -> Conn<Step, B> {
-    return x.flatMap(f)
-  }
 }
 
 public func flatMap<Step, A, B>(_ f: @escaping (A) -> Conn<Step, B>) -> (Conn<Step, A>) -> Conn<Step, B> {
