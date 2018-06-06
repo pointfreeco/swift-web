@@ -1,0 +1,137 @@
+▿ Node
+  ▿ element: Element
+    - name: "html"
+    ▿ attribs: 1 element
+      ▿ AnyAttribute
+        - key: "xmlns"
+        - value: "http://www.w3.org/1999/xhtml"
+    ▿ content: Optional<Array<Node>>
+      ▿ some: 2 elements
+        ▿ Node
+          ▿ element: Element
+            - name: "head"
+            - attribs: 0 elements
+            ▿ content: Optional<Array<Node>>
+              ▿ some: 3 elements
+                ▿ Node
+                  ▿ element: Element
+                    - name: "meta"
+                    ▿ attribs: 2 elements
+                      ▿ AnyAttribute
+                        - key: "http-equiv"
+                        - value: HttpEquiv.contentType
+                      ▿ AnyAttribute
+                        - key: "content"
+                        - value: "text/html; charset=UTF-8"
+                    - content: Optional<Array<Node>>.none
+                ▿ Node
+                  ▿ element: Element
+                    - name: "title"
+                    - attribs: 0 elements
+                    ▿ content: Optional<Array<Node>>
+                      ▿ some: 1 element
+                        ▿ Node
+                          ▿ text: EncodedString
+                            - string: ""
+                ▿ Node
+                  ▿ element: Element
+                    - name: "style"
+                    - attribs: 0 elements
+                    ▿ content: Optional<Array<Node>>
+                      ▿ some: 1 element
+                        ▿ Node
+                          ▿ text: EncodedString
+                            - string: ""
+        ▿ Node
+          ▿ element: Element
+            - name: "body"
+            - attribs: 0 elements
+            ▿ content: Optional<Array<Node>>
+              ▿ some: 1 element
+                ▿ Node
+                  ▿ element: Element
+                    - name: "table"
+                    ▿ attribs: 6 elements
+                      ▿ AnyAttribute
+                        - key: "border"
+                        - value: 0
+                      ▿ AnyAttribute
+                        - key: "cellpadding"
+                        - value: 0
+                      ▿ AnyAttribute
+                        - key: "cellspacing"
+                        - value: 0
+                      ▿ AnyAttribute
+                        - key: "height"
+                        ▿ value: Html4Size
+                          - pct: 100
+                      ▿ AnyAttribute
+                        - key: "width"
+                        ▿ value: Html4Size
+                          - pct: 100
+                      ▿ AnyAttribute
+                        - key: "id"
+                        - value: "bodyTable"
+                    ▿ content: Optional<Array<Node>>
+                      ▿ some: 1 element
+                        ▿ Node
+                          ▿ element: Element
+                            - name: "tr"
+                            - attribs: 0 elements
+                            ▿ content: Optional<Array<Node>>
+                              ▿ some: 1 element
+                                ▿ Node
+                                  ▿ element: Element
+                                    - name: "td"
+                                    ▿ attribs: 2 elements
+                                      ▿ AnyAttribute
+                                        - key: "align"
+                                        - value: Alignment.center
+                                      ▿ AnyAttribute
+                                        - key: "valign"
+                                        - value: VerticalAlignment.top
+                                    ▿ content: Optional<Array<Node>>
+                                      ▿ some: 1 element
+                                        ▿ Node
+                                          ▿ element: Element
+                                            - name: "table"
+                                            ▿ attribs: 5 elements
+                                              ▿ AnyAttribute
+                                                - key: "border"
+                                                - value: 0
+                                              ▿ AnyAttribute
+                                                - key: "cellpadding"
+                                                - value: 20
+                                              ▿ AnyAttribute
+                                                - key: "cellspacing"
+                                                - value: 0
+                                              ▿ AnyAttribute
+                                                - key: "width"
+                                                ▿ value: Html4Size
+                                                  - px: 600
+                                              ▿ AnyAttribute
+                                                - key: "id"
+                                                - value: "emailContainer"
+                                            ▿ content: Optional<Array<Node>>
+                                              ▿ some: 1 element
+                                                ▿ Node
+                                                  ▿ element: Element
+                                                    - name: "tr"
+                                                    - attribs: 0 elements
+                                                    ▿ content: Optional<Array<Node>>
+                                                      ▿ some: 1 element
+                                                        ▿ Node
+                                                          ▿ element: Element
+                                                            - name: "td"
+                                                            ▿ attribs: 2 elements
+                                                              ▿ AnyAttribute
+                                                                - key: "align"
+                                                                - value: Alignment.center
+                                                              ▿ AnyAttribute
+                                                                - key: "valign"
+                                                                - value: VerticalAlignment.top
+                                                            ▿ content: Optional<Array<Node>>
+                                                              ▿ some: 1 element
+                                                                ▿ Node
+                                                                  ▿ text: EncodedString
+                                                                    - string: "This is where my content goes."

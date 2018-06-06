@@ -2,57 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "Algebra",
-        "repositoryURL": "https://github.com/typelift/Algebra.git",
-        "state": {
-          "branch": null,
-          "revision": "e81a20aa543dd0847897b57073a3f939c2124375",
-          "version": "0.2.0"
-        }
-      },
-      {
         "package": "Cryptor",
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
-          "branch": null,
-          "revision": "1de800d80f22a930e617f7c551a692475f92a23d",
-          "version": "0.8.22"
-        }
-      },
-      {
-        "package": "CommonCrypto",
-        "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
-        "state": {
-          "branch": null,
-          "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
-          "version": "0.1.5"
-        }
-      },
-      {
-        "package": "DoctorPretty",
-        "repositoryURL": "https://github.com/bkase/DoctorPretty.git",
-        "state": {
-          "branch": null,
-          "revision": "7e1b0fea76e8e81d5e08ccd603d6bbcbdad9931c",
-          "version": "0.4.1"
-        }
-      },
-      {
-        "package": "FileCheck",
-        "repositoryURL": "https://github.com/trill-lang/FileCheck.git",
-        "state": {
-          "branch": null,
-          "revision": "e5871587ddf85c0bcf84f773925655f2f83ef336",
-          "version": "0.0.7"
-        }
-      },
-      {
-        "package": "Operadics",
-        "repositoryURL": "https://github.com/typelift/Operadics.git",
-        "state": {
-          "branch": null,
-          "revision": "c2a14919b3653a39a9bf268c1ae0bf71ad6833fe",
-          "version": "0.3.0"
+          "branch": "6e1715e9",
+          "revision": "6e1715e9ece6d18801d6833efb1323769c723511",
+          "version": null
         }
       },
       {
@@ -60,8 +15,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "77dc77b9b5cdddfb3c385c5ee6cb74153d284967",
-          "version": "1.7.2"
+          "revision": "695afc5205aaa49fca092b94b479ff71c43d9d3c",
+          "version": "1.8.0"
         }
       },
       {
@@ -98,24 +53,6 @@
           "branch": null,
           "revision": "17c4ad4a687a5250313bb668fedce614891f03c4",
           "version": "0.1.0"
-        }
-      },
-      {
-        "package": "SwiftCheck",
-        "repositoryURL": "https://github.com/typelift/SwiftCheck.git",
-        "state": {
-          "branch": null,
-          "revision": "df82fb889864945c64458f38846702af729b3ee4",
-          "version": "0.9.1"
-        }
-      },
-      {
-        "package": "Swiftx",
-        "repositoryURL": "https://github.com/typelift/Swiftx.git",
-        "state": {
-          "branch": null,
-          "revision": "140f1510ecb8597970c58c5a41a32bda72310d31",
-          "version": "0.6.0"
         }
       }
     ]

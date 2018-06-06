@@ -127,45 +127,45 @@ class HTMLTests: XCTestCase {
 
   func testPrettyRender() {
 
-    let htmlNode = html(
-      [],
-      [
-        body(
-          [
-            comment("Welcome to our app!"),
-            h1(["Title"]),
-            p(
-              [
-                "Some text",
-                a(["A link"]),
-                "Some more text..."
-              ]
-            )
-          ]
-        )
-      ]
-    )
-
-    XCTAssertEqual(
-      """
-<html>
-  <body>
-    <!-- Welcome to our app! -->
-    <h1>
-      Title
-    </h1>
-    <p>
-      Some text
-      <a>
-        A link
-      </a>
-      Some more text...
-    </p>
-  </body>
-</html>
-""",
-      prettyPrint(node: htmlNode)
-    )
+//    let htmlNode = html(
+//      [],
+//      [
+//        body(
+//          [
+//            comment("Welcome to our app!"),
+//            h1(["Title"]),
+//            p(
+//              [
+//                "Some text",
+//                a(["A link"]),
+//                "Some more text..."
+//              ]
+//            )
+//          ]
+//        )
+//      ]
+//    )
+//
+//    XCTAssertEqual(
+//      """
+//<html>
+//  <body>
+//    <!-- Welcome to our app! -->
+//    <h1>
+//      Title
+//    </h1>
+//    <p>
+//      Some text
+//      <a>
+//        A link
+//      </a>
+//      Some more text...
+//    </p>
+//  </body>
+//</html>
+//""",
+//      prettyPrint(node: htmlNode)
+//    )
   }
 
   func testDocument() {

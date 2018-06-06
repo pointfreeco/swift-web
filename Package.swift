@@ -26,8 +26,8 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("25773a7")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("2a0edb4")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.0.0"),
-    .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.4.1")),
-    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("0.8.22"))
+//    .package(url: "https://github.com/bkase/DoctorPretty.git", .exact("0.4.1")),
+    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .revision("6e1715e9"))
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude", "UrlFormEncoding"]),
@@ -52,7 +52,12 @@ let package = Package(
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
 
-    .target(name: "HtmlPrettyPrint", dependencies: ["DoctorPretty", "Html"]),
+    .target(
+      name: "HtmlPrettyPrint",
+      dependencies: [
+//        "DoctorPretty",
+        "Html"
+      ]),
     .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
