@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
           "branch": null,
-          "revision": "1de800d80f22a930e617f7c551a692475f92a23d",
-          "version": "0.8.22"
+          "revision": "4503221a71d49c6075b5042f5ff2d858acbe74a8",
+          "version": "1.0.4"
         }
       },
       {
@@ -25,7 +25,7 @@
         "state": {
           "branch": null,
           "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
-          "version": "0.1.5"
+          "version": "1.0.0"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "77dc77b9b5cdddfb3c385c5ee6cb74153d284967",
-          "version": "1.7.2"
+          "revision": "695afc5205aaa49fca092b94b479ff71c43d9d3c",
+          "version": "1.8.0"
         }
       },
       {
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-tagged.git",
         "state": {
           "branch": null,
-          "revision": "17c4ad4a687a5250313bb668fedce614891f03c4",
-          "version": "0.1.0"
+          "revision": "d53900894206f9453a837b566f2805c0f9c86967",
+          "version": "0.2.0"
         }
       },
       {
