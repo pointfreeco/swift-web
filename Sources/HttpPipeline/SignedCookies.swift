@@ -136,7 +136,7 @@ public func encrypted(text plainText: String, secret: String) -> String? {
     ? CryptoUtils.zeroPad(byteArray: plainTextBytes, blockSize: blockSize)
     : plainTextBytes
 
-  let cipherText = Cryptor(operation: .encrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv)
+  let cipherText = (try? Cryptor(operation: .encrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv))?
     .update(byteArray: paddedPlainTextBytes)?
     .final()
 
@@ -157,7 +157,7 @@ public func decrypted(text encryptedText: String, secret: String) -> String? {
   let iv = [UInt8](repeating: 0, count: secretBytes.count)
   let encryptedTextBytes = CryptoUtils.byteArray(fromHex: encryptedText)
 
-  let decryptedText = Cryptor(operation: .decrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv)
+  let decryptedText = (try? Cryptor(operation: .decrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv))?
     .update(byteArray: encryptedTextBytes)?
     .final()
 
