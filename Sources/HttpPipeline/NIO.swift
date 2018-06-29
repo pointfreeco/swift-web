@@ -12,7 +12,7 @@ public func run(
 
   do {
     let reuseAddrOpt = ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR)
-    let group = MultiThreadedEventLoopGroup(numThreads: System.coreCount)
+    let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     let bootstrap = ServerBootstrap(group: group)
       .serverChannelOption(ChannelOptions.backlog, value: 256)
       .serverChannelOption(reuseAddrOpt, value: 1)
