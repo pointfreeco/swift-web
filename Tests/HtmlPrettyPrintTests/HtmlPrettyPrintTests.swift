@@ -184,7 +184,6 @@ composition.
       ]
     )
 
-    record = true
     assertSnapshot(matching: prettyPrint(node: doc, pageWidth: 50), pathExtension: "html")
   }
 }
