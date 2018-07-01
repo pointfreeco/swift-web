@@ -1,23 +1,16 @@
-▿ Step
-  ResponseEnded
+GET /
 
-▿ Request
-  GET /
+200 OK
+Content-Length: 19
+Content-Type: text/html; charset=utf-8
+Set-Cookie: foo=bar; Domain=www.pointfree.co
+Set-Cookie: foo=bar; Domain=www.pointfree.co; HttpOnly; Secure
+Set-Cookie: foo=bar; Expires=Fri, 13 Feb 2009 23:31:30 GMT
+Set-Cookie: foo=bar; HttpOnly
+Set-Cookie: foo=bar; Max-Age=3600
+Set-Cookie: foo=bar; Path=/path/to/some/where
+Set-Cookie: foo=bar; SameSite=Lax
+Set-Cookie: foo=bar; SameSite=Strict
+Set-Cookie: foo=bar; Secure
 
-  (Data, 0 bytes)
-
-▿ Response
-  Status 200 OK
-  Content-Length: 19
-  Content-Type: text/html; charset=utf-8
-  Set-Cookie: foo=bar; Domain=www.pointfree.co
-  Set-Cookie: foo=bar; Domain=www.pointfree.co; HttpOnly; Secure
-  Set-Cookie: foo=bar; Expires=Fri, 13 Feb 2009 23:31:30 GMT
-  Set-Cookie: foo=bar; HttpOnly
-  Set-Cookie: foo=bar; Max-Age=3600
-  Set-Cookie: foo=bar; Path=/path/to/some/where
-  Set-Cookie: foo=bar; SameSite=Lax
-  Set-Cookie: foo=bar; SameSite=Strict
-  Set-Cookie: foo=bar; Secure
-
-  <p>Hello, world</p>
+<p>Hello, world</p>

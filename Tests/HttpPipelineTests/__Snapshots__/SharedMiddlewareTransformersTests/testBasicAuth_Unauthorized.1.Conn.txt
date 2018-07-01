@@ -1,15 +1,8 @@
-▿ Step
-  ResponseEnded
+GET /
 
-▿ Request
-  GET /
+401 Unauthorized
+Content-Length: 20
+Content-Type: text/plain
+WWW-Authenticate: Basic
 
-  (Data, 0 bytes)
-
-▿ Response
-  Status 401 UNAUTHORIZED
-  Content-Length: 20
-  Content-Type: text/plain
-  WWW-Authenticate: Basic
-
-  Please authenticate.
+Please authenticate.

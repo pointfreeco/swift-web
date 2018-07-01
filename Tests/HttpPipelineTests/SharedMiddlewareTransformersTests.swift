@@ -8,6 +8,11 @@ import SnapshotTesting
 private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 
 class SharedMiddlewareTransformersTests: XCTestCase {
+  override func setUp() {
+    super.setUp()
+//    record=true
+  }
+
   func testBasicAuth_Unauthorized() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")

@@ -30,7 +30,7 @@ body {
 }
 
 """,
-      render(config: pretty, css: css)
+      render(config: .pretty, css: css)
     )
   }
 
@@ -53,7 +53,7 @@ body {
 }
 
 """,
-      render(config: pretty, css: css)
+      render(config: .pretty, css: css)
     )
   }
 }

@@ -11,11 +11,7 @@ extension View {
 // MARK: Helpers
 
 extension View where B == [Node] {
-  public func rendered(with data: A) -> String {
-    return self.rendered(with: data, config: compact)
-  }
-
-  public func rendered(with data: A, config: Config) -> String {
+  public func rendered(with data: A, config: Config = .compact) -> String {
     return render(self.view(data), config: config)
   }
 

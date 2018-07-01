@@ -1,13 +1,6 @@
-▿ Step
-  ResponseEnded
+GET http://www.pointfree.co
 
-▿ Request
-  GET http://www.pointfree.co
+200 OK
+Content-Type: text/html; charset=utf-8
 
-  (Data, 0 bytes)
-
-▿ Response
-  Status 200 OK
-  Content-Type: text/html; charset=utf-8
-
-  <p>Hello, world</p>
+<p>Hello, world</p>

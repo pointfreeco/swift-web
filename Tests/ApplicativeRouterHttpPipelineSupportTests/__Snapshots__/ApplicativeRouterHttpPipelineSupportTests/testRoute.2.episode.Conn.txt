@@ -1,14 +1,7 @@
-▿ Step
-  ResponseEnded
+GET /episode/ep1-hello-world
 
-▿ Request
-  GET /episode/ep1-hello-world
+200 OK
+Content-Length: 44
+Content-Type: text/plain
 
-  (Data, 0 bytes)
-
-▿ Response
-  Status 200 OK
-  Content-Length: 44
-  Content-Type: text/plain
-
-  Recognized route: episode("ep1-hello-world")
+Recognized route: episode("ep1-hello-world")

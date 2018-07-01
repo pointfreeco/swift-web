@@ -1,11 +1,4 @@
-▿ Step
-  ResponseEnded
+GET /
 
-▿ Request
-  GET /
-
-  (Data, 0 bytes)
-
-▿ Response
-  Status 302 FOUND
-  Location: /sign-in
+302 Found
+Location: /sign-in

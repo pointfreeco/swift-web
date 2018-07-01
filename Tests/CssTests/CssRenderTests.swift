@@ -11,7 +11,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "a#hello.world:first-child{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -22,7 +22,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "a#hello.world:first-child{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -33,7 +33,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body p *{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -44,7 +44,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "footer{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -55,7 +55,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "#hello-world{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -66,7 +66,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       ".hello-world{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -77,7 +77,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body p:first-child{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -88,7 +88,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body p::first-sentence{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -99,7 +99,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "input[type=\"button\"]{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -110,7 +110,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "input[type^=\"button\"]{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -121,7 +121,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "input[type*=\"button\"]{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -132,7 +132,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "input[type=\"button\"]{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -143,7 +143,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "input[type$=\"button\"]{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -154,7 +154,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "input[type~=\"button\"]{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -165,7 +165,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "input[type|=\"button\"]{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -176,7 +176,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body > p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -187,7 +187,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body > p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -198,7 +198,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -209,7 +209,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -220,7 +220,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body + p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -231,7 +231,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body + p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -242,7 +242,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "p ~ a{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -253,7 +253,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "p ~ a{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -264,7 +264,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "p.hello{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -275,7 +275,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "p.hello{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -286,7 +286,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "a, p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -297,7 +297,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "a, p{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -314,7 +314,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body#hello{background:#ff0000}body#hello p:first-child{background:#00ff00}body#hello p:first-child a.blue{background:#0000ff}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -327,7 +327,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "#hello #world{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -338,7 +338,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "blockquote::after{content:\"\"}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -349,7 +349,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "span{margin-top:0;margin-right:0;margin-bottom:0;margin-left:0}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -360,7 +360,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "ol, ul{list-style-type:none}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -373,7 +373,7 @@ class CssRenderTests: XCTestCase {
 
     XCTAssertEqual(
       "body a{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -395,7 +395,7 @@ body {
 
 
 """,
-      render(config: pretty, css: css)
+      render(config: .pretty, css: css)
     )
   }
 
@@ -409,7 +409,7 @@ body {
 
     XCTAssertEqual(
       "a{background:#ff0000}a.active{background:#0000ff}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -420,7 +420,7 @@ body {
 
     XCTAssertEqual(
       "body#home > .link, .row .column + .column{background:#ff0000}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 
@@ -429,7 +429,7 @@ body {
 
     XCTAssertEqual(
       ".hide{clip:rect(1px,1px,1px,1px)}",
-      render(config: compact, css: css)
+      render(config: .compact, css: css)
     )
   }
 }

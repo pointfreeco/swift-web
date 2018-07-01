@@ -14,7 +14,7 @@ class SupportTests: XCTestCase {
 
     XCTAssertEqual(
       "<p style=\"color:#ff0000\">Hello world!</p>",
-      render(node, config: compact)
+      render(node, config: .compact)
     )
   }
 

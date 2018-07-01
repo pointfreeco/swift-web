@@ -7,6 +7,11 @@ import SnapshotTesting
 import HttpPipelineTestSupport
 
 class SyntaxRouterTests: XCTestCase {
+  override func setUp() {
+    super.setUp()
+//    record=true
+  }
+
   func testHome() {
     let request = URLRequest(url: URL(string: "home")!)
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405

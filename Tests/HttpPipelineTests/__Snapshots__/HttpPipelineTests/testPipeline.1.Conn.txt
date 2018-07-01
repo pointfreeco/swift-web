@@ -1,14 +1,7 @@
-▿ Step
-  ResponseEnded
+GET /
 
-▿ Request
-  GET /
+200 OK
+Content-Length: 12
+Content-Type: text/plain
 
-  (Data, 0 bytes)
-
-▿ Response
-  Status 200 OK
-  Content-Length: 12
-  Content-Type: text/plain
-
-  Hello, world
+Hello, world

@@ -73,7 +73,7 @@ class ViewTests: XCTestCase {
     let styledSpan = View { (css: Stylesheet) in
       span(
         [ style <| css ],
-        [ .text(encode(render(config: compact, css: css))) ]
+        [ .text(encode(render(config: .compact, css: css))) ]
       )
     }
 
