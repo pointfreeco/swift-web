@@ -7,31 +7,37 @@ public struct Config {
   let rbrace: String
   let sep: String
   let warn: Bool
+
+  public static let pretty = Config(
+    align: true,
+    finalSemicolon: true,
+    indentation: "  ",
+    lbrace: "{",
+    newline: "\n",
+    rbrace: "}",
+    sep: " ",
+    warn: true
+  )
+
+  public static let compact = Config(
+    align: false,
+    finalSemicolon: false,
+    indentation: "",
+    lbrace: "{",
+    newline: "",
+    rbrace: "}",
+    sep: "",
+    warn: false
+  )
+
+  public static let inline = Config(
+    align: false,
+    finalSemicolon: false,
+    indentation: "",
+    lbrace: "",
+    newline: "",
+    rbrace: "",
+    sep: "",
+    warn: false
+  )
 }
-
-public let pretty = Config(align: true,
-                           finalSemicolon: true,
-                           indentation: "  ",
-                           lbrace: "{",
-                           newline: "\n",
-                           rbrace: "}",
-                           sep: " ",
-                           warn: true)
-
-public let compact = Config(align: false,
-                            finalSemicolon: false,
-                            indentation: "",
-                            lbrace: "{",
-                            newline: "",
-                            rbrace: "}",
-                            sep: "",
-                            warn: false)
-
-public let inline = Config(align: false,
-                           finalSemicolon: false,
-                           indentation: "",
-                           lbrace: "",
-                           newline: "",
-                           rbrace: "",
-                           sep: "",
-                           warn: false)

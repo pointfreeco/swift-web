@@ -3,24 +3,16 @@ import Prelude
 public struct Config {
   let indentation: String
   let newline: String
+
+  public static let compact = Config(indentation: "", newline: "")
+  public static let pretty  = Config(indentation: "  ", newline: "\n")
 }
 
-public let compact = Config(indentation: "", newline: "")
-public let pretty  = Config(indentation: "  ", newline: "\n")
-
-public func render(_ nodes: [Node]) -> String {
-  return render(nodes, config: compact)
-}
-
-public func render(_ nodes: [Node], config: Config) -> String {
+public func render(_ nodes: [Node], config: Config = .compact) -> String {
   return nodes |> foldMap { render($0, config: config) }
 }
 
-public func render(_ node: Node) -> String {
-  return render(node, config: compact)
-}
-
-public func render(_ node: Node, config: Config = compact) -> String {
+public func render(_ node: Node, config: Config = .compact) -> String {
 
   func realRender(_ node: Node, config: Config, indentation: String) -> String {
 

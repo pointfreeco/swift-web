@@ -1,18 +1,11 @@
-▿ Step
-  ResponseEnded
+GET /
 
-▿ Request
-  GET /
+200 OK
+A: Header should be first
+Content-Length: 19
+Content-Type: text/html; charset=utf-8
+Goodbye: World
+Hello: World
+Z: Header should be last
 
-  (Data, 0 bytes)
-
-▿ Response
-  Status 200 OK
-  A: Header should be first
-  Content-Length: 19
-  Content-Type: text/html; charset=utf-8
-  Goodbye: World
-  Hello: World
-  Z: Header should be last
-
-  <p>Hello, world</p>
+<p>Hello, world</p>

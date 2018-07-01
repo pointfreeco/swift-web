@@ -7,6 +7,11 @@ import SnapshotTesting
 import XCTest
 
 class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
+  override func setUp() {
+    super.setUp()
+//    record=true
+  }
+
   func testRoute() {
     let router =
       Route.iso.home <¢> get <% end

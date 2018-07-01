@@ -1,11 +1,7 @@
 import Prelude
 import Either
 
-public func render(css: Stylesheet) -> String {
-  return render(config: pretty, css: css)
-}
-
-public func render(config: Config, css: Stylesheet) -> String {
+public func render(config: Config = .pretty, css: Stylesheet) -> String {
   return render(config: config, [], css)
 }
 
