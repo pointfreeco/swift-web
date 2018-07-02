@@ -35,12 +35,8 @@ public func render(_ node: Node, config: Config = .compact) -> String {
           $0.map {
             realRender(
               $0,
-              config: element.name == "pre"
-                ? Config(indentation: "", newline: config.newline)
-                : config,
-              indentation: element.name == "pre"
-                ? ""
-                : indentation + config.indentation
+              config: element.name == "pre" ? .compact : config,
+              indentation: element.name == "pre" ? "" : indentation + config.indentation
             )
           }
         }?.joined()
