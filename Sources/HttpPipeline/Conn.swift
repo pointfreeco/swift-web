@@ -15,7 +15,7 @@ public struct Conn<Step, A> {
 public func connection(
   from request: URLRequest,
   defaultHeaders headers: [Response.Header] = [
-  .init("Content-Security-Policy", "script-src 'unsafe-inline'; style-src 'unsafe-inline'"),
+//  .init("Content-Security-Policy", "script-src 'unsafe-inline'; style-src 'unsafe-inline'"),
   .init("Referrer-Policy", "strict-origin-when-cross-origin"),
   .init("X-Content-Type-Options", "nosniff"),
   .init("X-Download-Options", "noopen"),
