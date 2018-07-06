@@ -23,17 +23,17 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
         >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/")!))).perform(),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])).perform(),
       named: "home"
     )
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!))).perform(),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!), defaultHeaders: [])).perform(),
       named: "episode"
     )
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))).perform(),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])).perform(),
       named: "unrecognized"
     )
   }
@@ -47,7 +47,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
         >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!))).perform(),
+      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])).perform(),
       named: "unrecognized"
     )
   }
