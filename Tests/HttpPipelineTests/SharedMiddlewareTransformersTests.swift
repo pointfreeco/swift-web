@@ -5,7 +5,7 @@ import Optics
 import Prelude
 import SnapshotTesting
 
-private let conn = connection(from: URLRequest(url: URL(string: "/")!))
+private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
 class SharedMiddlewareTransformersTests: XCTestCase {
   override func setUp() {
@@ -61,7 +61,8 @@ class SharedMiddlewareTransformersTests: XCTestCase {
 
     let conn = connection(
       from: URLRequest(url: URL(string: "/")!)
-        |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
+        |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="],
+      defaultHeaders: []
     )
 
     assertSnapshot(matching: middleware(conn).perform())
@@ -85,16 +86,16 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> end
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform()
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform()
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://pointfree.co")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [])).perform()
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.point-free.co")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.point-free.co")!), defaultHeaders: [])).perform()
     )
   }
 
@@ -118,17 +119,17 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       var result = request
       result.allHTTPHeaderFields = result.allHTTPHeaderFields ?? [:]
       result.allHTTPHeaderFields?["X-Forwarded-Proto"] = "https"
-      return connection(from: result)
+      return connection(from: result, defaultHeaders: [])
     }
 
     assertSnapshot(
       matching: middleware(securedConnection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))).perform()
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform()
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform()
     )
   }
 
@@ -149,13 +150,13 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> end
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform()
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform()
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!))).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform()
     )
   }
 

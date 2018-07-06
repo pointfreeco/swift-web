@@ -10,7 +10,7 @@ class HttpPipelineHtmlSupportTests: XCTestCase {
     let pipeline = writeStatus(.ok)
       >=> respond(view)
 
-    let conn = connection(from: URLRequest(url: URL(string: "/")!))
+    let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
     let response = (conn |> pipeline).perform()
 
     XCTAssertEqual(200, response.response.status.rawValue)
