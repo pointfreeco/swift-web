@@ -88,7 +88,7 @@ extension PartialIso where A == String, B == Data {
   /// TODO: this should prob take encoding as an argument.
   public static var data: PartialIso {
     return .init(
-      apply: ^\.utf8 >>> Data.init,
+      apply: ^\.utf8 >>> Data.init(_:),
       unapply: { String(decoding: $0, as: UTF8.self) }
     )
   }
@@ -111,7 +111,7 @@ extension PartialIso where A: Codable, B == Data {
   /// FIXME: build/use UrlFormEncoder
   public static func codableToFormData(_ type: A.Type, decoder: UrlFormDecoder = .init()) -> PartialIso {
     return .init(
-      apply: urlFormEncode(value:) >>> ^\.utf8 >>> Data.init,
+      apply: urlFormEncode(value:) >>> ^\.utf8 >>> Data.init(_:),
       unapply: { try? decoder.decode(type, from: $0) }
     )
   }
