@@ -10,7 +10,7 @@ public func id<T>(_ idSelector: CssSelector) -> Attribute<T> {
 }
 
 public func style<T>(_ style: Stylesheet) -> Attribute<T> {
-  return .init("style", style)
+  return .init("style", Css.render(config: .inline, css: style))
 }
 
 public func style(
@@ -24,14 +24,4 @@ public func style(
 
 public func style(_ css: Stylesheet, config: Css.Config = .compact) -> ChildOf<Element.Head> {
   return style([], css, config: config)
-}
-
-extension Stylesheet: Html.Value {
-  public func render(with key: String) -> EncodedString? {
-    return encode("\(key)=") + quote(encode(Css.render(config: .inline, css: self)))
-  }
-
-  public func renderedValue() -> EncodedString? {
-    return encode(Css.render(config: .inline, css: self))
-  }
 }

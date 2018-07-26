@@ -1,6 +1,6 @@
 import Prelude
 
-public enum Role: String, Value {
+public enum Role: String {
   case alert
   case alertdialog
   case application
@@ -72,10 +72,10 @@ public enum Role: String, Value {
   case treeitem
 }
 public func role<T>(_ value: Role) -> Attribute<T> {
-  return .init("role", value)
+  return .init("role", value.rawValue)
 }
 
-public enum AriaBoolean: String, Value {
+public enum AriaBoolean: String {
   case `false`
   case `true`
   case undefined
@@ -90,7 +90,7 @@ extension AriaBoolean: ExpressibleByBooleanLiteral {
   }
 }
 
-public enum AriaToggled: String, Value {
+public enum AriaToggled: String {
   case `false`
   case `true`
   case mixed
@@ -114,14 +114,14 @@ public func ariaAtomic<T>(_ value: Bool) -> Attribute<T> {
   return .init("aria-atomic", String(value))
 }
 
-public enum AriaAutocomplete: String, Value {
+public enum AriaAutocomplete: String {
   case both
   case inline
   case list
   case none
 }
 public func ariaAutocomplete<T>(_ value: AriaAutocomplete) -> Attribute<T> {
-  return .init("aria-autocomplete", value)
+  return .init("aria-autocomplete", value.rawValue)
 }
 
 public func ariaBusy<T>(_ value: Bool) -> Attribute<T> {
@@ -129,26 +129,26 @@ public func ariaBusy<T>(_ value: Bool) -> Attribute<T> {
 }
 
 public func ariaChecked<T>(_ value: AriaToggled) -> Attribute<T> {
-  return .init("aria-checked", value)
+  return .init("aria-checked", value.rawValue)
 }
 
 public func ariaColcount<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-colcount", value)
+  return .init("aria-colcount", String(value))
 }
 
 public func ariaColindex<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-colindex", value)
+  return .init("aria-colindex", String(value))
 }
 
 public func ariaColspan<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-colspan", value)
+  return .init("aria-colspan", String(value))
 }
 
 public func ariaControls<T>(_ value: Id) -> Attribute<T> {
   return .init("aria-controls", value)
 }
 
-public enum AriaCurrent: String, Value {
+public enum AriaCurrent: String {
   case date
   case `false`
   case location
@@ -167,7 +167,7 @@ extension AriaCurrent: ExpressibleByBooleanLiteral {
   }
 }
 public func ariaCurrent<T>(_ value: AriaCurrent) -> Attribute<T> {
-  return .init("aria-current", value)
+  return .init("aria-current", value.rawValue)
 }
 
 public func ariaDescribedby<T>(_ value: Id) -> Attribute<T> {
@@ -182,7 +182,7 @@ public func ariaDisabled<T>(_ value: Bool) -> Attribute<T> {
   return .init("aria-disabled", String(value))
 }
 
-public enum AriaDropeffect: String, Value {
+public enum AriaDropeffect: String {
   case copy
   case execute
   case link
@@ -191,7 +191,7 @@ public enum AriaDropeffect: String, Value {
   case popup
 }
 public func ariaDropeffect<T>(_ value: AriaDropeffect) -> Attribute<T> {
-  return .init("aria-dropeffect", value)
+  return .init("aria-dropeffect", value.rawValue)
 }
 
 public func ariaErrormessage<T>(_ value: Id) -> Attribute<T> {
@@ -199,7 +199,7 @@ public func ariaErrormessage<T>(_ value: Id) -> Attribute<T> {
 }
 
 public func ariaExpanded<T>(_ value: AriaBoolean) -> Attribute<T> {
-  return .init("aria-expanded", value)
+  return .init("aria-expanded", value.rawValue)
 }
 
 public func ariaFlowto<T>(_ value: Id) -> Attribute<T> {
@@ -207,10 +207,10 @@ public func ariaFlowto<T>(_ value: Id) -> Attribute<T> {
 }
 
 public func ariaGrabbed<T>(_ value: AriaBoolean) -> Attribute<T> {
-  return .init("aria-grabbed", value)
+  return .init("aria-grabbed", value.rawValue)
 }
 
-public enum AriaHaspopup: String, Value {
+public enum AriaHaspopup: String {
   case dialog
   case `false`
   case grid
@@ -228,14 +228,14 @@ extension AriaHaspopup: ExpressibleByBooleanLiteral {
   }
 }
 public func ariaHaspopup<T>(_ value: AriaHaspopup) -> Attribute<T> {
-  return .init("aria-haspopup", value)
+  return .init("aria-haspopup", value.rawValue)
 }
 
 public func ariaHidden<T>(_ value: AriaBoolean) -> Attribute<T> {
-  return .init("aria-hidden", value)
+  return .init("aria-hidden", value.rawValue)
 }
 
-public enum AriaInvalid: String, Value {
+public enum AriaInvalid: String {
   case `false`
   case grammar
   case spelling
@@ -251,7 +251,7 @@ extension AriaInvalid: ExpressibleByBooleanLiteral {
   }
 }
 public func ariaInvalid<T>(_ value: AriaInvalid) -> Attribute<T> {
-  return .init("aria-invalid", value)
+  return .init("aria-invalid", value.rawValue)
 }
 
 public func ariaKeyshortcuts<T>(_ value: String) -> Attribute<T> {
@@ -267,16 +267,16 @@ public func ariaLabelledby<T>(_ value: Id) -> Attribute<T> {
 }
 
 public func ariaLevel<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-level", value)
+  return .init("aria-level", String(value))
 }
 
-public enum AriaLive: String, Value {
+public enum AriaLive: String {
   case assertive
   case off
   case polite
 }
 public func ariaLive<T>(_ value: AriaLive) -> Attribute<T> {
-  return .init("aria-live", value)
+  return .init("aria-live", value.rawValue)
 }
 
 public func ariaModal<T>(_ value: Bool) -> Attribute<T> {
@@ -291,13 +291,13 @@ public func ariaMultiselectable<T>(_ value: Bool) -> Attribute<T> {
   return .init("aria-multiselectable", String(value))
 }
 
-public enum AriaOrientation: String, Value {
+public enum AriaOrientation: String {
   case horizontal
   case undefined
   case vertical
 }
 public func ariaOrientation<T>(_ value: AriaOrientation) -> Attribute<T> {
-  return .init("aria-orientation", value)
+  return .init("aria-orientation", value.rawValue)
 }
 
 public func ariaOwns<T>(_ value: Id) -> Attribute<T> {
@@ -309,18 +309,18 @@ public func ariaPlaceholder<T>(_ value: String) -> Attribute<T> {
 }
 
 public func ariaPosinset<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-posinset", value)
+  return .init("aria-posinset", String(value))
 }
 
 public func ariaPressed<T>(_ value: AriaToggled) -> Attribute<T> {
-  return .init("aria-pressed", value)
+  return .init("aria-pressed", value.rawValue)
 }
 
 public func ariaReadonly<T>(_ value: Bool) -> Attribute<T> {
   return .init("aria-readonly", String(value))
 }
 
-public enum AriaRelevant: String, Value {
+public enum AriaRelevant: String {
   case additions
   case all
   case removals
@@ -339,45 +339,45 @@ public func ariaRoledescription<T>(_ value: String) -> Attribute<T> {
 }
 
 public func ariaRowcount<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-rowcount", value)
+  return .init("aria-rowcount", String(value))
 }
 
 public func ariaRowindex<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-rowindex", value)
+  return .init("aria-rowindex", String(value))
 }
 
 public func ariaRowspan<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-rowspan", value)
+  return .init("aria-rowspan", String(value))
 }
 
 public func ariaSelected<T>(_ value: AriaBoolean) -> Attribute<T> {
-  return .init("aria-selected", value)
+  return .init("aria-selected", value.rawValue)
 }
 
 public func ariaSetsize<T>(_ value: Int) -> Attribute<T> {
-  return .init("aria-setsize", value)
+  return .init("aria-setsize", String(value))
 }
 
-public enum AriaSort: String, Value {
+public enum AriaSort: String {
   case ascending
   case descending
   case none
   case other
 }
 public func ariaSort<T>(_ value: AriaSort) -> Attribute<T> {
-  return .init("aria-sort", value)
+  return .init("aria-sort", value.rawValue)
 }
 
 public func ariaValuemax<T>(_ value: Double) -> Attribute<T> {
-  return .init("aria-valuemax", value)
+  return .init("aria-valuemax", String(value))
 }
 
 public func ariaValuemin<T>(_ value: Double) -> Attribute<T> {
-  return .init("aria-valuemin", value)
+  return .init("aria-valuemin", String(value))
 }
 
 public func ariaValuenow<T>(_ value: Double) -> Attribute<T> {
-  return .init("aria-valuenow", value)
+  return .init("aria-valuenow", String(value))
 }
 
 public func ariaValuetext<T>(_ value: String) -> Attribute<T> {

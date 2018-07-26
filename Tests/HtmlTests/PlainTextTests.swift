@@ -4,7 +4,8 @@ import SnapshotTesting
 
 class PlainTextTests: XCTestCase {
   func testPlainText() {
-    let doc = document([
+    let doc = [
+      .doctype("html"),
       html([
         head([
           title("Hello!"),
@@ -47,7 +48,7 @@ class PlainTextTests: XCTestCase {
           script("alert(\"hello!\");"),
           ]),
         ])
-      ])
+    ]
 
     assertSnapshot(matching: plainText(for: doc))
   }

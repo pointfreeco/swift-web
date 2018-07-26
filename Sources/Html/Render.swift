@@ -13,48 +13,73 @@ public func render(_ nodes: [Node], config: Config = .compact) -> String {
 }
 
 public func render(_ node: Node, config: Config = .compact) -> String {
-
   func realRender(_ node: Node, config: Config, indentation: String) -> String {
-
     switch node {
     case let .comment(string):
-      return indentation + "<!-- " + string.string + " -->" + config.newline
-    case let .document(nodes):
-      return indentation + "<!DOCTYPE html>" + config.newline + nodes
-        .map { realRender($0, config: config, indentation: indentation) }
-        .joined(separator: config.newline)
-    case let .element(element):
-      let _attribs = element.attribs
-        .map { attrib in attrib.value.render(with: attrib.key)?.string }
-        .compactMap { $0 }
-        .joined(separator: " ")
-      let attribs = _attribs.isEmpty ? "" : " " + _attribs
+      return indentation + "<!-- " + escape(html: string) + " -->" + config.newline
+    case let .doctype(string):
+      return indentation + "<!DOCTYPE " + escape(html: string) + ">" + config.newline
+    case let .element(tag, attribs, children):
+      let tag = escape(html: tag)
 
-      let renderedChildren = element.content
-        .map {
-          $0.map {
-            realRender(
-              $0,
-              config: element.name == "pre" ? .compact : config,
-              indentation: element.name == "pre" ? "" : indentation + config.indentation
-            )
-          }
-        }?.joined()
-
-      return renderedChildren
-        .map { children -> String in
-          indentation + "<\(element.name)\(attribs)>"
-            + config.newline
-            + children
-            + indentation + "</\(element.name)>"
-            + config.newline
+      let attribs = attribs.isEmpty ? "" : " " + attribs
+        .map { key, value in
+          value.isEmpty
+            ? escape(html: key)
+            : escape(html: key) + "=\"" + escape(html: value) + "\""
         }
-        ?? "\(indentation)<\(element.name)\(attribs)>\(config.newline)"
+        .joined(separator: " ")
+
+      let close = voidElements.contains(tag) ? ">" : "/>"
+
+      guard !children.isEmpty else { return indentation + "<" + tag + attribs + close + config.newline }
+
+      let children = children
+        .map {
+          realRender(
+            $0,
+            config: tag == "pre" ? .compact : config,
+            indentation: tag == "pre" ? "" : indentation + config.indentation
+          )
+        }
+        .joined()
+
+      return indentation + "<" + tag + attribs + ">" + config.newline
+        + children
+        + indentation + "</" + tag + ">" + config.newline
 
     case let .text(string):
-      return indentation + string.string + config.newline
+      return indentation + escape(html: string) + config.newline
+    case let .raw(string):
+      return string
     }
   }
 
   return realRender(node, config: config, indentation: "")
 }
+
+public func escape(html: String) -> String {
+  return html
+    .replacingOccurrences(of: "&", with: "&amp;")
+    .replacingOccurrences(of: "<", with: "&lt;")
+    .replacingOccurrences(of: ">", with: "&gt;")
+    .replacingOccurrences(of: "\"", with: "&quot;")
+    .replacingOccurrences(of: "'", with: "&#39;")
+}
+
+private let voidElements: Set<String> = [
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+]

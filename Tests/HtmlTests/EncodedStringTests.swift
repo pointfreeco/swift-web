@@ -7,7 +7,7 @@ class EncodedStringTests: XCTestCase {
   func testEscape() {
     let node = body(
       ["/body><script>alert('BAD')</script>"]
-    ).node
+    ).rawValue
 
     XCTAssertEqual(
       "<body>/body&gt;&lt;script&gt;alert(&#39;BAD&#39;)&lt;/script&gt;</body>",
@@ -18,7 +18,7 @@ class EncodedStringTests: XCTestCase {
   func testDoesntEscapeInStyleTag() {
     let node = head(
       [style("/body><script>alert('BAD')</script>")]
-    ).node
+    ).rawValue
 
     XCTAssertEqual(
       "<head><style>/body><script>alert('BAD')</script></style></head>",
@@ -29,7 +29,7 @@ class EncodedStringTests: XCTestCase {
   func testDoesntEscapeInScript() {
     let node = head(
       [script("/body><script>alert('BAD')</script>")]
-    ).node
+    ).rawValue
 
     XCTAssertEqual(
       "<head><script>/body><script>alert('BAD')</script></script></head>",
@@ -49,10 +49,10 @@ class EncodedStringTests: XCTestCase {
     )
   }
 
-  func testUnsafeUnencodedString() {
-    XCTAssertEqual(
-      "<p>Point&#8209;Free</p>",
-      render(p(["Point", .text(unsafeUnencodedString("&#8209;")), "Free"]))
-    )
-  }
+//  func testUnsafeUnencodedString() {
+//    XCTAssertEqual(
+//      "<p>Point&#8209;Free</p>",
+//      render(p(["Point", .text("&#8209;"), "Free"]))
+//    )
+//  }
 }

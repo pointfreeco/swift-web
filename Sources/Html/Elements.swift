@@ -2,13 +2,28 @@ import MediaType
 import NonEmpty
 import Prelude
 
+public func element<T>(_ name: StaticString, _ attribs: [Attribute<T>], _ children: [Node]) -> Node {
+  return .element(String(describing: name), attribs.map(^\.rawValue), children)
+}
+
+public func element(_ name: StaticString, _ children: [Node]) -> Node {
+  return .element(String(describing: name), [], children)
+}
+
+public struct ChildOf<T> {
+  public let rawValue: Node
+  public init(_ node: Node) {
+    self.rawValue = node
+  }
+}
+
 public protocol ContainsAVSource {}
 public protocol ContainsList {}
 public protocol ContainsOptions {}
 public protocol ContainsTr {}
 public protocol ContainsTrack {}
 
-extension Element {
+public enum Element {
   public enum A: HasHref, HasRel, HasTarget {}
   public enum Abbr {}
   public enum Address {}
@@ -114,7 +129,7 @@ extension Element {
 }
 
 public func a(_ attribs: [Attribute<Element.A>], _ content: [Node]) -> Node {
-  return node("a", attribs, content)
+  return element("a", attribs, content)
 }
 
 public func a(_ content: [Node]) -> Node {
@@ -122,7 +137,7 @@ public func a(_ content: [Node]) -> Node {
 }
 
 public func abbr(_ attribs: [Attribute<Element.Abbr>], _ content: [Node]) -> Node {
-  return node("abbr", attribs, content)
+  return element("abbr", attribs, content)
 }
 
 public func abbr(_ content: [Node]) -> Node {
@@ -130,7 +145,7 @@ public func abbr(_ content: [Node]) -> Node {
 }
 
 public func address(_ attribs: [Attribute<Element.Address>], _ content: [Node]) -> Node {
-  return node("address", attribs, content)
+  return element("address", attribs, content)
 }
 
 public func address(_ content: [Node]) -> Node {
@@ -138,11 +153,11 @@ public func address(_ content: [Node]) -> Node {
 }
 
 public func area(_ attribs: [Attribute<Element.Area>]) -> ChildOf<Element.Map> {
-  return .init(node("area", attribs, nil))
+  return .init(element("area", attribs, []))
 }
 
 public func article(_ attribs: [Attribute<Element.Article>], _ content: [Node]) -> Node {
-  return node("article", attribs, content)
+  return element("article", attribs, content)
 }
 
 public func article(_ content: [Node]) -> Node {
@@ -150,7 +165,7 @@ public func article(_ content: [Node]) -> Node {
 }
 
 public func aside(_ attribs: [Attribute<Element.Aside>], _ content: [Node]) -> Node {
-  return node("aside", attribs, content)
+  return element("aside", attribs, content)
 }
 
 public func aside(_ content: [Node]) -> Node {
@@ -163,7 +178,7 @@ public func audio(
   _ transparent: [Node] = [])
   -> Node {
 
-    return node("audio", attribs, content.map(^\.node) + transparent)
+    return element("audio", attribs, content.map(^\.rawValue) + transparent)
 }
 
 public func audio(_ content: [ChildOf<Element.Audio>], _ transparent: [Node] = []) -> Node {
@@ -171,7 +186,7 @@ public func audio(_ content: [ChildOf<Element.Audio>], _ transparent: [Node] = [
 }
 
 public func b(_ attribs: [Attribute<Element.B>], _ content: [Node]) -> Node {
-  return node("b", attribs, content)
+  return element("b", attribs, content)
 }
 
 public func b(_ content: [Node]) -> Node {
@@ -179,11 +194,11 @@ public func b(_ content: [Node]) -> Node {
 }
 
 public func base(_ attribs: [Attribute<Element.Base>]) -> ChildOf<Element.Head> {
-  return .init(node("base", attribs, nil))
+  return .init(element("base", attribs, []))
 }
 
 public func bdi(_ attribs: [Attribute<Element.Bdi>], _ content: [Node]) -> Node {
-  return node("bdi", attribs, content)
+  return element("bdi", attribs, content)
 }
 
 public func bdi(_ content: [Node]) -> Node {
@@ -191,7 +206,7 @@ public func bdi(_ content: [Node]) -> Node {
 }
 
 public func bdo(dir: Direction, _ attribs: [Attribute<Element.Bdi>], _ content: [Node]) -> Node {
-  return node("bdo", [Html.dir(dir)] + attribs, content)
+  return element("bdo", [Html.dir(dir)] + attribs, content)
 }
 
 public func bdo(dir: Direction, _ content: [Node]) -> Node {
@@ -199,7 +214,7 @@ public func bdo(dir: Direction, _ content: [Node]) -> Node {
 }
 
 public func blockquote(_ attribs: [Attribute<Element.Blockquote>], _ content: [Node]) -> Node {
-  return node("blockquote", attribs, content)
+  return element("blockquote", attribs, content)
 }
 
 public func blockquote(_ content: [Node]) -> Node {
@@ -207,17 +222,17 @@ public func blockquote(_ content: [Node]) -> Node {
 }
 
 public func body(_ attribs: [Attribute<Element.Body>], _ content: [Node]) -> ChildOf<Element.Html> {
-  return .init(node("body", attribs, content))
+  return .init(element("body", attribs, content))
 }
 
 public func body(_ content: [Node]) -> ChildOf<Element.Html> {
   return body([], content)
 }
 
-public let br: Node = node("br", nil)
+public let br: Node = element("br", [])
 
 public func button(_ attribs: [Attribute<Element.Button>], _ content: [Node]) -> Node {
-  return node("button", attribs, content)
+  return element("button", attribs, content)
 }
 
 public func button(_ content: [Node]) -> Node {
@@ -225,7 +240,7 @@ public func button(_ content: [Node]) -> Node {
 }
 
 public func canvas(_ attribs: [Attribute<Element.Canvas>], _ content: [Node]) -> Node {
-  return node("canvas", attribs, content)
+  return element("canvas", attribs, content)
 }
 
 public func canvas(_ content: [Node]) -> Node {
@@ -234,7 +249,7 @@ public func canvas(_ content: [Node]) -> Node {
 
 // TODO: "caption" can only be the first element of a "table"
 public func caption(_ attribs: [Attribute<Element.Caption>], _ content: [Node]) -> ChildOf<Element.Table> {
-  return .init(node("caption", attribs, content))
+  return .init(element("caption", attribs, content))
 }
 
 public func caption(_ content: [Node]) -> ChildOf<Element.Table> {
@@ -242,7 +257,7 @@ public func caption(_ content: [Node]) -> ChildOf<Element.Table> {
 }
 
 public func cite(_ attribs: [Attribute<Element.Cite>], _ content: [Node]) -> Node {
-  return node("cite", attribs, content)
+  return element("cite", attribs, content)
 }
 
 public func cite(_ content: [Node]) -> Node {
@@ -250,7 +265,7 @@ public func cite(_ content: [Node]) -> Node {
 }
 
 public func code(_ attribs: [Attribute<Element.Code>], _ content: [Node]) -> Node {
-  return node("code", attribs, content)
+  return element("code", attribs, content)
 }
 
 public func code(_ content: [Node]) -> Node {
@@ -258,13 +273,13 @@ public func code(_ content: [Node]) -> Node {
 }
 
 public func col(_ attribs: [Attribute<Element.Col>]) -> ChildOf<Element.Colgroup> {
-  return .init(node("col", attribs, nil))
+  return .init(element("col", attribs, []))
 }
 
 public func colgroup(_ attribs: [Attribute<Element.Colgroup>], _ content: [ChildOf<Element.Colgroup>])
   -> ChildOf<Element.Table> {
 
-    return .init(node("colgroup", attribs, content.map(^\.node)))
+    return .init(element("colgroup", attribs, content.map(^\.rawValue)))
 }
 
 public func colgroup(_ content: [ChildOf<Element.Colgroup>]) -> ChildOf<Element.Table> {
@@ -272,7 +287,7 @@ public func colgroup(_ content: [ChildOf<Element.Colgroup>]) -> ChildOf<Element.
 }
 
 public func dd(_ attribs: [Attribute<Element.Dd>], _ content: [Node]) -> ChildOf<Element.Dl> {
-  return .init(node("dd", attribs, content))
+  return .init(element("dd", attribs, content))
 }
 
 public func dd(_ content: [Node]) -> ChildOf<Element.Dl> {
@@ -280,7 +295,7 @@ public func dd(_ content: [Node]) -> ChildOf<Element.Dl> {
 }
 
 public func del(_ attribs: [Attribute<Element.Del>], _ content: [Node]) -> Node {
-  return node("del", attribs, content)
+  return element("del", attribs, content)
 }
 
 public func del(_ content: [Node]) -> Node {
@@ -289,7 +304,7 @@ public func del(_ content: [Node]) -> Node {
 
 // TODO: required first child element "summary"
 public func details(_ attribs: [Attribute<Element.Details>], _ content: [Node]) -> Node {
-  return node("details", attribs, content)
+  return element("details", attribs, content)
 }
 
 public func details(_ content: [Node]) -> Node {
@@ -297,7 +312,7 @@ public func details(_ content: [Node]) -> Node {
 }
 
 public func dfn(_ attribs: [Attribute<Element.Dfn>], _ content: [Node]) -> Node {
-  return node("dfn", attribs, content)
+  return element("dfn", attribs, content)
 }
 
 public func dfn(_ content: [Node]) -> Node {
@@ -305,7 +320,7 @@ public func dfn(_ content: [Node]) -> Node {
 }
 
 public func div(_ attribs: [Attribute<Element.Div>], _ content: [Node]) -> Node {
-  return node("div", attribs, content)
+  return element("div", attribs, content)
 }
 
 public func div(_ content: [Node]) -> Node {
@@ -313,7 +328,7 @@ public func div(_ content: [Node]) -> Node {
 }
 
 public func dl(_ attribs: [Attribute<Element.Dl>], _ content: [ChildOf<Element.Dl>]) -> Node {
-  return node("dl", attribs, content.map(^\.node))
+  return element("dl", attribs, content.map(^\.rawValue))
 }
 
 public func dl(_ content: [ChildOf<Element.Dl>]) -> Node {
@@ -321,7 +336,7 @@ public func dl(_ content: [ChildOf<Element.Dl>]) -> Node {
 }
 
 public func dt(_ attribs: [Attribute<Element.Dt>], _ content: [Node]) -> ChildOf<Element.Dl> {
-  return .init(node("dt", attribs, content))
+  return .init(element("dt", attribs, content))
 }
 
 public func dt(_ content: [Node]) -> ChildOf<Element.Dl> {
@@ -329,7 +344,7 @@ public func dt(_ content: [Node]) -> ChildOf<Element.Dl> {
 }
 
 public func em(_ attribs: [Attribute<Element.Em>], _ content: [Node]) -> Node {
-  return node("em", attribs, content)
+  return element("em", attribs, content)
 }
 
 public func em(_ content: [Node]) -> Node {
@@ -337,11 +352,11 @@ public func em(_ content: [Node]) -> Node {
 }
 
 public func embed(_ attribs: [Attribute<Element.Embed>]) -> Node {
-  return node("embed", attribs, nil)
+  return element("embed", attribs, [])
 }
 
 public func fieldset(_ attribs: [Attribute<Element.Fieldset>], _ content: [Node]) -> Node {
-  return node("fieldset", attribs, content)
+  return element("fieldset", attribs, content)
 }
 
 public func fieldset(_ content: [Node]) -> Node {
@@ -351,7 +366,7 @@ public func fieldset(_ content: [Node]) -> Node {
 public func figcaption(_ attribs: [Attribute<Element.Figcaption>], _ content: [Node])
   -> ChildOf<Element.Figure> {
 
-    return .init(node("figcaption", attribs, content))
+    return .init(element("figcaption", attribs, content))
 }
 
 public func figcaption(_ content: [Node]) -> ChildOf<Element.Figure> {
@@ -359,7 +374,7 @@ public func figcaption(_ content: [Node]) -> ChildOf<Element.Figure> {
 }
 
 public func figure(_ attribs: [Attribute<Element.Figure>], _ content: [ChildOf<Element.Figure>]) -> Node {
-  return node("figure", attribs, content.map(^\.node))
+  return element("figure", attribs, content.map(^\.rawValue))
 }
 
 public func figure(_ content: [ChildOf<Element.Figure>]) -> Node {
@@ -367,7 +382,7 @@ public func figure(_ content: [ChildOf<Element.Figure>]) -> Node {
 }
 
 public func footer(_ attribs: [Attribute<Element.Footer>], _ content: [Node]) -> Node {
-  return node("footer", attribs, content)
+  return element("footer", attribs, content)
 }
 
 public func footer(_ content: [Node]) -> Node {
@@ -375,7 +390,7 @@ public func footer(_ content: [Node]) -> Node {
 }
 
 public func form(_ attribs: [Attribute<Element.Form>], _ content: [Node]) -> Node {
-  return node("form", attribs, content)
+  return element("form", attribs, content)
 }
 
 public func form(_ content: [Node]) -> Node {
@@ -383,7 +398,7 @@ public func form(_ content: [Node]) -> Node {
 }
 
 public func h1(_ attribs: [Attribute<Element.H1>], _ content: [Node]) -> Node {
-  return node("h1", attribs, content)
+  return element("h1", attribs, content)
 }
 
 public func h1(_ content: [Node]) -> Node {
@@ -391,7 +406,7 @@ public func h1(_ content: [Node]) -> Node {
 }
 
 public func h2(_ attribs: [Attribute<Element.H2>], _ content: [Node]) -> Node {
-  return node("h2", attribs, content)
+  return element("h2", attribs, content)
 }
 
 public func h2(_ content: [Node]) -> Node {
@@ -399,7 +414,7 @@ public func h2(_ content: [Node]) -> Node {
 }
 
 public func h3(_ attribs: [Attribute<Element.H3>], _ content: [Node]) -> Node {
-  return node("h3", attribs, content)
+  return element("h3", attribs, content)
 }
 
 public func h3(_ content: [Node]) -> Node {
@@ -407,7 +422,7 @@ public func h3(_ content: [Node]) -> Node {
 }
 
 public func h4(_ attribs: [Attribute<Element.H4>], _ content: [Node]) -> Node {
-  return node("h4", attribs, content)
+  return element("h4", attribs, content)
 }
 
 public func h4(_ content: [Node]) -> Node {
@@ -415,7 +430,7 @@ public func h4(_ content: [Node]) -> Node {
 }
 
 public func h5(_ attribs: [Attribute<Element.H5>], _ content: [Node]) -> Node {
-  return node("h5", attribs, content)
+  return element("h5", attribs, content)
 }
 
 public func h5(_ content: [Node]) -> Node {
@@ -423,7 +438,7 @@ public func h5(_ content: [Node]) -> Node {
 }
 
 public func h6(_ attribs: [Attribute<Element.H6>], _ content: [Node]) -> Node {
-  return node("h6", attribs, content)
+  return element("h6", attribs, content)
 }
 
 public func h6(_ content: [Node]) -> Node {
@@ -431,21 +446,21 @@ public func h6(_ content: [Node]) -> Node {
 }
 
 public func head(_ content: [ChildOf<Element.Head>]) -> ChildOf<Element.Html> {
-  return .init(node("head", content.map(^\.node)))
+  return .init(element("head", content.map(^\.rawValue)))
 }
 
 public func header(_ attribs: [Attribute<Element.Header>], _ content: [Node]) -> Node {
-  return node("header", attribs, content)
+  return element("header", attribs, content)
 }
 
 public func header(_ content: [Node]) -> Node {
   return header([], content)
 }
 
-public let hr: Node = node("hr", nil)
+public let hr: Node = element("hr", [])
 
 public func html(_ attribs: [Attribute<Element.Html>], _ content: [ChildOf<Element.Html>]) -> Node {
-  return node("html", attribs, content.map(^\.node))
+  return element("html", attribs, content.map(^\.rawValue))
 }
 
 public func html(_ content: [ChildOf<Element.Html>]) -> Node {
@@ -453,7 +468,7 @@ public func html(_ content: [ChildOf<Element.Html>]) -> Node {
 }
 
 public func i(_ attribs: [Attribute<Element.I>], _ content: [Node]) -> Node {
-  return node("i", attribs, content)
+  return element("i", attribs, content)
 }
 
 public func i(_ content: [Node]) -> Node {
@@ -461,28 +476,33 @@ public func i(_ content: [Node]) -> Node {
 }
 
 public func iframe(_ attribs: [Attribute<Element.Iframe>], _ content: [Node] = []) -> Node {
-  return node("iframe", attribs, content)
+  return element("iframe", attribs, content)
 }
 
 public func img(src: String, alt: String, _ attribs: [Attribute<Element.Img>]) -> Node {
-  return node("img", [Html.src(src), Html.alt(alt)] + attribs, nil)
+  return element("img", [Html.src(src), Html.alt(alt)] + attribs, [])
 }
 
 public func img(base64: String, mediaType: MediaType, alt: String, _ attribs: [Attribute<Element.Img>])
   -> Node {
 
-    return node("img", [
-      Html.alt(alt),
-      Html.src("data:" + mediaType.description + ";base64, " + base64),
-      ] + attribs,nil)
+    return element(
+      "img",
+      [
+        Html.alt(alt),
+        Html.src("data:" + mediaType.description + ";base64, " + base64),
+        ] + attribs
+      ,
+      []
+    )
 }
 
 public func input(_ attribs: [Attribute<Element.Input>]) -> Node {
-  return node("input", attribs, nil)
+  return element("input", attribs, [])
 }
 
 public func ins(_ attribs: [Attribute<Element.Ins>], _ content: [Node]) -> Node {
-  return node("ins", attribs, content)
+  return element("ins", attribs, content)
 }
 
 public func ins(_ content: [Node]) -> Node {
@@ -490,7 +510,7 @@ public func ins(_ content: [Node]) -> Node {
 }
 
 public func kbd(_ attribs: [Attribute<Element.Kbd>], _ content: [Node]) -> Node {
-  return node("kbd", attribs, content)
+  return element("kbd", attribs, content)
 }
 
 public func kbd(_ content: [Node]) -> Node {
@@ -498,7 +518,7 @@ public func kbd(_ content: [Node]) -> Node {
 }
 
 public func label(_ attribs: [Attribute<Element.Label>], _ content: [Node]) -> Node {
-  return node("label", attribs, content)
+  return element("label", attribs, content)
 }
 
 public func label(_ content: [Node]) -> Node {
@@ -506,7 +526,7 @@ public func label(_ content: [Node]) -> Node {
 }
 
 public func legend(_ attribs: [Attribute<Element.Legend>], _ content: [Node]) -> ChildOf<Element.Fieldset> {
-  return .init(node("legend", attribs, content))
+  return .init(element("legend", attribs, content))
 }
 
 public func legend(_ content: [Node]) -> ChildOf<Element.Fieldset> {
@@ -514,7 +534,7 @@ public func legend(_ content: [Node]) -> ChildOf<Element.Fieldset> {
 }
 
 public func li<T: ContainsList>(_ attribs: [Attribute<Element.Li>], _ content: [Node]) -> ChildOf<T> {
-  return .init(node("li", attribs, content))
+  return .init(element("li", attribs, content))
 }
 
 public func li<T: ContainsList>(_ content: [Node]) -> ChildOf<T> {
@@ -522,11 +542,11 @@ public func li<T: ContainsList>(_ content: [Node]) -> ChildOf<T> {
 }
 
 public func link(_ attribs: [Attribute<Element.Link>]) -> ChildOf<Element.Head> {
-  return .init(node("link", attribs, nil))
+  return .init(element("link", attribs, []))
 }
 
 public func main(_ attribs: [Attribute<Element.Main>], _ content: [Node]) -> Node {
-  return node("main", attribs, content)
+  return element("main", attribs, content)
 }
 
 public func main(_ content: [Node]) -> Node {
@@ -536,7 +556,7 @@ public func main(_ content: [Node]) -> Node {
 public func map(name: String, _ attribs: [Attribute<Element.Map>], _ content: [ChildOf<Element.Map>])
   -> Node {
 
-    return node("map", [Html.name(name)] + attribs, content.map(^\.node))
+    return element("map", [Html.name(name)] + attribs, content.map(^\.rawValue))
 }
 
 public func map(name: String, _ content: [ChildOf<Element.Map>]) -> Node {
@@ -544,7 +564,7 @@ public func map(name: String, _ content: [ChildOf<Element.Map>]) -> Node {
 }
 
 public func mark(_ attribs: [Attribute<Element.Mark>], _ content: [Node]) -> Node {
-  return node("mark", attribs, content)
+  return element("mark", attribs, content)
 }
 
 public func mark(_ content: [Node]) -> Node {
@@ -552,11 +572,11 @@ public func mark(_ content: [Node]) -> Node {
 }
 
 public func meta(_ attribs: [Attribute<Element.Meta>]) -> ChildOf<Element.Head> {
-  return .init(node("meta", attribs, nil))
+  return .init(element("meta", attribs, []))
 }
 
 public func meta(contentType: MediaType) -> ChildOf<Element.Head> {
-  return meta([httpEquiv(.contentType), .init("content", contentType)])
+  return meta([httpEquiv(.contentType), .init("content", contentType.description)])
 }
 
 public func meta(defaultStyle: String) -> ChildOf<Element.Head> {
@@ -564,7 +584,7 @@ public func meta(defaultStyle: String) -> ChildOf<Element.Head> {
 }
 
 public func meta(refresh: Int) -> ChildOf<Element.Head> {
-  return meta([httpEquiv(.refresh), .init("content", refresh)])
+  return meta([httpEquiv(.refresh), .init("content", String(refresh))])
 }
 
 public func meta(applicationName: String) -> ChildOf<Element.Head> {
@@ -589,11 +609,11 @@ public func meta(keywords: [String]) -> ChildOf<Element.Head> {
 }
 
 public func meta(name: String, content: String) -> ChildOf<Element.Head> {
-  return meta([attribute("name", name), Html.content(content)])
+  return meta([.init("name", name), Html.content(content)])
 }
 
 public func meta(property: String, content: String) -> ChildOf<Element.Head> {
-  return meta([attribute("property", property), Html.content(content)])
+  return meta([.init("property", property), Html.content(content)])
 }
 
 public enum Viewport {
@@ -670,7 +690,7 @@ public func meta(viewport prop: Viewport, _ props: Viewport...) -> ChildOf<Eleme
 }
 
 public func meter(value: Double, _ attribs: [Attribute<Element.Meter>], _ content: [Node]) -> Node {
-  return node("meter", [Html.value(value)] + attribs, content)
+  return element("meter", [Html.value(value)] + attribs, content)
 }
 
 public func meter(value: Double, _ content: [Node]) -> Node {
@@ -678,7 +698,7 @@ public func meter(value: Double, _ content: [Node]) -> Node {
 }
 
 public func nav(_ attribs: [Attribute<Element.Nav>], _ content: [Node]) -> Node {
-  return node("nav", attribs, content)
+  return element("nav", attribs, content)
 }
 
 public func nav(_ content: [Node]) -> Node {
@@ -687,11 +707,11 @@ public func nav(_ content: [Node]) -> Node {
 
 // TODO: Required attribute "data" or "type"
 public func object(_ attribs: [Attribute<Element.Object>], _ content: [ChildOf<Element.Object>]) -> Node {
-  return node("object", attribs, content.map(^\.node))
+  return element("object", attribs, content.map(^\.rawValue))
 }
 
 public func ol(_ attribs: [Attribute<Element.Ol>], _ content: [ChildOf<Element.Ol>]) -> Node {
-  return node("ol", attribs, content.map(^\.node))
+  return element("ol", attribs, content.map(^\.rawValue))
 }
 
 public func ol(_ content: [ChildOf<Element.Ol>]) -> Node {
@@ -700,7 +720,7 @@ public func ol(_ content: [ChildOf<Element.Ol>]) -> Node {
 
 public func optgroup(_ attribs: [Attribute<Element.Optgroup>], _ content: [ChildOf<Element.Optgroup>])
   -> Node {
-    return node("optgroup", attribs, content.map(^\.node))
+    return element("optgroup", attribs, content.map(^\.rawValue))
 }
 
 public func optgroup(_ content: [ChildOf<Element.Optgroup>]) -> Node {
@@ -709,7 +729,7 @@ public func optgroup(_ content: [ChildOf<Element.Optgroup>]) -> Node {
 
 public func option<T: ContainsOptions>(_ attribs: [Attribute<Element.Option>], _ content: String)
   -> ChildOf<T> {
-    return .init(node("option", attribs, [text(content)]))
+    return .init(element("option", attribs, [.text(content)]))
 }
 
 public func option<T: ContainsOptions>(_ content: String) -> ChildOf<T> {
@@ -717,7 +737,7 @@ public func option<T: ContainsOptions>(_ content: String) -> ChildOf<T> {
 }
 
 public func output(_ attribs: [Attribute<Element.Output>], _ content: [Node]) -> Node {
-  return node("output", attribs, content)
+  return element("output", attribs, content)
 }
 
 public func output(_ content: [Node]) -> Node {
@@ -725,7 +745,7 @@ public func output(_ content: [Node]) -> Node {
 }
 
 public func p(_ attribs: [Attribute<Element.P>], _ content: [Node]) -> Node {
-  return node("p", attribs, content)
+  return element("p", attribs, content)
 }
 
 public func p(_ content: [Node]) -> Node {
@@ -733,7 +753,7 @@ public func p(_ content: [Node]) -> Node {
 }
 
 public func param(_ attribs: [Attribute<Element.Param>]) -> ChildOf<Element.Object> {
-  return .init(node("param", attribs, nil))
+  return .init(element("param", attribs, []))
 }
 
 public func picture(
@@ -744,7 +764,7 @@ public func picture(
   _ imgAttribs: [Attribute<Element.Img>] = [])
   -> Node {
 
-    return node("picture", attribs, content.map(^\.node) + [img(src: src, alt: alt, imgAttribs)])
+    return element("picture", attribs, content.map(^\.rawValue) + [img(src: src, alt: alt, imgAttribs)])
 }
 
 public func picture(
@@ -758,7 +778,7 @@ public func picture(
 }
 
 public func pre(_ attribs: [Attribute<Element.Pre>], _ content: [Node]) -> Node {
-  return node("pre", attribs, content)
+  return element("pre", attribs, content)
 }
 
 public func pre(_ content: [Node]) -> Node {
@@ -766,7 +786,7 @@ public func pre(_ content: [Node]) -> Node {
 }
 
 public func q(_ attribs: [Attribute<Element.Q>], _ content: [Node]) -> Node {
-  return node("q", attribs, content)
+  return element("q", attribs, content)
 }
 
 public func q(_ content: [Node]) -> Node {
@@ -774,7 +794,7 @@ public func q(_ content: [Node]) -> Node {
 }
 
 public func s(_ attribs: [Attribute<Element.S>], _ content: [Node]) -> Node {
-  return node("s", attribs, content)
+  return element("s", attribs, content)
 }
 
 public func s(_ content: [Node]) -> Node {
@@ -782,7 +802,7 @@ public func s(_ content: [Node]) -> Node {
 }
 
 public func samp(_ attribs: [Attribute<Element.Samp>], _ content: [Node]) -> Node {
-  return node("samp", attribs, content)
+  return element("samp", attribs, content)
 }
 
 public func samp(_ content: [Node]) -> Node {
@@ -790,11 +810,11 @@ public func samp(_ content: [Node]) -> Node {
 }
 
 public func script(_ attribs: [Attribute<Element.Script>], _ content: StaticString) -> Node {
-  return node("script", attribs, [.text(EncodedString(content))])
+  return element("script", attribs, [.raw(String(describing: content))])
 }
 
 public func script(_ attribs: [Attribute<Element.Script>]) -> Node {
-  return node("script", attribs, [])
+  return element("script", attribs, [""])
 }
 
 public func script(_ content: StaticString) -> Node {
@@ -814,7 +834,7 @@ public func script<T>(_ content: StaticString) -> ChildOf<T> {
 }
 
 public func section(_ attribs: [Attribute<Element.Section>], _ content: [Node]) -> Node {
-  return node("section", attribs, content)
+  return element("section", attribs, content)
 }
 
 public func section(_ content: [Node]) -> Node {
@@ -822,7 +842,7 @@ public func section(_ content: [Node]) -> Node {
 }
 
 public func select(_ attribs: [Attribute<Element.Select>], _ content: [ChildOf<Element.Select>]) -> Node {
-  return node("select", attribs, content.map(^\.node))
+  return element("select", attribs, content.map(^\.rawValue))
 }
 
 public func select(_ content: [ChildOf<Element.Select>]) -> Node {
@@ -830,7 +850,7 @@ public func select(_ content: [ChildOf<Element.Select>]) -> Node {
 }
 
 public func small(_ attribs: [Attribute<Element.Small>], _ content: [Node]) -> Node {
-  return node("small", attribs, content)
+  return element("small", attribs, content)
 }
 
 public func small(_ content: [Node]) -> Node {
@@ -842,16 +862,16 @@ public func source<T: ContainsAVSource>(
   _ attribs: [Attribute<Element.Source>] = [],
   _ transparent: [Node] = [])
   -> ChildOf<T> {
-    return .init(node("source", [Html.src(src)] + attribs, nil))
+    return .init(element("source", [Html.src(src)] + attribs, []))
 }
 
 public func source(srcset string: String, _ attribs: [Attribute<Element.Source>] = [])
   -> ChildOf<Element.Picture> {
-    return .init(node("source", [srcset(string)] + attribs, nil))
+    return .init(element("source", [srcset(string)] + attribs, []))
 }
 
 public func span(_ attribs: [Attribute<Element.Span>], _ content: [Node]) -> Node {
-  return node("span", attribs, content)
+  return element("span", attribs, content)
 }
 
 public func span(_ content: [Node]) -> Node {
@@ -859,7 +879,7 @@ public func span(_ content: [Node]) -> Node {
 }
 
 public func strong(_ attribs: [Attribute<Element.Strong>], _ content: [Node]) -> Node {
-  return node("strong", attribs, content)
+  return element("strong", attribs, content)
 }
 
 public func strong(_ content: [Node]) -> Node {
@@ -867,7 +887,7 @@ public func strong(_ content: [Node]) -> Node {
 }
 
 public func style(_ attribs: [Attribute<Element.Style>], _ content: String) -> ChildOf<Element.Head> {
-  return .init(node("style", attribs, [.text(EncodedString(content))]))
+  return .init(element("style", attribs, [.raw(content)]))
 }
 
 public func style(_ content: String) -> ChildOf<Element.Head> {
@@ -875,7 +895,7 @@ public func style(_ content: String) -> ChildOf<Element.Head> {
 }
 
 public func sub(_ attribs: [Attribute<Element.Sub>], _ content: [Node]) -> Node {
-  return node("sub", attribs, content)
+  return element("sub", attribs, content)
 }
 
 public func sub(_ content: [Node]) -> Node {
@@ -883,7 +903,7 @@ public func sub(_ content: [Node]) -> Node {
 }
 
 public func summary(_ attribs: [Attribute<Element.Summary>], _ content: [Node]) -> ChildOf<Element.Details> {
-  return .init(node("summary", attribs, content))
+  return .init(element("summary", attribs, content))
 }
 
 public func summary(_ content: [Node]) -> ChildOf<Element.Details> {
@@ -891,7 +911,7 @@ public func summary(_ content: [Node]) -> ChildOf<Element.Details> {
 }
 
 public func sup(_ attribs: [Attribute<Element.Sup>], _ content: [Node]) -> Node {
-  return node("sup", attribs, content)
+  return element("sup", attribs, content)
 }
 
 public func sup(_ content: [Node]) -> Node {
@@ -899,15 +919,15 @@ public func sup(_ content: [Node]) -> Node {
 }
 
 public func svg(_ attribs: [Attribute<Element.Svg>], _ content: StaticString) -> Node {
-  return node("svg", attribs, [.text(EncodedString(content))])
+  return element("svg", attribs, [.raw(String(describing: content))])
 }
 
 public func svg(_ content: StaticString) -> Node {
-  return node("svg", [.text(EncodedString(content))])
+  return svg([], content)
 }
 
 public func table(_ attribs: [Attribute<Element.Table>], _ content: [ChildOf<Element.Table>]) -> Node {
-  return node("table", attribs, content.map(^\.node))
+  return element("table", attribs, content.map(^\.rawValue))
 }
 
 public func table(_ content: [ChildOf<Element.Table>]) -> Node {
@@ -915,7 +935,7 @@ public func table(_ content: [ChildOf<Element.Table>]) -> Node {
 }
 
 public func tbody(_ attribs: [Attribute<Element.Tbody>], _ content: [Node]) -> ChildOf<Element.Table> {
-  return .init(node("tbody", attribs, content))
+  return .init(element("tbody", attribs, content))
 }
 
 public func tbody(_ content: [Node]) -> ChildOf<Element.Table> {
@@ -923,7 +943,7 @@ public func tbody(_ content: [Node]) -> ChildOf<Element.Table> {
 }
 
 public func td(_ attribs: [Attribute<Element.Td>], _ content: [Node]) -> ChildOf<Element.Tr> {
-  return .init(node("td", attribs, content))
+  return .init(element("td", attribs, content))
 }
 
 public func td(_ content: [Node]) -> ChildOf<Element.Tr> {
@@ -931,7 +951,7 @@ public func td(_ content: [Node]) -> ChildOf<Element.Tr> {
 }
 
 public func textarea(_ attribs: [Attribute<Element.Textarea>], _ content: String = "") -> Node {
-  return node("textarea", attribs, [text(content)])
+  return element("textarea", attribs, [.text(content)])
 }
 
 public func textarea(_ content: String = "") -> Node {
@@ -939,7 +959,7 @@ public func textarea(_ content: String = "") -> Node {
 }
 
 public func tfoot(_ attribs: [Attribute<Element.Tfoot>], _ content: [Node]) -> ChildOf<Element.Table> {
-  return .init(node("tfoot", attribs, content))
+  return .init(element("tfoot", attribs, content))
 }
 
 public func tfoot(_ content: [Node]) -> ChildOf<Element.Table> {
@@ -948,7 +968,7 @@ public func tfoot(_ content: [Node]) -> ChildOf<Element.Table> {
 
 // TODO: "th" can only be within "thead" or the first "tr" of a "table"
 public func th(_ attribs: [Attribute<Element.Th>], _ content: [Node]) -> ChildOf<Element.Tr> {
-  return .init(node("th", attribs, content))
+  return .init(element("th", attribs, content))
 }
 
 public func th(_ content: [Node]) -> ChildOf<Element.Tr> {
@@ -956,7 +976,7 @@ public func th(_ content: [Node]) -> ChildOf<Element.Tr> {
 }
 
 public func thead(_ attribs: [Attribute<Element.Thead>], _ content: [Node]) -> ChildOf<Element.Table> {
-  return .init(node("thead", attribs, content))
+  return .init(element("thead", attribs, content))
 }
 
 public func thead(_ content: [Node]) -> ChildOf<Element.Table> {
@@ -964,7 +984,7 @@ public func thead(_ content: [Node]) -> ChildOf<Element.Table> {
 }
 
 public func time(_ attribs: [Attribute<Element.Time>], _ content: [Node]) -> Node {
-  return node("time", attribs, content)
+  return element("time", attribs, content)
 }
 
 public func time(_ content: [Node]) -> Node {
@@ -972,11 +992,11 @@ public func time(_ content: [Node]) -> Node {
 }
 
 public func title(_ string: String) -> ChildOf<Element.Head> {
-  return .init(node("title", [text(string)]))
+  return .init(element("title", [.text(string)]))
 }
 
 public func tr<T: ContainsTr>(_ attribs: [Attribute<Element.Tr>], _ content: [ChildOf<Element.Tr>]) -> ChildOf<T> {
-  return .init(node("tr", attribs, content.map(^\.node)))
+  return .init(element("tr", attribs, content.map(^\.rawValue)))
 }
 
 public func tr<T: ContainsTr>(_ content: [ChildOf<Element.Tr>]) -> ChildOf<T> {
@@ -984,11 +1004,11 @@ public func tr<T: ContainsTr>(_ content: [ChildOf<Element.Tr>]) -> ChildOf<T> {
 }
 
 public func track<T: ContainsTrack>(src: String, _ attribs: [Attribute<Element.Track>] = []) -> ChildOf<T> {
-  return .init(node("track", [Html.src(src)] + attribs, nil))
+  return .init(element("track", [Html.src(src)] + attribs, []))
 }
 
 public func u(_ attribs: [Attribute<Element.U>], _ content: [Node]) -> Node {
-  return node("u", attribs, content)
+  return element("u", attribs, content)
 }
 
 public func u(_ content: [Node]) -> Node {
@@ -996,7 +1016,7 @@ public func u(_ content: [Node]) -> Node {
 }
 
 public func ul(_ attribs: [Attribute<Element.Ul>], _ content: [ChildOf<Element.Ul>]) -> Node {
-  return node("ul", attribs, content.map(^\.node))
+  return element("ul", attribs, content.map(^\.rawValue))
 }
 
 public func ul(_ content: [ChildOf<Element.Ul>]) -> Node {
@@ -1004,7 +1024,7 @@ public func ul(_ content: [ChildOf<Element.Ul>]) -> Node {
 }
 
 public func `var`(_ attribs: [Attribute<Element.Var>], _ content: [Node]) -> Node {
-  return node("var", attribs, content)
+  return element("var", attribs, content)
 }
 
 public func `var`(_ content: [Node]) -> Node {
@@ -1017,11 +1037,11 @@ public func video(
   _ transparent: [Node] = [])
   -> Node {
 
-    return node("video", attribs, content.map(^\.node) + transparent)
+    return element("video", attribs, content.map(^\.rawValue) + transparent)
 }
 
 public func video(_ content: [ChildOf<Element.Video>], _ transparent: [Node]) -> Node {
   return video([], content, transparent)
 }
 
-public let wbr: Node = node("wbr", nil)
+public let wbr: Node = element("wbr", [])

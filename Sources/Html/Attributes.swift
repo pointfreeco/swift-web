@@ -2,6 +2,13 @@ import Foundation
 import MediaType
 import Prelude
 
+public struct Attribute<Element> {
+  public let rawValue: (String, String)
+  public init(_ key: String, _ value: String) {
+    self.rawValue = (key, value)
+  }
+}
+
 public typealias Id = String
 
 public func abbr(_ value: String) -> Attribute<Element.Th> {
@@ -22,27 +29,28 @@ public func alt<T: HasAlt>(_ value: String) -> Attribute<T> {
 }
 
 public protocol HasAutofocus {}
-public func autofocus<T: HasAutofocus>(_ value: Bool) -> Attribute<T> {
-  return .init("autofocus", value)
+extension Attribute where Element: HasAutofocus {
+  public static var autofocus: Attribute {
+    return .init("autofocus", "")
+  }
 }
 
 public protocol HasAutoplay {}
-public func autoplay<T: HasAutoplay>(_ value: Bool) -> Attribute<T> {
-  return .init("autoplay", value)
-}
-
-extension Charset: Value {
-  public func renderedValue() -> EncodedString? {
-    return Html.encode(self.rawValue)
+extension Attribute where Element: HasAutoplay {
+  public static var autoplay: Attribute {
+    return .init("autoplay", "")
   }
 }
+
 public protocol HasCharset {}
 public func charset<T: HasCharset>(_ value: Charset) -> Attribute<T> {
-  return .init("charset", value)
+  return .init("charset", value.rawValue)
 }
 
-public func checked(_ value: Bool) -> Attribute<Element.Input> {
-  return .init("checked", value)
+extension Attribute {
+  public static var checked: Attribute<Html.Element.Input> {
+    return .init("checked", "")
+  }
 }
 
 public protocol HasCite {}
@@ -55,12 +63,12 @@ public func `class`<T>(_ value: String) -> Attribute<T> {
 }
 
 public func cols(_ value: Int) -> Attribute<Element.Textarea> {
-  return .init("cols", value)
+  return .init("cols", String(value))
 }
 
 public protocol HasColspan {}
 public func colspan<T: HasColspan>(_ value: Int) -> Attribute<T> {
-  return .init("colspan", value)
+  return .init("colspan", String(value))
 }
 
 public func content(_ value: String) -> Attribute<Element.Meta> {
@@ -72,17 +80,19 @@ public func contenteditable<T>(_ value: String) -> Attribute<T> {
 }
 
 public protocol HasControls {}
-public func controls<T: HasControls>(_ value: Bool) -> Attribute<T> {
-  return .init("controls", value)
+extension Attribute where Element: HasControls {
+  public var controls: Attribute {
+    return .init("controls", "")
+  }
 }
 
-public enum Crossorigin: String, Value {
+public enum Crossorigin: String {
   case anonymous
   case useCredentials = "use-credentials"
 }
 public protocol HasCrossorigin {}
 public func crossorigin<T: HasCrossorigin>(_ value: Crossorigin) -> Attribute<T> {
-  return .init("crossorigin", value)
+  return .init("crossorigin", value.rawValue)
 }
 
 public func data<T>(_ name: StaticString, _ value: String) -> Attribute<T> {
@@ -95,35 +105,28 @@ private let iso8601DateFormatter: DateFormatter = {
   formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
   return formatter
 }()
-extension Date: Value {
-  public func renderedValue() -> EncodedString? {
-    return Html.encode(iso8601DateFormatter.string(from: self))
-  }
-}
 public protocol HasDatetime {}
 public func datetime<T: HasDatetime>(_ value: Date) -> Attribute<T> {
-  return .init("datetime", value)
+  return .init("datetime", iso8601DateFormatter.string(from: value))
 }
 
-public func `default`(_ value: Bool) -> Attribute<Element.Track> {
-  return .init("default", value)
-}
+public let `default` = Attribute<Element.Track>("default", "")
 
-public enum Direction: String, Value {
+public enum Direction: String {
   case ltr
   case rtl
   case auto
 }
 public func dir<T>(_ value: Direction) -> Attribute<T> {
-  return .init("dir", value)
+  return .init("dir", value.rawValue)
 }
 
 public protocol HasDisabled {}
 public func disabled<T: HasDisabled>(_ value: Bool) -> Attribute<T> {
-  return .init("disabled", value)
+  return .init("disabled", "")
 }
 
-public enum Draggable: String, Value {
+public enum Draggable: String {
   case `true`
   case `false`
   case auto
@@ -138,16 +141,16 @@ extension Draggable: ExpressibleByBooleanLiteral {
   }
 }
 public func draggable<T>(_ value: Draggable) -> Attribute<T> {
-  return .init("draggable", value)
+  return .init("draggable", value.rawValue)
 }
 
-public enum Dropzone: String, Value {
+public enum Dropzone: String {
   case copy
   case move
   case link
 }
 public func dropzone<T>(_ value: Dropzone) -> Attribute<T> {
-  return .init("dropzone", value)
+  return .init("dropzone", value.rawValue)
 }
 
 public protocol HasFor {}
@@ -167,15 +170,17 @@ public func headers<T: HasHeaders>(_ value: Id) -> Attribute<T> {
 
 public protocol HasHeight {}
 public func height<T: HasHeight>(_ value: Int) -> Attribute<T> {
-  return .init("height", value)
+  return .init("height", String(value))
 }
 
-public func hidden<T>(_ value: Bool) -> Attribute<T> {
-  return .init("hidden", value)
+extension Attribute {
+  public static var hidden: Attribute {
+    return .init("hidden", "")
+  }
 }
 
 public func hr(_ attribs: [Attribute<Element.Hr>]) -> Node {
-  return node("hr", attribs, nil)
+  return element("hr", attribs, [])
 }
 
 public protocol HasHref {}
@@ -187,20 +192,20 @@ public func mailto<T: HasHref>(_ address: String) -> Attribute<T> {
   return href("mailto:" + address)
 }
 
-public enum HttpEquiv: String, Value {
+public enum HttpEquiv: String {
   case contentType = "content-type"
   case defaultStyle = "default-style"
   case refresh = "refresh"
 }
 public func httpEquiv(_ value: HttpEquiv) -> Attribute<Element.Meta> {
-  return .init("http-equiv", value)
+  return .init("http-equiv", value.rawValue)
 }
 
 public func id<T>(_ value: Id) -> Attribute<T> {
   return .init("id", value)
 }
 
-public enum Kind: String, Value {
+public enum Kind: String {
   case captions
   case chapters
   case descriptions
@@ -208,14 +213,14 @@ public enum Kind: String, Value {
   case subtitles
 }
 public func kind(_ value: Kind) -> Attribute<Element.Track> {
-  return .init("kind", value)
+  return .init("kind", value.rawValue)
 }
 
 public func label(_ value: String) -> Attribute<Element.Track> {
   return .init("label", value)
 }
 
-public enum Language: String, Value {
+public enum Language: String {
   case aa
   case ab
   case ae
@@ -405,26 +410,28 @@ public enum Language: String, Value {
   case zhHant = "zh-Hant"
 }
 public func lang<T>(_ value: Language) -> Attribute<T> {
-  return .init("lang", value)
+  return .init("lang", value.rawValue)
 }
 
 public protocol HasLoop {}
-public func loop<T: HasLoop>(_ value: Bool) -> Attribute<T> {
-  return .init("loop", value)
+extension Attribute where Element: HasLoop {
+  public var loop: Attribute {
+    return .init("loop", "")
+  }
 }
 
 public protocol HasMax {}
 public func max<T: HasMax>(_ value: Double) -> Attribute<T> {
-  return .init("max", value)
+  return .init("max", String(value))
 }
 
 public func max<T: HasMax>(_ value: Int) -> Attribute<T> {
-  return .init("max", value)
+  return .init("max", String(value))
 }
 
 public protocol HasMaxlength {}
 public func maxlength<T>(_ value: Int) -> Attribute<T> {
-  return .init("maxlength", value)
+  return .init("maxlength", String(value))
 }
 
 // TODO: Add direct media query support to HtmlCssSupport
@@ -432,36 +439,40 @@ public func media(_ value: String) -> Attribute<Element.Source> {
   return .init("media", value)
 }
 
-public enum Method: String, Value {
+public enum Method: String {
   case get = "GET"
   case post = "POST"
 }
 public func method(_ value: Method) -> Attribute<Element.Form> {
-  return .init("method", value)
+  return .init("method", value.rawValue)
 }
 
 public protocol HasMin {}
 public func min<T: HasMin>(_ value: Double) -> Attribute<T> {
-  return .init("min", value)
+  return .init("min", String(value))
 }
 
 public func min<T: HasMin>(_ value: Int) -> Attribute<T> {
-  return .init("min", value)
+  return .init("min", String(value))
 }
 
 public protocol HasMinlength {}
 public func minlength<T: HasMinlength>(_ value: Int) -> Attribute<T> {
-  return .init("minlength", value)
+  return .init("minlength", String(value))
 }
 
 public protocol HasMultiple {}
-public func multiple<T: HasMultiple>(_ value: Bool) -> Attribute<T> {
-  return .init("multiple", value)
+extension Attribute where Element: HasMultiple {
+  public static var multiple: Attribute {
+    return .init("multiple", "")
+  }
 }
 
 public protocol HasMuted {}
-public func muted<T: HasMuted>(_ value: Bool) -> Attribute<T> {
-  return .init("muted", value)
+extension Attribute where Element: HasMuted {
+  public static var muted: Attribute {
+    return .init("muted", "")
+  }
 }
 
 public protocol HasName {}
@@ -469,7 +480,7 @@ public func name<T: HasName>(_ value: String) -> Attribute<T> {
   return .init("name", value)
 }
 
-public enum MetaName: String, Value {
+public enum MetaName: String {
   case applicationName = "application-name"
   case author
   case description
@@ -479,11 +490,13 @@ public enum MetaName: String, Value {
   case viewport
 }
 public func name(_ value: MetaName) -> Attribute<Element.Meta> {
-  return .init("name", value)
+  return .init("name", value.rawValue)
 }
 
-public func novalidate(_ value: Bool) -> Attribute<Element.Form> {
-  return .init("novalidate", value)
+extension Attribute {
+  public static var novalidate: Attribute<Html.Element.Form> {
+    return .init("novalidate", "")
+  }
 }
 
 public protocol HasOnchange {}
@@ -519,9 +532,10 @@ public func onsubmit<T: HasOnsubmit>(unsafeJavascript: String) -> Attribute<T> {
   return .init("onsubmit", "\(unsafeJavascript)")
 }
 
-
-public func open(_ value: Bool) -> Attribute<Element.Details> {
-  return .init("open", value)
+extension Attribute {
+  public static var open: Attribute<Html.Element.Details> {
+    return .init("open", "")
+  }
 }
 
 public func pattern(_ value: String) -> Attribute<Element.Input> {
@@ -534,30 +548,34 @@ public func placeholder<T: HasPlaceholder>(_ value: String) -> Attribute<T> {
 }
 
 public protocol HasPlaysinline {}
-public func playsinline<T: HasPlaysinline>(_ value: Bool) -> Attribute<T> {
-  return .init("playsinline", value)
+extension Attribute where Element: HasPlaysinline {
+  public var playsinline: Attribute {
+    return .init("playsinline", "")
+  }
 }
 
 public func poster(_ value: String) -> Attribute<Element.Video> {
   return .init("poster", value)
 }
 
-public enum Preload: String, Value {
+public enum Preload: String {
   case auto
   case metadata
   case none
 }
 public protocol HasPreload {}
 public func preload<T: HasPreload>(_ value: Preload) -> Attribute<T> {
-  return .init("preload", value)
+  return .init("preload", value.rawValue)
 }
 
 public protocol HasReadonly {}
-public func readonly<T: HasReadonly>(_ value: Bool) -> Attribute<T> {
-  return .init("readonly", value)
+extension Attribute where Element: HasReadonly {
+  public var readonly: Attribute {
+    return .init("readonly", "")
+  }
 }
 
-public struct Rel: Value {
+public struct Rel {
   let value: String
 
   public static let alternate = value("alternate")
@@ -576,28 +594,26 @@ public struct Rel: Value {
   public static func value(_ value: String) -> Rel {
     return .init(value: value)
   }
-
-  public func renderedValue() -> EncodedString? {
-    return Html.encode(self.value)
-  }
 }
 public protocol HasRel {}
 public func rel<T: HasRel>(_ value: Rel) -> Attribute<T> {
-  return .init("rel", value)
+  return .init("rel", value.value)
 }
 
 public protocol HasRequired {}
-public func required<T: HasRequired>(_ value: Bool) -> Attribute<T> {
-  return .init("required", value)
+extension Attribute where Element: HasRequired {
+  public var required: Attribute {
+    return .init("required", "")
+  }
 }
 
 public func rows(_ value: Int) -> Attribute<Element.Textarea> {
-  return .init("rows", value)
+  return .init("rows", String(value))
 }
 
 public protocol HasRowspan {}
 public func rowspan<T: HasRowspan>(_ value: Int) -> Attribute<T> {
-  return .init("rowspan", value)
+  return .init("rowspan", String(value))
 }
 
 public enum Sandbox: String {
@@ -612,18 +628,20 @@ public func sandbox(_ value: [Sandbox]) -> Attribute<Element.Iframe> {
   return .init("sandbox", value.map(^\.rawValue).joined(separator: " "))
 }
 
-public enum Scope: String, Value {
+public enum Scope: String {
   case col
   case colgroup
   case row
   case rowgroup
 }
-public func scope(_ value: Bool) -> Attribute<Element.Th> {
-  return .init("scope", value)
+public func scope(_ value: Scope) -> Attribute<Element.Th> {
+  return .init("scope", value.rawValue)
 }
 
-public func selected(_ value: Bool) -> Attribute<Element.Option> {
-  return .init("selected", value)
+extension Attribute {
+  public static var selected: Attribute<Html.Element.Option> {
+    return .init("selected", "")
+  }
 }
 
 public func sizes<T>(_ value: String) -> Attribute<T> {
@@ -649,10 +667,10 @@ public func srcdoc(_ value: Node) -> Attribute<Element.Iframe> {
 }
 
 public func srclang(_ value: Language) -> Attribute<Element.Track> {
-  return .init("srclang", value)
+  return .init("srclang", value.rawValue)
 }
 
-public enum Size: CustomStringConvertible, Value {
+public enum Size: CustomStringConvertible {
   case w(Int)
   case x(Int)
 
@@ -663,10 +681,6 @@ public enum Size: CustomStringConvertible, Value {
     case let .x(n):
       return "\(n)x"
     }
-  }
-
-  public func renderedValue() -> EncodedString? {
-    return Html.encode(self.description)
   }
 }
 public protocol HasSrcset {}
@@ -679,7 +693,7 @@ public func srcset(_ value: String) -> Attribute<Element.Source> {
 }
 
 public func step(_ value: Int) -> Attribute<Element.Input> {
-  return .init("step", value)
+  return .init("step", String(value))
 }
 
 public func style<T>(_ value: String) -> Attribute<T> {
@@ -687,10 +701,10 @@ public func style<T>(_ value: String) -> Attribute<T> {
 }
 
 public func tabindex<T>(_ value: Int) -> Attribute<T> {
-  return .init("tabindex", value)
+  return .init("tabindex", String(value))
 }
 
-public struct Target: Value {
+public struct Target {
   let frame: String
 
   public static let blank = named("_blank")
@@ -701,21 +715,17 @@ public struct Target: Value {
   public static func named(_ frame: String) -> Target {
     return .init(frame: frame)
   }
-
-  public func renderedValue() -> EncodedString? {
-    return Html.encode(self.frame)
-  }
 }
 public protocol HasTarget {}
 public func target<T: HasTarget>(_ value: Target) -> Attribute<T> {
-  return .init("target", value)
+  return .init("target", value.frame)
 }
 
 public func title<T>(_ value: String) -> Attribute<T> {
   return .init("title", value)
 }
 
-public enum Translate: String, Value {
+public enum Translate: String {
   case yes
   case no
 }
@@ -729,29 +739,24 @@ extension Translate: ExpressibleByBooleanLiteral {
   }
 }
 public func translate<T>(_ value: Translate) -> Attribute<T> {
-  return .init("translate", value)
+  return .init("translate", value.rawValue)
 }
 
-extension MediaType: Value {
-  public func renderedValue() -> EncodedString? {
-    return Html.encode(self.description)
-  }
-}
 public protocol HasMediaType {}
 public func type<T: HasMediaType>(_ value: MediaType) -> Attribute<T> {
-  return .init("type", value)
+  return .init("type", value.description)
 }
 
-public enum ButtonType: String, Value {
+public enum ButtonType: String {
   case button
   case reset
   case submit
 }
 public func type(_ value: ButtonType) -> Attribute<Element.Button> {
-  return .init("type", value)
+  return .init("type", value.rawValue)
 }
 
-public enum InputType: String, Value {
+public enum InputType: String {
   case button
   case checkbox
   case color
@@ -776,17 +781,17 @@ public enum InputType: String, Value {
   case week
 }
 public func type(_ value: InputType) -> Attribute<Element.Input> {
-  return .init("type", value)
+  return .init("type", value.rawValue)
 }
 
 public protocol HasDoubleValue {}
 public func value<T: HasDoubleValue>(_ value: Double) -> Attribute<T> {
-  return .init("value", value)
+  return .init("value", String(value))
 }
 
 public protocol HasIntValue {}
 public func value<T: HasIntValue>(_ value: Int) -> Attribute<T> {
-  return .init("value", value)
+  return .init("value", String(value))
 }
 
 public protocol HasStringValue {}
@@ -796,7 +801,7 @@ public func value<T: HasStringValue>(_ value: String) -> Attribute<T> {
 
 public protocol HasWidth {}
 public func width<T: HasWidth>(_ value: Int) -> Attribute<T> {
-  return .init("width", value)
+  return .init("width", String(value))
 }
 
 public protocol HasXmlns {}
@@ -804,10 +809,10 @@ public func xmlns<T: HasXmlns>(_ value: String) -> Attribute<T> {
   return .init("xmlns", value)
 }
 
-public enum Wrap: String, Value {
+public enum Wrap: String {
   case hard
   case soft
 }
 public func wrap(_ value: Wrap) -> Attribute<Element.Textarea> {
-  return .init("wrap", value)
+  return .init("wrap", value.rawValue)
 }
