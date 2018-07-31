@@ -117,7 +117,7 @@ public func redirectUnrelatedHosts<A>(
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, A, Data>)
   -> Middleware<StatusLineOpen, ResponseEnded, A, Data> {
 
-    return redirectUnrelatedHosts(isAllowedHost: allowedHosts.contains, canonicalHost: canonicalHost)
+    return redirectUnrelatedHosts(isAllowedHost: { allowedHosts.contains($0) }, canonicalHost: canonicalHost)
 }
 
 public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
