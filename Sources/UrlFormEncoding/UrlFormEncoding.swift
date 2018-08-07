@@ -74,5 +74,6 @@ private func urlFormEncode(value: Any, keyConstructor: (String) -> String) -> St
 }
 
 extension CharacterSet {
-  public static let urlQueryParamAllowed = CharacterSet(charactersIn: "?=&# ").inverted
+  public static let urlQueryParamAllowed = CharacterSet.urlQueryAllowed
+    .subtracting(.init(charactersIn: ":#[]@!$&'()*+,;="))
 }
