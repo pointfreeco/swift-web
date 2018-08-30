@@ -19,6 +19,7 @@ let package = Package(
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
     .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
+    .library(name: "View", targets: ["View"])
     ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("5d5005d")),
@@ -61,11 +62,13 @@ let package = Package(
                 dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
-    .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
+    .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting", "View"]),
 
     .target(name: "HttpPipelineTestSupport", dependencies: ["HttpPipeline", "Html", "SnapshotTesting"]),
 
     .target(name: "UrlFormEncoding", dependencies: ["Prelude", "Optics"]),
     .testTarget(name: "UrlFormEncodingTests", dependencies: ["UrlFormEncoding", "SnapshotTesting"]),
+
+    .target(name: "View", dependencies: ["Html", "Prelude"]),
     ]
 )

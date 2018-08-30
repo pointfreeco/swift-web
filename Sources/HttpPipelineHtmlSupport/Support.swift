@@ -2,10 +2,10 @@ import Foundation
 import Html
 import HttpPipeline
 import Prelude
+import View
 
-// todo: move to pointfreeco
-//public func respond<A>(_ view: View<A>) -> Middleware<HeadersOpen, ResponseEnded, A, Data> {
-//  return { conn in
-//    conn |> respond(body: view.rendered(with: conn.data), contentType: .html)
-//  }
-//}
+public func respond<A>(_ view: View<A>) -> Middleware<HeadersOpen, ResponseEnded, A, Data> {
+  return { conn in
+    conn |> respond(body: view.rendered(with: conn.data), contentType: .html)
+  }
+}
