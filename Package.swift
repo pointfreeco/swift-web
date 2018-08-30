@@ -61,8 +61,8 @@ let package = Package(
     .testTarget(name: "HttpPipelineTests",
                 dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
-    .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
-    .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting", "View"]),
+    .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline", "View"]),
+    .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
 
     .target(name: "HttpPipelineTestSupport", dependencies: ["HttpPipeline", "Html", "SnapshotTesting"]),
 
