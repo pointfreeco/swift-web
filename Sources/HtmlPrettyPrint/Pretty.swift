@@ -19,64 +19,64 @@ public func prettyPrint(nodes: [Node], pageWidth: Int = 110) -> String {
 
 private func prettyPrint(node: Node) -> Doc {
   switch node {
-  case let .element(element):
-    return prettyPrint(element: element)
+  case let .element(tag, attrs, children):
+    return prettyPrint(tag: tag, attrs: attrs, children: children)
   case let .text(text):
-//    return .text(text.string)
-     return prettyPrint(text: text)
+    return prettyPrint(text: escape(html: text))
+  case let .raw(text):
+    return prettyPrint(text: text)
   case let .comment(comment):
-    return prettyPrint(comment: comment.string)
-  case let .document(nodes):
-    return prettyPrint(document: nodes)
+    return prettyPrint(comment: comment)
+  case let .doctype(doctype):
+    return prettyPrint(doctype: doctype)
   }
 }
 
-private func prettyPrint(element: Element) -> Doc {
+private func prettyPrint(tag: String, attrs: [(String, String?)], children: [Node]) -> Doc {
 
-  return prettyPrintOpenTag(element: element)
-    <> prettyPrintChildren(nodes: element.content)
-    <> prettyPrintCloseTag(element: element)
+  return prettyPrintOpenTag(tag, attrs: attrs, children: children)
+    <> prettyPrintChildren(nodes: children)
+    <> prettyPrintCloseTag(tag)
 }
 
 
-private func prettyPrintChildren(nodes: [Node]?) -> Doc {
-  guard let nodes = nodes else { return .empty }
-
+private func prettyPrintChildren(nodes: [Node]) -> Doc {
   return nodes.map(prettyPrint(node:))
     .vcat()
     .indent(2)
 }
 
-private func prettyPrintOpenTag(element: Element) -> Doc {
+private func prettyPrintOpenTag(_ tag: String, attrs: [(String, String?)], children: [Node]) -> Doc {
 
   return .text("<")
-    <> .text(element.name)
-    <> prettyPrint(attributes: element.attribs)
-    <> .text(">") <> (element.content == nil ? .empty : .hardline)
+    <> .text(tag)
+    <> prettyPrint(attrs: attrs)
+    <> .text(">") <> (children.isEmpty ? .empty : .hardline)
 }
 
-private func prettyPrintCloseTag(element: Element) -> Doc {
-  return element.content == nil
+private func prettyPrintCloseTag(_ tag: String) -> Doc {
+  return voidElements.contains(tag)
     ? .empty
-    : .hardline <> .text("</") <> .text(element.name) <> .text(">")
+    : .hardline <> .text("</") <> .text(tag) <> .text(">")
 }
 
-private func prettyPrint(attributes attribs: [AnyAttribute]) -> Doc {
+private func prettyPrint(attrs: [(String, String?)]) -> Doc {
 
-  return .text(attribs.count == 0 ? "" : " ")
-    <> attribs
-      .map(prettyPrint(attribute:))
+  return .text(attrs.count == 0 ? "" : " ")
+    <> attrs
+      .map(prettyPrint(attr:))
       .sep()
       .hang(0)
 }
 
-private func prettyPrint(attribute: AnyAttribute) -> Doc {
+private func prettyPrint(attr: (String, String?)) -> Doc {
+  let (key, value) = attr
 
   // class attributes get special rendering logic so to make them line up
   // when they flow past the page width.
-  if attribute.key == "class" {
-    return .text("\(attribute.key)=\"")
-      <> (attribute.value.renderedValue()?.string ?? "")
+  if key == "class" {
+    return .text("\(key)=\"")
+      <> (value ?? "")
         .split(separator: " ")
         .map(String.init)
         .map(Doc.text)
@@ -85,9 +85,9 @@ private func prettyPrint(attribute: AnyAttribute) -> Doc {
       <> .text("\"")
   }
 
-  if attribute.key == "content" {
-    return .text("\(attribute.key)=\"")
-      <> (attribute.value.renderedValue()?.string ?? "")
+  if key == "content" {
+    return .text("\(key)=\"")
+      <> (value ?? "")
         .split(separator: " ")
         .map(String.init)
         .map(Doc.text)
@@ -98,9 +98,9 @@ private func prettyPrint(attribute: AnyAttribute) -> Doc {
 
   // style attributes also get special rendering, but aligning after the semicolon
   // that separates multiple styles
-  if attribute.key == "style" {
-    return .text("\(attribute.key)=\"")
-      <> (attribute.value.renderedValue()?.string ?? "")
+  if key == "style" {
+    return .text("\(key)=\"")
+      <> (value ?? "")
         .split(separator: ";")
         .map { Doc.text(String($0) + ";") }
         .sep()
@@ -108,11 +108,18 @@ private func prettyPrint(attribute: AnyAttribute) -> Doc {
       <> .text("\"")
   }
 
-  return (attribute.value.render(with: attribute.key)?.string).map(Doc.text) ?? .zero
+  return value
+    .map { value in
+      value.isEmpty
+        ? escape(html: key)
+        : escape(html: key) + "=\"" + escape(html: value) + "\""
+    }
+    .map(Doc.text)
+    ?? .zero
 }
 
-private func prettyPrint(text: EncodedString) -> Doc {
-  return text.string
+private func prettyPrint(text: String) -> Doc {
+  return text
     .split(separator: " ")
     .map(String.init)
     .map(Doc.text)
@@ -121,7 +128,7 @@ private func prettyPrint(text: EncodedString) -> Doc {
 
 private func prettyPrint(comment: String) -> Doc {
   return .text("<!--")
-    <%> comment
+    <%> escape(html: comment)
       .split(separator: " ")
       .map(String.init)
       .map(Doc.text)
@@ -135,3 +142,24 @@ private func prettyPrint(document nodes: [Node]) -> Doc {
     <> .hardline
     <> nodes.map(prettyPrint(node:)).vcat()
 }
+
+private func prettyPrint(doctype: String) -> Doc {
+  return .text("<!DOCTYPE " +  escape(html: doctype) + ">")
+}
+
+private let voidElements: Set<String> = [
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+]

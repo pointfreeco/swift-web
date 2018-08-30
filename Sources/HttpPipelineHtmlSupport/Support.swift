@@ -3,8 +3,9 @@ import Html
 import HttpPipeline
 import Prelude
 
-public func respond<A>(_ view: View<A>) -> Middleware<HeadersOpen, ResponseEnded, A, Data> {
-  return { conn in
-    conn |> respond(body: view.rendered(with: conn.data), contentType: .html)
-  }
-}
+// todo: move to pointfreeco
+//public func respond<A>(_ view: View<A>) -> Middleware<HeadersOpen, ResponseEnded, A, Data> {
+//  return { conn in
+//    conn |> respond(body: view.rendered(with: conn.data), contentType: .html)
+//  }
+//}

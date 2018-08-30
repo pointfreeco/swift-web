@@ -56,12 +56,21 @@
         }
       },
       {
+        "package": "Html",
+        "repositoryURL": "https://github.com/mbrandonw/swift-html",
+        "state": {
+          "branch": "master",
+          "revision": "a87fb86cc9f3dbd3fa783f279663f014388a27ff",
+          "version": null
+        }
+      },
+      {
         "package": "swift-nio",
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "695afc5205aaa49fca092b94b479ff71c43d9d3c",
-          "version": "1.8.0"
+          "revision": "f42c836ba58e3e38688acdb75df986dff02717f1",
+          "version": "1.9.4"
         }
       },
       {

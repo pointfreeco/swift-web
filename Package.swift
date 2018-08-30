@@ -11,7 +11,7 @@ let package = Package(
     .library(name: "Css", targets: ["Css"]),
     .library(name: "CssReset", targets: ["CssReset"]),
     .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
-    .library(name: "Html", targets: ["Html"]),
+    //.library(name: "Html", targets: ["Html"]),
     .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
     .library(name: "HtmlTestSupport", targets: ["HtmlTestSupport"]),
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
@@ -27,7 +27,9 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("69b48c8")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
     .package(url: "https://github.com/bkase/DoctorPretty.git", from: "0.5.0"),
-    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4"))
+    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4")),
+
+    .package(url: "https://github.com/mbrandonw/swift-html", .branch("master"))
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude", "UrlFormEncoding"]),
@@ -46,8 +48,8 @@ let package = Package(
 
     .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotTesting"]),
 
-    .target(name: "Html", dependencies: ["MediaType", "NonEmpty", "Prelude"]),
-    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
+//    .target(name: "Html", dependencies: ["MediaType", "NonEmpty", "Prelude"]),
+//    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
