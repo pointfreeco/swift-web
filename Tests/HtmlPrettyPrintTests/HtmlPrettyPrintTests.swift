@@ -9,6 +9,7 @@ import XCTest
 class PrettyTests: XCTestCase {
   override func setUp() {
     super.setUp()
+//    record = true
   }
 
   func testPretty() {
@@ -19,7 +20,7 @@ class PrettyTests: XCTestCase {
         [
           body(
             [
-              .comment("This is gonna be a long comment. Let's see what happens! --> <script>"),
+              .comment("This is gonna be a long comment. Let's see what happens!"),
               div(
                 [
                   div(
