@@ -6,6 +6,6 @@ import View
 
 public func respond<A>(_ view: View<A>) -> Middleware<HeadersOpen, ResponseEnded, A, Data> {
   return { conn in
-    conn |> respond(body: view.rendered(with: conn.data), contentType: .html)
+    conn |> respond(body: render(view.view(conn.data)), contentType: .html)
   }
 }
