@@ -22,7 +22,7 @@ let router: Router<Routes> = [
 
   // /home
   Routes.iso.home
-    <¢> get %> lit("home") %> end,
+    <¢> get %> "home" %> end,
 
   // /
   Routes.iso.root
@@ -30,33 +30,33 @@ let router: Router<Routes> = [
 
   // /home/episodes/:string_or_int/comments/:int
   Routes.iso.pathComponents
-    <¢> get %> lit("home") %> lit("episodes") %> pathParam(.intOrString) <%> lit("comments") %> .int <% end,
+    <¢> get %> "home" %> "episodes" %> pathParam(.intOrString) <%> "comments" %> .int <% end,
 
   // POST /signup
   Routes.iso.postBodyField
-    <¢> post %> formField("email") <% lit("signup") <% end,
+    <¢> post %> formField("email") <% "signup" <% end,
 
   // POST /subscribe
   Routes.iso.postBodyFormData
-    <¢> post %> lit("subscribe") %> formBody(SubscribeData.self) <% end,
+    <¢> post %> "subscribe" %> formBody(SubscribeData.self) <% end,
 
   // POST /episodes/:id
   Routes.iso.postBodyJsonDecodable
-    <¢> post %> jsonBody(Episode.self) <%> lit("episodes") %> .int <% end,
+    <¢> post %> jsonBody(Episode.self) <%> "episodes" %> .int <% end,
 
   // /path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int
   Routes.iso.simpleQueryParams
-    <¢> get %> lit("path") %> lit("to") %> lit("somewhere") %> lit("cool")
+    <¢> get %> "path" %> "to" %> "somewhere" %> "cool"
     %> queryParam("ref", opt(.string)) <%> queryParam("active", .bool) <%> queryParam("t", .int)
     <% end,
 
   // GET /subscribe?plan=:int
   Routes.iso.codableQueryParams
-    <¢> get %> lit("subscribe") %> queryParams(SubscribeData.self)
+    <¢> get %> "subscribe" %> queryParams(SubscribeData.self)
     <% end,
 
   Routes.iso.redirect
-    <¢> get %> lit("somewhere") %> queryParam("redirect", .string) <% end
+    <¢> get %> "somewhere" %> queryParam("redirect", .string) <% end
   ]
   .reduce(.empty, <|>)
 
