@@ -54,6 +54,30 @@ public struct Router<A> {
   }
 }
 
+extension Router: ExpressibleByUnicodeScalarLiteral where A == Prelude.Unit {
+  public typealias UnicodeScalarLiteralType = String.UnicodeScalarLiteralType
+
+  public init(unicodeScalarLiteral value: UnicodeScalarLiteralType) {
+    self = lit(String(value))
+  }
+}
+
+extension Router: ExpressibleByExtendedGraphemeClusterLiteral where A == Prelude.Unit {
+  public typealias ExtendedGraphemeClusterLiteralType = String.ExtendedGraphemeClusterLiteralType
+
+  public init(extendedGraphemeClusterLiteral value: ExtendedGraphemeClusterLiteralType) {
+    self = lit(String(value))
+  }
+}
+
+extension Router: ExpressibleByStringLiteral where A == Prelude.Unit {
+  public typealias StringLiteralType = String
+
+  public init(stringLiteral value: String) {
+    self = lit(value)
+  }
+}
+
 // Functor
 
 extension Router {
