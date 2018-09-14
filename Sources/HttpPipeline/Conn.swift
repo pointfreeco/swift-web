@@ -17,7 +17,7 @@ public func connection(
   defaultHeaders headers: [Response.Header] = [
 //  .init("Content-Security-Policy", "script-src 'unsafe-inline'; style-src 'unsafe-inline'"),
   .init("Referrer-Policy", "strict-origin-when-cross-origin"),
-  .init("Strict-Transport-Security", "max-age=63072000"),
+  .init("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
   .init("X-Content-Type-Options", "nosniff"),
   .init("X-Download-Options", "noopen"),
   .init("X-Frame-Options", "SAMEORIGIN"),
