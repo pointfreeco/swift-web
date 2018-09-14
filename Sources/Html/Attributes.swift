@@ -189,6 +189,7 @@ public func mailto<T: HasHref>(_ address: String) -> Attribute<T> {
 
 public enum HttpEquiv: String, Value {
   case contentType = "content-type"
+  case contentSecurityPolicy = "content-security-policy"
   case defaultStyle = "default-style"
   case refresh = "refresh"
 }
