@@ -8,6 +8,7 @@ extension Node: Snapshot {
   }
 
   public var snapshotFormat: String {
-    return prettyPrint(node: self)
+    fatalError("todo")
+//    return prettyPrint(node: self)
   }
 }
