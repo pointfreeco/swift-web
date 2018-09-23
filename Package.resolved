@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/trill-lang/FileCheck.git",
         "state": {
           "branch": null,
-          "revision": "e5871587ddf85c0bcf84f773925655f2f83ef336",
-          "version": "0.0.7"
+          "revision": "89b8480055f9adf8ce2f9ad5e2fac7ac1076242e",
+          "version": "0.0.8"
         }
       },
       {
@@ -51,16 +51,16 @@
         "repositoryURL": "https://github.com/typelift/Operadics.git",
         "state": {
           "branch": null,
-          "revision": "c2a14919b3653a39a9bf268c1ae0bf71ad6833fe",
-          "version": "0.3.0"
+          "revision": "ef9c00e70ac4e5fba046f4eae3bd4e4e8f058648",
+          "version": "0.4.0"
         }
       },
       {
         "package": "Html",
-        "repositoryURL": "https://github.com/mbrandonw/swift-html",
+        "repositoryURL": "https://github.com/pointfreeco/swift-html",
         "state": {
-          "branch": "master",
-          "revision": "68fdb594fdfedf8a621b782731d51352c3ef1b45",
+          "branch": "public-escaping",
+          "revision": "af74154cb8583b4559e3f74875032ab5bc3a8875",
           "version": null
         }
       },
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "f42c836ba58e3e38688acdb75df986dff02717f1",
-          "version": "1.9.4"
+          "revision": "5d8148c8b45dfb449276557f22120694567dd1d2",
+          "version": "1.9.5"
         }
       },
       {

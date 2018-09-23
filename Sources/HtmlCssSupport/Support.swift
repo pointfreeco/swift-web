@@ -19,7 +19,7 @@ public func style(
   config: Css.Config = .compact
   )
   -> ChildOf<Tag.Head> {
-    return style(render(config: config, css: css))
+    return style(unsafe: render(config: config, css: css))
 }
 
 public func style(_ css: Stylesheet, config: Css.Config = .compact) -> ChildOf<Tag.Head> {

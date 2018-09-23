@@ -22,7 +22,7 @@ private func prettyPrint(node: Node) -> Doc {
   case let .element(tag, attrs, children):
     return prettyPrint(tag: tag, attrs: attrs, children: children)
   case let .text(text):
-    return prettyPrint(text: escape(html: text))
+    return prettyPrint(text: escapeTextNode(text: text))
   case let .raw(text):
     return prettyPrint(text: text)
   case let .comment(comment):
@@ -111,8 +111,8 @@ private func prettyPrint(attr: (String, String?)) -> Doc {
   return value
     .map { value in
       value.isEmpty
-        ? escape(html: key)
-        : escape(html: key) + "=\"" + escape(html: value) + "\""
+        ? key
+        : key + "=\"" + escapeAttributeValue(value) + "\""
     }
     .map(Doc.text)
     ?? .zero
@@ -128,7 +128,7 @@ private func prettyPrint(text: String) -> Doc {
 
 private func prettyPrint(comment: String) -> Doc {
   return .text("<!--")
-    <%> escape(html: comment)
+    <%> comment
       .split(separator: " ")
       .map(String.init)
       .map(Doc.text)
@@ -144,7 +144,7 @@ private func prettyPrint(document nodes: [Node]) -> Doc {
 }
 
 private func prettyPrint(doctype: String) -> Doc {
-  return .text("<!DOCTYPE " +  escape(html: doctype) + ">")
+  return .text("<!DOCTYPE " +  doctype + ">")
 }
 
 private let voidElements: Set<String> = [
