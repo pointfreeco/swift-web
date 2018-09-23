@@ -13,6 +13,7 @@ let package = Package(
     .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
     .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
     .library(name: "HtmlTestSupport", targets: ["HtmlTestSupport"]),
+    .library(name: "HtmlPlainTextPrint", targets: ["HtmlPlainTextPrint"]),
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
 //    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
@@ -48,6 +49,9 @@ let package = Package(
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
+
+    .target(name: "HtmlPlainTextPrint", dependencies: ["Html"]),
+    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HtmlPrettyPrint", dependencies: ["DoctorPretty", "Html"]),
     .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
