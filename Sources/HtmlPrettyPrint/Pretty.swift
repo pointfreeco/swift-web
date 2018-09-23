@@ -1,60 +1,94 @@
-import Html
-
-/// Renders an array of nodes to an HTML string.
-///
-/// - Parameter nodes: An array of nodes.
-public func prettyPrint(_ nodes: [Node]) -> String {
-  return nodes.map(prettyPrint).joined()
-}
-
-/// Renders a node to an HTML string.
-///
-/// - Parameter node: A node.
-public func prettyPrint(_ node: Node) -> String {
-  return prettyPrint(node, indentation: 0)
-}
-
-private func prettyPrint(_ node: Node, indentation: Int) -> String {
-  switch node {
-  case let .comment(string):
-    return "<!-- \(string.replacingOccurrences(of: "-->", with: "--&gt;")) -->"
-
-  case let .doctype(string):
-    return "<!DOCTYPE \(string.replacingOccurrences(of: ">", with: "&gt;"))>"
-
-  case let .element(tag, attribs, children):
-    let renderedAttribs = render(attribs)
-    guard !children.isEmpty else {
-      return "<" + tag + renderedAttribs + (voidElements.contains(tag) ? ">" : "/>")
-    }
-    return "<" + tag + renderedAttribs + ">" + render(children) + "</" + tag + ">"
-
-  case let .text(string):
-    return escapeTextNode(text: string)
-
-  case let .raw(string):
-    return string
-  }
-}
-
-public func render<T>(_ children: [ChildOf<T>]) -> String {
-  return children.map(render).joined()
-}
-
-public func render<T>(_ child: ChildOf<T>) -> String {
-  return prettyPrint(child.rawValue)
-}
-
-private func render(_ attribs: [(String, String?)]) -> String {
-  return attribs
-    .compactMap { key, value in
-      value.map {
-        " " + key + ($0.isEmpty ? "" : "=\"\(escapeAttributeValue($0))\"")
-      }
-    }
-    .joined()
-}
-
+//import Html
+//
+///// Renders an array of nodes to an HTML string.
+/////
+///// - Parameter nodes: An array of nodes.
+//public func prettyPrint(_ nodes: [Node]) -> String {
+//  return nodes.map(prettyPrint).joined()
+//}
+//
+///// Renders a node to an HTML string.
+/////
+///// - Parameter node: A node.
+//public func prettyPrint(_ node: Node) -> String {
+//  return prettyPrint(node, indentation: 0)
+//}
+//
+//public func render<T>(_ children: [ChildOf<T>]) -> String {
+//  return children.map(prettyPrint).joined()
+//}
+//
+//public func prettyPrint<T>(_ child: ChildOf<T>) -> String {
+//  return prettyPrint(child.rawValue)
+//}
+//
+//private func prettyPrint(_ nodes: [Node], indentation: Int) -> String {
+//  return nodes.map { prettyPrint($0, indentation: indentation) }.joined()
+//}
+//
+//private func prettyPrint(_ node: Node, indentation: Int) -> String {
+//  let indentationString = String(repeating: " ", count: indentation)
+//
+//  switch node {
+//  case let .comment(string):
+//    return "\(indentationString)<!-- \(string.replacingOccurrences(of: "-->", with: "--&gt;")) -->\n"
+//
+//  case let .doctype(string):
+//    return "\(indentationString)<!DOCTYPE \(string.replacingOccurrences(of: ">", with: "&gt;"))>\n"
+//
+//  case let .element(tag, attribs, children):
+//
+//    let tag = "\(indentationString)<\(tag) "
+//    let tagWithAttributes = tag + render(attribs, indentation: tag.count + indentation)
+//
+//    if children.isEmpty {
+//      return tagWithAttributes + (voidElements.contains(tag) ? ">" : "/>") + "\n"
+//    } else {
+//      return tagWithAttributes + ">\n" + prettyPrint(children, indentation: indentation + 2) + "\(indentation)</\(tag)>\n"
+//    }
+//
+////    let renderedAttribs = render(attribs)
+////    guard !children.isEmpty else {
+////      return "\(indentationString)<" + tag + renderedAttribs + (voidElements.contains(tag) ? ">" : "/>")
+////    }
+////    return "\(indentationString)<" + tag + renderedAttribs + ">" + render(children) + "</" + tag + ">"
+//
+//  case let .text(string):
+//    return indentationString + escapeTextNode(text: string)
+//
+//  case let .raw(string):
+//    return indentationString + string
+//  }
+//}
+//
+//private func render(_ attribs: [(String, String?)], indentation: Int) -> String {
+//  let indentationString = String(repeating: " ", count: indentation)
+//
+//  let tmp = attribs
+//    .enumerated()
+//    .compactMap { zip(.some($0), .some($1.0), $1.1) }
+//    .map { idx, key, value in
+//      (idx == 0 ? "" : indentationString)
+//        + key
+//        + (value.isEmpty ? "" : "=\"\(escapeAttributeValue(value))\"")
+//    }
+//    .joined(separator: "\n\(indentationString)")
+//
+//  return tmp
+//
+////  return attribs
+////    .compactMap { key, value in
+////      value.map {
+////        " " + key + ($0.isEmpty ? "" : "=\"\(escapeAttributeValue($0))\"")
+////      }
+////    }
+////    .joined()
+//}
+//
+//private func zip<A, B, C>(_ a: A?, _ b: B?, _ c: C?) -> (A, B, C)? {
+//  guard let a = a, let b = b, let c = c else { return nil }
+//  return .some((a, b, c))
+//}
 
 
 //import DoctorPretty
