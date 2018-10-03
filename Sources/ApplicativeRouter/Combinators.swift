@@ -48,7 +48,7 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<
       return f.apply(route.query.first(where: { k, _ in k == key })?.value).map { (route, $0) }
     },
     print: { a in
-      var query: [(String, String?)] = []
+      var query: [(key: String, value: String?)] = []
       if let str = f.unapply(a) {
         query.append((key, str))
       }
