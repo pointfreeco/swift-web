@@ -58,6 +58,7 @@ private func urlFormEncode(value: Any, keyConstructor: (String) -> String) -> St
   }
 
   return dictionary
+    .sorted(by: { $0.key < $1.key })
     .map { key, value in
       switch value {
       case let value as [String: Any]:

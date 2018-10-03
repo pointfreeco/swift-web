@@ -1,3 +1,3 @@
 POST subscribe
 
-quantity=3&plan=2
+plan=2&quantity=3
