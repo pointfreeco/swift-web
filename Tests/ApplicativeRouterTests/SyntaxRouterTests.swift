@@ -181,14 +181,17 @@ class SyntaxRouterTests: XCTestCase {
   func testCodableFormDataPostBody() {
     let request = URLRequest(url: URL(string: "subscribe")!)
       |> \.httpMethod .~ "post"
-      |> \.httpBody .~ Data("plan=1".utf8)
-    let route = Routes.postBodyFormData(SubscribeData(plan: 1))
+      |> \.httpBody .~ Data("plan=1&quantity=2".utf8)
+    let route = Routes.postBodyFormData(SubscribeData(plan: 1, quantity: 2))
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual(
       "subscribe",
       router.templateUrl(for: route)?.absoluteString
+    )
+    assertSnapshot(
+      matching: router.request(for: .postBodyFormData(SubscribeData(plan: 2, quantity: 3)))!
     )
   }
 
