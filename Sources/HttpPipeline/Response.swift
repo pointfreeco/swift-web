@@ -126,8 +126,10 @@ public struct Response {
       }
     }
 
-    public static func setCookies(_ pairs: [String: String], options: Set<CookieOption>) -> [Header] {
-      return pairs.map { .setCookie($0.key, $0.value, options) }
+    public static func setCookies(_ pairs: [(key: String, value: String)], options: Set<CookieOption>)
+      -> [Header] {
+
+        return pairs.map { .setCookie($0.key, $0.value, options) }
     }
 
     public static func clearCookie(_ name: String) -> Header {

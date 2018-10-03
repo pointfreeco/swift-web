@@ -78,16 +78,23 @@ public let stringBody = dataBody.map(PartialIso.data.inverted)
 /// Processes the body data of the request into form data of (key, value) pairs.
 public let formEncodedBodyFields = stringBody.map(.formEncodedFields)
 
+private func first(key: String) -> PartialIso<[(key: String, value: String?)], String> {
+  return PartialIso<[(key: String, value: String?)], String>(
+    apply: { $0.first(where: { $0.key == key })?.value },
+    unapply: { [(key: key, value: $0)] }
+  )
+}
+
 public func formField(_ name: String) -> Router<String> {
-  return formEncodedBodyFields.map(key(name))
+  return formEncodedBodyFields.map(first(key: name))
 }
 
 public func formField<A>(_ name: String, _ f: PartialIso<String, A>) -> Router<A> {
-  return formEncodedBodyFields.map(key(name)).map(f)
+  return formEncodedBodyFields.map(first(key: name)).map(f)
 }
 
-public func formFields(_ names: String...) -> Router<[String: String]> {
-  return formEncodedBodyFields.map(keys(names))
+public func formFields(_ names: String...) -> Router<[(key: String, value: String?)]> {
+  return formEncodedBodyFields.map(filter { names.contains($0.key) })
 }
 
 public func formBody<A: Codable>(_ type: A.Type, decoder: UrlFormDecoder = .init()) -> Router<A> {
