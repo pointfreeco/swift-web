@@ -4,6 +4,7 @@ import Prelude
 
 struct SubscribeData: Codable {
   let plan: Int
+  let quantity: Int
 }
 
 enum Routes {

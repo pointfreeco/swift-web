@@ -1,0 +1,3 @@
+POST subscribe
+
+plan=2&quantity=3
