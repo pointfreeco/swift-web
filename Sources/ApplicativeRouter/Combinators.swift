@@ -14,8 +14,8 @@ public func lit(_ str: String) -> Router<Prelude.Unit> {
             : nil
       }
   },
-    print: { _ in .init(method: nil, path: [str], query: [:], body: nil) },
-    template: { _ in .init(method: nil, path: [str], query: [:], body: nil) }
+    print: { _ in .init(method: nil, path: [str], query: [], body: nil) },
+    template: { _ in .init(method: nil, path: [str], query: [], body: nil) }
   )
 }
 
@@ -28,10 +28,10 @@ public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
       return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), v)
   },
     print: { a in
-      .init(method: nil, path: [f.unapply(a) ?? ""], query: [:], body: nil)
+      .init(method: nil, path: [f.unapply(a) ?? ""], query: [], body: nil)
   },
     template: { a in
-      .init(method: nil, path: [":\(typeKey(a))"], query: [:], body: nil)
+      .init(method: nil, path: [":\(typeKey(a))"], query: [], body: nil)
   })
 }
 
@@ -45,17 +45,17 @@ public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
 public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
   return .init(
     parse: { route in
-      return f.apply(route.query[key]).map { (route, $0) }
+      return f.apply(route.query.first(where: { k, _ in k == key })?.value).map { (route, $0) }
     },
     print: { a in
-      var query: [String: String] = [:]
+      var query: [(String, String?)] = []
       if let str = f.unapply(a) {
-        query[key] = str
+        query.append((key, str))
       }
       return RequestData(method: nil, path: [], query: query, body: nil)
     },
     template: { a in
-      RequestData(method: nil, path: [], query: [key: ":\(typeKey(a))"], body: nil)
+      RequestData(method: nil, path: [], query: [(key, ":\(typeKey(a))")], body: nil)
   })
 }
 
@@ -68,8 +68,8 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A
 /// Processes the body data of the request.
 public let dataBody = Router<Data>(
   parse: { route in route.body.map { (route, $0) } },
-  print: { .init(method: nil, path: [], query: [:], body: $0) },
-  template: { .init(method: nil, path: [], query: [:], body: $0) }
+  print: { .init(method: nil, path: [], query: [], body: $0) },
+  template: { .init(method: nil, path: [], query: [], body: $0) }
 )
 
 /// Processes the body data of the request as a string.
@@ -109,7 +109,7 @@ public func jsonBody<A: Codable>(
 public let end = Router<Prelude.Unit>(
   parse: { route in
     route.path.isEmpty
-      ? (RequestData(method: route.method, path: [], query: [:], body: nil), unit)
+      ? (RequestData(method: route.method, path: [], query: [], body: nil), unit)
       : nil
 },
   print: const(.empty),
@@ -140,19 +140,19 @@ public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
         .map { (route, $0) }
   },
     print: { a in
-      let params = (try? JSONEncoder().encode(a))
+      let params: [(key: String, value: String?)] = (try? JSONEncoder().encode(a))
         .flatMap { try? JSONSerialization.jsonObject(with: $0) }
         .flatMap { $0 as? [String: Any] }
-        .map { $0.mapValues { "\($0)" } }
-        ?? [:]
+        .map { $0.map { k, v in (k, "\(v)") } }
+        ?? []
       return RequestData(method: nil, path: [], query: params, body: nil)
   },
     template: { a in
-      let params = (try? JSONEncoder().encode(a))
+      let params: [(key: String, value: String?)] = (try? JSONEncoder().encode(a))
         .flatMap { try? JSONSerialization.jsonObject(with: $0) }
         .flatMap { $0 as? [String: Any] }
-        .map { $0.mapValues { _ in ":string" } }
-        ?? [:]
+        .map { $0.map { k, _ in (k, ":string") } }
+        ?? []
       return RequestData(method: nil, path: [], query: params, body: nil)
   })
 }
@@ -165,8 +165,8 @@ public func method(_ method: Method) -> Router<Prelude.Unit> {
         ? (route |> \.method .~ nil, unit)
         : nil
   },
-    print: { _ in  .init(method: method, path: [], query: [:], body: nil) },
-    template: { _ in  .init(method: method, path: [], query: [:], body: nil) }
+    print: { _ in  .init(method: method, path: [], query: [], body: nil) },
+    template: { _ in  .init(method: method, path: [], query: [], body: nil) }
   )
 }
 
