@@ -164,11 +164,10 @@ private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let url = request.url else {
-    return .init(method: method, path: [], query: [:], body: request.httpBody)
+    return .init(method: method, path: [], query: [], body: request.httpBody)
   }
 
-  let pairs = parse(query: url.query ?? "").map { ($0, $1 ?? "") }
-  let query = [String: String](pairs, uniquingKeysWith: { $1 })
+  let query = parse(query: url.query ?? "")
 
   let path = url.path.components(separatedBy: "/")
     |> mapOptional { $0.isEmpty ? nil : $0 }
@@ -204,7 +203,7 @@ private func urlComponents(from route: RequestData) -> URLComponents {
 
   if !route.query.isEmpty {
     components.queryItems = route.query
-      .sorted { lhs, rhs in lhs.key < rhs.key }
+      .filter { $0.value != nil }
       .map(URLQueryItem.init(name:value:))
   }
 
