@@ -201,10 +201,9 @@ private func urlComponents(from route: RequestData) -> URLComponents {
   var components = URLComponents()
   components.path = route.path.joined(separator: "/")
 
-  if !route.query.isEmpty {
-    components.queryItems = route.query
-      .filter { $0.value != nil }
-      .map(URLQueryItem.init(name:value:))
+  let query = route.query.filter { $0.value != nil }
+  if !query.isEmpty {
+    components.queryItems = query.map(URLQueryItem.init(name:value:))
   }
 
   return components
