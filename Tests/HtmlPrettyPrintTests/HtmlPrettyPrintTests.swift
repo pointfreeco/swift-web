@@ -9,7 +9,7 @@ import XCTest
 class PrettyTests: XCTestCase {
   override func setUp() {
     super.setUp()
-    record = true
+//    record = true
   }
 
   func testPretty() {
