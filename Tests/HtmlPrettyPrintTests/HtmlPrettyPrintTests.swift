@@ -9,7 +9,7 @@ import XCTest
 class PrettyTests: XCTestCase {
   override func setUp() {
     super.setUp()
-//    record = true
+    record = true
   }
 
   func testPretty() {
@@ -46,7 +46,7 @@ not identify the arguments (or "points") on which they operate.
       )
     ]
 
-    assertSnapshot(matching: prettyPrint(nodes: doc, pageWidth: 40), pathExtension: "html")
+    assertSnapshot(matching: prettyPrint(doc), pathExtension: "html")
   }
 
   func testDocument() {
@@ -187,6 +187,6 @@ composition.
       ]
     )
 
-    assertSnapshot(matching: prettyPrint(node: doc, pageWidth: 50), pathExtension: "html")
+    assertSnapshot(matching: prettyPrint(doc), pathExtension: "html")
   }
 }

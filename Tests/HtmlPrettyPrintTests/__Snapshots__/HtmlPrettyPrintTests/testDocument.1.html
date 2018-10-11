@@ -1,135 +1,122 @@
-<html>
-  <head>
-    <title>
-      The Site Title
-    </title>
-    <style>
-      body{background:#f0f0f0}
-    </style>
-    <script>
-      alert("hello world!")
-    </script>
-  </head>
-  <body class="home" id="home">
-    <header class="site-header">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           width="100"
-           height="100">
-        <circle cx="50" cy="50" r="40"
-        stroke="green" stroke-width="4"
-        fill="yellow" />
-      </svg>
-      <a href="/home">
-        Home
-      </a>
-      <nav class="site-nav">
-        <div>
-          <a href="/episodes">
-            Episodes
+  <html>
+    <head>
+      <title>
+        The Site Title
+      </title>
+      <style>
+        body{background:#f0f0f0}
+      </style>
+      <script>
+        alert("hello world!")
+      </script>
+    </head>
+    <body class="home"
+          id="home">
+      <header class="site-header">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="100"
+             height="100">
+          <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+        </svg>
+        <a href="/home">
+          Home
+        </a>
+        <nav class="site-nav">
+          <div>
+            <a href="/episodes">
+              Episodes
+            </a>
+            <a href="/About">
+              About
+            </a>
+          </div>
+        </nav>
+      </header>
+      <main class="page-content">
+        <h1 class="page-heading">
+          <ul class="episode-list">
+            <li>
+              <span class="episode-metadata">
+                April 27, 2017
+              </span>
+              <h2>
+                <a href="/episode/2">
+                  Episode #2
+                </a>
+              </h2>
+              <p>
+                Side effects: can’t live with ’em; can’t write a program without ’em. Let’s explore a few kinds of side effects we encounter every day, why they make code difficult to reason about and test, and how we can control them without losing composition.
+              </p>
+            </li>
+            <li>
+              <span class="episode-metadata">
+                April 20, 2017
+              </span>
+              <h2>
+                <a href="/episode/1">
+                  Episode #1
+                </a>
+              </h2>
+              <p>
+                Our first episode is all about functions! We talk a bit about what makes functions special, contrasting them with the way we usually write code, and have some exploratory discussions about operators and composition.
+              </p>
+            </li>
+          </ul>
+        </h1>
+        <p class="rss-subscribe">
+          subscribe 
+          <a href="/rss.xml">
+            via RSS
           </a>
-          <a href="/About">
-            About
-          </a>
-        </div>
-      </nav>
-    </header>
-    <main class="page-content">
-      <h1 class="page-heading">
-        <ul class="episode-list">
+        </p>
+      </main>
+      <hr class="pf-divider
+                 border-top
+                 m-ml0
+                 m-mr0
+                 m-mt0
+                 m-mb0
+                 bg-white">
+      <footer class="site-footer">
+        <h2>
+          The Site
+        </h2>
+        <ul>
           <li>
-            <span class="episode-metadata">
-              April 27, 2017
-            </span>
-            <h2>
-              <a href="/episode/2">
-                Episode #2
-              </a>
-            </h2>
-            <p>
-              Side effects: can’t live with ’em;
-              can’t write a program without ’em.
-              Let’s explore a few kinds of side
-              effects we encounter every day, why
-              they make code difficult to reason
-              about and test, and how we can
-              control them without losing
-              composition.
-            </p>
+            <a href="#">
+              Contact us
+            </a>
           </li>
           <li>
-            <span class="episode-metadata">
-              April 20, 2017
-            </span>
-            <h2>
-              <a href="/episode/1">
-                Episode #1
-              </a>
-            </h2>
-            <p>
-              Our first episode is all about
-              functions! We talk a bit about what
-              makes functions special, contrasting
-              them with the way we usually write
-              code, and have some exploratory
-              discussions about operators and
-              composition.
-            </p>
+            <a href="#">
+              About
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              Home
+            </a>
           </li>
         </ul>
-      </h1>
-      <p class="rss-subscribe">
-        subscribe
-        <a href="/rss.xml">
-          via RSS
-        </a>
-      </p>
-    </main>
-    <hr class="pf-divider
-               border-top
-               m-ml0
-               m-mr0
-               m-mt0
-               m-mb0
-               bg-white">  
-    <footer class="site-footer">
-      <h2>
-        The Site
-      </h2>
-      <ul>
-        <li>
-          <a href="#">
-            Contact us
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            About
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            Home
-          </a>
-        </li>
-      </ul>
-      <form id="newsletter-form"
-            action="#"
-            method="post">
-        <h4>
-          Sign up for our newsletter!
-        </h4>
-        <label for="email">
-          Email:
-        </label>
-        <input type="text"
-               name="email"
-               id="email"
-               value>  
-        <input type="submit" value="Submit">  
-      </form>
-    </footer>
-    <script>
-      /* google analytics */
-    </script>
-  </body>
-</html>
+        <form id="newsletter-form"
+              action="#"
+              method="post">
+          <h4>
+            Sign up for our newsletter!
+          </h4>
+          <label for="email">
+            Email: 
+          </label>
+          <input type="text"
+                 name="email"
+                 id="email"
+                 value="">
+          <input type="submit"
+                 value="Submit">
+        </form>
+      </footer>
+      <script>
+        /* google analytics */
+      </script>
+    </body>
+  </html>
