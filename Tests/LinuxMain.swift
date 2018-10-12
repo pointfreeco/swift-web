@@ -1,9 +1,9 @@
-// Generated using Sourcery 0.15.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.13.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import XCTest
 
-@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
+@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HtmlPlainTextPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
 extension ApplicativeRouterHttpPipelineSupportTests {
   static var allTests: [(String, (ApplicativeRouterHttpPipelineSupportTests) -> () throws -> Void)] = [
     ("testRoute", testRoute),
