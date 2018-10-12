@@ -23,8 +23,8 @@ let package = Package(
     .library(name: "View", targets: ["View"])
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("5d5005d")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("69b48c8")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("f8501a7")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("8f9182d")),
     .package(url: "https://github.com/pointfreeco/swift-html", from: "0.1.2"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4")),
@@ -50,10 +50,10 @@ let package = Package(
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
 
     .target(name: "HtmlPlainTextPrint", dependencies: ["Html", "Prelude"]),
-    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
+    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["Css", "Html", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HtmlPrettyPrint", dependencies: ["Html"]),
-    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
+    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport", "SnapshotTesting"]),
 
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 

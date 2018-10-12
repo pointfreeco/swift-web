@@ -3,7 +3,7 @@ import XCTest
 import SnapshotTesting
 import HtmlPlainTextPrint
 
-class PlainTextTests: XCTestCase {
+class PlainTextTests: SnapshotTestCase {
   func testPlainText() {
     let doc = html([
       head([

@@ -11,6 +11,31 @@ extension Application {
   }
 }
 
+extension Strategy {
+  public static var response: Strategy<Response, String> {
+    Strategy<Response, String>(pathExtension: "txt", diffable: .string) { response in
+      let lines = ["\(response.status.rawValue) \(response.status.description)"]
+        + response.headers.map { $0.description }.sorted()
+      let top = lines.joined(separator: "\n")
+
+      let isApplicationOrText = response.headers
+        .first(where: { $0.name == "Content-Type" })
+        .map { $0.value.hasPrefix("application/") || $0.value.hasPrefix("text/") }
+        ?? false
+
+      if isApplicationOrText {
+        // todo: use proper encoding when available
+        return top + "\n\n\(String(decoding: response.body, as: UTF8.self))\n"
+      }
+      return top
+    }
+  }
+}
+
+extension Response: DefaultDiffable {
+  public static let defaultStrategy: Strategy<Response, String> = .response
+}
+
 extension Response: Snapshot {
   public typealias Format = String
 

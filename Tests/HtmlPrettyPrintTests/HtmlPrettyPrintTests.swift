@@ -2,10 +2,11 @@ import Css
 import Html
 import HtmlCssSupport
 import HtmlPrettyPrint
+import HtmlTestSupport
 import SnapshotTesting
 import XCTest
 
-class PrettyTests: XCTestCase {
+class PrettyTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
 //    record = true
@@ -45,7 +46,7 @@ not identify the arguments (or "points") on which they operate.
       )
     ]
 
-    assertSnapshot(matching: prettyPrint(doc), pathExtension: "html")
+    assertSnapshot(matching: doc, with: .html)
   }
 
   func testDocument() {
@@ -186,6 +187,6 @@ composition.
       ]
     )
 
-    assertSnapshot(matching: prettyPrint(doc), pathExtension: "html")
+    assertSnapshot(matching: doc, with: .html)
   }
 }

@@ -3,7 +3,7 @@ import SnapshotTesting
 import UrlFormEncoding
 import XCTest
 
-final class UrlFormEncoderTests: XCTestCase {
+final class UrlFormEncoderTests: SnapshotTestCase {
   func testEncoding_DeepObject() {
     assertSnapshot(
       matching: urlFormEncode(
