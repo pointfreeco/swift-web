@@ -7,7 +7,7 @@ import XCTest
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
-class SignedCookieTests: XCTestCase {
+class SignedCookieTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
 //    record=true
@@ -21,12 +21,13 @@ aGVsbG8td29ybGQ=\
 4wgeyWTkB2EKsLHYK7Ao1VzjFMXeTLZHXX76XTTOBCw=
 """
 
-    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeaders(
           [.setSignedCookie(key: "session", value: "hello-world", secret: secret)]
             |> catOptionals
-    )
+        )
+        >=> end
 
     assertSnapshot(matching: middleware(conn).perform())
 
@@ -52,12 +53,13 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 6nCh0Of4anIuD8+6EgYj+g6hOf4wvwiZr6lDodIc+z0=
 """
 
-    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeaders(
           [.setSignedCookie(key: "session", value: episode, secret: secret)]
             |> catOptionals
-    )
+        )
+        >=> end
 
     #if !os(Linux)
       assertSnapshot(matching: middleware(conn).perform())
@@ -85,12 +87,13 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 68fe5aaecd5cfad403ffad8ae6d0f116
 """
 
-    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeaders(
           [.setSignedCookie(key: "session", value: "hello-world", secret: secret, encrypt: true)]
             |> catOptionals
-    )
+        )
+        >=> end
 
     assertSnapshot(matching: middleware(conn).perform())
 
@@ -123,12 +126,13 @@ cb4db8ac9390ac810837809f11bc6803\
 """
     let episode = Episode(id: 42, name: "All About Functions")
 
-    let middleware: Middleware<StatusLineOpen, HeadersOpen, Prelude.Unit, Prelude.Unit> =
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeaders(
           [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true)]
             |> catOptionals
-    )
+        )
+        >=> end
 
     #if !os(Linux)
       assertSnapshot(matching: middleware(conn).perform())

@@ -1,7 +1,0 @@
-GET /does/not/exist
-
-404 Not Found
-Content-Length: 9
-Content-Type: text/plain
-
-Not Found

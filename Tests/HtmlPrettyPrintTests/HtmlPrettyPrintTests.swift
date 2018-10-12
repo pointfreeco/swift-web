@@ -187,6 +187,6 @@ composition.
       ]
     )
 
-    assertSnapshot(matching: doc, with: .html)
+    assertSnapshot(matching: doc)
   }
 }

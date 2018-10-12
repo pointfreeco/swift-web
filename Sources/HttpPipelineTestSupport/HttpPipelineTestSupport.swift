@@ -12,8 +12,39 @@ extension Application {
 }
 
 extension Strategy {
+  public static var conn: Strategy<Conn<ResponseEnded, Data>, String> {
+    var conn = Strategy.string.asyncContramap { (conn: Conn<ResponseEnded, Data>) in
+      Async { callback in
+        Strategy.request.snapshotToDiffable(conn.request).run { request in
+          Strategy.response.snapshotToDiffable(conn.response).run { response in
+            callback(request + "\n\n" + response)
+          }
+        }
+      }
+    }
+    conn.pathExtension = "Conn.txt"
+    return conn
+  }
+
+  // TODO: move to snapshot-testing plugin library
+  public static var request: Strategy<URLRequest, String> {
+    var request = Strategy.string.contramap { (request: URLRequest) in
+      let headers = (request.allHTTPHeaderFields ?? [:])
+        .map { key, value in "\(key): \(value)" }
+        .sorted()
+
+      // NB: `absoluteString` is necessary because of https://github.com/apple/swift-corelibs-foundation/pull/1312
+      let lines = ["\(request.httpMethod ?? "GET") \((request.url?.absoluteString).map(String.init(describing:)) ?? "?")"]
+        + headers
+      return lines.joined(separator: "\n")
+        + (request.httpBody.map { "\n\n\(String(decoding: $0, as: UTF8.self))" } ?? "")
+    }
+    request.pathExtension = "URLRequest.txt"
+    return request
+  }
+
   public static var response: Strategy<Response, String> {
-    Strategy<Response, String>(pathExtension: "txt", diffable: .string) { response in
+    var response = Strategy.string.contramap { (response: Response) in
       let lines = ["\(response.status.rawValue) \(response.status.description)"]
         + response.headers.map { $0.description }.sorted()
       let top = lines.joined(separator: "\n")
@@ -29,70 +60,23 @@ extension Strategy {
       }
       return top
     }
+    response.pathExtension = "Response.txt"
+    return response
   }
+}
+
+extension Conn: DefaultDiffable where Step == ResponseEnded, A == Data {
+  public typealias B = String
+
+  public static let defaultStrategy: Strategy<Conn<ResponseEnded, Data>, String> = .conn
+}
+
+extension URLRequest: DefaultDiffable {
+  public static let defaultStrategy: Strategy<URLRequest, String> = .request
 }
 
 extension Response: DefaultDiffable {
   public static let defaultStrategy: Strategy<Response, String> = .response
-}
-
-extension Response: Snapshot {
-  public typealias Format = String
-
-  public static var snapshotPathExtension: String? {
-    return "Response.txt"
-  }
-
-  public var snapshotFormat: String {
-    let lines = ["\(self.status.rawValue) \(self.status.description)"]
-      + self.headers.map { $0.description }.sorted()
-    let top = lines.joined(separator: "\n")
-
-    let isApplicationOrText = self.headers
-      .first(where: { $0.name == "Content-Type" })
-      .map { $0.value.hasPrefix("application/") || $0.value.hasPrefix("text/") }
-      ?? false
-
-    if isApplicationOrText {
-      // todo: use proper encoding when available
-      return top + "\n\n\(String(decoding: self.body, as: UTF8.self))\n"
-    }
-    return top
-  }
-}
-
-extension Conn: Snapshot {
-  public var snapshotFormat: String {
-    return """
-    \(self.request.snapshotFormat)
-
-    \(self.response.snapshotFormat)
-    """
-  }
-
-  public static var snapshotPathExtension: String? {
-    return "Conn.txt"
-  }
-}
-
-// TODO: move to snapshot-testing
-extension URLRequest: Snapshot {
-
-  public var snapshotFormat: String {
-    let headers = (self.allHTTPHeaderFields ?? [:])
-      .map { key, value in "\(key): \(value)" }
-      .sorted()
-
-    // NB: `absoluteString` is necessary because of https://github.com/apple/swift-corelibs-foundation/pull/1312
-    let lines = ["\(self.httpMethod ?? "GET") \((self.url?.absoluteString).map(String.init(describing:)) ?? "?")"]
-      + headers
-    return lines.joined(separator: "\n")
-      + (self.httpBody.map { "\n\n\(String(decoding: $0, as: UTF8.self))" } ?? "")
-  }
-
-  public static var snapshotPathExtension: String? {
-    return "URLRequest.txt"
-  }
 }
 
 // TODO: move to prelude

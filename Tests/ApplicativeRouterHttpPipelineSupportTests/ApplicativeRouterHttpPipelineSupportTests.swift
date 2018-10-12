@@ -6,7 +6,7 @@ import Prelude
 import SnapshotTesting
 import XCTest
 
-class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
+class ApplicativeRouterHttpPipelineSupportTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
 //    record=true

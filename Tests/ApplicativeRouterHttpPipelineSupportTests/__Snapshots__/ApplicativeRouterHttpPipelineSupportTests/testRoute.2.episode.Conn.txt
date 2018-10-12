@@ -1,7 +1,0 @@
-GET /episode/ep1-hello-world
-
-200 OK
-Content-Length: 44
-Content-Type: text/plain
-
-Recognized route: episode("ep1-hello-world")

@@ -6,7 +6,7 @@ import XCTest
 import SnapshotTesting
 import HttpPipelineTestSupport
 
-class SyntaxRouterTests: XCTestCase {
+class SyntaxRouterTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
 //    record=true

@@ -3,7 +3,7 @@ import SnapshotTesting
 import UrlFormEncoding
 import XCTest
 
-final class UrlFormDecoderTests: XCTestCase {
+final class UrlFormDecoderTests: SnapshotTestCase {
   let decoder = UrlFormDecoder()
 
   func testOptionality() throws {

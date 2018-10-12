@@ -7,7 +7,7 @@ import SnapshotTesting
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
-class SharedMiddlewareTransformersTests: XCTestCase {
+class SharedMiddlewareTransformersTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
 //    record=true
