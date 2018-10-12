@@ -90,7 +90,6 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
   case "ol":
     return zip(1..., children)
       .map { "  \($0). \(plainText(for: $1))" }.joined(separator: "\n") + "\n"
-      ?? ""
 
   case "p":
     return "\(children.map(plainText).joined())\n\n"
@@ -104,7 +103,6 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
   case "ul":
     return children
       .map { "  - \(plainText(for: $0))" }.joined(separator: "\n") + "\n"
-      ?? ""
 
   case "abbr",
        "acronym",
