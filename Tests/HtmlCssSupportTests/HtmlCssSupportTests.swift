@@ -24,14 +24,14 @@ class SupportTests: XCTestCase {
 
     XCTAssertEqual(
       """
-<html>
-  <head>
-    <style>
-      body{color:#ff0000}
-    </style>
-  </head>
-</html>
-""",
+      <html>
+        <head>
+          <style>
+            body{color:#ff0000}
+          </style>
+        </head>
+      </html>
+      """,
       prettyPrint(document)
     )
   }
