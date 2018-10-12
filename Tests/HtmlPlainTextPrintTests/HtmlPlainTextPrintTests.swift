@@ -48,6 +48,6 @@ class PlainTextTests: SnapshotTestCase {
         ]),
       ])
 
-    assertSnapshot(matching: plainText(for: doc))
+    assertSnapshot(matching: HtmlPlainTextPrint.plainText(for: doc))
   }
 }

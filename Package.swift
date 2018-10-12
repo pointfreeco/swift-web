@@ -50,7 +50,7 @@ let package = Package(
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
 
     .target(name: "HtmlPlainTextPrint", dependencies: ["Html", "Prelude"]),
-    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["Css", "Html", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
+    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["HtmlPlainTextPrint", "Css", "Html", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HtmlPrettyPrint", dependencies: ["Html"]),
     .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport", "SnapshotTesting"]),
