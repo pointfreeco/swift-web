@@ -15,7 +15,7 @@ public struct Config {
 public func prettyPrint(_ nodes: [Node], config: Config = .pretty) -> String {
   return nodes
     .map { prettyPrint($0, config: config) }
-    .joined(separator: "\n")
+    .joined()
 }
 
 public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
@@ -60,5 +60,5 @@ public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
     }
   }
 
-  return prettyPrintHelp(node, config: config, indentation: "").trimmingCharacters(in: .whitespacesAndNewlines)
+  return prettyPrintHelp(node, config: config, indentation: "")
 }

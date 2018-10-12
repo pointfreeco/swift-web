@@ -31,6 +31,7 @@ class SupportTests: XCTestCase {
           </style>
         </head>
       </html>
+
       """,
       prettyPrint(document)
     )
