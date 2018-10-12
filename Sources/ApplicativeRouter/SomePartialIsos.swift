@@ -73,7 +73,7 @@ extension PartialIso where A == String, B == Double {
   }
 }
 
-extension PartialIso where A == String, B == [String: String] {
+extension PartialIso where A == String, B == [(key: String, value: String?)] {
   /// An isomorphism between strings and dictionaries using form encoded format.
   public static var formEncodedFields: PartialIso {
     return .init(
@@ -124,6 +124,20 @@ public let jsonDictionaryToData = PartialIso<[String: String], Data>(
       .flatMap { $0 as? [String: String] }
 })
 
+public func first<A>(where predicate: @escaping (A) -> Bool) -> PartialIso<[A], A> {
+  return PartialIso<[A], A>(
+    apply: { $0.first(where: predicate) },
+    unapply: { [$0] }
+  )
+}
+
+public func filter<A>(_ isIncluded: @escaping (A) -> Bool) -> PartialIso<[A], [A]> {
+  return PartialIso<[A], [A]>(
+    apply: { $0.filter(isIncluded) },
+    unapply: id
+  )
+}
+
 public func key<K, V>(_ key: K) -> PartialIso<[K: V], V> {
   return PartialIso<[K: V], V>(
     apply: { $0[key] },
@@ -147,13 +161,14 @@ extension PartialIso where A == String, B == Either<String, Int> {
   }
 }
 
-private func formEncodedStringToFields(_ body: String) -> [String: String] {
-  let pairs = parse(query: body).map { ($0, $1 ?? "") }
-  return [String: String](pairs, uniquingKeysWith: { $1 })
+private func formEncodedStringToFields(_ body: String) -> [(key: String, value: String?)] {
+  return parse(query: body)
 }
 
-private func fieldsToFormEncodedString(_ data: [String: String]) -> String {
-  return urlFormEncode(value: data)
+private func fieldsToFormEncodedString(_ data: [(key: String, value: String?)]) -> String {
+  var urlComponents = URLComponents()
+  urlComponents.queryItems = data.map(URLQueryItem.init(name:value:))
+  return urlComponents.percentEncodedQuery ?? ""
 }
 
 extension PartialIso where B: RawRepresentable, B.RawValue == A {

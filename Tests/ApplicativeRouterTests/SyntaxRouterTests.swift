@@ -119,7 +119,7 @@ class SyntaxRouterTests: XCTestCase {
   }
 
   func testSimpleQueryParams() {
-    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?active=true&ref=hello&t=122")!)
+    let request = URLRequest(url: URL(string: "path/to/somewhere/cool?ref=hello&active=true&t=122")!)
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
       |> \.httpMethod .~ "get"
     let route = Routes.simpleQueryParams(ref: "hello", active: true, t: 122)
@@ -127,7 +127,7 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual(
-      "path/to/somewhere/cool?active=:bool&ref=:optional_string&t=:int",
+      "path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int",
       router.templateUrl(for: route)?.absoluteString
     )
   }
@@ -141,7 +141,7 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual(
-      "path/to/somewhere/cool?active=:bool&ref=:optional_string&t=:int",
+      "path/to/somewhere/cool?ref=:optional_string&active=:bool&t=:int",
       router.templateUrl(for: route)?.absoluteString
     )
   }
@@ -181,14 +181,17 @@ class SyntaxRouterTests: XCTestCase {
   func testCodableFormDataPostBody() {
     let request = URLRequest(url: URL(string: "subscribe")!)
       |> \.httpMethod .~ "post"
-      |> \.httpBody .~ Data("plan=1".utf8)
-    let route = Routes.postBodyFormData(SubscribeData(plan: 1))
+      |> \.httpBody .~ Data("plan=1&quantity=2".utf8)
+    let route = Routes.postBodyFormData(SubscribeData(plan: 1, quantity: 2))
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: route))
     XCTAssertEqual(
       "subscribe",
       router.templateUrl(for: route)?.absoluteString
+    )
+    assertSnapshot(
+      matching: router.request(for: .postBodyFormData(SubscribeData(plan: 2, quantity: 3)))!
     )
   }
 
