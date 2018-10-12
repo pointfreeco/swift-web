@@ -1,5 +1,4 @@
 import Css
-import DoctorPretty
 import Html
 import HtmlCssSupport
 import HtmlPrettyPrint
