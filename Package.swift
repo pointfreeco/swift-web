@@ -49,7 +49,7 @@ let package = Package(
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
 
-    .target(name: "HtmlPlainTextPrint", dependencies: ["Html"]),
+    .target(name: "HtmlPlainTextPrint", dependencies: ["Html", "Prelude"]),
     .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HtmlPrettyPrint", dependencies: ["Html"]),
