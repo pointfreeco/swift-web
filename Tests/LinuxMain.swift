@@ -1,9 +1,9 @@
-// Generated using Sourcery 0.11.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.13.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import XCTest
 
-@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
+@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
 extension ApplicativeRouterHttpPipelineSupportTests {
   static var allTests: [(String, (ApplicativeRouterHttpPipelineSupportTests) -> () throws -> Void)] = [
     ("testRoute", testRoute),
@@ -61,15 +61,6 @@ extension CssRenderTests {
     ("testClipRect", testClipRect)
   ]
 }
-extension EncodedStringTests {
-  static var allTests: [(String, (EncodedStringTests) -> () throws -> Void)] = [
-    ("testEscape", testEscape),
-    ("testDoesntEscapeInStyleTag", testDoesntEscapeInStyleTag),
-    ("testDoesntEscapeInScript", testDoesntEscapeInScript),
-    ("testEscapesAttributeValues", testEscapesAttributeValues),
-    ("testUnsafeUnencodedString", testUnsafeUnencodedString)
-  ]
-}
 extension EncryptionTests {
   static var allTests: [(String, (EncryptionTests) -> () throws -> Void)] = [
     ("testEncrypt", testEncrypt),
@@ -82,33 +73,9 @@ extension FlexBoxTests {
     ("testFlexBox", testFlexBox)
   ]
 }
-extension FullDocumentTests {
-  static var allTests: [(String, (FullDocumentTests) -> () throws -> Void)] = [
-    ("testDocument", testDocument)
-  ]
-}
 extension FullStylesheetTests {
   static var allTests: [(String, (FullStylesheetTests) -> () throws -> Void)] = [
     ("testABigStyleSheet", testABigStyleSheet)
-  ]
-}
-extension HTMLTests {
-  static var allTests: [(String, (HTMLTests) -> () throws -> Void)] = [
-    ("testImgTag", testImgTag),
-    ("testHtml3", testHtml3),
-    ("testHtmlTag", testHtmlTag),
-    ("testATag", testATag),
-    ("testHtmlWithInlineStyles", testHtmlWithInlineStyles),
-    ("testHtmlInput", testHtmlInput),
-    ("testScriptTag", testScriptTag),
-    ("testPrettyRender", testPrettyRender),
-    ("testDocument", testDocument),
-    ("testTables", testTables),
-    ("testBooleanAttributes", testBooleanAttributes)
-  ]
-}
-extension HtmlRenderTests {
-  static var allTests: [(String, (HtmlRenderTests) -> () throws -> Void)] = [
   ]
 }
 extension HttpPipelineHtmlSupportTests {
@@ -140,7 +107,8 @@ extension PlainTextTests {
 }
 extension PrettyTests {
   static var allTests: [(String, (PrettyTests) -> () throws -> Void)] = [
-    ("testPretty", testPretty)
+    ("testPretty", testPretty),
+    ("testDocument", testDocument)
   ]
 }
 extension PropertyTests {
@@ -225,13 +193,6 @@ extension UrlFormEncoderTests {
     ("testEncodingCodable", testEncodingCodable)
   ]
 }
-extension ViewTests {
-  static var allTests: [(String, (ViewTests) -> () throws -> Void)] = [
-    ("testSemigroupAssociativity", testSemigroupAssociativity),
-    ("testSemigroup", testSemigroup),
-    ("testProfunctor", testProfunctor)
-  ]
-}
 
 // swiftlint:disable trailing_comma
 XCTMain([
@@ -239,13 +200,9 @@ XCTMain([
   testCase(BackgroundTests.allTests),
   testCase(BorderTests.allTests),
   testCase(CssRenderTests.allTests),
-  testCase(EncodedStringTests.allTests),
   testCase(EncryptionTests.allTests),
   testCase(FlexBoxTests.allTests),
-  testCase(FullDocumentTests.allTests),
   testCase(FullStylesheetTests.allTests),
-  testCase(HTMLTests.allTests),
-  testCase(HtmlRenderTests.allTests),
   testCase(HttpPipelineHtmlSupportTests.allTests),
   testCase(HttpPipelineTests.allTests),
   testCase(MediaTests.allTests),
@@ -260,6 +217,5 @@ XCTMain([
   testCase(SyntaxRouterTests.allTests),
   testCase(UrlFormDecoderTests.allTests),
   testCase(UrlFormEncoderTests.allTests),
-  testCase(ViewTests.allTests),
 ])
 // swiftlint:enable trailing_comma

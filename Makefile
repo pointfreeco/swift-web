@@ -3,7 +3,6 @@ imports = \
 	@testable import ApplicativeRouterTests; \
 	@testable import CssTests; \
 	@testable import CssResetTests; \
-	@testable import HtmlTests; \
 	@testable import HtmlCssSupportTests; \
 	@testable import HtmlPrettyPrintTests; \
 	@testable import HttpPipelineTests; \
