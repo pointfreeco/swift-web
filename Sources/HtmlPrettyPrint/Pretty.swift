@@ -23,7 +23,7 @@ public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
     func renderValues(_ values: String, separator: Character, indentBy: Int) -> String {
       return values
         .split(separator: separator)
-        .joined(separator: (separator == " " ? "" : String(separator)) + config.newline + String(repeating: " ", count: indentBy + (separator == " " ? 1 : 0)))
+        .joined(separator: (separator == " " ? "" : String(separator)) + config.newline + String(repeating: " ", count: indentBy + 1))
     }
 
     func separator(forKey key: String) -> Character {
