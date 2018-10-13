@@ -87,7 +87,7 @@ public final class UrlFormDecoder: Decoder {
       return date
     case let .formatted(formatter):
       guard let date = formatter.date(from: string) else {
-        throw Error.decodingError("Expected \(formatter.dateFormat), got \(string)", self.codingPath)
+        throw Error.decodingError("Expected \(String(describing: formatter.dateFormat)), got \(string)", self.codingPath)
       }
       return date
     case let .custom(strategy):

@@ -7,7 +7,7 @@ import XCTest
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
-class HttpPipelineTests: XCTestCase {
+class HttpPipelineTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
 //    record=true

@@ -11,23 +11,23 @@ let package = Package(
     .library(name: "Css", targets: ["Css"]),
     .library(name: "CssReset", targets: ["CssReset"]),
     .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
-    .library(name: "Html", targets: ["Html"]),
     .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
     .library(name: "HtmlTestSupport", targets: ["HtmlTestSupport"]),
+    .library(name: "HtmlPlainTextPrint", targets: ["HtmlPlainTextPrint"]),
     .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
 //    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
-    .library(name: "MediaType", targets: ["MediaType"]),
     .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
+    .library(name: "View", targets: ["View"])
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("5d5005d")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("69b48c8")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("f067724")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("8f9182d")),
+    .package(url: "https://github.com/pointfreeco/swift-html", .revision("e6952b9")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
-    .package(url: "https://github.com/bkase/DoctorPretty.git", from: "0.5.0"),
-    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4"))
+    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4")),
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude", "UrlFormEncoding"]),
@@ -46,32 +46,32 @@ let package = Package(
 
     .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotTesting"]),
 
-    .target(name: "Html", dependencies: ["MediaType", "NonEmpty", "Prelude"]),
-    .testTarget(name: "HtmlTests", dependencies: ["Html", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport"]),
-
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
     .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
 
-    .target(name: "HtmlPrettyPrint", dependencies: ["DoctorPretty", "Html"]),
-    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
+    .target(name: "HtmlPlainTextPrint", dependencies: ["Html", "Prelude"]),
+    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["HtmlPlainTextPrint", "Css", "Html", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
+
+    .target(name: "HtmlPrettyPrint", dependencies: ["Html"]),
+    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport", "SnapshotTesting"]),
 
     .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
 
     .target(name: "HttpPipeline",
-            dependencies: ["Cryptor", "MediaType", "NIO", "NIOHTTP1", "Prelude", "Optics"]),
+            dependencies: ["Cryptor", "Html", "NIO", "NIOHTTP1", "Prelude", "Optics"]),
 //    .target(name: "HttpPipelineExample",
 //            dependencies: ["HttpPipeline", "HttpPipelineHtmlSupport"]),
     .testTarget(name: "HttpPipelineTests",
                 dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
 
-    .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline"]),
+    .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline", "View"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
 
-    .target(name: "HttpPipelineTestSupport", dependencies: ["HttpPipeline", "MediaType", "SnapshotTesting"]),
-
-    .target(name: "MediaType", dependencies: []),
+    .target(name: "HttpPipelineTestSupport", dependencies: ["HttpPipeline", "Html", "SnapshotTesting"]),
 
     .target(name: "UrlFormEncoding", dependencies: ["Prelude", "Optics"]),
     .testTarget(name: "UrlFormEncodingTests", dependencies: ["UrlFormEncoding", "SnapshotTesting"]),
+
+    .target(name: "View", dependencies: ["Html", "Prelude"]),
     ]
 )

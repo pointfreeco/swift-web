@@ -1,50 +1,53 @@
 import Css
-import DoctorPretty
 import Html
 import HtmlCssSupport
 import HtmlPrettyPrint
+import HtmlTestSupport
 import SnapshotTesting
 import XCTest
 
-class PrettyTests: XCTestCase {
-
-  func testPretty() {
-    let doc: Node = .document(
-      [
-        html(
-          [
-            body(
-              [
-                comment("This is gonna be a long comment. Let's see what happens!"),
-                div(
-                  [
-                    div(
-                      [
-                        id("some-long-id"),
-                        Html.class("foo bar baz class1 class2 class3"),
-                        style("color: red;background: blue;padding: rem(2);")
-                      ],
-                      ["hello world"]
-                    ),
-                    p([
-                      """
-    Tacit programming, also called point-free style, is a programming paradigm in which function definitions do not identify the arguments (or "points") on which they operate.
-    """
-    ]),
-                    img(src: "cat.jpg", alt: "", [ id("cat"), Html.class("cat") ])
-                  ]
-                )
-              ]
-            )
-          ]
-        )
-      ]
-    )
-
-    assertSnapshot(matching: prettyPrint(node: doc, pageWidth: 40), pathExtension: "html")
+class PrettyTests: SnapshotTestCase {
+  override func setUp() {
+    super.setUp()
+//    record = true
   }
 
+  func testPretty() {
 
+    let doc: [Node] = [
+      .doctype("html"),
+      html(
+        [
+          body(
+            [
+              .comment("This is gonna be a long comment. Let's see what happens!"),
+              div(
+                [
+                  div(
+                    [
+                      id("some-long-id"),
+                      Html.class("foo bar baz class1 class2 class3"),
+                      style("color: red;background: blue;padding: rem(2);")
+                    ],
+                    ["hello world"]
+                  ),
+                  p([
+                    """
+Tacit programming, also called point-free style, is a programming paradigm in which function definitions do \
+not identify the arguments (or "points") on which they operate.
+"""
+                    ]),
+                  img([src("cat.jpg"), alt(""), id("cat"), Html.class("cat")])
+                ]
+              )
+            ]
+          )
+        ]
+      )
+    ]
+
+    assertSnapshot(matching: doc, with: .html)
+  }
 
   func testDocument() {
     let doc = html(
@@ -68,7 +71,7 @@ class PrettyTests: XCTestCase {
               [ Html.class("site-header") ],
               [
                 svg(
-                  [xmlns("http://www.w3.org/2000/svg"), width(100), height(100)],
+                  [.init("xmlns", "http://www.w3.org/2000/svg"), width(100), height(100)],
                   """
 <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
 """
@@ -184,6 +187,6 @@ composition.
       ]
     )
 
-    assertSnapshot(matching: prettyPrint(node: doc, pageWidth: 50), pathExtension: "html")
+    assertSnapshot(matching: doc)
   }
 }

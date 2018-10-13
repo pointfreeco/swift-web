@@ -1,12 +1,16 @@
 import Css
 import SnapshotTesting
 
-extension Stylesheet: Snapshot {
-  public static var snapshotPathExtension: String? {
-    return "css"
+extension Strategy {
+  public static func css(_ config: Config) -> Strategy<Stylesheet, String> {
+    var css = Strategy.string.contramap { (stylesheet: Stylesheet) in
+      render(config: config, css: stylesheet)
+    }
+    css.pathExtension = "css"
+    return css
   }
+}
 
-  public var snapshotFormat: String {
-    return render(config: .pretty, css: self)
-  }
+extension Stylesheet: DefaultDiffable {
+  public static let defaultStrategy: Strategy<Stylesheet, String> = .css(.pretty)
 }

@@ -5,12 +5,12 @@ import Prelude
 import XCTest
 import SnapshotTesting
 
-class ResetTests: XCTestCase {
+class ResetTests: SnapshotTestCase {
   func testResetPretty() {
     assertSnapshot(matching: reset)
   }
 
   func testResetCompact() {
-    assertSnapshot(matching: render(config: .compact, css: reset), pathExtension: "css")
+    assertSnapshot(matching: reset, with: .css(.compact))
   }
 }

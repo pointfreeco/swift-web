@@ -1,5 +1,5 @@
 import Foundation
-import MediaType
+import Html
 import Optics
 import Prelude
 

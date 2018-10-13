@@ -3,9 +3,9 @@ imports = \
 	@testable import ApplicativeRouterTests; \
 	@testable import CssTests; \
 	@testable import CssResetTests; \
-	@testable import HtmlTests; \
 	@testable import HtmlCssSupportTests; \
 	@testable import HtmlPrettyPrintTests; \
+	@testable import HtmlPlainTextPrintTests; \
 	@testable import HttpPipelineTests; \
 	@testable import HttpPipelineHtmlSupportTests; \
 	@testable import UrlFormEncodingTests;
@@ -47,7 +47,7 @@ test-ios: xcodeproj
 	set -o pipefail && \
 	xcodebuild test \
 		-scheme Web-Package \
-		-destination platform="iOS Simulator,name=iPhone 8,OS=11.4" \
+		-destination platform="iOS Simulator,name=iPhone XR,OS=12.0" \
 		| xcpretty
 
 test-swift:

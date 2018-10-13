@@ -2,6 +2,7 @@ import Html
 import HttpPipeline
 import HttpPipelineHtmlSupport
 import Prelude
+import View
 import XCTest
 
 class HttpPipelineHtmlSupportTests: XCTestCase {

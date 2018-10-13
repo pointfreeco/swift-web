@@ -1,137 +1,64 @@
-import DoctorPretty
 import Html
-import Operadics
 
-public func prettyPrint(node: Node, pageWidth: Int = 110) -> String {
+public struct Config {
+  public let indentation: String
+  public let newline: String
 
-  return (prettyPrint(node: node) as Doc)
-    .renderPretty(ribbonFrac: 1, pageWidth: pageWidth)
-    .displayString()
-}
-
-public func prettyPrint(nodes: [Node], pageWidth: Int = 110) -> String {
-
-  return nodes.map(prettyPrint(node:))
-    .vcat()
-    .renderPretty(ribbonFrac: 1, pageWidth: pageWidth)
-    .displayString()
-}
-
-private func prettyPrint(node: Node) -> Doc {
-  switch node {
-  case let .element(element):
-    return prettyPrint(element: element)
-  case let .text(text):
-//    return .text(text.string)
-     return prettyPrint(text: text)
-  case let .comment(comment):
-    return prettyPrint(comment: comment.string)
-  case let .document(nodes):
-    return prettyPrint(document: nodes)
-  }
-}
-
-private func prettyPrint(element: Element) -> Doc {
-
-  return prettyPrintOpenTag(element: element)
-    <> prettyPrintChildren(nodes: element.content)
-    <> prettyPrintCloseTag(element: element)
-}
-
-
-private func prettyPrintChildren(nodes: [Node]?) -> Doc {
-  guard let nodes = nodes else { return .empty }
-
-  return nodes.map(prettyPrint(node:))
-    .vcat()
-    .indent(2)
-}
-
-private func prettyPrintOpenTag(element: Element) -> Doc {
-
-  return .text("<")
-    <> .text(element.name)
-    <> prettyPrint(attributes: element.attribs)
-    <> .text(">") <> (element.content == nil ? .empty : .hardline)
-}
-
-private func prettyPrintCloseTag(element: Element) -> Doc {
-  return element.content == nil
-    ? .empty
-    : .hardline <> .text("</") <> .text(element.name) <> .text(">")
-}
-
-private func prettyPrint(attributes attribs: [AnyAttribute]) -> Doc {
-
-  return .text(attribs.count == 0 ? "" : " ")
-    <> attribs
-      .map(prettyPrint(attribute:))
-      .sep()
-      .hang(0)
-}
-
-private func prettyPrint(attribute: AnyAttribute) -> Doc {
-
-  // class attributes get special rendering logic so to make them line up
-  // when they flow past the page width.
-  if attribute.key == "class" {
-    return .text("\(attribute.key)=\"")
-      <> (attribute.value.renderedValue()?.string ?? "")
-        .split(separator: " ")
-        .map(String.init)
-        .map(Doc.text)
-        .sep()
-        .hang(0)
-      <> .text("\"")
+  public init(indentation: String, newline: String) {
+    self.indentation = indentation
+    self.newline = newline
   }
 
-  if attribute.key == "content" {
-    return .text("\(attribute.key)=\"")
-      <> (attribute.value.renderedValue()?.string ?? "")
-        .split(separator: " ")
-        .map(String.init)
-        .map(Doc.text)
-        .fillSep()
-        .hang(0)
-      <> .text("\"")
+  public static let pretty = Config(indentation: "  ", newline: "\n")
+}
+
+public func prettyPrint(_ nodes: [Node], config: Config = .pretty) -> String {
+  return nodes
+    .map { prettyPrint($0, config: config) }
+    .joined()
+}
+
+public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
+  func prettyPrintHelp(_ node: Node, config: Config, indentation: String) -> String {
+    func renderValues(_ values: String, separator: Character, indentBy: Int) -> String {
+      return values
+        .split(separator: separator)
+        .joined(separator: (separator == " " ? "" : String(separator)) + config.newline + String(repeating: " ", count: indentBy + 1))
+    }
+
+    func separator(forKey key: String) -> Character {
+      switch key {
+      case "class":
+        return " "
+      case "style":
+        return ";"
+      default:
+        return " "
+      }
+    }
+
+    switch node {
+    case let .comment(string):
+      return indentation + "<!-- " + string + " -->" + config.newline
+    case let .doctype(string):
+      return indentation + "<!DOCTYPE " + string + ">" + config.newline
+    case let .element(tag, attrs, children):
+      let renderedAttrs = attrs.map { k, v -> String in
+        let indentBy = indentation.count + tag.count + k.count + 3
+        return " " + k + (v.map { "=\"\(renderValues($0, separator: separator(forKey: k), indentBy: indentBy))\"" } ?? "")
+        }.joined(separator: config.newline + indentation + String(repeating: " ", count: tag.count + 1))
+      guard !voidElements.contains(tag) else {
+        return indentation + "<" + tag + renderedAttrs + ">" + config.newline
+      }
+      return indentation + "<" + tag + renderedAttrs + ">" + config.newline
+        + children.map { prettyPrintHelp($0, config: config, indentation: indentation + config.indentation) }.joined()
+        + indentation + "</" + tag + ">" + config.newline
+    case let .raw(string):
+      return indentation + string + config.newline
+    case let .text(string):
+      return indentation + string + config.newline
+    }
   }
 
-  // style attributes also get special rendering, but aligning after the semicolon
-  // that separates multiple styles
-  if attribute.key == "style" {
-    return .text("\(attribute.key)=\"")
-      <> (attribute.value.renderedValue()?.string ?? "")
-        .split(separator: ";")
-        .map { Doc.text(String($0) + ";") }
-        .sep()
-        .hang(0)
-      <> .text("\"")
-  }
-
-  return (attribute.value.render(with: attribute.key)?.string).map(Doc.text) ?? .zero
-}
-
-private func prettyPrint(text: EncodedString) -> Doc {
-  return text.string
-    .split(separator: " ")
-    .map(String.init)
-    .map(Doc.text)
-    .fillSep()
-}
-
-private func prettyPrint(comment: String) -> Doc {
-  return .text("<!--")
-    <%> comment
-      .split(separator: " ")
-      .map(String.init)
-      .map(Doc.text)
-      .fillSep()
-      .hang(0)
-    <%> .text("-->")
-}
-
-private func prettyPrint(document nodes: [Node]) -> Doc {
-  return .text("<!DOCTYPE html>")
-    <> .hardline
-    <> nodes.map(prettyPrint(node:)).vcat()
+  return prettyPrintHelp(node, config: config, indentation: "")
 }
