@@ -30,8 +30,8 @@ final class UrlFormDecoderTests: SnapshotTestCase {
       let ys: [Int]
     }
 
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: Data("x=1&ys=1".utf8)))
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: Data("x=1&ys=1&ys=2".utf8)))
+    assertSnapshot(matchingAny: try decoder.decode(Foo.self, from: Data("x=1&ys=1".utf8)))
+    assertSnapshot(matchingAny: try decoder.decode(Foo.self, from: Data("x=1&ys=1&ys=2".utf8)))
 
     // FIXME: Make work!
 //    XCTAssertNil(try decoder.decode(Foo?.self, from: Data("ys=1&ys=2".utf8)))
@@ -74,7 +74,7 @@ final class UrlFormDecoderTests: SnapshotTestCase {
 
     decoder.parsingStrategy = .brackets
 
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: data))
+    assertSnapshot(matchingAny: try decoder.decode(Foo.self, from: data))
   }
 
   func testBracketsWithIndices() throws {
@@ -104,7 +104,7 @@ final class UrlFormDecoderTests: SnapshotTestCase {
 
     decoder.parsingStrategy = .bracketsWithIndices
 
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: data))
+    assertSnapshot(matchingAny: try decoder.decode(Foo.self, from: data))
   }
 
   func testDataDecodingWithBase64() throws {
@@ -128,7 +128,7 @@ final class UrlFormDecoderTests: SnapshotTestCase {
     decoder.dateDecodingStrategy = .secondsSince1970
     let interval = Int(Date(timeIntervalSinceReferenceDate: 0).timeIntervalSince1970)
 
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)))
+    assertSnapshot(matchingAny: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)))
   }
 
   func testDateDecodingWithMillisecondsSince1970() throws {
@@ -139,7 +139,7 @@ final class UrlFormDecoderTests: SnapshotTestCase {
     decoder.dateDecodingStrategy = .millisecondsSince1970
     let interval = "\(Int(Date(timeIntervalSinceReferenceDate: 0).timeIntervalSince1970))000"
 
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)))
+    assertSnapshot(matchingAny: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)))
   }
 
   func testDateDecodingWithIso8601() throws {
@@ -149,10 +149,10 @@ final class UrlFormDecoderTests: SnapshotTestCase {
     decoder.dateDecodingStrategy = .iso8601
 
     assertSnapshot(
-      matching: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00.000-00:00".utf8))
+      matchingAny: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00.000-00:00".utf8))
     )
     assertSnapshot(
-      matching: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00-00:00".utf8))
+      matchingAny: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00-00:00".utf8))
     )
   }
 

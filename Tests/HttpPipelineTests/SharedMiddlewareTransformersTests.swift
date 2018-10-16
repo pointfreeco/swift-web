@@ -169,6 +169,6 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
 
     _ = middleware(conn).perform()
 
-    assertSnapshot(matching: log)
+    assertSnapshot(matchingAny: log)
   }
 }
