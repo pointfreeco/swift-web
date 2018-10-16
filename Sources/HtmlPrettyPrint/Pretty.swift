@@ -20,20 +20,21 @@ public func prettyPrint(_ nodes: [Node], config: Config = .pretty) -> String {
 
 public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
   func prettyPrintHelp(_ node: Node, config: Config, indentation: String) -> String {
-    func renderValues(_ values: String, separator: Character, indentBy: Int) -> String {
+    func renderValues(_ values: String, separator: Character?, indentBy: Int) -> String {
+      guard let separator = separator else { return values }
       return values
         .split(separator: separator)
         .joined(separator: (separator == " " ? "" : String(separator)) + config.newline + String(repeating: " ", count: indentBy + 1))
     }
 
-    func separator(forKey key: String) -> Character {
+    func separator(forKey key: String) -> Character? {
       switch key {
       case "class":
         return " "
       case "style":
         return ";"
       default:
-        return " "
+        return nil
       }
     }
 
