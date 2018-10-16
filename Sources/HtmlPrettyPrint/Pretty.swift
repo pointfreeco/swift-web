@@ -44,10 +44,14 @@ public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
     case let .doctype(string):
       return indentation + "<!DOCTYPE " + string + ">" + config.newline
     case let .element(tag, attrs, children):
-      let renderedAttrs = attrs.map { k, v -> String in
-        let indentBy = indentation.count + tag.count + k.count + 3
-        return " " + k + (v.map { "=\"\(renderValues($0, separator: separator(forKey: k), indentBy: indentBy))\"" } ?? "")
-        }.joined(separator: config.newline + indentation + String(repeating: " ", count: tag.count + 1))
+      let renderedAttrs = attrs
+        .compactMap { k, v -> String? in
+          let indentBy = indentation.count + tag.count + k.count + 3
+          return v.map {
+            $0.isEmpty ? " \(k)" : " \(k)=\"\(renderValues($0, separator: separator(forKey: k), indentBy: indentBy))\""
+          }
+        }
+        .joined(separator: config.newline + indentation + String(repeating: " ", count: tag.count + 1))
       guard !voidElements.contains(tag) else {
         return indentation + "<" + tag + renderedAttrs + ">" + config.newline
       }
