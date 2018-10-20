@@ -4,7 +4,7 @@ import SnapshotTesting
 
 extension Strategy {
   public static var html: Strategy<[Node], String> {
-    var html = Strategy.string.contramap { (nodes: [Node]) in
+    var html = Strategy.lines.pullback { (nodes: [Node]) in
       prettyPrint(nodes)
     }
     html.pathExtension = "html"
@@ -12,7 +12,7 @@ extension Strategy {
   }
 
   public static var htmlNode: Strategy<Node, String> {
-    return Strategy.html.contramap { [$0] }
+    return Strategy.html.pullback { [$0] }
   }
 }
 

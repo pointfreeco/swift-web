@@ -39,7 +39,7 @@ not identify the arguments (or "points") on which they operate.
         ])
     ]
 
-    assertSnapshot(matching: doc, with: .html)
+    assertSnapshot(of: .html, matching: doc)
   }
 
   func testDocument() {

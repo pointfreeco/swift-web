@@ -13,7 +13,7 @@ extension Application {
 
 extension Strategy {
   public static var conn: Strategy<Conn<ResponseEnded, Data>, String> {
-    var conn = Strategy.string.asyncContramap { (conn: Conn<ResponseEnded, Data>) in
+    var conn = Strategy.lines.asyncPullback { (conn: Conn<ResponseEnded, Data>) in
       Async { callback in
         Strategy.request.snapshotToDiffable(conn.request).run { request in
           Strategy.response.snapshotToDiffable(conn.response).run { response in
@@ -28,7 +28,7 @@ extension Strategy {
 
   // TODO: move to snapshot-testing plugin library
   public static var request: Strategy<URLRequest, String> {
-    var request = Strategy.string.contramap { (request: URLRequest) in
+    var request = Strategy.lines.pullback { (request: URLRequest) in
       let headers = (request.allHTTPHeaderFields ?? [:])
         .map { key, value in "\(key): \(value)" }
         .sorted()
@@ -44,7 +44,7 @@ extension Strategy {
   }
 
   public static var response: Strategy<Response, String> {
-    var response = Strategy.string.contramap { (response: Response) in
+    var response = Strategy.lines.pullback { (response: Response) in
       let lines = ["\(response.status.rawValue) \(response.status.description)"]
         + response.headers.map { $0.description }.sorted()
       let top = lines.joined(separator: "\n")
