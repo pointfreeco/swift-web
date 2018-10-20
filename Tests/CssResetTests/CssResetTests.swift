@@ -11,6 +11,6 @@ class ResetTests: SnapshotTestCase {
   }
 
   func testResetCompact() {
-    assertSnapshot(matching: reset, with: .css(.compact))
+    assertSnapshot(of: .css(.compact), matching: reset)
   }
 }

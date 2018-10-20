@@ -23,8 +23,8 @@ let package = Package(
     .library(name: "View", targets: ["View"])
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("d5bdd4a")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("f16a6f3")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("1810294")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("7bc56c3")),
     .package(url: "https://github.com/pointfreeco/swift-html", .revision("0.1.3")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4")),
