@@ -6,6 +6,14 @@ import Prelude
 
 public func run(
   _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>,
+  defaultHeaders: [Response.Header] = [
+  .init("Referrer-Policy", "strict-origin-when-cross-origin"),
+  .init("X-Content-Type-Options", "nosniff"),
+  .init("X-Download-Options", "noopen"),
+  .init("X-Frame-Options", "SAMEORIGIN"),
+  .init("X-Permitted-Cross-Domain-Policies", "none"),
+  .init("X-XSS-Protection", "1; mode=block"),
+  ],
   on port: Int = 8080,
   gzip: Bool = false
   ) {
@@ -18,9 +26,9 @@ public func run(
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
         channel.pipeline.configureHTTPServerPipeline().then {
-          let handlers: [ChannelHandler] = gzip
-            ? [HTTPResponseCompressor(), Handler(middleware)]
-            : [Handler(middleware)]
+          let handlers: [ChannelHandler] = (gzip ? [HTTPResponseCompressor()] : [])
+            + [Handler(defaultHeaders: defaultHeaders, middleware: middleware)]
+
           return channel.pipeline.addHandlers(handlers, first: false)
         }
       }
@@ -41,10 +49,15 @@ public func run(
 private final class Handler: ChannelInboundHandler {
   typealias InboundIn = HTTPServerRequestPart
 
-  var request: URLRequest?
+  let defaultHeaders: [Response.Header]
   let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>
+  var request: URLRequest?
 
-  init(_ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>) {
+  init(
+    defaultHeaders: [Response.Header],
+    middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>
+    ) {
+    self.defaultHeaders = defaultHeaders
     self.middleware = middleware
   }
 
@@ -75,7 +88,7 @@ private final class Handler: ChannelInboundHandler {
         return
       }
 
-      let conn = self.middleware(connection(from: req)).perform()
+      let conn = self.middleware(connection(from: req, defaultHeaders: defaultHeaders)).perform()
       let res = conn.response
 
       let head = HTTPResponseHead(
