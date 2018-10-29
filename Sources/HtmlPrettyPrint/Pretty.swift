@@ -52,7 +52,7 @@ public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
           }
         }
         .joined(separator: config.newline + indentation + String(repeating: " ", count: tag.count + 1))
-      guard !voidElements.contains(tag) else {
+      guard !children.isEmpty || !voidElements.contains(tag) else {
         return indentation + "<" + tag + renderedAttrs + ">" + config.newline
       }
       return indentation + "<" + tag + renderedAttrs + ">" + config.newline

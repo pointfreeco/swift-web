@@ -133,4 +133,16 @@ composition.
 
     assertSnapshot(matching: doc)
   }
+
+  func testVoidElementsWithChildren() {
+    let doc = element("link", [.init("href", "https://www.pointfree.co") as Attribute<Void>], [""])
+
+    XCTAssertEqual("""
+<link href="https://www.pointfree.co">
+  \
+
+</link>
+
+""", prettyPrint(doc))
+  }
 }
