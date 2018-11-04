@@ -6,6 +6,11 @@ import XCTest
 final class UrlFormDecoderTests: SnapshotTestCase {
   let decoder = UrlFormDecoder()
 
+  override func setUp() {
+    super.setUp()
+//    record = true
+  }
+
   func testOptionality() throws {
     struct Foo: Decodable {
       let x: Int?

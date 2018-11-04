@@ -11,12 +11,12 @@ extension Application {
   }
 }
 
-extension Strategy {
+extension Strategy where A == Conn<ResponseEnded, Data>, B == String {
   public static var conn: Strategy<Conn<ResponseEnded, Data>, String> {
-    var conn = Strategy.lines.asyncPullback { (conn: Conn<ResponseEnded, Data>) in
+    var conn = SimpleStrategy.lines.asyncPullback { (conn: Conn<ResponseEnded, Data>) in
       Async { callback in
-        Strategy.request.snapshotToDiffable(conn.request).run { request in
-          Strategy.response.snapshotToDiffable(conn.response).run { response in
+        Strategy<URLRequest, String>.request.snapshotToDiffable(conn.request).run { request in
+          Strategy<Response, String>.response.snapshotToDiffable(conn.response).run { response in
             callback(request + "\n\n" + response)
           }
         }
@@ -25,10 +25,12 @@ extension Strategy {
     conn.pathExtension = "Conn.txt"
     return conn
   }
+}
 
+extension Strategy where A == URLRequest, B == String {
   // TODO: move to snapshot-testing plugin library
   public static var request: Strategy<URLRequest, String> {
-    var request = Strategy.lines.pullback { (request: URLRequest) in
+    var request = SimpleStrategy.lines.pullback { (request: URLRequest) in
       let headers = (request.allHTTPHeaderFields ?? [:])
         .map { key, value in "\(key): \(value)" }
         .sorted()
@@ -42,9 +44,11 @@ extension Strategy {
     request.pathExtension = "URLRequest.txt"
     return request
   }
+}
 
+extension Strategy where A == Response, B == String {
   public static var response: Strategy<Response, String> {
-    var response = Strategy.lines.pullback { (response: Response) in
+    var response = SimpleStrategy.lines.pullback { (response: Response) in
       let lines = ["\(response.status.rawValue) \(response.status.description)"]
         + response.headers.map { $0.description }.sorted()
       let top = lines.joined(separator: "\n")
