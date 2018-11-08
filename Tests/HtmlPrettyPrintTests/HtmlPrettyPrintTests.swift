@@ -6,6 +6,10 @@ import HtmlTestSupport
 import SnapshotTesting
 import XCTest
 
+#if !os(Linux)
+typealias SnapshotTestCase = XCTestCase
+#endif
+
 class PrettyTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
@@ -39,7 +43,7 @@ not identify the arguments (or "points") on which they operate.
         ])
     ]
 
-    assertSnapshot(of: .html, matching: doc)
+    assertSnapshot(matching: doc, as: .html)
   }
 
   func testDocument() {

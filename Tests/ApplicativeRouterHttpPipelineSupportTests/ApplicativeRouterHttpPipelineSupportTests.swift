@@ -6,6 +6,10 @@ import Prelude
 import SnapshotTesting
 import XCTest
 
+#if !os(Linux)
+typealias SnapshotTestCase = XCTestCase
+#endif
+
 class ApplicativeRouterHttpPipelineSupportTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
