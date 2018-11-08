@@ -23,7 +23,7 @@ let package = Package(
     .library(name: "View", targets: ["View"])
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("052f3ae")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("f270907")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("afb1918")),
     .package(url: "https://github.com/pointfreeco/swift-html", .revision("0.1.3")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
