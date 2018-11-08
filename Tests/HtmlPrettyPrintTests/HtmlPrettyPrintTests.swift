@@ -6,6 +6,10 @@ import HtmlTestSupport
 import SnapshotTesting
 import XCTest
 
+#if !os(Linux)
+typealias SnapshotTestCase = XCTestCase
+#endif
+
 class PrettyTests: SnapshotTestCase {
   override func setUp() {
     super.setUp()
@@ -39,7 +43,7 @@ not identify the arguments (or "points") on which they operate.
         ])
     ]
 
-    assertSnapshot(of: .html, matching: doc)
+    assertSnapshot(matching: doc, as: .html)
   }
 
   func testDocument() {
@@ -132,5 +136,17 @@ composition.
     )
 
     assertSnapshot(matching: doc)
+  }
+
+  func testVoidElementsWithChildren() {
+    let doc = element("link", [.init("href", "https://www.pointfree.co") as Attribute<Void>], [""])
+
+    XCTAssertEqual("""
+<link href="https://www.pointfree.co">
+  \
+
+</link>
+
+""", prettyPrint(doc))
   }
 }

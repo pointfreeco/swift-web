@@ -1,9 +1,9 @@
 import Css
 import SnapshotTesting
 
-extension Strategy {
+extension Strategy where Snapshottable == Stylesheet, Format == String {
   public static func css(_ config: Config) -> Strategy<Stylesheet, String> {
-    var css = Strategy.lines.pullback { (stylesheet: Stylesheet) in
+    var css = SimpleStrategy.lines.pullback { (stylesheet: Stylesheet) in
       render(config: config, css: stylesheet)
     }
     css.pathExtension = "css"
@@ -11,6 +11,6 @@ extension Strategy {
   }
 }
 
-extension Stylesheet: DefaultDiffable {
+extension Stylesheet: DefaultSnapshottable {
   public static let defaultStrategy: Strategy<Stylesheet, String> = .css(.pretty)
 }
