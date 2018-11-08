@@ -4,6 +4,10 @@ import Css
 import CssTestSupport
 import SnapshotTesting
 
+#if !os(Linux)
+typealias SnapshotTestCase = XCTestCase
+#endif
+
 class FlexBoxTests: SnapshotTestCase {
 
   func testFlexBox() {

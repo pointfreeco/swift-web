@@ -11,7 +11,7 @@ extension Application {
   }
 }
 
-extension Strategy where A == Conn<ResponseEnded, Data>, B == String {
+extension Strategy where Snapshottable == Conn<ResponseEnded, Data>, Format == String {
   public static var conn: Strategy<Conn<ResponseEnded, Data>, String> {
     var conn = SimpleStrategy.lines.asyncPullback { (conn: Conn<ResponseEnded, Data>) in
       Async { callback in
@@ -27,7 +27,7 @@ extension Strategy where A == Conn<ResponseEnded, Data>, B == String {
   }
 }
 
-extension Strategy where A == URLRequest, B == String {
+extension Strategy where Snapshottable == URLRequest, Format == String {
   // TODO: move to snapshot-testing plugin library
   public static var request: Strategy<URLRequest, String> {
     var request = SimpleStrategy.lines.pullback { (request: URLRequest) in
@@ -46,7 +46,7 @@ extension Strategy where A == URLRequest, B == String {
   }
 }
 
-extension Strategy where A == Response, B == String {
+extension Strategy where Snapshottable == Response, Format == String {
   public static var response: Strategy<Response, String> {
     var response = SimpleStrategy.lines.pullback { (response: Response) in
       let lines = ["\(response.status.rawValue) \(response.status.description)"]
@@ -69,17 +69,17 @@ extension Strategy where A == Response, B == String {
   }
 }
 
-extension Conn: DefaultDiffable where Step == ResponseEnded, A == Data {
-  public typealias B = String
+extension Conn: DefaultSnapshottable where Step == ResponseEnded, A == Data {
+  public typealias Format = String
 
   public static let defaultStrategy: Strategy<Conn<ResponseEnded, Data>, String> = .conn
 }
 
-extension URLRequest: DefaultDiffable {
+extension URLRequest: DefaultSnapshottable {
   public static let defaultStrategy: Strategy<URLRequest, String> = .request
 }
 
-extension Response: DefaultDiffable {
+extension Response: DefaultSnapshottable {
   public static let defaultStrategy: Strategy<Response, String> = .response
 }
 
