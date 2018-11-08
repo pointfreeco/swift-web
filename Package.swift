@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:4.1
 
 import PackageDescription
 
@@ -23,8 +23,8 @@ let package = Package(
     .library(name: "View", targets: ["View"])
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("dbdb163")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("afb1918")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9e0df98")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("d886237")),
     .package(url: "https://github.com/pointfreeco/swift-html", .revision("0.1.3")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4")),
