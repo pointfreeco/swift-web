@@ -28,16 +28,19 @@ class ApplicativeRouterHttpPipelineSupportTests: SnapshotTestCase {
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])).perform(),
+      as: .conn,
       named: "home"
     )
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!), defaultHeaders: [])).perform(),
+      as: .conn,
       named: "episode"
     )
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])).perform(),
+      as: .conn,
       named: "unrecognized"
     )
   }
@@ -52,6 +55,7 @@ class ApplicativeRouterHttpPipelineSupportTests: SnapshotTestCase {
 
     assertSnapshot(
       matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])).perform(),
+      as: .conn,
       named: "unrecognized"
     )
   }

@@ -2,22 +2,15 @@ import Html
 import HtmlPrettyPrint
 import SnapshotTesting
 
-extension Strategy where Snapshottable == [Node], Format == String {
-  public static var html: Strategy<[Node], String> {
-    var html = SimpleStrategy.lines.pullback { (nodes: [Node]) in
-      prettyPrint(nodes)
-    }
-    html.pathExtension = "html"
-    return html
+extension Snapshotting where Value == [Node], Format == String {
+  public static var html: Snapshotting {
+    var snapshotting = SimplySnapshotting.lines
+    .pullback { (nodes: [Node]) in prettyPrint(nodes) }
+    snapshotting.pathExtension = "html"
+    return snapshotting
   }
 }
 
-extension Strategy where Snapshottable == Node, Format == String {
-  public static var htmlNode: Strategy<Node, String> {
-    return Strategy<[Node], String>.html.pullback { [$0] }
-  }
-}
-
-extension Node: DefaultSnapshottable {
-  public static let defaultStrategy: Strategy<Node, String> = .htmlNode
+extension Snapshotting where Value == Node, Format == String {
+  public static let html = Snapshotting<[Node], String>.html.pullback { [$0] }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import Html
 import HttpPipeline
+import Optics
 import Prelude
 import SnapshotTesting
 import XCTest
@@ -11,76 +12,35 @@ extension Application {
   }
 }
 
-extension Strategy where Snapshottable == Conn<ResponseEnded, Data>, Format == String {
-  public static var conn: Strategy<Conn<ResponseEnded, Data>, String> {
-    var conn = SimpleStrategy.lines.asyncPullback { (conn: Conn<ResponseEnded, Data>) in
-      Async { callback in
-        Strategy<URLRequest, String>.request.snapshotToDiffable(conn.request).run { request in
-          Strategy<Response, String>.response.snapshotToDiffable(conn.response).run { response in
-            callback(request + "\n\n" + response)
-          }
+extension Snapshotting where Value == Conn<ResponseEnded, Data>, Format == String {
+  public static let conn = SimplySnapshotting.lines.asyncPullback { (conn: Conn<ResponseEnded, Data>) in
+    Async { callback in
+      Snapshotting<URLRequest, String>.raw.snapshot(conn.request).run { request in
+        Snapshotting<Response, String>.response.snapshot(conn.response).run { response in
+          callback(request + "\n\n" + response)
         }
       }
     }
-    conn.pathExtension = "Conn.txt"
-    return conn
-  }
+  } |> \.pathExtension .~ "Conn.txt"
 }
 
-extension Strategy where Snapshottable == URLRequest, Format == String {
-  // TODO: move to snapshot-testing plugin library
-  public static var request: Strategy<URLRequest, String> {
-    var request = SimpleStrategy.lines.pullback { (request: URLRequest) in
-      let headers = (request.allHTTPHeaderFields ?? [:])
-        .map { key, value in "\(key): \(value)" }
-        .sorted()
+extension Snapshotting where Value == Response, Format == String {
+  public static let response = SimplySnapshotting.lines.pullback { (response: Response) in
+    let lines = ["\(response.status.rawValue) \(response.status.description)"]
+      + response.headers.map { $0.description }.sorted()
+    let top = lines.joined(separator: "\n")
 
-      // NB: `absoluteString` is necessary because of https://github.com/apple/swift-corelibs-foundation/pull/1312
-      let lines = ["\(request.httpMethod ?? "GET") \((request.url?.absoluteString).map(String.init(describing:)) ?? "?")"]
-        + headers
-      return lines.joined(separator: "\n")
-        + (request.httpBody.map { "\n\n\(String(decoding: $0, as: UTF8.self))" } ?? "")
+    let isApplicationOrText = response.headers
+      .first(where: { $0.name == "Content-Type" })
+      .map { $0.value.hasPrefix("application/") || $0.value.hasPrefix("text/") }
+      ?? false
+
+    if isApplicationOrText {
+      // todo: use proper encoding when available
+      return top + "\n\n\(String(decoding: response.body, as: UTF8.self))\n"
     }
-    request.pathExtension = "URLRequest.txt"
-    return request
+    return top
   }
-}
-
-extension Strategy where Snapshottable == Response, Format == String {
-  public static var response: Strategy<Response, String> {
-    var response = SimpleStrategy.lines.pullback { (response: Response) in
-      let lines = ["\(response.status.rawValue) \(response.status.description)"]
-        + response.headers.map { $0.description }.sorted()
-      let top = lines.joined(separator: "\n")
-
-      let isApplicationOrText = response.headers
-        .first(where: { $0.name == "Content-Type" })
-        .map { $0.value.hasPrefix("application/") || $0.value.hasPrefix("text/") }
-        ?? false
-
-      if isApplicationOrText {
-        // todo: use proper encoding when available
-        return top + "\n\n\(String(decoding: response.body, as: UTF8.self))\n"
-      }
-      return top
-    }
-    response.pathExtension = "Response.txt"
-    return response
-  }
-}
-
-extension Conn: DefaultSnapshottable where Step == ResponseEnded, A == Data {
-  public typealias Format = String
-
-  public static let defaultStrategy: Strategy<Conn<ResponseEnded, Data>, String> = .conn
-}
-
-extension URLRequest: DefaultSnapshottable {
-  public static let defaultStrategy: Strategy<URLRequest, String> = .request
-}
-
-extension Response: DefaultSnapshottable {
-  public static let defaultStrategy: Strategy<Response, String> = .response
 }
 
 // TODO: move to prelude

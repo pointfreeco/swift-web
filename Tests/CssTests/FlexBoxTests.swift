@@ -29,6 +29,6 @@ class FlexBoxTests: SnapshotTestCase {
         <> ".aside-2" % order(2)
         <> ".aside-3" % order(3)
 
-    assertSnapshot(matching: css)
+    assertSnapshot(matching: css, as: .css)
   }
 }
