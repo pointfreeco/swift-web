@@ -18,7 +18,7 @@ class HttpPipelineTests: SnapshotTestCase {
       writeStatus(.ok)
         >=> respond(text: "Hello, world")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testHtmlResponse() {
@@ -26,20 +26,20 @@ class HttpPipelineTests: SnapshotTestCase {
       writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testRedirect() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> = redirect(to: "/sign-in")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testRedirect_AdditionalHeaders() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testWriteHeaders() {
@@ -51,7 +51,7 @@ class HttpPipelineTests: SnapshotTestCase {
         >=> writeHeader("A", "Header should be first")
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testCookies() {
@@ -62,7 +62,7 @@ class HttpPipelineTests: SnapshotTestCase {
         >=> writeHeader(.clearCookie("test"))
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testCookieOptions() {
@@ -81,6 +81,6 @@ class HttpPipelineTests: SnapshotTestCase {
         )
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 }

@@ -135,7 +135,7 @@ composition.
       ]
     )
 
-    assertSnapshot(matching: doc)
+    assertSnapshot(matching: doc, as: .html)
   }
 
   func testVoidElementsWithChildren() {

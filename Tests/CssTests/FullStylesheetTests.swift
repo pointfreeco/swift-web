@@ -30,6 +30,6 @@ class FullStylesheetTests: SnapshotTestCase {
         <> appearance(.button)
     )
 
-    assertSnapshot(matching: css)
+    assertSnapshot(matching: css, as: .css)
   }
 }

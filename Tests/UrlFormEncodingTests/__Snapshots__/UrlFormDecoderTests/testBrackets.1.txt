@@ -1,6 +1,4 @@
 ▿ Foo
-  - helloWorld: "a greeting for you"
-  - port: 8080
   - bar: Optional<Bar>.none
   ▿ bars: 2 elements
     ▿ Bar
@@ -14,3 +12,5 @@
     ▿ 1 element
       ▿ Bar
         - baz: 4
+  - helloWorld: "a greeting for you"
+  - port: 8080

@@ -11,7 +11,7 @@ typealias SnapshotTestCase = XCTestCase
 
 class ResetTests: SnapshotTestCase {
   func testResetPretty() {
-    assertSnapshot(matching: reset)
+    assertSnapshot(matching: reset, as: .css)
   }
 
   func testResetCompact() {

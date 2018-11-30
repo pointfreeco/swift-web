@@ -1,23 +1,15 @@
 import Html
 import HtmlPrettyPrint
+import Optics
+import Prelude
 import SnapshotTesting
 
-extension Strategy where Snapshottable == [Node], Format == String {
-  public static var html: Strategy<[Node], String> {
-    var html = SimpleStrategy.lines.pullback { (nodes: [Node]) in
-      prettyPrint(nodes)
-    }
-    html.pathExtension = "html"
-    return html
-  }
+extension Snapshotting where Value == [Node], Format == String {
+  public static let html = SimplySnapshotting.lines
+    .pullback { (nodes: [Node]) in prettyPrint(nodes) }
+    |> \.pathExtension .~ "html"
 }
 
-extension Strategy where Snapshottable == Node, Format == String {
-  public static var htmlNode: Strategy<Node, String> {
-    return Strategy<[Node], String>.html.pullback { [$0] }
-  }
-}
-
-extension Node: DefaultSnapshottable {
-  public static let defaultStrategy: Strategy<Node, String> = .htmlNode
+extension Snapshotting where Value == Node, Format == String {
+  public static let html = Snapshotting<[Node], String>.html.pullback { [$0] }
 }

@@ -19,7 +19,7 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testBasicAuth_Unauthorized_ProtectedPredicate() {
@@ -28,7 +28,7 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testBasicAuth_Unauthorized_Realm() {
@@ -37,7 +37,7 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testBasicAuth_Unauthorized_CustomFailure() {
@@ -50,7 +50,7 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testBasicAuth_Authorized() {
@@ -65,7 +65,7 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
       defaultHeaders: []
     )
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
   func testRedirectUnrelatedHosts() {
@@ -86,16 +86,20 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
         >=> end
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.point-free.co")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.point-free.co")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
   }
 
@@ -123,13 +127,16 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
     }
 
     assertSnapshot(
-      matching: middleware(securedConnection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))).perform()
+      matching: middleware(securedConnection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))).perform(),
+      as: .conn
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
   }
 
@@ -150,13 +157,16 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
         >=> end
 
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
     assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform()
+      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform(),
+      as: .conn
     )
   }
 

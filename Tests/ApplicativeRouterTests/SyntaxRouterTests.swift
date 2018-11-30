@@ -45,10 +45,11 @@ class SyntaxRouterTests: SnapshotTestCase {
     // NB: Previously we did `XCTAssertEqual` on a left/right side to check that the requests match, but
     //     due to a weird Swift bug (https://bugs.swift.org/browse/SR-6407) we are switching to a snapshot
     //     test.
-    assertSnapshot(matching:
-      router.request(for: .home, base: URL(string: "http://www.pointfree.co/"))!
+    assertSnapshot(
+      matching: router.request(for: .home, base: URL(string: "http://www.pointfree.co/"))!
         // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
-        |> \.httpMethod .~ "GET"
+        |> \.httpMethod .~ "GET",
+      as: .raw
     )
   }
 
@@ -195,7 +196,8 @@ class SyntaxRouterTests: SnapshotTestCase {
       router.templateUrl(for: route)?.absoluteString
     )
     assertSnapshot(
-      matching: router.request(for: .postBodyFormData(SubscribeData(plan: 2, quantity: 3)))!
+      matching: router.request(for: .postBodyFormData(SubscribeData(plan: 2, quantity: 3)))!,
+      as: .raw
     )
   }
 

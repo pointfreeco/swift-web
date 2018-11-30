@@ -26,7 +26,8 @@ final class UrlFormEncoderTests: SnapshotTestCase {
           ]
         ]
         )
-        .sortedByFormEncodedKey()
+        .sortedByFormEncodedKey(),
+      as: .lines
     )
   }
 
@@ -40,7 +41,8 @@ final class UrlFormEncoderTests: SnapshotTestCase {
           "empty_object": [:],
           ]
         )
-        .sortedByFormEncodedKey()
+        .sortedByFormEncodedKey(),
+      as: .lines
     )
   }
 
@@ -50,7 +52,8 @@ final class UrlFormEncoderTests: SnapshotTestCase {
         values: ["Functions & Purity", "Monoids", "Applicatives"],
         rootKey: "episodes"
         )
-        .sortedByFormEncodedKey()
+        .sortedByFormEncodedKey(),
+      as: .lines
     )
   }
 
@@ -64,7 +67,8 @@ final class UrlFormEncoderTests: SnapshotTestCase {
         ],
         rootKey: "episodes"
         )
-        .sortedByFormEncodedKey()
+        .sortedByFormEncodedKey(),
+      as: .lines
     )
   }
 
@@ -77,7 +81,8 @@ final class UrlFormEncoderTests: SnapshotTestCase {
 
     assertSnapshot(
       matching: urlFormEncode(value: episode)
-        .sortedByFormEncodedKey()
+        .sortedByFormEncodedKey(),
+      as: .lines
     )
   }
 }

@@ -33,7 +33,7 @@ aGVsbG8td29ybGQ=\
         )
         >=> end
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
 
     XCTAssertEqual(
       "hello-world",
@@ -66,7 +66,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
         >=> end
 
     #if !os(Linux)
-      assertSnapshot(matching: middleware(conn).perform())
+      assertSnapshot(matching: middleware(conn).perform(), as: .conn)
     #endif
 
     XCTAssertEqual(
@@ -99,7 +99,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
         )
         >=> end
 
-    assertSnapshot(matching: middleware(conn).perform())
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
 
     XCTAssertEqual(
       "hello-world",
@@ -139,7 +139,7 @@ cb4db8ac9390ac810837809f11bc6803\
         >=> end
 
     #if !os(Linux)
-      assertSnapshot(matching: middleware(conn).perform())
+      assertSnapshot(matching: middleware(conn).perform(), as: .conn)
     #endif
 
     XCTAssertEqual(
