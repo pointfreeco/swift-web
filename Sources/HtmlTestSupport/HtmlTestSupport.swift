@@ -1,6 +1,5 @@
 import Html
 import HtmlPrettyPrint
-import Prelude
 import SnapshotTesting
 
 extension Snapshotting where Value == [Node], Format == String {
