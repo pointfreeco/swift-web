@@ -5,9 +5,12 @@ import Prelude
 import SnapshotTesting
 
 extension Snapshotting where Value == [Node], Format == String {
-  public static let html = SimplySnapshotting.lines
+  public static var html: Snapshotting {
+    var snapshotting = SimplySnapshotting.lines
     .pullback { (nodes: [Node]) in prettyPrint(nodes) }
-    |> \.pathExtension .~ "html"
+    snapshotting.pathExtension = "html"
+    return snapshotting
+  }
 }
 
 extension Snapshotting where Value == Node, Format == String {
