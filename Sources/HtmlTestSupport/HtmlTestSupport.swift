@@ -1,6 +1,5 @@
 import Html
 import HtmlPrettyPrint
-import Optics
 import Prelude
 import SnapshotTesting
 
