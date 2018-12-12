@@ -79,7 +79,9 @@ private final class Handler: ChannelInboundHandler {
           status: .init(statusCode: 307),
           headers: .init([("location", self.baseUrl.absoluteString)])
         )))
-        _ = ctx.channel.close()
+        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+          ctx.channel.close()
+        }
         return
       }
 
