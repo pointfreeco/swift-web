@@ -7,7 +7,8 @@ import Prelude
 public func run(
   _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>,
   on port: Int = 8080,
-  gzip: Bool = false
+  gzip: Bool = false,
+  baseUrl: URL
   ) {
 
   do {
@@ -19,8 +20,8 @@ public func run(
       .childChannelInitializer { channel in
         channel.pipeline.configureHTTPServerPipeline().then {
           let handlers: [ChannelHandler] = gzip
-            ? [HTTPResponseCompressor(), Handler(middleware)]
-            : [Handler(middleware)]
+            ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware)]
+            : [Handler(baseUrl: baseUrl, middleware: middleware)]
           return channel.pipeline.addHandlers(handlers, first: false)
         }
       }
@@ -41,10 +42,12 @@ public func run(
 private final class Handler: ChannelInboundHandler {
   typealias InboundIn = HTTPServerRequestPart
 
+  let baseUrl: URL
   var request: URLRequest?
   let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>
 
-  init(_ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>) {
+  init(baseUrl: URL, middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>) {
+    self.baseUrl = baseUrl
     self.middleware = middleware
   }
 
@@ -71,6 +74,11 @@ private final class Handler: ChannelInboundHandler {
       }
     case .end:
       guard let req = self.request else {
+        _ = ctx.channel.write(HTTPServerResponsePart.head(HTTPResponseHead(
+          version: .init(major: 1, minor: 1),
+          status: .init(statusCode: 307),
+          headers: .init([("location", self.baseUrl.absoluteString)])
+        )))
         _ = ctx.channel.close()
         return
       }
