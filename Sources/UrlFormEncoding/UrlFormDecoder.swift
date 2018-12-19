@@ -167,7 +167,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
-      return try self.unwrap(key, Bool.init)
+      return try self.unwrap(key, isTrue)
     }
 
     func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
@@ -324,7 +324,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     mutating func decode(_ type: Bool.Type) throws -> Bool {
-      return try self.unwrap(Bool.init)
+      return try self.unwrap(isTrue)
     }
 
     mutating func decode(_ type: Int.Type) throws -> Int {
@@ -460,7 +460,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decode(_ type: Bool.Type) throws -> Bool {
-      return try self.unwrap(Bool.init)
+      return try self.unwrap(isTrue)
     }
 
     func decode(_ type: Int.Type) throws -> Int {
@@ -754,4 +754,10 @@ private func accumulateValues(_ query: String) -> UrlFormDecoder.Container {
     params[name] = .unkeyed(values)
   }
   return .keyed(params)
+}
+
+private let truths: Set<String> = ["1", "true"]
+
+private func isTrue(_ string: String) -> Bool {
+  return truths.contains(string.lowercased())
 }

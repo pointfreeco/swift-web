@@ -163,6 +163,18 @@ final class UrlFormDecoderTests: SnapshotTestCase {
     )
   }
 
+  func testBools() {
+    struct MyBool: Decodable {
+      let bool: Bool
+    }
+    XCTAssertTrue(try decoder.decode(MyBool.self, from: Data("bool=true".utf8)).bool)
+    XCTAssertTrue(try decoder.decode(MyBool.self, from: Data("bool=TRUE".utf8)).bool)
+    XCTAssertTrue(try decoder.decode(MyBool.self, from: Data("bool=1".utf8)).bool)
+    XCTAssertFalse(try decoder.decode(MyBool.self, from: Data("bool=false".utf8)).bool)
+    XCTAssertFalse(try decoder.decode(MyBool.self, from: Data("bool=FALSE".utf8)).bool)
+    XCTAssertFalse(try decoder.decode(MyBool.self, from: Data("bool=0".utf8)).bool)
+  }
+
 //  func testDateDecodingWithFormatted() throws {
 //    struct MyDate: Decodable {
 //      let date: Date
