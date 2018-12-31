@@ -21,6 +21,9 @@ public func plainText(for node: Node) -> String {
       .range(of: "\\bdisplay:\\s*none\\b", options: .regularExpression) == nil else { return "" }
     return plainText(tag: tag, attributes: attributes, children: children)
 
+  case let .fragment(children):
+    return children.map(plainText).joined()
+
   case let .raw(text):
     return text
   case let .text(text):
@@ -28,13 +31,11 @@ public func plainText(for node: Node) -> String {
   }
 }
 
-private func plainText(tag: String, attributes: [(key: String, value: String?)], children: [Node]) -> String {
+private func plainText(tag: String, attributes: [(key: String, value: String?)], children: Node) -> String {
 
   switch tag.lowercased() {
   case "a":
-    let content = children
-      .map(plainText)
-      .joined()
+    let content = plainText(for: children)
     let href = attributes.first(where: { $0.key == "href" })?.value
 
     return href.map {
@@ -43,21 +44,19 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
     ?? content
 
   case "b", "strong":
-    return "**" + children.map(plainText).joined() + "**"
+    return "**" + plainText(for: children) + "**"
 
   case "blockquote":
-    return "> \(children.map(plainText).joined())\n\n"
+    return "> \(plainText(for: children))\n\n"
 
   case "br":
     return "\n"
 
   case "em", "i":
-    return "_" + children.map(plainText).joined() + "_"
+    return "_" + plainText(for: children) + "_"
 
   case "h1":
-    let content = children
-      .map(plainText)
-      .joined()
+    let content = plainText(for: children)
     return """
     \(content)
     \(String(repeating: "=", count: content.count))
@@ -66,9 +65,7 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
     """
 
   case "h2":
-    let content = children
-      .map(plainText)
-      .joined()
+    let content = plainText(for: children)
     return """
     \(content)
     \(String(repeating: "-", count: content.count))
@@ -77,33 +74,33 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
     """
 
   case "h3":
-    return "### \(children.map(plainText).joined())\n\n"
+    return "### \(plainText(for: children))\n\n"
   case "h4":
-    return "#### \(children.map(plainText).joined())\n\n"
+    return "#### \(plainText(for: children)))\n\n"
   case "h5":
-    return "##### \(children.map(plainText).joined())\n\n"
+    return "##### \(plainText(for: children))\n\n"
   case "h6":
-    return "###### \(children.map(plainText).joined())\n\n"
+    return "###### \(plainText(for: children))\n\n"
 
   case "head", "script", "style":
     return ""
     
-  case "ol":
-    return zip(1..., children)
-      .map { "  \($0). \(plainText(for: $1))" }.joined(separator: "\n") + "\n"
+//  case "ol":
+//    return zip(1..., children)
+//      .map { "  \($0). \(plainText(for: $1))" }.joined(separator: "\n") + "\n"
 
   case "p":
-    return "\(children.map(plainText).joined())\n\n"
+    return "\(plainText(for: children))\n\n"
     
   case "q":
-    return "\"\(children.map(plainText).joined())\""
+    return "\"\(plainText(for: children))\""
 
   case "sub", "sup":
-    return "[\(children.map(plainText).joined())]"
+    return "[\(plainText(for: children))]"
 
-  case "ul":
-    return children
-      .map { "  - \(plainText(for: $0))" }.joined(separator: "\n") + "\n"
+//  case "ul":
+//    return children
+//      .map { "  - \(plainText(for: $0))" }.joined(separator: "\n") + "\n"
 
   case "abbr",
        "acronym",
@@ -126,10 +123,10 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
        "textarea",
        "tt",
        "var":
-    return children.map(plainText).joined()
+    return plainText(for: children)
 
   default:
-    return children.map(plainText).joined() + "\n"
+    return plainText(for: children) + "\n"
   }
 }
 

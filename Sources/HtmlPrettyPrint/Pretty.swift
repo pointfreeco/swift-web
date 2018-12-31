@@ -43,7 +43,7 @@ public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
       return indentation + "<!-- " + string + " -->" + config.newline
     case let .doctype(string):
       return indentation + "<!DOCTYPE " + string + ">" + config.newline
-    case let .element(tag, attrs, children):
+    case let .element(tag, attrs, .fragment(children)):
       let renderedAttrs = attrs
         .compactMap { k, v -> String? in
           let indentBy = indentation.count + tag.count + k.count + 3
@@ -58,6 +58,10 @@ public func prettyPrint(_ node: Node, config: Config = .pretty) -> String {
       return indentation + "<" + tag + renderedAttrs + ">" + config.newline
         + children.map { prettyPrintHelp($0, config: config, indentation: indentation + config.indentation) }.joined()
         + indentation + "</" + tag + ">" + config.newline
+    case let .element(tag, attrs, children):
+      return prettyPrintHelp(.element(tag, attrs, .fragment([children])), config: config, indentation: indentation)
+    case let .fragment(children):
+      return children.map { prettyPrintHelp($0, config: config, indentation: indentation + config.indentation) }.joined()
     case let .raw(string):
       return indentation + string + config.newline
     case let .text(string):
