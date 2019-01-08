@@ -12,9 +12,7 @@ let package = Package(
     .library(name: "CssReset", targets: ["CssReset"]),
     .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
     .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
-    .library(name: "HtmlTestSupport", targets: ["HtmlTestSupport"]),
     .library(name: "HtmlPlainTextPrint", targets: ["HtmlPlainTextPrint"]),
-    .library(name: "HtmlPrettyPrint", targets: ["HtmlPrettyPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
 //    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
@@ -25,7 +23,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("8cbc934")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.1.0"),
-    .package(url: "https://github.com/pointfreeco/swift-html", .revision("a494cde")),
+    .package(url: "https://github.com/pointfreeco/swift-html", .revision("efd29ae")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4")),
   ],
@@ -47,15 +45,10 @@ let package = Package(
     .target(name: "CssTestSupport", dependencies: ["Css", "SnapshotTesting"]),
 
     .target(name: "HtmlCssSupport", dependencies: ["Css", "Html"]),
-    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "HtmlPrettyPrint", "CssTestSupport", "HtmlTestSupport"]),
+    .testTarget(name: "HtmlCssSupportTests", dependencies: ["HtmlCssSupport", "CssTestSupport", "HtmlSnapshotTesting"]),
 
     .target(name: "HtmlPlainTextPrint", dependencies: ["Html", "Prelude"]),
-    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["HtmlPlainTextPrint", "Css", "Html", "HtmlCssSupport", "HtmlPrettyPrint", "SnapshotTesting"]),
-
-    .target(name: "HtmlPrettyPrint", dependencies: ["Html"]),
-    .testTarget(name: "HtmlPrettyPrintTests", dependencies: ["Css", "HtmlCssSupport", "HtmlPrettyPrint", "HtmlTestSupport", "SnapshotTesting"]),
-
-    .target(name: "HtmlTestSupport", dependencies: ["HtmlPrettyPrint", "SnapshotTesting"]),
+    .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["HtmlPlainTextPrint", "Css", "Html", "HtmlCssSupport", "SnapshotTesting"]),
 
     .target(name: "HttpPipeline",
             dependencies: ["Cryptor", "Html", "NIO", "NIOHTTP1", "Prelude", "Optics"]),

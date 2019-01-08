@@ -1,5 +1,4 @@
 import Html
-import HtmlPrettyPrint
 
 let doc = document([
   html([
@@ -11,4 +10,4 @@ let doc = document([
     ])
   ])
 
-print(prettyPrint(node: doc))
+print(debugRender(doc))
