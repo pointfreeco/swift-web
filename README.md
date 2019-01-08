@@ -46,7 +46,6 @@ This library contains an extensive test suite and a set of playgrounds that can 
 
 * [`HttpPipelineHtmlSupport`](#httppipelinehtmlsupport)
 * [`HtmlCssSupport`](#htmlcsssupport)
-* [`HtmlPrettyPrint`](#htmlprettyprint)
 * [`CssReset`](#cssreset)
 
 ## `Html`
@@ -270,52 +269,6 @@ print(render(styledDocument, config: pretty))
     Home
   </a>
 </p>
-```
-
-## `HtmlPrettyPrint`
-
-Contains functions for pretty printing an `Html` node (or nodes) using [DoctorPretty](https://github.com/bkase/DoctorPretty.git), a wonderful little pretty printer library. The implementation of this library has been covered in [this](http://www.fewbutripe.com/swift/html/dsl/2017/07/17/pretty-printing-html.html) article.
-
-The library not only takes care of adding newlines for tags so that the DOM structure is easy to read, but will also insert newlines when text goes past a column width, and even align smartly:
-
-```swift
-import HtmlPrettyPrint
-
-let doc = document([
-  html([
-    body([
-      comment("This is gonna be a long comment. Let's see what happens!"),
-      div([
-        div(
-          [id("some-long-id"), Html.class("foo bar baz")],
-          ["hello world"]),
-        img(src: "cat.jpg", alt: "", [id("cat"), Html.class("cat")])
-        ])
-      ])
-    ])
-  ])
-
-prettyPrint(node: doc, pageWidth: 40)
-```
-```html
-<!DOCTYPE html>
-<html>
-  <body>
-    <!-- This is gonna be a long
-         comment. Let's see what
-         happens! -->
-    <div>
-      <div id="some-long-id"
-           class="foo bar baz">
-        hello world
-      </div>
-      <img src="cat.jpg"
-           alt=""
-           id="cat"
-           class="cat">
-    </div>
-  </body>
-</html>
 ```
 
 ## `CssReset`
