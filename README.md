@@ -37,7 +37,6 @@ This library contains an extensive test suite and a set of playgrounds that can 
 
 #### Primary modules
 
-* [`Html`](#html)
 * [`Css`](#css)
 * [`HttpPipeline`](#httppipeline)
 * [`ApplicativeRouter`](#applicativerouter)
@@ -47,49 +46,6 @@ This library contains an extensive test suite and a set of playgrounds that can 
 * [`HttpPipelineHtmlSupport`](#httppipelinehtmlsupport)
 * [`HtmlCssSupport`](#htmlcsssupport)
 * [`CssReset`](#cssreset)
-
-## `Html`
-
-An embedded domain specific language (EDSL) in Swift for modeling HTML documents. A few simple value types and functions allow you to model most of HTML, and they compose easily.
-
-```swift
-import Html
-
-let doc = document([
-  html([
-    body([
-      p(["Hello world!"]),
-      p(["Goodbye!"]),
-      a([href("/")], ["Home"])
-      ])
-    ])
-  ])
-
-render(doc, config: pretty)
-```
-```html
-<!DOCTYPE html>
-<html>
-  <body>
-    <p>
-      Hello world!
-    </p>
-    <p>
-      Goodbye!
-    </p>
-    <a href="/">
-      Home
-    </a>
-  </body>
-</html>
-```
-
-The design of this library has been covered by the following articles:
-
-* [Type-safe HTML in Swift](http://www.fewbutripe.com/swift/html/dsl/2017/06/22/type-safe-html-in-swift.html)
-* [Rendering an HTML DSL in Swift](http://www.fewbutripe.com/swift/html/dsl/2017/06/23/rendering-html-dsl-in-swift.html)
-* [Composable HTML Views in Swift](http://www.fewbutripe.com/swift/html/dsl/2017/06/29/composable-html-views-in-swift.html)
-
 
 ## `Css`
 
