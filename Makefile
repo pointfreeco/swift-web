@@ -4,7 +4,6 @@ imports = \
 	@testable import CssTests; \
 	@testable import CssResetTests; \
 	@testable import HtmlCssSupportTests; \
-	@testable import HtmlPrettyPrintTests; \
 	@testable import HtmlPlainTextPrintTests; \
 	@testable import HttpPipelineTests; \
 	@testable import HttpPipelineHtmlSupportTests; \

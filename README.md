@@ -37,7 +37,6 @@ This library contains an extensive test suite and a set of playgrounds that can 
 
 #### Primary modules
 
-* [`Html`](#html)
 * [`Css`](#css)
 * [`HttpPipeline`](#httppipeline)
 * [`ApplicativeRouter`](#applicativerouter)
@@ -46,51 +45,7 @@ This library contains an extensive test suite and a set of playgrounds that can 
 
 * [`HttpPipelineHtmlSupport`](#httppipelinehtmlsupport)
 * [`HtmlCssSupport`](#htmlcsssupport)
-* [`HtmlPrettyPrint`](#htmlprettyprint)
 * [`CssReset`](#cssreset)
-
-## `Html`
-
-An embedded domain specific language (EDSL) in Swift for modeling HTML documents. A few simple value types and functions allow you to model most of HTML, and they compose easily.
-
-```swift
-import Html
-
-let doc = document([
-  html([
-    body([
-      p(["Hello world!"]),
-      p(["Goodbye!"]),
-      a([href("/")], ["Home"])
-      ])
-    ])
-  ])
-
-render(doc, config: pretty)
-```
-```html
-<!DOCTYPE html>
-<html>
-  <body>
-    <p>
-      Hello world!
-    </p>
-    <p>
-      Goodbye!
-    </p>
-    <a href="/">
-      Home
-    </a>
-  </body>
-</html>
-```
-
-The design of this library has been covered by the following articles:
-
-* [Type-safe HTML in Swift](http://www.fewbutripe.com/swift/html/dsl/2017/06/22/type-safe-html-in-swift.html)
-* [Rendering an HTML DSL in Swift](http://www.fewbutripe.com/swift/html/dsl/2017/06/23/rendering-html-dsl-in-swift.html)
-* [Composable HTML Views in Swift](http://www.fewbutripe.com/swift/html/dsl/2017/06/29/composable-html-views-in-swift.html)
-
 
 ## `Css`
 
@@ -270,52 +225,6 @@ print(render(styledDocument, config: pretty))
     Home
   </a>
 </p>
-```
-
-## `HtmlPrettyPrint`
-
-Contains functions for pretty printing an `Html` node (or nodes) using [DoctorPretty](https://github.com/bkase/DoctorPretty.git), a wonderful little pretty printer library. The implementation of this library has been covered in [this](http://www.fewbutripe.com/swift/html/dsl/2017/07/17/pretty-printing-html.html) article.
-
-The library not only takes care of adding newlines for tags so that the DOM structure is easy to read, but will also insert newlines when text goes past a column width, and even align smartly:
-
-```swift
-import HtmlPrettyPrint
-
-let doc = document([
-  html([
-    body([
-      comment("This is gonna be a long comment. Let's see what happens!"),
-      div([
-        div(
-          [id("some-long-id"), Html.class("foo bar baz")],
-          ["hello world"]),
-        img(src: "cat.jpg", alt: "", [id("cat"), Html.class("cat")])
-        ])
-      ])
-    ])
-  ])
-
-prettyPrint(node: doc, pageWidth: 40)
-```
-```html
-<!DOCTYPE html>
-<html>
-  <body>
-    <!-- This is gonna be a long
-         comment. Let's see what
-         happens! -->
-    <div>
-      <div id="some-long-id"
-           class="foo bar baz">
-        hello world
-      </div>
-      <img src="cat.jpg"
-           alt=""
-           id="cat"
-           class="cat">
-    </div>
-  </body>
-</html>
 ```
 
 ## `CssReset`

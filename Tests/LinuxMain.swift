@@ -3,7 +3,7 @@
 
 import XCTest
 
-@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlCssSupportTests; @testable import HtmlPrettyPrintTests; @testable import HtmlPlainTextPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
+@testable import ApplicativeRouterHttpPipelineSupportTests; @testable import ApplicativeRouterTests; @testable import CssTests; @testable import CssResetTests; @testable import HtmlCssSupportTests; @testable import HtmlPlainTextPrintTests; @testable import HttpPipelineTests; @testable import HttpPipelineHtmlSupportTests; @testable import UrlFormEncodingTests;
 extension ApplicativeRouterHttpPipelineSupportTests {
   static var allTests: [(String, (ApplicativeRouterHttpPipelineSupportTests) -> () throws -> Void)] = [
     ("testRoute", testRoute),
@@ -105,12 +105,6 @@ extension PlainTextTests {
     ("testPlainText", testPlainText)
   ]
 }
-extension PrettyTests {
-  static var allTests: [(String, (PrettyTests) -> () throws -> Void)] = [
-    ("testPretty", testPretty),
-    ("testDocument", testDocument)
-  ]
-}
 extension PropertyTests {
   static var allTests: [(String, (PropertyTests) -> () throws -> Void)] = [
     ("testPrefixed_Monoid", testPrefixed_Monoid)
@@ -181,7 +175,8 @@ extension UrlFormDecoderTests {
     ("testDataDecodingWithBase64", testDataDecodingWithBase64),
     ("testDateDecodingWithSecondsSince1970", testDateDecodingWithSecondsSince1970),
     ("testDateDecodingWithMillisecondsSince1970", testDateDecodingWithMillisecondsSince1970),
-    ("testDateDecodingWithIso8601", testDateDecodingWithIso8601)
+    ("testDateDecodingWithIso8601", testDateDecodingWithIso8601),
+    ("testBools", testBools)
   ]
 }
 extension UrlFormEncoderTests {
@@ -207,7 +202,6 @@ XCTMain([
   testCase(HttpPipelineTests.allTests),
   testCase(MediaTests.allTests),
   testCase(PlainTextTests.allTests),
-  testCase(PrettyTests.allTests),
   testCase(PropertyTests.allTests),
   testCase(ResetTests.allTests),
   testCase(SharedMiddlewareTransformersTests.allTests),
