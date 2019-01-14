@@ -7,9 +7,9 @@ public enum BodyOpen {}
 public enum ResponseEnded {}
 
 public struct Conn<Step, A> {
-  public private(set) var data: A
-  public private(set) var request: URLRequest
-  public private(set) var response: Response
+  public var data: A
+  public var request: URLRequest
+  public var response: Response
 }
 
 public func connection(

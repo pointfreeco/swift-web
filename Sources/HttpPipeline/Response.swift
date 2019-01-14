@@ -4,9 +4,9 @@ import Optics
 import Prelude
 
 public struct Response {
-  public private(set) var status: Status
-  public private(set) var headers: [Header]
-  public private(set) var body: Data
+  public var status: Status
+  public var headers: [Header]
+  public var body: Data
 
   public struct Header {
     public let name: String
