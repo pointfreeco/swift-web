@@ -21,11 +21,11 @@ let package = Package(
     .library(name: "View", targets: ["View"])
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("8cbc934")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .branch("swift-5")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.1.0"),
     .package(url: "https://github.com/pointfreeco/swift-html", from: "0.2.0"),
-    .package(url: "https://github.com/apple/swift-nio.git", from: "1.8.0"),
-    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.4")),
+    .package(url: "https://github.com/apple/swift-nio.git", .branch("master")),
+    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.23")),
   ],
   targets: [
     .target(name: "ApplicativeRouter", dependencies: ["Either", "Optics", "Prelude", "UrlFormEncoding"]),

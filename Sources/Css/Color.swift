@@ -40,7 +40,7 @@ public enum Color: Val, Inherit, Initial {
   }
 }
 
-public extension Color {
+extension Color {
   public static let aliceblue = rgb(240, 248, 255)
   public static let antiquewhite = rgb(250, 235, 215)
   public static let aqua = rgb(0, 255, 255)
@@ -202,7 +202,7 @@ extension Color: _ExpressibleByColorLiteral {
   }
 }
 
-public extension Color {
+extension Color {
   public private(set) var red: UInt8? {
     get {
       guard case let .rgba(r, _, _, _) = self else { return nil }
