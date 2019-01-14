@@ -13,6 +13,7 @@ let package = Package(
     .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
     .library(name: "HtmlPlainTextPrint", targets: ["HtmlPlainTextPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
+    .library(name: "HttpPipeline2", targets: ["HttpPipeline2"]),
 //    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
@@ -55,6 +56,11 @@ let package = Package(
 //            dependencies: ["HttpPipeline", "HttpPipelineHtmlSupport"]),
     .testTarget(name: "HttpPipelineTests",
                 dependencies: ["HttpPipeline", "SnapshotTesting", "HttpPipelineTestSupport"]),
+
+    .target(name: "HttpPipeline2",
+            dependencies: ["NIO", "NIOHTTP1", "Prelude"]),
+    .testTarget(name: "HttpPipeline2Tests",
+                dependencies: ["HttpPipeline2", "SnapshotTesting"]),
 
     .target(name: "HttpPipelineHtmlSupport", dependencies: ["Html", "HttpPipeline", "View"]),
     .testTarget(name: "HttpPipelineHtmlSupportTests", dependencies: ["HttpPipelineHtmlSupport", "SnapshotTesting"]),
