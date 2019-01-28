@@ -13,8 +13,9 @@ let package = Package(
     .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
     .library(name: "HtmlPlainTextPrint", targets: ["HtmlPlainTextPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
-    .library(name: "HttpPipeline2", targets: ["HttpPipeline2"]),
 //    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
+    .library(name: "HttpPipeline2", targets: ["HttpPipeline2"]),
+    .executable(name: "HttpPipeline2Example", targets: ["HttpPipeline2Example"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
     .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
@@ -59,6 +60,8 @@ let package = Package(
 
     .target(name: "HttpPipeline2",
             dependencies: ["NIO", "NIOHTTP1", "Prelude"]),
+    .target(name: "HttpPipeline2Example",
+            dependencies: ["HttpPipeline2"]),
     .testTarget(name: "HttpPipeline2Tests",
                 dependencies: ["HttpPipeline2", "SnapshotTesting"]),
 

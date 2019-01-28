@@ -18,7 +18,7 @@ public func run(
       .serverChannelOption(ChannelOptions.backlog, value: 256)
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
-        channel.pipeline.configureHTTPServerPipeline().then {
+        channel.pipeline.configureHTTPServerPipeline().flatMap {
           let handlers: [ChannelHandler] = gzip
             ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware)]
             : [Handler(baseUrl: baseUrl, middleware: middleware)]
@@ -79,7 +79,7 @@ private final class Handler: ChannelInboundHandler {
           status: .init(statusCode: 307),
           headers: .init([("location", self.baseUrl.absoluteString)])
         )))
-        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
           ctx.channel.close()
         }
         return
@@ -99,7 +99,7 @@ private final class Handler: ChannelInboundHandler {
       buffer.write(bytes: res.body)
       _ = ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)))
 
-      _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+      _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
         ctx.channel.close()
       }
     }
