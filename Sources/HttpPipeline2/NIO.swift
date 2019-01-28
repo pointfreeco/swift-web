@@ -43,8 +43,7 @@ private final class Handler: ChannelInboundHandler {
   typealias InboundIn = HTTPServerRequestPart
 
   let baseUrl: URL
-  var head: HTTPRequestHead?
-  var body = Data()
+  var request: Request?
   let middleware: AppMiddleware
 
   init(baseUrl: URL, middleware: @escaping AppMiddleware) {
@@ -56,14 +55,16 @@ private final class Handler: ChannelInboundHandler {
     let reqPart = self.unwrapInboundIn(data)
 
     switch reqPart {
-    case let .head(header):
-      self.head = header
+    case let .head(head):
+      self.request = Request(head: head, body: nil)
     case var .body(bodyPart):
       if let bodyPart = bodyPart.readBytes(length: bodyPart.readableBytes) {
-        self.body.append(contentsOf: bodyPart)
+        var body = self.request?.body ?? []
+        body.append(contentsOf: bodyPart)
+        self.request?.body = body
       }
     case .end:
-      guard let head = self.head else {
+      guard let req = self.request else {
         let badRequest = HTTPResponseHead(
           version: HTTPVersion(major: 1, minor: 1),
           status: .badRequest,
@@ -75,41 +76,15 @@ private final class Handler: ChannelInboundHandler {
         return
       }
 
+      let res = Response(request: req)
       let conn = Conn<StatusLineOpen, Void>(
-        eventLoop: ctx.eventLoop,
-        request: Request(head: head, body: self.body),
-        response: Response(
-          head: HTTPResponseHead(
-            version: head.version,
-            status: .internalServerError
-          ),
-          body: Data()
-        ),
+        channel: ctx.channel,
+        request: req,
+        response: res,
         value: ()
       )
 
-      _ = self.middleware(conn).flatMap { conn -> EventLoopFuture<Void> in
-        _ = ctx.channel.write(HTTPServerResponsePart.head(conn.response.head))
-
-        var buffer = ctx.channel.allocator.buffer(capacity: conn.response.body.count)
-        buffer.write(bytes: conn.response.body)
-        _ = ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)))
-
-        let p: EventLoopPromise<Void> = conn.eventLoop.makePromise()
-        DispatchQueue.global(qos: .background)
-          .asyncAfter(deadline: .now() + 1, execute: {
-            p.succeed(())
-          })
-
-        return p.futureResult.flatMap {
-          var buffer = ctx.channel.allocator.buffer(capacity: conn.response.body.count)
-          buffer.write(bytes: conn.response.body)
-          _ = ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)))
-
-          return ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil))
-            .flatMap { ctx.channel.close() }
-        }
-      }
+      _ = self.middleware(conn)
     }
   }
 }
