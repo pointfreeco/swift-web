@@ -179,13 +179,13 @@ private func makeHttps(url: URL) -> URL? {
 /// time the request took.
 ///
 /// - Parameter logger: A function for logging strings.
-public func requestLogger(logger: @escaping (String) -> Void, uuid: UUID)
+public func requestLogger(logger: @escaping (String) -> Void, uuid: @escaping () -> UUID)
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>)
   -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
 
     return { middleware in
       return { conn in
-        let id = uuid.uuidString
+        let id = uuid().uuidString
         let startTime = Date().timeIntervalSince1970
         logger("\(id) [Request] \(conn.request.httpMethod ?? "GET") \(conn.request.url?.relativePath ?? "")")
         return middleware(conn).flatMap { b in
