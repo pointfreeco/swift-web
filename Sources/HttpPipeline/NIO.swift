@@ -107,6 +107,10 @@ private final class Handler: ChannelInboundHandler {
       }
     }
   }
+
+  func errorCaught(ctx: ChannelHandlerContext, error: Error) {
+    _ = ctx.close()
+  }
 }
 
 private func method(from method: HTTPMethod) -> String {
