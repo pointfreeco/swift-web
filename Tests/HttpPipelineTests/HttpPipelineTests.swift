@@ -15,20 +15,21 @@ class HttpPipelineTests: SnapshotTestCase {
 
   func testClient() throws {
     let req = request(
-      .POST,
-      "https://jsonplaceholder.typicode.com/posts",
-      ["Content-type": "application/json; charset=UTF-8"],
-      .init(
-        """
+      to: .post(
+        "https://jsonplaceholder.typicode.com/posts",
+        headers: ["Content-Type": "application/json; charset=UTF-8"],
+        body: .init(
+          """
 {
   "title": "foo",
   "body": "bar",
   "userId": 1
 }
 """.utf8
+        )
       )
     )
-    let (head, body) = try req.wait()
+    let (_, body) = try req.wait()
     print(String(decoding: body, as: UTF8.self))
   }
 

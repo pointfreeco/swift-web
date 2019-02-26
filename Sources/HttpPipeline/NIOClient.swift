@@ -11,11 +11,11 @@ public struct Request {
   var body: [UInt8]?
 
   public static func get(_ url: String, headers: [String: String] = [:]) -> Request {
-    return Request(method: .GET, url: url, headers: [:], body: nil)
+    return Request(method: .GET, url: url, headers: headers, body: nil)
   }
 
   public static func post(_ url: String, headers: [String: String] = [:], body: [UInt8]) -> Request {
-    return Request(method: .POST, url: url, headers: [:], body: body)
+    return Request(method: .POST, url: url, headers: headers, body: body)
   }
 }
 
@@ -82,7 +82,7 @@ public func request(
           method: request.method,
           uri: urlComponents.path.isEmpty ? "/" : urlComponents.path
         )
-        head.headers.add(name: "host", value: host)
+        head.headers.add(name: "Host", value: host)
         request.headers.forEach { head.headers.add(name: $0, value: $1) }
         channel.write(NIOAny(HTTPClientRequestPart.head(head)), promise: nil)
         if let body = request.body {
