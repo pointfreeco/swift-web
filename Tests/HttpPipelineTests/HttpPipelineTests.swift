@@ -13,6 +13,25 @@ class HttpPipelineTests: SnapshotTestCase {
 //    record=true
   }
 
+  func testClient() throws {
+    let req = request(
+      .POST,
+      "https://jsonplaceholder.typicode.com/posts",
+      ["Content-type": "application/json; charset=UTF-8"],
+      .init(
+        """
+{
+  "title": "foo",
+  "body": "bar",
+  "userId": 1
+}
+""".utf8
+      )
+    )
+    let (head, body) = try req.wait()
+    print(String(decoding: body, as: UTF8.self))
+  }
+
   func testPipeline() {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
