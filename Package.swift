@@ -24,6 +24,9 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.1.0"),
     .package(url: "https://github.com/pointfreeco/swift-html", from: "0.2.1"),
     .package(url: "https://github.com/apple/swift-nio.git", .branch("master")),
+    .package(url: "https://github.com/apple/swift-nio-extras.git", .revision("3c1bf78")),
+//    .package(url: "https://github.com/apple/swift-nio-http2.git", .branch("master")),
+    .package(url: "https://github.com/apple/swift-nio-ssl.git", .branch("master")),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.23")),
   ],
   targets: [
@@ -50,7 +53,7 @@ let package = Package(
     .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["HtmlPlainTextPrint", "Css", "Html", "HtmlCssSupport", "SnapshotTesting"]),
 
     .target(name: "HttpPipeline",
-            dependencies: ["Cryptor", "Html", "NIO", "NIOHTTP1", "Prelude", "Optics"]),
+            dependencies: ["Cryptor", "Html", "NIO", "NIOHTTP1", "NIOHTTPCompression", "NIOSSL", "Prelude", "Optics"]),
 //    .target(name: "HttpPipelineExample",
 //            dependencies: ["HttpPipeline", "HttpPipelineHtmlSupport"]),
     .testTarget(name: "HttpPipelineTests",

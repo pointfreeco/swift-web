@@ -1,6 +1,7 @@
 import Foundation
 import NIO
 import NIOHTTP1
+import NIOHTTPCompression
 import Optics
 import Prelude
 
@@ -18,11 +19,11 @@ public func run(
       .serverChannelOption(ChannelOptions.backlog, value: 256)
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
-        channel.pipeline.configureHTTPServerPipeline().then {
+        channel.pipeline.configureHTTPServerPipeline().flatMap {
           let handlers: [ChannelHandler] = gzip
             ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware)]
             : [Handler(baseUrl: baseUrl, middleware: middleware)]
-          return channel.pipeline.addHandlers(handlers, first: false)
+          return channel.pipeline.addHandlers(handlers, position: .last)
         }
       }
       .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
@@ -84,15 +85,15 @@ private final class Handler: ChannelInboundHandler {
           ),
           promise: nil
         )
-        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
           ctx.channel.close()
         }
         return
       }
 
-      let promise = ctx.eventLoop.newPromise(of: Conn<ResponseEnded, Data>.self)
-      self.middleware(connection(from: req)).parallel.run(promise.succeed(result:))
-      _ = promise.futureResult.then { conn -> EventLoopFuture<Void> in
+      let promise = ctx.eventLoop.makePromise(of: Conn<ResponseEnded, Data>.self)
+      self.middleware(connection(from: req)).parallel.run(promise.succeed)
+      _ = promise.futureResult.flatMap { conn -> EventLoopFuture<Void> in
         let res = conn.response
 
         let head = HTTPResponseHead(
@@ -103,10 +104,10 @@ private final class Handler: ChannelInboundHandler {
         ctx.channel.write(HTTPServerResponsePart.head(head), promise: nil)
 
         var buffer = ctx.channel.allocator.buffer(capacity: res.body.count)
-        buffer.write(bytes: res.body)
+        buffer.writeBytes(res.body)
         ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
 
-        return ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+        return ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
           ctx.channel.close()
         }
       }
@@ -153,6 +154,7 @@ private func method(from method: HTTPMethod) -> String {
   case .MKCALENDAR: return "MKCALENDAR"
   case .MKACTIVITY: return "MKACTIVITY"
   case .UNSUBSCRIBE: return "UNSUBSCRIBE"
+  case .SOURCE: return "SOURCE"
   case let .RAW(value): return value
   }
 }
