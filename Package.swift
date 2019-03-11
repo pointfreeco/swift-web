@@ -22,7 +22,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .branch("swift-5")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.1.0"),
-    .package(url: "https://github.com/pointfreeco/swift-html", from: "0.2.0"),
+    .package(url: "https://github.com/pointfreeco/swift-html", from: "0.2.1"),
     .package(url: "https://github.com/apple/swift-nio.git", .branch("master")),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.23")),
   ],

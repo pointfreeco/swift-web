@@ -74,35 +74,47 @@ private final class Handler: ChannelInboundHandler {
       }
     case .end:
       guard let req = self.request else {
-        _ = ctx.channel.write(HTTPServerResponsePart.head(HTTPResponseHead(
-          version: .init(major: 1, minor: 1),
-          status: .init(statusCode: 307),
-          headers: .init([("location", self.baseUrl.absoluteString)])
-        )))
+        ctx.channel.write(
+          HTTPServerResponsePart.head(
+            HTTPResponseHead(
+              version: .init(major: 1, minor: 1),
+              status: .init(statusCode: 307),
+              headers: .init([("location", self.baseUrl.absoluteString)])
+            )
+          ),
+          promise: nil
+        )
         _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
           ctx.channel.close()
         }
         return
       }
 
-      let conn = self.middleware(connection(from: req)).perform()
-      let res = conn.response
+      let promise = ctx.eventLoop.newPromise(of: Conn<ResponseEnded, Data>.self)
+      self.middleware(connection(from: req)).parallel.run(promise.succeed(result:))
+      _ = promise.futureResult.then { conn -> EventLoopFuture<Void> in
+        let res = conn.response
 
-      let head = HTTPResponseHead(
-        version: .init(major: 1, minor: 1),
-        status: .init(statusCode: res.status.rawValue),
-        headers: .init(res.headers.map { ($0.name, $0.value) })
-      )
-      _ = ctx.channel.write(HTTPServerResponsePart.head(head))
+        let head = HTTPResponseHead(
+          version: .init(major: 1, minor: 1),
+          status: .init(statusCode: res.status.rawValue),
+          headers: .init(res.headers.map { ($0.name, $0.value) })
+        )
+        ctx.channel.write(HTTPServerResponsePart.head(head), promise: nil)
 
-      var buffer = ctx.channel.allocator.buffer(capacity: res.body.count)
-      buffer.write(bytes: res.body)
-      _ = ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)))
+        var buffer = ctx.channel.allocator.buffer(capacity: res.body.count)
+        buffer.write(bytes: res.body)
+        ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
 
-      _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
-        ctx.channel.close()
+        return ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+          ctx.channel.close()
+        }
       }
     }
+  }
+
+  func errorCaught(ctx: ChannelHandlerContext, error: Error) {
+    ctx.close(promise: nil)
   }
 }
 

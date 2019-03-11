@@ -177,30 +177,22 @@ private func makeHttps(url: URL) -> URL? {
 
 /// Transforms middleware into one that logs the request info that comes through and logs the amount of
 /// time the request took.
-public func requestLogger(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>
-  )
-  -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
-    return requestLogger(logger: { print($0) })(middleware)
-}
-
-/// Transforms middleware into one that logs the request info that comes through and logs the amount of
-/// time the request took.
 ///
 /// - Parameter logger: A function for logging strings.
-public func requestLogger(logger: @escaping (String) -> Void)
+public func requestLogger(logger: @escaping (String) -> Void, uuid: @escaping () -> UUID)
   -> (@escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>)
   -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
 
     return { middleware in
       return { conn in
+        let id = uuid().uuidString
         let startTime = Date().timeIntervalSince1970
+        logger("\(id) [Request] \(conn.request.httpMethod ?? "GET") \(conn.request.url?.relativePath ?? "")")
         return middleware(conn).flatMap { b in
           IO {
             let endTime = Date().timeIntervalSince1970
             // NB: `absoluteString` is necessary because of https://github.com/apple/swift-corelibs-foundation/pull/1312
-            logger("[Request] \(conn.request.httpMethod ?? "GET") \(conn.request.url?.absoluteString ?? "")")
-            logger("[Time]    \(Int((endTime - startTime) * 1000))ms")
+            logger("\(id) [Time] \(Int((endTime - startTime) * 1000))ms")
             return b
           }
         }

@@ -172,7 +172,8 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
 
   func testRequestLogger() {
     var log: [String] = []
-    let middleware = requestLogger(logger: { log.append($0) })
+    let uuid = UUID(uuidString: "DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD")!
+    let middleware = requestLogger(logger: {  log.append($0) }, uuid: { uuid })
       <| writeStatus(.ok)
       >=> writeHeader(.contentType(.html))
       >=> respond(html: "<p>Hello, world</p>")

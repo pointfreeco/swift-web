@@ -1,3 +1,3 @@
 ▿ 2 elements
-  - "[Request] GET /"
-  - "[Time]    0ms"
+  - "DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD [Request] GET /"
+  - "DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD [Time] 0ms"
