@@ -109,7 +109,7 @@ public func digest(value: String, secret: String) -> String? {
   let keyBytes = CryptoUtils.byteArray(fromHex: secret)
   let valueBytes = CryptoUtils.byteArray(from: value)
   let digestBytes = HMAC(using: .sha256, key: keyBytes).update(byteArray: valueBytes)?.final()
-  return digestBytes.map { Data(bytes: $0).base64EncodedString() }
+  return digestBytes.map { Data($0).base64EncodedString() }
 }
 
 public func hexDigest(value: String, asciiSecret: String) -> String? {

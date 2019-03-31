@@ -21,12 +21,12 @@ let package = Package(
     ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .branch("swift-5")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.4.0"),
-    .package(url: "https://github.com/pointfreeco/swift-html", from: "0.2.1"),
-    .package(url: "https://github.com/apple/swift-nio.git", .branch("master")),
-    .package(url: "https://github.com/apple/swift-nio-extras.git", .revision("3c1bf78")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.5.0"),
+    .package(url: "https://github.com/pointfreeco/swift-html", .exact("0.2.1")),
+    .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
+    .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
 //    .package(url: "https://github.com/apple/swift-nio-http2.git", .branch("master")),
-    .package(url: "https://github.com/apple/swift-nio-ssl.git", .branch("master")),
+    .package(url: "https://github.com/apple/swift-nio-ssl.git", from: "2.0.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.23")),
   ],
   targets: [

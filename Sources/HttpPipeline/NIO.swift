@@ -52,7 +52,7 @@ private final class Handler: ChannelInboundHandler {
     self.middleware = middleware
   }
 
-  func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
+  func channelRead(context: ChannelHandlerContext, data: NIOAny) {
     let reqPart = self.unwrapInboundIn(data)
 
     switch reqPart {
@@ -75,7 +75,7 @@ private final class Handler: ChannelInboundHandler {
       }
     case .end:
       guard let req = self.request else {
-        ctx.channel.write(
+        context.channel.write(
           HTTPServerResponsePart.head(
             HTTPResponseHead(
               version: .init(major: 1, minor: 1),
@@ -85,13 +85,13 @@ private final class Handler: ChannelInboundHandler {
           ),
           promise: nil
         )
-        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
-          ctx.channel.close()
+        _ = context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
+          context.channel.close()
         }
         return
       }
 
-      let promise = ctx.eventLoop.makePromise(of: Conn<ResponseEnded, Data>.self)
+      let promise = context.eventLoop.makePromise(of: Conn<ResponseEnded, Data>.self)
       self.middleware(connection(from: req)).parallel.run(promise.succeed)
       _ = promise.futureResult.flatMap { conn -> EventLoopFuture<Void> in
         let res = conn.response
@@ -101,21 +101,21 @@ private final class Handler: ChannelInboundHandler {
           status: .init(statusCode: res.status.rawValue),
           headers: .init(res.headers.map { ($0.name, $0.value) })
         )
-        ctx.channel.write(HTTPServerResponsePart.head(head), promise: nil)
+        context.channel.write(HTTPServerResponsePart.head(head), promise: nil)
 
-        var buffer = ctx.channel.allocator.buffer(capacity: res.body.count)
+        var buffer = context.channel.allocator.buffer(capacity: res.body.count)
         buffer.writeBytes(res.body)
-        ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
+        context.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
 
-        return ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
-          ctx.channel.close()
+        return context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
+          context.channel.close()
         }
       }
     }
   }
 
-  func errorCaught(ctx: ChannelHandlerContext, error: Error) {
-    ctx.close(promise: nil)
+  func errorCaught(context: ChannelHandlerContext, error: Error) {
+    context.close(promise: nil)
   }
 }
 
