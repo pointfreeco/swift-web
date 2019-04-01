@@ -1,0 +1,8 @@
+GET /
+Authorization: Basic SGVsbG86V29ybGQ=
+
+200 OK
+Content-Length: 19
+Content-Type: text/html; charset=utf-8
+
+<p>Hello, world</p>

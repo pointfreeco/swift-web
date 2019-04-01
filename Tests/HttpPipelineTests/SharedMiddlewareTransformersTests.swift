@@ -68,6 +68,21 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
     assertSnapshot(matching: middleware(conn).perform(), as: .conn)
   }
 
+  func testBasicAuth_Authorized_LowercasedHeaderName() {
+    let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
+      basicAuth(user: "Hello", password: "World")
+        <| writeStatus(.ok)
+        >=> respond(html: "<p>Hello, world</p>")
+
+    let conn = connection(
+      from: URLRequest(url: URL(string: "/")!)
+        |> \.allHTTPHeaderFields .~ ["authorization": "Basic SGVsbG86V29ybGQ="],
+      defaultHeaders: []
+    )
+    
+    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+  }
+
   func testRedirectUnrelatedHosts() {
     let allowedHosts = [
       "www.pointfree.co",
