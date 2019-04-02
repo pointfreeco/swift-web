@@ -127,7 +127,7 @@ extension SharedMiddlewareTransformersTests {
     ("testRequireHerokuHttps", testRequireHerokuHttps),
     ("testRequireHttps", testRequireHttps),
     ("testRequestLogger", testRequestLogger),
-    ("testBasiAuthValidationIsCaseInsensitive", testBasiAuthValidationIsCaseInsensitive)
+    ("testBasicAuthValidationIsCaseInsensitive", testBasicAuthValidationIsCaseInsensitive)
   ]
 }
 extension SignedCookieTests {
