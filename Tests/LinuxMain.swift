@@ -123,11 +123,11 @@ extension SharedMiddlewareTransformersTests {
     ("testBasicAuth_Unauthorized_Realm", testBasicAuth_Unauthorized_Realm),
     ("testBasicAuth_Unauthorized_CustomFailure", testBasicAuth_Unauthorized_CustomFailure),
     ("testBasicAuth_Authorized", testBasicAuth_Authorized),
-    ("testBasicAuth_Authorized_LowercasedHeaderName", testBasicAuth_Authorized_LowercasedHeaderName),
     ("testRedirectUnrelatedHosts", testRedirectUnrelatedHosts),
     ("testRequireHerokuHttps", testRequireHerokuHttps),
     ("testRequireHttps", testRequireHttps),
-    ("testRequestLogger", testRequestLogger)
+    ("testRequestLogger", testRequestLogger),
+    ("testBasiAuthValidationIsCaseInsensitive", testBasiAuthValidationIsCaseInsensitive)
   ]
 }
 extension SignedCookieTests {
