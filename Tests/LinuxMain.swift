@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.13.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.15.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import XCTest
@@ -123,6 +123,7 @@ extension SharedMiddlewareTransformersTests {
     ("testBasicAuth_Unauthorized_Realm", testBasicAuth_Unauthorized_Realm),
     ("testBasicAuth_Unauthorized_CustomFailure", testBasicAuth_Unauthorized_CustomFailure),
     ("testBasicAuth_Authorized", testBasicAuth_Authorized),
+    ("testBasicAuth_Authorized_LowercasedHeaderName", testBasicAuth_Authorized_LowercasedHeaderName),
     ("testRedirectUnrelatedHosts", testRedirectUnrelatedHosts),
     ("testRequireHerokuHttps", testRequireHerokuHttps),
     ("testRequireHttps", testRequireHttps),
