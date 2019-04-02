@@ -182,4 +182,14 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
 
     assertSnapshot(matching: log, as: .dump)
   }
+  
+  func testBasicAuthValidationIsCaseInsensitive() {
+    let urlRequestWithUppercaseAuthorizationHeader = URLRequest(url: URL(string: "/")!)
+      |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
+    XCTAssertTrue(validateBasicAuth(user: "Hello", password: "World", request: urlRequestWithUppercaseAuthorizationHeader))
+
+    let urlRequestWithLowercasedAuthorizationHeader = URLRequest(url: URL(string: "/")!)
+      |> \.allHTTPHeaderFields .~ ["authorization": "Basic SGVsbG86V29ybGQ="]
+    XCTAssertTrue(validateBasicAuth(user: "Hello", password: "World", request: urlRequestWithLowercasedAuthorizationHeader))
+  }
 }

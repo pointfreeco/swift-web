@@ -160,7 +160,7 @@ public func requireHttps<A>(allowedInsecureHosts: [String])
 
 public func validateBasicAuth(user: String, password: String, request: URLRequest) -> Bool {
 
-  let auth = request.allHTTPHeaderFields?.first(where: { $0.key == "Authorization" })?.value ?? ""
+  let auth = request.value(forHTTPHeaderField: "Authorization") ?? ""
 
   let parts = Foundation.Data(base64Encoded: String(auth.dropFirst(6)))
     .map { String(decoding: $0, as: UTF8.self) }
