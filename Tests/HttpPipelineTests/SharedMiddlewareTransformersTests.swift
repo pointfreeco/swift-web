@@ -173,14 +173,25 @@ class SharedMiddlewareTransformersTests: SnapshotTestCase {
   func testRequestLogger() {
     var log: [String] = []
     let uuid = UUID(uuidString: "DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD")!
-    let middleware = requestLogger(logger: {  log.append($0) }, uuid: { uuid })
+    let middleware = requestLogger(logger: { log.append($0) }, uuid: { uuid })
       <| writeStatus(.ok)
       >=> writeHeader(.contentType(.html))
       >=> respond(html: "<p>Hello, world</p>")
 
     _ = middleware(conn).perform()
 
-    assertSnapshot(matching: log, as: .dump)
+    XCTAssertEqual(2, log.count)
+    XCTAssertEqual("DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD [Request] GET /", log[0])
+    XCTAssertNotNil(
+      try NSRegularExpression(
+        pattern: "^DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD \\[Time\\] \\d+ms$",
+        options: []
+      ).firstMatch(
+        in: log[1],
+        options: [],
+        range: NSRange(log[1].startIndex..<log[1].endIndex, in: log[1])
+      )
+    )
   }
   
   func testBasicAuthValidationIsCaseInsensitive() {

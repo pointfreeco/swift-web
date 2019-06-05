@@ -68,7 +68,7 @@ extension PartialIso where A == String, B == Double {
   public static var double: PartialIso {
     return PartialIso(
       apply: Double.init,
-      unapply: String.init
+      unapply: String.init(_:)
     )
   }
 }
@@ -174,25 +174,6 @@ private func fieldsToFormEncodedString(_ data: [(key: String, value: String?)]) 
 extension PartialIso where B: RawRepresentable, B.RawValue == A {
   public static var rawRepresentable: PartialIso {
     return .init(
-      apply: B.init(rawValue:),
-      unapply: ^\.rawValue
-    )
-  }
-}
-
-public protocol TaggedType {
-  associatedtype Tag
-  associatedtype RawValue
-
-  var rawValue: RawValue { get }
-  init(rawValue: RawValue)
-}
-
-extension Tagged: TaggedType {}
-
-extension PartialIso where B: TaggedType, A == B.RawValue {
-  public static var tagged: PartialIso<B.RawValue, B> {
-    return PartialIso(
       apply: B.init(rawValue:),
       unapply: ^\.rawValue
     )
