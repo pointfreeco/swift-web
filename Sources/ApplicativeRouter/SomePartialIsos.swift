@@ -68,7 +68,7 @@ extension PartialIso where A == String, B == Double {
   public static var double: PartialIso {
     return PartialIso(
       apply: Double.init,
-      unapply: String.init
+      unapply: String.init(_:)
     )
   }
 }
