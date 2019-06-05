@@ -180,25 +180,6 @@ extension PartialIso where B: RawRepresentable, B.RawValue == A {
   }
 }
 
-public protocol TaggedType {
-  associatedtype Tag
-  associatedtype RawValue
-
-  var rawValue: RawValue { get }
-  init(rawValue: RawValue)
-}
-
-extension Tagged: TaggedType {}
-
-extension PartialIso where B: TaggedType, A == B.RawValue {
-  public static var tagged: PartialIso<B.RawValue, B> {
-    return PartialIso(
-      apply: B.init(rawValue:),
-      unapply: ^\.rawValue
-    )
-  }
-}
-
 extension PartialIso where A == String, B == UUID {
   public static var uuid: PartialIso<String, UUID> {
     return PartialIso(
