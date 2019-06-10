@@ -58,8 +58,8 @@ private final class Handler: ChannelInboundHandler {
     case let .head(header):
       self.request = URL(string: header.uri).map {
         var req = URLRequest(url: $0)
-          |> \.httpMethod .~ method(from: header.method)
-          |> \.allHTTPHeaderFields .~ header.headers.reduce(into: [:]) { $0[$1.name] = $1.value }
+        req.httpMethod = method(from: header.method)
+        req.allHTTPHeaderFields = header.headers.reduce(into: [:]) { $0[$1.name] = $1.value }
         let proto = req.value(forHTTPHeaderField: "X-Forwarded-Proto") ?? "http"
         req.url = req.value(forHTTPHeaderField: "Host").flatMap {
           URL(string: proto + "://" + $0 + header.uri)
