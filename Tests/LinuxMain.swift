@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.13.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.15.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import XCTest
@@ -126,7 +126,8 @@ extension SharedMiddlewareTransformersTests {
     ("testRedirectUnrelatedHosts", testRedirectUnrelatedHosts),
     ("testRequireHerokuHttps", testRequireHerokuHttps),
     ("testRequireHttps", testRequireHttps),
-    ("testRequestLogger", testRequestLogger)
+    ("testRequestLogger", testRequestLogger),
+    ("testBasicAuthValidationIsCaseInsensitive", testBasicAuthValidationIsCaseInsensitive)
   ]
 }
 extension SignedCookieTests {
