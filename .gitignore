@@ -38,6 +38,7 @@ playground.xcworkspace
 # Packages/
 # Package.pins
 .build/
+.swiftpm/
 Packages/*
 
 # CocoaPods
@@ -52,8 +53,7 @@ Packages/*
 #
 # Add this line if you want to avoid checking in source code from Carthage dependencies.
 # Carthage/Checkouts
-
-Carthage/Build
+# Carthage/Build
 
 # fastlane
 #
