@@ -8,14 +8,14 @@ import Prelude
 public func run(
   _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>,
   on port: Int = 8080,
+  eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount),
   gzip: Bool = false,
   baseUrl: URL
   ) {
 
   do {
     let reuseAddrOpt = ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR)
-    let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-    let bootstrap = ServerBootstrap(group: group)
+    let bootstrap = ServerBootstrap(group: eventLoopGroup)
       .serverChannelOption(ChannelOptions.backlog, value: 256)
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
@@ -34,7 +34,7 @@ public func run(
     let serverChannel = try bootstrap.bind(host: host, port: port).wait()
     print("Listening on \(host):\(port)...")
     try serverChannel.closeFuture.wait()
-    try group.syncShutdownGracefully()
+    try eventLoopGroup.syncShutdownGracefully()
   } catch {
     fatalError(error.localizedDescription)
   }
