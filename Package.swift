@@ -1,5 +1,4 @@
-// swift-tools-version:4.2
-
+// swift-tools-version:5.0
 import PackageDescription
 
 let package = Package(
@@ -21,10 +20,13 @@ let package = Package(
     .library(name: "View", targets: ["View"])
     ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-html", from: "0.2.1"),
-    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("6e426b0")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .exact("1.2.0")),
-    .package(url: "https://github.com/apple/swift-nio.git", from: "1.13.0"),
+    .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("b26e98e")),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.5.0"),
+    .package(url: "https://github.com/pointfreeco/swift-html", .exact("0.2.1")),
+    .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
+    .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
+//    .package(url: "https://github.com/apple/swift-nio-http2.git", .branch("master")),
+    .package(url: "https://github.com/apple/swift-nio-ssl.git", from: "2.0.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.23")),
   ],
   targets: [
@@ -51,7 +53,7 @@ let package = Package(
     .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["HtmlPlainTextPrint", "Css", "Html", "HtmlCssSupport", "SnapshotTesting"]),
 
     .target(name: "HttpPipeline",
-            dependencies: ["Cryptor", "Html", "NIO", "NIOHTTP1", "Prelude", "Optics"]),
+            dependencies: ["Cryptor", "Html", "NIO", "NIOHTTP1", "NIOHTTPCompression", "NIOSSL", "Prelude", "Optics"]),
 //    .target(name: "HttpPipelineExample",
 //            dependencies: ["HttpPipeline", "HttpPipelineHtmlSupport"]),
     .testTarget(name: "HttpPipelineTests",

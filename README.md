@@ -1,4 +1,4 @@
-# swift-web 
+# swift-web
 
 macOS [![CircleCI](https://circleci.com/gh/pointfreeco/swift-web.svg?style=svg)](https://circleci.com/gh/pointfreeco/swift-web) Linux [![Build Status](https://travis-ci.org/pointfreeco/swift-web.svg?branch=master)](https://travis-ci.org/pointfreeco/swift-web)
 

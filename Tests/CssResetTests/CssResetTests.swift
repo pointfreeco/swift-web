@@ -5,11 +5,7 @@ import Prelude
 import XCTest
 import SnapshotTesting
 
-#if !os(Linux)
-typealias SnapshotTestCase = XCTestCase
-#endif
-
-class ResetTests: SnapshotTestCase {
+class ResetTests: XCTestCase {
   func testResetPretty() {
     assertSnapshot(matching: reset, as: .css)
   }

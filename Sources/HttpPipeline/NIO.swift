@@ -1,28 +1,29 @@
 import Foundation
 import NIO
 import NIOHTTP1
+import NIOHTTPCompression
 import Optics
 import Prelude
 
 public func run(
   _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>,
   on port: Int = 8080,
+  eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount),
   gzip: Bool = false,
   baseUrl: URL
   ) {
 
   do {
     let reuseAddrOpt = ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR)
-    let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-    let bootstrap = ServerBootstrap(group: group)
+    let bootstrap = ServerBootstrap(group: eventLoopGroup)
       .serverChannelOption(ChannelOptions.backlog, value: 256)
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
-        channel.pipeline.configureHTTPServerPipeline().then {
+        channel.pipeline.configureHTTPServerPipeline().flatMap {
           let handlers: [ChannelHandler] = gzip
             ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware)]
             : [Handler(baseUrl: baseUrl, middleware: middleware)]
-          return channel.pipeline.addHandlers(handlers, first: false)
+          return channel.pipeline.addHandlers(handlers, position: .last)
         }
       }
       .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
@@ -33,7 +34,7 @@ public func run(
     let serverChannel = try bootstrap.bind(host: host, port: port).wait()
     print("Listening on \(host):\(port)...")
     try serverChannel.closeFuture.wait()
-    try group.syncShutdownGracefully()
+    try eventLoopGroup.syncShutdownGracefully()
   } catch {
     fatalError(error.localizedDescription)
   }
@@ -51,7 +52,7 @@ private final class Handler: ChannelInboundHandler {
     self.middleware = middleware
   }
 
-  func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
+  func channelRead(context: ChannelHandlerContext, data: NIOAny) {
     let reqPart = self.unwrapInboundIn(data)
 
     switch reqPart {
@@ -74,7 +75,7 @@ private final class Handler: ChannelInboundHandler {
       }
     case .end:
       guard let req = self.request else {
-        ctx.channel.write(
+        context.channel.write(
           HTTPServerResponsePart.head(
             HTTPResponseHead(
               version: .init(major: 1, minor: 1),
@@ -84,15 +85,15 @@ private final class Handler: ChannelInboundHandler {
           ),
           promise: nil
         )
-        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
-          ctx.channel.close()
+        _ = context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
+          context.channel.close()
         }
         return
       }
 
-      let promise = ctx.eventLoop.newPromise(of: Conn<ResponseEnded, Data>.self)
-      self.middleware(connection(from: req)).parallel.run(promise.succeed(result:))
-      _ = promise.futureResult.then { conn -> EventLoopFuture<Void> in
+      let promise = context.eventLoop.makePromise(of: Conn<ResponseEnded, Data>.self)
+      self.middleware(connection(from: req)).parallel.run(promise.succeed)
+      _ = promise.futureResult.flatMap { conn -> EventLoopFuture<Void> in
         let res = conn.response
 
         let head = HTTPResponseHead(
@@ -100,21 +101,21 @@ private final class Handler: ChannelInboundHandler {
           status: .init(statusCode: res.status.rawValue),
           headers: .init(res.headers.map { ($0.name, $0.value) })
         )
-        ctx.channel.write(HTTPServerResponsePart.head(head), promise: nil)
+        context.channel.write(HTTPServerResponsePart.head(head), promise: nil)
 
-        var buffer = ctx.channel.allocator.buffer(capacity: res.body.count)
-        buffer.write(bytes: res.body)
-        ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
+        var buffer = context.channel.allocator.buffer(capacity: res.body.count)
+        buffer.writeBytes(res.body)
+        context.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
 
-        return ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
-          ctx.channel.close()
+        return context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
+          context.channel.close()
         }
       }
     }
   }
 
-  func errorCaught(ctx: ChannelHandlerContext, error: Error) {
-    ctx.close(promise: nil)
+  func errorCaught(context: ChannelHandlerContext, error: Error) {
+    context.close(promise: nil)
   }
 }
 
@@ -153,6 +154,7 @@ private func method(from method: HTTPMethod) -> String {
   case .MKCALENDAR: return "MKCALENDAR"
   case .MKACTIVITY: return "MKACTIVITY"
   case .UNSUBSCRIBE: return "UNSUBSCRIBE"
+  case .SOURCE: return "SOURCE"
   case let .RAW(value): return value
   }
 }

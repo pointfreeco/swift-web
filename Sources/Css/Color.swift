@@ -40,7 +40,7 @@ public enum Color: Val, Inherit, Initial {
   }
 }
 
-public extension Color {
+extension Color {
   public static let aliceblue = rgb(240, 248, 255)
   public static let antiquewhite = rgb(250, 235, 215)
   public static let aqua = rgb(0, 255, 255)
@@ -202,8 +202,8 @@ extension Color: _ExpressibleByColorLiteral {
   }
 }
 
-public extension Color {
-  public private(set) var red: UInt8? {
+extension Color {
+  public var red: UInt8? {
     get {
       guard case let .rgba(r, _, _, _) = self else { return nil }
       return r
@@ -214,7 +214,7 @@ public extension Color {
     }
   }
 
-  public private(set) var green: UInt8? {
+  public var green: UInt8? {
     get {
       guard case let .rgba(r, _, _, _) = self else { return nil }
       return r
@@ -225,7 +225,7 @@ public extension Color {
     }
   }
 
-  public private(set) var blue: UInt8? {
+  public var blue: UInt8? {
     get {
       guard case let .rgba(r, _, _, _) = self else { return nil }
       return r
@@ -236,7 +236,7 @@ public extension Color {
     }
   }
 
-  public private(set) var alpha: Float? {
+  public var alpha: Float? {
     get {
       guard case let .rgba(_, _, _, a) = self else { return nil }
       return a
@@ -247,7 +247,7 @@ public extension Color {
     }
   }
 
-  public private(set) var hue: Int? {
+  public var hue: Int? {
     get {
       guard case let .rgba(r, g, b, _) = self else { return nil }
       return rgb2hsl(r, g, b).hue
@@ -260,7 +260,7 @@ public extension Color {
     }
   }
 
-  public private(set) var saturation: Float? {
+  public var saturation: Float? {
     get {
       guard case let .rgba(r, g, b, _) = self else { return nil }
       return rgb2hsl(r, g, b).saturation
@@ -273,7 +273,7 @@ public extension Color {
     }
   }
 
-  public private(set) var lightness: Float? {
+  public var lightness: Float? {
     get {
       guard case let .rgba(r, g, b, _) = self else { return nil }
       return rgb2hsl(r, g, b).lightness

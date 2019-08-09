@@ -4,9 +4,9 @@ import Optics
 import Prelude
 
 public struct Response {
-  public private(set) var status: Status
-  public private(set) var headers: [Header]
-  public private(set) var body: Data
+  public var status: Status
+  public var headers: [Header]
+  public var body: Data
 
   public struct Header {
     public let name: String
@@ -86,15 +86,15 @@ public struct Response {
         }
       }
 
-      public var hashValue: Int {
+      public func hash(into hasher: inout Hasher) {
         switch self {
-        case let .domain(domain):     return domain.hashValue
-        case let .expires(time):      return time.hashValue
-        case .httpOnly:               return 1
-        case let .maxAge(maxAge):     return maxAge.hashValue
-        case let .path(path):         return path.hashValue
-        case let .sameSite(sameSite): return sameSite.hashValue
-        case .secure:                 return 2
+        case let .domain(domain):     return hasher.combine(domain)
+        case let .expires(time):      return hasher.combine(time)
+        case .httpOnly:               return hasher.combine("httpOnly")
+        case let .maxAge(maxAge):     return hasher.combine(maxAge)
+        case let .path(path):         return hasher.combine(path)
+        case let .sameSite(sameSite): return hasher.combine(sameSite)
+        case .secure:                 return hasher.combine("secure")
         }
       }
 

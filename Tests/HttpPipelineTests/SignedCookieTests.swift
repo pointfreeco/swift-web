@@ -7,11 +7,7 @@ import XCTest
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
-#if !os(Linux)
-typealias SnapshotTestCase = XCTestCase
-#endif
-
-class SignedCookieTests: SnapshotTestCase {
+class SignedCookieTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    record=true

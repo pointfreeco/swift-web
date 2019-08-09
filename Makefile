@@ -10,7 +10,7 @@ imports = \
 	@testable import UrlFormEncodingTests;
 
 xcodeproj:
-	swift package generate-xcodeproj --xcconfig-overrides Development.xcconfig
+	xcrun --toolchain swift swift package generate-xcodeproj --xcconfig-overrides Development.xcconfig
 	xed .
 
 bootstrap: common-crypto-mm xcodeproj xcodeproj-mm
@@ -46,7 +46,7 @@ test-ios: xcodeproj
 	set -o pipefail && \
 	xcodebuild test \
 		-scheme Web-Package \
-		-destination platform="iOS Simulator,name=iPhone XR,OS=12.2" \
+		-destination platform="iOS Simulator,name=iPhone XR,OS=13.0" \
 		| xcpretty
 
 test-swift:
