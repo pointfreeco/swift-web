@@ -4,7 +4,7 @@ import Css
 import CssTestSupport
 import SnapshotTesting
 
-class FullStylesheetTests: SnapshotTestCase {
+class FullStylesheetTests: XCTestCase {
 
   func testABigStyleSheet() {
     let css: Stylesheet =

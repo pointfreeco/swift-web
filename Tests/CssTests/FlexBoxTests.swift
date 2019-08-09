@@ -4,11 +4,7 @@ import Css
 import CssTestSupport
 import SnapshotTesting
 
-#if !os(Linux)
-typealias SnapshotTestCase = XCTestCase
-#endif
-
-class FlexBoxTests: SnapshotTestCase {
+class FlexBoxTests: XCTestCase {
 
   func testFlexBox() {
     let css: Stylesheet =
