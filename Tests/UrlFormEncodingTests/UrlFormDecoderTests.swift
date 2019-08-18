@@ -21,6 +21,18 @@ final class UrlFormDecoderTests: XCTestCase {
     XCTAssertEqual(1, try decoder.decode(Foo.self, from: Data("x=1".utf8)).x)
   }
 
+  func testOptionalArrays() throws {
+    struct Foo: Decodable {
+      let x: [Int]?
+    }
+
+    let decoder = UrlFormDecoder()
+    decoder.parsingStrategy = .bracketsWithIndices
+    XCTAssertNil(try decoder.decode(Foo.self, from: Data()).x)
+    XCTAssertNil(try decoder.decode(Foo.self, from: Data("foo=bar".utf8)).x)
+    XCTAssertEqual([1], try decoder.decode(Foo.self, from: Data("x[0]=1".utf8)).x)
+  }
+
   func testPlusses() throws {
     struct Foo: Decodable {
       let x: String
