@@ -1,4 +1,7 @@
-FROM swift:5.0.2
+FROM swift:5.1
+
+RUN apt-get update
+RUN apt-get install -y openssl libssl-dev
 
 WORKDIR /package
 

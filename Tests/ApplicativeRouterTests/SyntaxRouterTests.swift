@@ -93,7 +93,7 @@ class SyntaxRouterTests: XCTestCase {
 
   func testPostBodyField() {
     let route = Routes.postBodyField(email: "hello@pointfree.co")
-    var request = URLRequest(url: URL(string: "signup")!)
+    let request = URLRequest(url: URL(string: "signup")!)
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ "email=hello@pointfree.co".data(using: .utf8)

@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.1
 import PackageDescription
 
 let package = Package(
@@ -18,10 +18,10 @@ let package = Package(
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
     .library(name: "UrlFormEncoding", targets: ["UrlFormEncoding"]),
     .library(name: "View", targets: ["View"])
-    ],
+  ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("b26e98e")),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.5.0"),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .revision("fb70100")),
     .package(url: "https://github.com/pointfreeco/swift-html", .exact("0.2.1")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),

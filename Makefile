@@ -24,12 +24,7 @@ xcodeproj-mm:
 	-@ls Web.xcodeproj/GeneratedModuleMap | xargs -n1 -I '{}' sudo cp "./Web.xcodeproj/GeneratedModuleMap/{}/module.modulemap" "$(FRAMEWORKS_PATH)/{}.framework/module.map"
 
 linux-main:
-	sourcery \
-		--sources ./Tests/ \
-		--templates ./.sourcery-templates/ \
-		--output ./Tests/ \
-		--args testimports='$(imports)' \
-		&& mv ./Tests/LinuxMain.generated.swift ./Tests/LinuxMain.swift
+	swift test --generate-linuxmain
 
 test-linux: linux-main
 	docker build --tag swift-web-test . \
