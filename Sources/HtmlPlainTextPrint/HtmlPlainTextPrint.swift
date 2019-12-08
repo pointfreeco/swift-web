@@ -14,17 +14,21 @@ public func plainText(for node: Node) -> String {
   case .comment, .doctype:
     return ""
 
-  case let .element(tag, attributes, children):
+  case let .element(tag, attributes, child):
     guard attributes
       .first(where: { $0.key == "style" })?
       .value?
       .range(of: "\\bdisplay:\\s*none\\b", options: .regularExpression) == nil else { return "" }
-    return plainText(tag: tag, attributes: attributes, children: children)
+    return plainText(tag: tag, attributes: attributes, children: [child])
 
   case let .raw(text):
     return text
+    
   case let .text(text):
     return unencode(text)
+
+  case let .fragment(children):
+    return children.map(plainText(for:)).joined()
   }
 }
 
