@@ -1,4 +1,4 @@
-FROM swift:5.1
+FROM vapor/swift:5.1-bionic
 
 RUN apt-get update
 RUN apt-get install -y openssl libssl-dev
