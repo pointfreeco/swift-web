@@ -19,7 +19,7 @@ public func plainText(for node: Node) -> String {
       .first(where: { $0.key == "style" })?
       .value?
       .range(of: "\\bdisplay:\\s*none\\b", options: .regularExpression) == nil else { return "" }
-    return plainText(tag: tag, attributes: attributes, children: [child])
+    return plainText(tag: tag, attributes: attributes, child: child)
 
   case let .raw(text):
     return text
@@ -32,13 +32,11 @@ public func plainText(for node: Node) -> String {
   }
 }
 
-private func plainText(tag: String, attributes: [(key: String, value: String?)], children: [Node]) -> String {
+private func plainText(tag: String, attributes: [(key: String, value: String?)], child: Node) -> String {
 
   switch tag.lowercased() {
   case "a":
-    let content = children
-      .map(plainText)
-      .joined()
+    let content = plainText(for: child)
     let href = attributes.first(where: { $0.key == "href" })?.value
 
     return href.map {
@@ -47,21 +45,19 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
     ?? content
 
   case "b", "strong":
-    return "**" + children.map(plainText).joined() + "**"
+    return "**" + plainText(for: child) + "**"
 
   case "blockquote":
-    return "> \(children.map(plainText).joined())\n\n"
+    return "> \(plainText(for: child))\n\n"
 
   case "br":
     return "\n"
 
   case "em", "i":
-    return "_" + children.map(plainText).joined() + "_"
+    return "_" + plainText(for: child) + "_"
 
   case "h1":
-    let content = children
-      .map(plainText)
-      .joined()
+    let content = plainText(for: child)
     return """
     \(content)
     \(String(repeating: "=", count: content.count))
@@ -70,9 +66,7 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
     """
 
   case "h2":
-    let content = children
-      .map(plainText)
-      .joined()
+    let content = plainText(for: child)
     return """
     \(content)
     \(String(repeating: "-", count: content.count))
@@ -81,32 +75,33 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
     """
 
   case "h3":
-    return "### \(children.map(plainText).joined())\n\n"
+    return "### \(plainText(for: child))\n\n"
   case "h4":
-    return "#### \(children.map(plainText).joined())\n\n"
+    return "#### \(plainText(for: child))\n\n"
   case "h5":
-    return "##### \(children.map(plainText).joined())\n\n"
+    return "##### \(plainText(for: child))\n\n"
   case "h6":
-    return "###### \(children.map(plainText).joined())\n\n"
+    return "###### \(plainText(for: child))\n\n"
 
   case "head", "script", "style":
     return ""
     
   case "ol":
-    return zip(1..., children)
+    return zip(1..., child.children(where: { $0.isLi }))
       .map { "  \($0). \(plainText(for: $1))" }.joined(separator: "\n") + "\n"
 
   case "p":
-    return "\(children.map(plainText).joined())\n\n"
+    return "\(plainText(for: child))\n\n"
     
   case "q":
-    return "\"\(children.map(plainText).joined())\""
+    return "\"\(plainText(for: child))\""
 
   case "sub", "sup":
-    return "[\(children.map(plainText).joined())]"
+    return "[\(plainText(for: child))]"
 
   case "ul":
-    return children
+    return child
+      .children(where: { $0.isLi })
       .map { "  - \(plainText(for: $0))" }.joined(separator: "\n") + "\n"
 
   case "abbr",
@@ -130,10 +125,10 @@ private func plainText(tag: String, attributes: [(key: String, value: String?)],
        "textarea",
        "tt",
        "var":
-    return children.map(plainText).joined()
+    return plainText(for: child)
 
   default:
-    return children.map(plainText).joined() + "\n"
+    return plainText(for: child) + "\n"
   }
 }
 
@@ -146,4 +141,26 @@ private func unencode(_ encoded: String) -> String {
     .replacingOccurrences(of: "&#39;", with: "'")
     .replacingOccurrences(of: "&nbsp;", with: " ")
     .replacingOccurrences(of: "&#8209;", with: "-")
+}
+
+fileprivate extension Node {
+  func children(where isIncluded: (Node) -> Bool) -> [Node] {
+    switch self {
+    case let .element(_, _, node):
+      return isIncluded(node) ? [node] : node.children(where: isIncluded)
+    case let .fragment(nodes):
+      return nodes.flatMap { isIncluded($0) ? [$0] : $0.children(where: isIncluded) }
+    case .comment, .doctype, .raw, .text:
+      return []
+    }
+  }
+
+  var isLi: Bool {
+    switch self {
+    case .element("li", _, _):
+      return true
+    default:
+      return false
+    }
+  }
 }
