@@ -1,3 +1,6 @@
+xcodeproj:
+	xcrun --toolchain swift swift package generate-xcodeproj
+
 test-linux: linux-main
 	docker run \
 		-it \
