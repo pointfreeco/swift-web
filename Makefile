@@ -1,14 +1,14 @@
 xcodeproj:
 	xcrun --toolchain swift swift package generate-xcodeproj
 
-test-linux: linux-main
+test-linux:
 	docker run \
 		-it \
 		--rm \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
 		swift:5.1 \
-		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev && swift test --enable-pubgrub-resolver --enable-test-discovery --parallel'
+		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev && make test-swift'
 
 test-macos: xcodeproj
 	set -o pipefail && \
@@ -25,6 +25,9 @@ test-ios: xcodeproj
 		| xcpretty
 
 test-swift:
-	swift test
+	swift test \
+		--enable-pubgrub-resolver \
+		--enable-test-discovery \
+		--parallel
 
 test-all: test-linux test-mac test-ios test-swift
