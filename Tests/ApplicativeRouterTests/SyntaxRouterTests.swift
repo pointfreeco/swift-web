@@ -1,5 +1,8 @@
 import ApplicativeRouter
 import Either
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import Optics
 import Prelude
 import XCTest

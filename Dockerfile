@@ -14,4 +14,4 @@ RUN rm -rf /package/.build/debug
 
 RUN swift package resolve
 RUN swift package clean
-CMD swift test --parallel
+CMD swift test --enable-pubgrub-resolver --parallel

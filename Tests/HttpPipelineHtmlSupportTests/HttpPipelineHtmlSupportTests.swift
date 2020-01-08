@@ -1,3 +1,6 @@
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import Html
 import HttpPipeline
 import HttpPipelineHtmlSupport

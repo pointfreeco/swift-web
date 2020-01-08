@@ -27,8 +27,13 @@ linux-main:
 	# swift test --generate-linuxmain
 
 test-linux: linux-main
-	docker build --tag swift-web-test . \
-		&& docker run --rm swift-web-test
+	docker run \
+		-it \
+		--rm \
+		-v "$(PWD):$(PWD)" \
+		-w "$(PWD)" \
+		swift:5.1 \
+		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev && swift test --enable-pubgrub-resolver --enable-test-discovery --parallel'
 
 test-macos: xcodeproj
 	set -o pipefail && \
