@@ -3,6 +3,9 @@ import PackageDescription
 
 let package = Package(
   name: "Web",
+  platforms: [
+    .macOS(.v10_13),
+  ],
   products: [
 //    .library(name: "ApplicativeRouter", targets: ["ApplicativeRouter"]),
 //    .library(name: "ApplicativeRouterHttpPipelineSupport",
@@ -23,7 +26,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("8bff642")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.7.1"),
-    .package(url: "https://github.com/pointfreeco/swift-html", .exact("0.2.1")),
+    .package(url: "https://github.com/pointfreeco/swift-html", .revision("7db1167")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.32")),
@@ -69,7 +72,7 @@ let package = Package(
 //    .target(name: "View", dependencies: ["Html", "Prelude"]),
     .target(name: "WTF", dependencies: [
       "Cryptor",
-      "Either",
+//      "Either",
 //      "Html",
       "NIO",
 //      "NIOHTTP1",
