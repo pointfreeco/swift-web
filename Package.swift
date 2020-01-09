@@ -25,7 +25,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.7.1"),
-    .package(url: "https://github.com/pointfreeco/swift-html", .revision("7db1167")),
+    .package(url: "https://github.com/pointfreeco/swift-html", .revision("3a1b7e4")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.32")),
