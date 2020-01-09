@@ -1,5 +1,8 @@
 import ApplicativeRouter
 import ApplicativeRouterHttpPipelineSupport
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import HttpPipeline
 import HttpPipelineTestSupport
 import Prelude
