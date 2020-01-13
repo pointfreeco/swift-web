@@ -4,13 +4,13 @@ import Optics
 import UrlFormEncoding
 
 /// Processes and consumes a single path component matching the string provided.
-public func lit(_ str: String) -> Router<Prelude.Unit> {
-  return Router<Prelude.Unit>(
+public func lit(_ str: String) -> Router<Void> {
+  return Router<Void>(
     parse: { route in
       uncons(route.path)
         .flatMap { p, ps in
           p == str
-            ? (.init(method: route.method, path: ps, query: route.query, body: route.body), unit)
+            ? (.init(method: route.method, path: ps, query: route.query, body: route.body), ())
             : nil
       }
   },
@@ -113,10 +113,10 @@ public func jsonBody<A: Codable>(
 }
 
 /// Parses the end of the request data by making sure that all of the path components have been consumed.
-public let end = Router<Prelude.Unit>(
+public let end = Router<Void>(
   parse: { route in
     route.path.isEmpty
-      ? (RequestData(method: route.method, path: [], query: [], body: nil), unit)
+      ? (RequestData(method: route.method, path: [], query: [], body: nil), ())
       : nil
 },
   print: const(.empty),
@@ -165,11 +165,11 @@ public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
 }
 
 /// Parses the HTTP method verb of the request.
-public func method(_ method: Method) -> Router<Prelude.Unit> {
+public func method(_ method: Method) -> Router<Void> {
   return Router(
     parse: { route in
       route.method == method
-        ? (route |> \.method .~ nil, unit)
+        ? (route |> \.method .~ nil, ())
         : nil
   },
     print: { _ in  .init(method: method, path: [], query: [], body: nil) },
