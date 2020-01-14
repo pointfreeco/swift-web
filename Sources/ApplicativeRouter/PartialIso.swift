@@ -55,11 +55,11 @@ extension PartialIso where B == A {
   }
 }
 
-extension PartialIso where B == (A, Prelude.Unit) {
-  /// An isomorphism between `A` and `(A, Unit)`.
-  public static var unit: PartialIso {
+extension PartialIso where B == (A, Void) {
+  /// An isomorphism between `A` and `(A, Void)`.
+  public static var void: PartialIso {
     return .init(
-      apply: { ($0, Prelude.unit) },
+      apply: { ($0, ()) },
       unapply: { $0.0 }
     )
   }

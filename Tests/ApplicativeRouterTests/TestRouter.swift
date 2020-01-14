@@ -98,12 +98,12 @@ extension Routes {
   enum iso {
     static let home = parenthesize <| PartialIso(
       apply: const(.some(.home)),
-      unapply: { $0 == .home ? unit : nil }
+      unapply: { $0 == .home ? () : nil }
     )
 
     static let root = parenthesize <| PartialIso(
       apply: const(.some(.root)),
-      unapply: { $0 == .root ? unit : nil }
+      unapply: { $0 == .root ? () : nil }
     )
 
     static let pathComponents = parenthesize <| PartialIso(

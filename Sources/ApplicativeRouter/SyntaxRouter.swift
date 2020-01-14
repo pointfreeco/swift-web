@@ -57,7 +57,7 @@ public struct Router<A> {
   }
 }
 
-extension Router: ExpressibleByUnicodeScalarLiteral where A == Prelude.Unit {
+extension Router: ExpressibleByUnicodeScalarLiteral where A == Void {
   public typealias UnicodeScalarLiteralType = String.UnicodeScalarLiteralType
 
   public init(unicodeScalarLiteral value: UnicodeScalarLiteralType) {
@@ -65,7 +65,7 @@ extension Router: ExpressibleByUnicodeScalarLiteral where A == Prelude.Unit {
   }
 }
 
-extension Router: ExpressibleByExtendedGraphemeClusterLiteral where A == Prelude.Unit {
+extension Router: ExpressibleByExtendedGraphemeClusterLiteral where A == Void {
   public typealias ExtendedGraphemeClusterLiteralType = String.ExtendedGraphemeClusterLiteralType
 
   public init(extendedGraphemeClusterLiteral value: ExtendedGraphemeClusterLiteralType) {
@@ -73,7 +73,7 @@ extension Router: ExpressibleByExtendedGraphemeClusterLiteral where A == Prelude
   }
 }
 
-extension Router: ExpressibleByStringLiteral where A == Prelude.Unit {
+extension Router: ExpressibleByStringLiteral where A == Void {
   public typealias StringLiteralType = String
 
   public init(stringLiteral value: String) {
@@ -125,15 +125,15 @@ extension Router {
   }
 
   /// Processes with the left and right side routers, discarding the result of the left side.
-  public static func %> (x: Router<Prelude.Unit>, y: Router) -> Router {
-    return (PartialIso.commute >>> PartialIso.unit.inverted) <¢> x <%> y
+  public static func %> (x: Router<Void>, y: Router) -> Router {
+    return (PartialIso.commute >>> PartialIso.void.inverted) <¢> x <%> y
   }
 }
 
-extension Router where A == Prelude.Unit {
+extension Router where A == Void {
   /// Processes with the left and right routers, discarding the result of the right side.
   public static func <% <B>(x: Router<B>, y: Router) -> Router<B> {
-    return PartialIso.unit.inverted <¢> x <%> y
+    return PartialIso.void.inverted <¢> x <%> y
   }
 }
 
