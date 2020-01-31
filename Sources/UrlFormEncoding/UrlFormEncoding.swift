@@ -1,5 +1,4 @@
 import Foundation
-import Prelude
 
 /// Encodes an encodable into `x-www-form-urlencoded` format. It first converts the value into a JSON
 /// dictionary, and then it encodes that into the format.
@@ -20,14 +19,14 @@ public func urlFormEncode<A: Encodable>(value: A) -> String {
 ///   - value: The array of values to encode.
 ///   - rootKey: A root key to hold the array.
 public func urlFormEncode(values: [Any], rootKey: String) -> String {
-  return urlFormEncode(values: values, rootKey: rootKey, keyConstructor: id)
+  return urlFormEncode(values: values, rootKey: rootKey, keyConstructor: { $0 })
 }
 
 /// Encodes a dictionary of values into `x-www-form-urlencoded` format.
 ///
 /// - Parameter value: The dictionary of values to encode
 public func urlFormEncode(value: [String: Any]) -> String {
-  return urlFormEncode(value: value, keyConstructor: id)
+  return urlFormEncode(value: value, keyConstructor: { $0 })
 }
 
 // MARK: - Private

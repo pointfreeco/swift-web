@@ -1,6 +1,4 @@
 import Foundation
-import Optics
-import Prelude
 
 public final class UrlFormDecoder: Decoder {
   private(set) var containers: [Container] = []
@@ -163,7 +161,10 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decodeNil(forKey key: Key) throws -> Bool {
-      return self.container[key.stringValue].flatMap(self.decoder.unbox).map(^\.isEmpty) ?? true
+      return self.container[key.stringValue]
+        .flatMap(self.decoder.unbox)
+        .map { $0.isEmpty }
+        ?? true
     }
 
     func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
@@ -219,7 +220,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decode(_ type: String.Type, forKey key: Key) throws -> String {
-      return try self.unwrap(key, id)
+      return try self.unwrap(key, { $0 })
     }
 
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T: Decodable {
@@ -320,7 +321,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     mutating func decodeNil() throws -> Bool {
-      return try self.unwrap(^\.isEmpty)
+      return try self.unwrap { $0.isEmpty }
     }
 
     mutating func decode(_ type: Bool.Type) throws -> Bool {
@@ -376,7 +377,7 @@ public final class UrlFormDecoder: Decoder {
     }
 
     mutating func decode(_ type: String.Type) throws -> String {
-      return try self.unwrap(id)
+      return try self.unwrap { $0 }
     }
 
     mutating func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
@@ -512,6 +513,8 @@ public final class UrlFormDecoder: Decoder {
     }
 
     func decode(_ type: String.Type) throws -> String {
+      // TODO: Why is this `id` necessary? It doesn't work to use `{ $0 }`
+      func id<A>(_ a: A) -> A { a }
       return try self.unwrap(id)
     }
 
@@ -606,7 +609,7 @@ public final class UrlFormDecoder: Decoder {
     ///
     /// - Note: Unkeyed brackets do not specify collection indices, so they cannot accumulate complex
     ///   structures by using multiple keys. See `bracketsWithIndices` as an alternative parsing strategy.
-    public static let brackets = custom(parse(isArray: ^\.isEmpty))
+    public static let brackets = custom(parse(isArray: { $0.isEmpty }))
 
     /// A parsing strategy that uses keys with a bracketed suffix to produce nested structures.
     ///
@@ -647,17 +650,27 @@ extension UrlFormDecoder.UnkeyedContainer.Key: CodingKey {
   }
 }
 
-private let iso8601 = ((\DateFormatter.calendar) .~ Calendar(identifier: .iso8601))
-  >>> ((\DateFormatter.locale) .~ Locale(identifier: "en_US_POSIX"))
-  >>> ((\DateFormatter.timeZone) .~ TimeZone(abbreviation: "GMT"))
+extension DateFormatter {
+  fileprivate static func iso8601() -> DateFormatter {
+    let df = DateFormatter()
+    df.calendar = Calendar(identifier: .iso8601)
+    df.locale =  Locale(identifier: "en_US_POSIX")
+    df.timeZone = TimeZone(abbreviation: "GMT")
+    return df
+  }
+}
 
-private let iso8601DateFormatter = DateFormatter()
-  |> iso8601
-  |> \.dateFormat .~ "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+private let iso8601DateFormatter: DateFormatter = {
+  let df = DateFormatter.iso8601()
+  df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+  return df
+}()
 
-private let iso8601DateFormatterWithoutMilliseconds = DateFormatter()
-  |> iso8601
-  |> \.dateFormat .~ "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+private let iso8601DateFormatterWithoutMilliseconds: DateFormatter = {
+  let df = DateFormatter.iso8601()
+  df.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+  return df
+}()
 
 private func parse(isArray: @escaping (String) -> Bool, sort: Bool = false) -> (String)
   -> UrlFormDecoder.Container {
@@ -735,13 +748,12 @@ private func pairs(_ query: String, sort: Bool = false) -> [(String, String?)] {
     .split(separator: "&")
     .map { (pairString: Substring) -> (name: String, value: String?) in
       let pairArray = pairString.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-        .compactMap(
-          String.init
-            >>> { $0.replacingOccurrences(of: "+", with: " ") }
-            >>> ^\.removingPercentEncoding
-      )
+        .compactMap {
+          $0.replacingOccurrences(of: "+", with: " ")
+            .removingPercentEncoding
+      }
       return (pairArray[0], pairArray.count == 2 ? pairArray[1] : nil)
-    }
+  }
 
   return sort ? pairs.sorted { $0.name < $1.name } : pairs
 }
