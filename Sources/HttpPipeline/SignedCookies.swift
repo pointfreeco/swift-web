@@ -1,3 +1,4 @@
+import Crypto
 import Cryptor
 import Foundation
 
@@ -21,7 +22,7 @@ extension Response.Header {
     -> Response.Header? {
 
       let encodedValue = data.base64EncodedString()
-      guard let computedDigest = digest(value: encodedValue, secret: secret) else { return nil }
+      let computedDigest = digest(value: encodedValue, secret: secret)
 
       let signedValue = encodedValue + "--" + computedDigest
       guard let finalValue = encrypt ? encrypted(text: signedValue, secret: secret) : signedValue
@@ -86,7 +87,7 @@ extension Response.Header {
     let trueDigest = digest(value: encodedValue, secret: secret)
 
     guard trueDigest == providedDigest else { return nil }
-    guard let value = base64DecodedData(string: encodedValue) else { return nil }
+    guard let value = Data(base64Encoded: Data(encodedValue.utf8)) else { return nil }
 
     return .some(value)
   }
@@ -105,18 +106,18 @@ extension Response.Header {
   }
 }
 
-public func digest(value: String, secret: String) -> String? {
-  let keyBytes = CryptoUtils.byteArray(fromHex: secret)
-  let valueBytes = CryptoUtils.byteArray(from: value)
-  let digestBytes = HMAC(using: .sha256, key: keyBytes).update(byteArray: valueBytes)?.final()
-  return digestBytes.map { Data($0).base64EncodedString() }
+public func digest(value: String, secret: String) -> String {
+  let key = SymmetricKey(data: secret.hex)
+  var hmac = Crypto.HMAC<SHA256>(key: key)
+  hmac.update(data: [UInt8](value.utf8))
+  return hmac.finalize().map { String(format: "%02x", $0) }.joined()
 }
 
 public func hexDigest(value: String, asciiSecret: String) -> String? {
-  let keyBytes = CryptoUtils.byteArray(from: asciiSecret)
-  let valueBytes = CryptoUtils.byteArray(from: value)
-  let digestBytes = HMAC(using: .sha256, key: keyBytes).update(byteArray: valueBytes)?.final()
-  return digestBytes.map { $0.map { String(format: "%02x", $0) }.joined() }
+  let key = SymmetricKey(data: [UInt8](asciiSecret.utf8))
+  var hmac = Crypto.HMAC<SHA256>(key: key)
+  hmac.update(data: [UInt8](value.utf8))
+  return hmac.finalize().map { String(format: "%02x", $0) }.joined()
 }
 
 private let nonHexCharacterSet = CharacterSet(charactersIn: "0123456789abcdefABCDEF").inverted
@@ -143,6 +144,24 @@ public func encrypted(text plainText: String, secret: String) -> String? {
   return cipherText.map { CryptoUtils.hexString(from: $0) }
 }
 
+public func encrypted2(text plainText: String, secret: String) -> String? {
+  let secretBytes = secret.hex
+  let key = SymmetricKey(data: secretBytes)
+  let iv = [UInt8](repeating: 0, count: secretBytes.count)
+//  let nonce = try! AES.GCM.Nonce(data: iv)
+  let nonce = AES.GCM.Nonce()
+
+  let blockSize = 16
+  let plainTextBytes = [UInt8](plainText.utf8)
+  let paddedPlainTextBytes = plainTextBytes.count % blockSize != 0
+    ? CryptoUtils.zeroPad(byteArray: plainTextBytes, blockSize: blockSize)
+    : plainTextBytes
+
+  let sealedBox = try! AES.GCM.seal(paddedPlainTextBytes, using: key, nonce: nonce)
+
+  return sealedBox.combined.map { $0.map { String(format: "%02x", $0) }.joined() }
+}
+
 public func decrypted(text encryptedText: String, secret: String) -> String? {
   // NB: Cryptor fatalErrros if secret isn't 32 characters long.
   guard secret.count == 32 else { return nil }
@@ -152,7 +171,7 @@ public func decrypted(text encryptedText: String, secret: String) -> String? {
   guard encryptedText.rangeOfCharacter(from: nonHexCharacterSet) == nil else { return nil }
   // NB: Cryptor fatalErrros if `encryptedText` has an odd number of characters.
   guard encryptedText.count % 2 == 0 else { return nil }
-  
+
   let secretBytes = CryptoUtils.byteArray(fromHex: secret)
   let iv = [UInt8](repeating: 0, count: secretBytes.count)
   let encryptedTextBytes = CryptoUtils.byteArray(fromHex: encryptedText)
@@ -166,6 +185,43 @@ public func decrypted(text encryptedText: String, secret: String) -> String? {
     .flatMap { String.init(data: $0, encoding: .utf8) }
 }
 
-private func base64DecodedData(string: String) -> Data? {
-  return Data(base64Encoded: Data(string.utf8))
+public func decrypted2(text encryptedText: String, secret: String) -> String? {
+  let sealedBox = try! AES.GCM.SealedBox(combined: CryptoUtils.byteArray(fromHex: secret))
+  let secretBytes = secret.hex
+  let key = SymmetricKey(data: secretBytes)
+  let data = try! AES.GCM.open(sealedBox, using: key)
+  return String(decoding: data, as: UTF8.self)
+
+//  // NB: Cryptor fatalErrros if secret isn't 32 characters long.
+//  guard secret.count == 32 else { return nil }
+//  // NB: Cryptor fatalErrors if secret contains non-hex digits.
+//  guard secret.rangeOfCharacter(from: nonHexCharacterSet) == nil else { return nil }
+//  // NB: Cryptor fatalErrors if `encryptedText` contains non-hex digits.
+//  guard encryptedText.rangeOfCharacter(from: nonHexCharacterSet) == nil else { return nil }
+//  // NB: Cryptor fatalErrros if `encryptedText` has an odd number of characters.
+//  guard encryptedText.count % 2 == 0 else { return nil }
+//
+//  let secretBytes = CryptoUtils.byteArray(fromHex: secret)
+//  let iv = [UInt8](repeating: 0, count: secretBytes.count)
+//  let encryptedTextBytes = CryptoUtils.byteArray(fromHex: encryptedText)
+//
+//  let decryptedText = (try? Cryptor(operation: .decrypt, algorithm: .aes, options: .none, key: secretBytes, iv: iv))?
+//    .update(byteArray: encryptedTextBytes)?
+//    .final()
+//
+//  return decryptedText
+//    .map { Data($0.filter { $0 != 0 }) }
+//    .flatMap { String.init(data: $0, encoding: .utf8) }
+}
+
+
+fileprivate extension StringProtocol {
+  var hex: [UInt8] {
+    var startIndex = self.startIndex
+    return stride(from: 0, to: count, by: 2).compactMap { _ in
+      let endIndex = index(startIndex, offsetBy: 2, limitedBy: self.endIndex) ?? self.endIndex
+      defer { startIndex = endIndex }
+      return UInt8(self[startIndex..<endIndex], radix: 16)
+    }
+  }
 }

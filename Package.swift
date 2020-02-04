@@ -1,10 +1,10 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.1
 import PackageDescription
 
 let package = Package(
   name: "Web",
   platforms: [
-    .macOS(.v10_13),
+    .macOS(.v10_15),
   ],
   products: [
     .library(name: "ApplicativeRouter", targets: ["ApplicativeRouter"]),
@@ -26,6 +26,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.7.1"),
     .package(url: "https://github.com/pointfreeco/swift-html", .revision("3a1b7e4")),
+    .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.32")),
@@ -54,7 +55,7 @@ let package = Package(
     .testTarget(name: "HtmlPlainTextPrintTests", dependencies: ["HtmlPlainTextPrint", "Css", "Html", "HtmlCssSupport", "SnapshotTesting"]),
 
     .target(name: "HttpPipeline",
-            dependencies: ["Cryptor", "Html", "NIO", "NIOHTTP1", "NIOHTTPCompression", "Prelude", "Optics"]),
+            dependencies: ["Crypto", "Cryptor", "Html", "NIO", "NIOHTTP1", "NIOHTTPCompression", "Prelude", "Optics"]),
 //    .target(name: "HttpPipelineExample",
 //            dependencies: ["HttpPipeline", "HttpPipelineHtmlSupport"]),
     .testTarget(name: "HttpPipelineTests",
