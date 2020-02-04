@@ -1,7 +1,8 @@
 # swift-web
 
-macOS [![CircleCI](https://circleci.com/gh/pointfreeco/swift-web.svg?style=svg)](https://circleci.com/gh/pointfreeco/swift-web) Linux [![Build Status](https://travis-ci.org/pointfreeco/swift-web.svg?branch=master)](https://travis-ci.org/pointfreeco/swift-web)
-
+[![Swift 5.1](https://img.shields.io/badge/swift-5.1-ED523F.svg?style=flat)](https://swift.org/download/)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fpointfreeco%2Fswift-web%2Fbadge&style=flat)](https://actions-badge.atrox.dev/pointfreeco/swift-web/goto)
+[![@pointfreeco](https://img.shields.io/badge/contact-@pointfreeco-5AA9E7.svg?style=flat)](https://twitter.com/pointfreeco)
 
 A collection of frameworks for solving various problems in building a Swift web framework. Each framework focuses on a single problem, like HTML rendering, CSS preprocessing, routing, middleware, and more. They also do not depend on any other framework in the collection. You can choose which pieces you want and don't want, for example you can use `Html` without `Css`.
 
