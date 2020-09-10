@@ -6,7 +6,7 @@ struct RequestData: Monoid {
   var path: [String] = []
   var query: [(key: String, value: String?)] = []
   var body: Data? = nil
-  var headers: [(key: String, value: String?)] = []
+  var headers: [String: String] = [:]
 
   static var empty = RequestData()
 
@@ -17,7 +17,7 @@ struct RequestData: Monoid {
       query: lhs.query + rhs.query,
       // todo: is coalescing enough or should we be appending?
       body: lhs.body ?? rhs.body,
-      headers: lhs.headers + rhs.headers
+      headers: lhs.headers.merging(rhs.headers, uniquingKeysWith: { $1 })
     )
   }
 }

@@ -10,7 +10,7 @@ public func lit(_ str: String) -> Router<Void> {
       uncons(route.path)
         .flatMap { p, ps in
           p == str
-            ? (.init(method: route.method, path: ps, query: route.query, body: route.body), ())
+            ? (.init(method: route.method, path: ps, query: route.query, body: route.body, headers: route.headers), ())
             : nil
       }
   },
@@ -25,7 +25,7 @@ public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
   return Router<A>(
     parse: { route in
       guard let (p, ps) = uncons(route.path), let v = f.apply(p) else { return nil }
-      return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), v)
+      return (RequestData(method: route.method, path: ps, query: route.query, body: route.body, headers: route.headers), v)
   },
     print: { a in
       .init(method: nil, path: [f.unapply(a) ?? ""], query: [], body: nil)
@@ -59,12 +59,10 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<
   })
 }
 
-public func header<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
+public func header<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
   .init(
     parse: { (request: RequestData) in
-      request.headers
-        .first(where: { k, _ in k == key })
-        .map(\.value)
+      request.headers[key]
         .flatMap(f.apply)
         .map { (request, $0) }
     },
@@ -74,7 +72,7 @@ public func header<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
         path: [],
         query: [],
         body: nil,
-        headers: f.unapply(value).map { [(key, $0)] } ?? []
+        headers: f.unapply(value).map { [key: $0] } ?? [:]
       )
     },
     template: { _ in fatalError() }
