@@ -59,6 +59,28 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<
   })
 }
 
+public func header<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
+  .init(
+    parse: { (request: RequestData) in
+      request.headers
+        .first(where: { k, _ in k == key })
+        .map(\.value)
+        .flatMap(f.apply)
+        .map { (request, $0) }
+    },
+    print: { (value: A) in
+      RequestData(
+        method: nil,
+        path: [],
+        query: [],
+        body: nil,
+        headers: f.unapply(value).map { [(key, $0)] } ?? []
+      )
+    },
+    template: { _ in fatalError() }
+  )
+}
+
 /// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
 /// using the partial isomorphism supplied.
 public func queryParam<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
