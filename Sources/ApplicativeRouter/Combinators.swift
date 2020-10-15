@@ -59,7 +59,7 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<
   })
 }
 
-public func header<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
+public func header<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
   .init(
     parse: { (request: RequestData) in
       request.headers[key]
@@ -67,12 +67,16 @@ public func header<A>(_ key: String, _ f: PartialIso<String, A>) -> Router<A> {
         .map { (request, $0) }
     },
     print: { (value: A) in
-      RequestData(
+      var headers: [String: String] = [:]
+      if let str = f.unapply(value) {
+        headers[key] = str
+      }
+      return RequestData(
         method: nil,
         path: [],
         query: [],
         body: nil,
-        headers: f.unapply(value).map { [key: $0] } ?? [:]
+        headers: headers
       )
     },
     template: { _ in fatalError() }

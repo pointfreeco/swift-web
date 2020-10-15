@@ -208,7 +208,7 @@ class SyntaxRouterTests: XCTestCase {
   }
 
   func testHeader() {
-    let router: Router<Int> = get %> "home" %> header("version", .int) <% end
+    let router: Router<Int> = get %> "home" %> header("version", req(.int)) <% end
 
     var request = URLRequest(url: URL(string: "home")!)
     request.allHTTPHeaderFields = ["version": "10"]
