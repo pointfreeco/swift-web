@@ -62,8 +62,7 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<
 public func header<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
   .init(
     parse: { (request: RequestData) in
-      request.headers[key]
-        .flatMap(f.apply)
+      f.apply(request.headers[key])
         .map { (request, $0) }
     },
     print: { (value: A) in

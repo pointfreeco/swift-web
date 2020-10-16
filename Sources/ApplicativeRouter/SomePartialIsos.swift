@@ -25,6 +25,22 @@ public func opt<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A?, B?> {
   )
 }
 
+public func opt<A, B>(_ iso: PartialIso<A, B>, default: B) -> PartialIso<A?, B> {
+  .init(
+    apply: {
+      switch $0 {
+      case let .some(a):
+        return iso.apply(a)
+      case .none:
+        return `default`
+      }
+    },
+    unapply: {
+      iso.unapply($0)
+    }
+  )
+}
+
 /// Lifts a partial isomorphism `(A) -> B` to one `(A?) -> B`.
 public func req<A, B>(_ f: PartialIso<A, B>) -> PartialIso<A?, B> {
   return Optional.iso.some.inverted >>> f
