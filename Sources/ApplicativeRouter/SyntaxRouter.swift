@@ -209,6 +209,7 @@ private func request(from data: RequestData, base: URL?) -> URLRequest? {
         URLRequest(url: $0)
           |> \.httpMethod .~ data.method?.rawValue
           |> \.httpBody .~ data.body
+          |> \.allHTTPHeaderFields .~ .some(data.headers)
   }
 }
 

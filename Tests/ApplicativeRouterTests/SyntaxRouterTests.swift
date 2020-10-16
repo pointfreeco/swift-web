@@ -207,7 +207,7 @@ class SyntaxRouterTests: XCTestCase {
     )
   }
 
-  func testHeader() {
+  func testHeader() throws {
     let router: Router<Int> = get %> "home" %> header("version", req(.int)) <% end
 
     var request = URLRequest(url: URL(string: "home")!)
@@ -216,5 +216,8 @@ class SyntaxRouterTests: XCTestCase {
       router.match(request: request),
       10
     )
+
+    request = try XCTUnwrap(router.request(for: 20))
+    XCTAssertEqual(request.allHTTPHeaderFields, ["version": "20"])
   }
 }
