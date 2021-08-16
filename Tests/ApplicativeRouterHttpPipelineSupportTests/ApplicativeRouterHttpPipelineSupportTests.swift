@@ -1,5 +1,8 @@
 import ApplicativeRouter
 import ApplicativeRouterHttpPipelineSupport
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import HttpPipeline
 import HttpPipelineTestSupport
 import Prelude
@@ -62,10 +65,10 @@ enum Route {
   case episode(String)
 
   enum iso {
-    static let home = parenthesize <| PartialIso<Prelude.Unit, Route>(
+    static let home = parenthesize <| PartialIso<Void, Route>(
       apply: const(Route.home),
       unapply: {
-        if case .home = $0 { return unit }
+        if case .home = $0 { return () }
         return nil
     })
 

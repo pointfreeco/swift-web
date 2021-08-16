@@ -1,5 +1,8 @@
 import ApplicativeRouter
 import Either
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import Optics
 import Prelude
 import XCTest
@@ -93,7 +96,7 @@ class SyntaxRouterTests: XCTestCase {
 
   func testPostBodyField() {
     let route = Routes.postBodyField(email: "hello@pointfree.co")
-    var request = URLRequest(url: URL(string: "signup")!)
+    let request = URLRequest(url: URL(string: "signup")!)
       // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ "email=hello@pointfree.co".data(using: .utf8)
@@ -201,6 +204,30 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual(
       "/somewhere?redirect=http://localhost:8080/home?redirect%3Dhttp://localhost:8080/home",
       router.absoluteString(for: .redirect("http://localhost:8080/home?redirect=http://localhost:8080/home"))
+    )
+  }
+
+  func testHeader() throws {
+    let router: Router<Int> = get %> "home" %> header("version", req(.int)) <% end
+
+    var request = URLRequest(url: URL(string: "home")!)
+    request.allHTTPHeaderFields = ["version": "10"]
+    XCTAssertEqual(
+      router.match(request: request),
+      10
+    )
+
+    request = try XCTUnwrap(router.request(for: 20))
+    XCTAssertEqual(request.allHTTPHeaderFields, ["version": "20"])
+  }
+
+  func testOptionalHeader() throws {
+    let router: Router<Int> = get %> "home" %> header("version", opt(.int, default: 10)) <% end
+
+    var request = URLRequest(url: URL(string: "home")!)
+    XCTAssertEqual(
+      router.match(request: request),
+      10
     )
   }
 }

@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import Prelude
 import Optics
 import UrlFormEncoding
@@ -54,7 +57,7 @@ public struct Router<A> {
   }
 }
 
-extension Router: ExpressibleByUnicodeScalarLiteral where A == Prelude.Unit {
+extension Router: ExpressibleByUnicodeScalarLiteral where A == Void {
   public typealias UnicodeScalarLiteralType = String.UnicodeScalarLiteralType
 
   public init(unicodeScalarLiteral value: UnicodeScalarLiteralType) {
@@ -62,7 +65,7 @@ extension Router: ExpressibleByUnicodeScalarLiteral where A == Prelude.Unit {
   }
 }
 
-extension Router: ExpressibleByExtendedGraphemeClusterLiteral where A == Prelude.Unit {
+extension Router: ExpressibleByExtendedGraphemeClusterLiteral where A == Void {
   public typealias ExtendedGraphemeClusterLiteralType = String.ExtendedGraphemeClusterLiteralType
 
   public init(extendedGraphemeClusterLiteral value: ExtendedGraphemeClusterLiteralType) {
@@ -70,7 +73,7 @@ extension Router: ExpressibleByExtendedGraphemeClusterLiteral where A == Prelude
   }
 }
 
-extension Router: ExpressibleByStringLiteral where A == Prelude.Unit {
+extension Router: ExpressibleByStringLiteral where A == Void {
   public typealias StringLiteralType = String
 
   public init(stringLiteral value: String) {
@@ -122,15 +125,15 @@ extension Router {
   }
 
   /// Processes with the left and right side routers, discarding the result of the left side.
-  public static func %> (x: Router<Prelude.Unit>, y: Router) -> Router {
-    return (PartialIso.commute >>> PartialIso.unit.inverted) <¢> x <%> y
+  public static func %> (x: Router<Void>, y: Router) -> Router {
+    return (PartialIso.commute >>> PartialIso.void.inverted) <¢> x <%> y
   }
 }
 
-extension Router where A == Prelude.Unit {
+extension Router where A == Void {
   /// Processes with the left and right routers, discarding the result of the right side.
   public static func <% <B>(x: Router<B>, y: Router) -> Router<B> {
-    return PartialIso.unit.inverted <¢> x <%> y
+    return PartialIso.void.inverted <¢> x <%> y
   }
 }
 
@@ -164,7 +167,13 @@ private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let url = request.url else {
-    return .init(method: method, path: [], query: [], body: request.httpBody)
+    return .init(
+      method: method,
+      path: [],
+      query: [],
+      body: request.httpBody,
+      headers: request.allHTTPHeaderFields ?? [:]
+    )
   }
 
   let query = parse(query: url.query ?? "")
@@ -172,7 +181,13 @@ private func requestData(from request: URLRequest) -> RequestData {
   let path = url.path.components(separatedBy: "/")
     |> mapOptional { $0.isEmpty ? nil : $0 }
 
-  return .init(method: method, path: path, query: query, body: request.httpBody)
+  return .init(
+    method: method,
+    path: path,
+    query: query,
+    body: request.httpBody,
+    headers: request.allHTTPHeaderFields ?? [:]
+  )
 }
 
 private func request(from data: RequestData) -> URLRequest? {
@@ -194,6 +209,7 @@ private func request(from data: RequestData, base: URL?) -> URLRequest? {
         URLRequest(url: $0)
           |> \.httpMethod .~ data.method?.rawValue
           |> \.httpBody .~ data.body
+          |> \.allHTTPHeaderFields .~ .some(data.headers)
   }
 }
 

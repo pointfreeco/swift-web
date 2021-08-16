@@ -4,13 +4,13 @@ import Optics
 import UrlFormEncoding
 
 /// Processes and consumes a single path component matching the string provided.
-public func lit(_ str: String) -> Router<Prelude.Unit> {
-  return Router<Prelude.Unit>(
+public func lit(_ str: String) -> Router<Void> {
+  return Router<Void>(
     parse: { route in
       uncons(route.path)
         .flatMap { p, ps in
           p == str
-            ? (.init(method: route.method, path: ps, query: route.query, body: route.body), unit)
+            ? (.init(method: route.method, path: ps, query: route.query, body: route.body, headers: route.headers), ())
             : nil
       }
   },
@@ -25,7 +25,7 @@ public func pathParam<A>(_ f: PartialIso<String, A>) -> Router<A> {
   return Router<A>(
     parse: { route in
       guard let (p, ps) = uncons(route.path), let v = f.apply(p) else { return nil }
-      return (RequestData(method: route.method, path: ps, query: route.query, body: route.body), v)
+      return (RequestData(method: route.method, path: ps, query: route.query, body: route.body, headers: route.headers), v)
   },
     print: { a in
       .init(method: nil, path: [f.unapply(a) ?? ""], query: [], body: nil)
@@ -57,6 +57,29 @@ public func queryParam<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<
     template: { a in
       RequestData(method: nil, path: [], query: [(key, ":\(typeKey(a))")], body: nil)
   })
+}
+
+public func header<A>(_ key: String, _ f: PartialIso<String?, A>) -> Router<A> {
+  .init(
+    parse: { (request: RequestData) in
+      f.apply(request.headers[key])
+        .map { (request, $0) }
+    },
+    print: { (value: A) in
+      var headers: [String: String] = [:]
+      if let str = f.unapply(value) {
+        headers[key] = str
+      }
+      return RequestData(
+        method: nil,
+        path: [],
+        query: [],
+        body: nil,
+        headers: headers
+      )
+    },
+    template: { _ in fatalError() }
+  )
 }
 
 /// Processes (and does not consume) a query param keyed by `key`, and then tries to convert it to type `A`
@@ -113,10 +136,10 @@ public func jsonBody<A: Codable>(
 }
 
 /// Parses the end of the request data by making sure that all of the path components have been consumed.
-public let end = Router<Prelude.Unit>(
+public let end = Router<Void>(
   parse: { route in
     route.path.isEmpty
-      ? (RequestData(method: route.method, path: [], query: [], body: nil), unit)
+      ? (RequestData(method: route.method, path: [], query: [], body: nil), ())
       : nil
 },
   print: const(.empty),
@@ -165,11 +188,11 @@ public func queryParams<A: Codable>(_ type: A.Type) -> Router<A> {
 }
 
 /// Parses the HTTP method verb of the request.
-public func method(_ method: Method) -> Router<Prelude.Unit> {
+public func method(_ method: Method) -> Router<Void> {
   return Router(
     parse: { route in
       route.method == method
-        ? (route |> \.method .~ nil, unit)
+        ? (route |> \.method .~ nil, ())
         : nil
   },
     print: { _ in  .init(method: method, path: [], query: [], body: nil) },

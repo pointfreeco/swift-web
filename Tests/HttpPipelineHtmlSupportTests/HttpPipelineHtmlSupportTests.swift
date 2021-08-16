@@ -1,3 +1,6 @@
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import Html
 import HttpPipeline
 import HttpPipelineHtmlSupport
@@ -7,7 +10,7 @@ import XCTest
 
 class HttpPipelineHtmlSupportTests: XCTestCase {
   func testResponse() {
-    let view = View<Prelude.Unit> { _ in p(["Hello world!"]) }
+    let view = View<Prelude.Unit> { _ in .p(["Hello world!"]) }
     let pipeline = writeStatus(.ok)
       >=> respond(view)
 
