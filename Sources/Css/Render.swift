@@ -162,6 +162,8 @@ func render(element: CssSelector.Element) -> String {
     return "blockquote"
   case .body:
     return "body"
+  case .button:
+    return "button"
   case .canvas:
     return "canvas"
   case .caption:
@@ -172,8 +174,12 @@ func render(element: CssSelector.Element) -> String {
     return "code"
   case .dd:
     return "dd"
+  case .del:
+    return "del"
   case .details:
     return "details"
+  case .dfn:
+    return "dfn"
   case .div:
     return "div"
   case .dl:
@@ -206,10 +212,12 @@ func render(element: CssSelector.Element) -> String {
     return "h5"
   case .h6:
     return "h6"
-  case .hgroup:
-    return "hgroup"
   case .header:
     return "header"
+  case .hgroup:
+    return "hgroup"
+  case .hr:
+    return "hr"
   case .html:
     return "html"
   case .i:
@@ -220,12 +228,16 @@ func render(element: CssSelector.Element) -> String {
     return "img"
   case .input:
     return "input"
+  case .ins:
+    return "ins"
   case .label:
     return "label"
   case .legend:
     return "legend"
   case .li:
     return "li"
+  case .main:
+    return "main"
   case .menu:
     return "menu"
   case .nav:
@@ -234,6 +246,8 @@ func render(element: CssSelector.Element) -> String {
     return "ol"
   case let .other(str):
     return str
+  case .optgroup:
+    return "optgroup"
   case .p:
     return "p"
   case .pre:
@@ -242,18 +256,28 @@ func render(element: CssSelector.Element) -> String {
     return "q"
   case .section:
     return "section"
+  case .select:
+    return "select"
   case .span:
     return "span"
   case .strong:
     return "strong"
+  case .sub:
+    return "sub"
   case .summary:
     return "summary"
+  case .sup:
+    return "sup"
+  case .svg:
+    return "svg"
   case .table:
     return "table"
   case .tbody:
     return "tbody"
   case .td:
     return "td"
+  case .textarea:
+    return "textarea"
   case .tfoot:
     return "tfoot"
   case .th:

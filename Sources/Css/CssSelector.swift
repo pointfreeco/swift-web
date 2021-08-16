@@ -68,12 +68,15 @@ public enum CssSelector {
     case b
     case blockquote
     case body
+    case button
     case canvas
     case caption
     case cite
     case code
     case dd
+    case del
     case details
+    case dfn
     case div
     case dl
     case dt
@@ -92,28 +95,37 @@ public enum CssSelector {
     case h6
     case header
     case hgroup
+    case hr
     case html
     case i
     case iframe
     case img
     case input
+    case ins
     case label
     case legend
     case li
+    case main
     case menu
     case nav
     case ol
     case other(String)
+    case optgroup
     case p
     case pre
     case q
     case section
+    case select
     case span
     case strong
+    case sub
     case summary
+    case sup
+    case svg
     case table
     case tbody
     case td
+    case textarea
     case tfoot
     case th
     case thead
