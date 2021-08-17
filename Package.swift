@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "Web",
+  name: "swift-web",
   platforms: [
     .macOS(.v10_13),
   ],
