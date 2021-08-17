@@ -290,7 +290,8 @@ func properties(_ config: Config, _ xs: [Either<String, (String, String)>]) -> S
       return config.warn
         ? ind + "/* no value for " + w + " */" + new
         : ""
-    case let .right(k, v):
+    case let .right(pair):
+      let (k, v) = pair
       let pad = config.align
         ? replicate(width - k.count)(" ")
         : ""
