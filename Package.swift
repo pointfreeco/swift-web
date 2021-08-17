@@ -161,7 +161,7 @@ let package = Package(
       dependencies: [
         .product(name: "NIO", package: "swift-nio"),
         .product(name: "NIOHTTP1", package: "swift-nio"),
-        .product(name: "NIOHTTPCompression", package: "swift-nio"),
+        .product(name: "NIOHTTPCompression", package: "swift-nio-extras"),
         .product(name: "Cryptor", package: "Cryptor"),
         .product(name: "Html", package: "swift-html"),
         .product(name: "Optics", package: "swift-prelude"),
