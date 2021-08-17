@@ -167,7 +167,13 @@ private func requestData(from request: URLRequest) -> RequestData {
   let method = request.httpMethod.flatMap(Method.init(string:)) ?? .get
 
   guard let url = request.url else {
-    return .init(method: method, path: [], query: [], body: request.httpBody)
+    return .init(
+      method: method,
+      path: [],
+      query: [],
+      body: request.httpBody,
+      headers: request.allHTTPHeaderFields ?? [:]
+    )
   }
 
   let query = parse(query: url.query ?? "")
@@ -175,7 +181,13 @@ private func requestData(from request: URLRequest) -> RequestData {
   let path = url.path.components(separatedBy: "/")
     |> mapOptional { $0.isEmpty ? nil : $0 }
 
-  return .init(method: method, path: path, query: query, body: request.httpBody)
+  return .init(
+    method: method,
+    path: path,
+    query: query,
+    body: request.httpBody,
+    headers: request.allHTTPHeaderFields ?? [:]
+  )
 }
 
 private func request(from data: RequestData) -> URLRequest? {
@@ -197,6 +209,7 @@ private func request(from data: RequestData, base: URL?) -> URLRequest? {
         URLRequest(url: $0)
           |> \.httpMethod .~ data.method?.rawValue
           |> \.httpBody .~ data.body
+          |> \.allHTTPHeaderFields .~ .some(data.headers)
   }
 }
 

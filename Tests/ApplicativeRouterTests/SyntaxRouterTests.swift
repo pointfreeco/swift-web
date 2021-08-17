@@ -206,4 +206,28 @@ class SyntaxRouterTests: XCTestCase {
       router.absoluteString(for: .redirect("http://localhost:8080/home?redirect=http://localhost:8080/home"))
     )
   }
+
+  func testHeader() throws {
+    let router: Router<Int> = get %> "home" %> header("version", req(.int)) <% end
+
+    var request = URLRequest(url: URL(string: "home")!)
+    request.allHTTPHeaderFields = ["version": "10"]
+    XCTAssertEqual(
+      router.match(request: request),
+      10
+    )
+
+    request = try XCTUnwrap(router.request(for: 20))
+    XCTAssertEqual(request.allHTTPHeaderFields, ["version": "20"])
+  }
+
+  func testOptionalHeader() throws {
+    let router: Router<Int> = get %> "home" %> header("version", opt(.int, default: 10)) <% end
+
+    var request = URLRequest(url: URL(string: "home")!)
+    XCTAssertEqual(
+      router.match(request: request),
+      10
+    )
+  }
 }
