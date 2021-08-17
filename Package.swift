@@ -23,8 +23,8 @@ let package = Package(
     .library(name: "View", targets: ["View"])
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-prelude", .revision("16550d9")),
     .package(url: "https://github.com/pointfreeco/swift-html", from: "0.4.0"),
+    .package(url: "https://github.com/pointfreeco/swift-prelude", .revision("16550d9")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.9.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
