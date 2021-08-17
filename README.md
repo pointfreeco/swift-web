@@ -8,7 +8,7 @@ A collection of frameworks for solving various problems in building a Swift web 
 
 ## Stability
 
-This library should be considered alpha, and not stable. Breaking changes will happen often.
+This library should be considered experimental. If you find its contents useful, please consider maintaining a fork.
 
 ## Installation
 
