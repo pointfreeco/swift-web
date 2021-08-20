@@ -68,7 +68,7 @@ extension Routes: Equatable {
       return true
 
     case let (.pathComponents(lhs0, lhs1), .pathComponents(rhs0, rhs1)):
-      return lhs0 == rhs0 && lhs1 == rhs1
+      return (lhs0, lhs1) == (rhs0, rhs1)
 
     case let (.postBodyField(lhs), .postBodyField(rhs)):
       return lhs == rhs
@@ -76,11 +76,11 @@ extension Routes: Equatable {
     case let (.postBodyFormData(lhs), .postBodyFormData(rhs)):
       return lhs.plan == rhs.plan
 
-    case let (.postBodyJsonDecodable(lhs), .postBodyJsonDecodable(rhs)):
-      return lhs == rhs
+    case let (.postBodyJsonDecodable(lhs0, lhs1), .postBodyJsonDecodable(rhs0, rhs1)):
+      return (lhs0, lhs1) == (rhs0, rhs1)
 
     case let (.simpleQueryParams(lhs0, lhs1, lhs2), .simpleQueryParams(rhs0, rhs1, rhs2)):
-      return lhs0 == rhs0 && lhs1 == rhs1 && lhs2 == rhs2
+      return (lhs0, lhs1, lhs2) == (rhs0, rhs1, rhs2)
 
     case let (.codableQueryParams(lhs), .codableQueryParams(rhs)):
       return lhs.plan == rhs.plan
@@ -109,8 +109,8 @@ extension Routes {
     static let pathComponents = parenthesize <| PartialIso(
       apply: Routes.pathComponents,
       unapply: {
-        guard case let .pathComponents(result) = $0 else { return nil }
-        return result
+        guard case let .pathComponents(a, b) = $0 else { return nil }
+        return (a, b)
     })
 
     static let postBodyField = parenthesize <| PartialIso(
@@ -130,15 +130,15 @@ extension Routes {
     static let postBodyJsonDecodable = parenthesize <| PartialIso(
       apply: Routes.postBodyJsonDecodable,
       unapply: {
-        guard case let .postBodyJsonDecodable(result) = $0 else { return nil }
-        return result
+        guard case let .postBodyJsonDecodable(a, b) = $0 else { return nil }
+        return (a, b)
     })
 
     static let simpleQueryParams = parenthesize <| PartialIso(
       apply: Routes.simpleQueryParams,
       unapply: {
-        guard case let .simpleQueryParams(result) = $0 else { return nil }
-        return result
+        guard case let .simpleQueryParams(a, b, c) = $0 else { return nil }
+        return (a, b, c)
     })
 
     static let codableQueryParams = parenthesize <| PartialIso(
