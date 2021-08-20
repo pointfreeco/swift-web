@@ -25,7 +25,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-html", from: "0.4.0"),
-    .package(url: "https://github.com/pointfreeco/swift-prelude", .revision("16550d9")),
+    .package(url: "https://github.com/pointfreeco/swift-prelude", .revision("7ff9911")),
     .package(
       name: "SnapshotTesting",
       url: "https://github.com/pointfreeco/swift-snapshot-testing",
