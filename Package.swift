@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
   name: "swift-web",
   platforms: [
-    .macOS(.v10_13),
+    .macOS(.v10_15),
   ],
   products: [
     .library(name: "ApplicativeRouter", targets: ["ApplicativeRouter"]),
@@ -31,12 +31,13 @@ let package = Package(
       url: "https://github.com/pointfreeco/swift-snapshot-testing",
       from: "1.9.0"
     ),
+    .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
     .package(
       name: "Cryptor",
       url: "https://github.com/IBM-Swift/BlueCryptor.git",
-      .exact("1.0.32")
+      from: "1.0.0"
     ),
   ],
   targets: [
@@ -162,6 +163,7 @@ let package = Package(
         .product(name: "NIO", package: "swift-nio"),
         .product(name: "NIOHTTP1", package: "swift-nio"),
         .product(name: "NIOHTTPCompression", package: "swift-nio-extras"),
+        .product(name: "Crypto", package: "swift-crypto"),
         .product(name: "Cryptor", package: "Cryptor"),
         .product(name: "Html", package: "swift-html"),
         .product(name: "Optics", package: "swift-prelude"),
