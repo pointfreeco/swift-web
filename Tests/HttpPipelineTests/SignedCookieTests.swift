@@ -7,13 +7,14 @@ import Optics
 import Prelude
 import SnapshotTesting
 import XCTest
+import Crypto
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
 class SignedCookieTests: XCTestCase {
   override func setUp() {
     super.setUp()
-//    record=true
+//    isRecording=true
   }
 
   func testSignedCookie() {
@@ -93,7 +94,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeaders(
-          [.setSignedCookie(key: "session", value: "hello-world", secret: secret, encrypt: true)]
+          [.setSignedCookie(key: "session", value: "hello-world", secret: secret, encrypt: true, nonce: .init(repeating: 0, count: 12))]
             |> catOptionals
         )
         >=> end
@@ -132,7 +133,7 @@ cb4db8ac9390ac810837809f11bc6803\
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeaders(
-          [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true)]
+          [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true, nonce: .init(repeating: 0, count: 12))]
             |> catOptionals
         )
         >=> end

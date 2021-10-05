@@ -3,7 +3,14 @@ import XCTest
 
 class EncryptionTests: XCTestCase {
   func testEncrypt() {
-    XCTAssertEqual("af54a6cf18a83a6dc0a38e2895dd1ce4", encrypted(text: "blah", secret: "DeadBeefDeadBeef0123012301230123"))
+    XCTAssertEqual(
+      "000000000000000000000000e377fa5aa3bcb469cfcd8e1e25b4743bdcde0b98",
+      encrypted(
+        text: "blah",
+        secret: "DeadBeefDeadBeef0123012301230123",
+        nonce: .init(repeating: 0, count: 12)
+      )
+    )
 
     // Secret is too short
     XCTAssertNil(encrypted(text: "blah", secret: "deadbeefdeadbeef"))
