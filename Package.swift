@@ -34,11 +34,6 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
-    .package(
-      name: "Cryptor",
-      url: "https://github.com/IBM-Swift/BlueCryptor.git",
-      from: "1.0.0"
-    ),
   ],
   targets: [
     .target(
@@ -164,7 +159,6 @@ let package = Package(
         .product(name: "NIOHTTP1", package: "swift-nio"),
         .product(name: "NIOHTTPCompression", package: "swift-nio-extras"),
         .product(name: "Crypto", package: "swift-crypto"),
-        .product(name: "Cryptor", package: "Cryptor"),
         .product(name: "Html", package: "swift-html"),
         .product(name: "Optics", package: "swift-prelude"),
         .product(name: "Prelude", package: "swift-prelude"),

@@ -156,7 +156,7 @@ public func decrypted(text encryptedText: String, secret: String) -> String? {
     let data = try AES.GCM.open(box, using: key)
     return String(decoding: data, as: UTF8.self)
   } catch {
-    return _decrypted(text: encryptedText, secret: secret)
+    return nil
   }
 }
 
