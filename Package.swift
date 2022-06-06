@@ -5,6 +5,9 @@ let package = Package(
   name: "swift-web",
   platforms: [
     .macOS(.v10_15),
+    .iOS(.v13),
+    .watchOS(.v6),
+    .tvOS(.v13),
   ],
   products: [
     .library(name: "ApplicativeRouter", targets: ["ApplicativeRouter"]),
