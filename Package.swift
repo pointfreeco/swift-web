@@ -26,11 +26,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-html", from: "0.4.0"),
     .package(url: "https://github.com/pointfreeco/swift-prelude", .revision("7ff9911")),
-    .package(
-      name: "SnapshotTesting",
-      url: "https://github.com/pointfreeco/swift-snapshot-testing",
-      from: "1.9.0"
-    ),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.10.0"),
     .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
@@ -55,7 +51,7 @@ let package = Package(
       dependencies: [
         "ApplicativeRouter",
         "HttpPipelineTestSupport",
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ],
       exclude: [
         "__Snapshots__",
@@ -75,7 +71,7 @@ let package = Package(
       dependencies: [
         "ApplicativeRouterHttpPipelineSupport",
         "HttpPipelineTestSupport",
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ],
       exclude: [
         "__Snapshots__",
@@ -116,7 +112,7 @@ let package = Package(
       name: "CssTestSupport",
       dependencies: [
         "Css",
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ]
     ),
 
@@ -150,7 +146,7 @@ let package = Package(
         "HtmlPlainTextPrint",
         "HtmlCssSupport",
         .product(name: "Html", package: "swift-html"),
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ],
       exclude: [
         "__Snapshots__",
@@ -175,7 +171,7 @@ let package = Package(
       dependencies: [
         "HttpPipeline",
         "HttpPipelineTestSupport",
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ],
       exclude: [
         "__Snapshots__",
@@ -194,7 +190,7 @@ let package = Package(
       name: "HttpPipelineHtmlSupportTests",
       dependencies: [
         "HttpPipelineHtmlSupport",
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ]
     ),
 
@@ -203,7 +199,7 @@ let package = Package(
       dependencies: [
         "HttpPipeline",
         .product(name: "Html", package: "swift-html"),
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ]
     ),
 
@@ -218,7 +214,7 @@ let package = Package(
       name: "UrlFormEncodingTests",
       dependencies: [
         "UrlFormEncoding",
-        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ],
       exclude: [
         "__Snapshots__",
