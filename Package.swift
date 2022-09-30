@@ -24,7 +24,7 @@ let package = Package(
     .library(name: "View", targets: ["View"])
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-html", from: "0.4.0"),
+    .package(url: "https://github.com/pointfreeco/swift-html", .revision("14d01d1")),
     .package(url: "https://github.com/pointfreeco/swift-prelude", .revision("7ff9911")),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.10.0"),
     .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
