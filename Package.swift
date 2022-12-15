@@ -1,4 +1,5 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.7
+
 import PackageDescription
 
 let package = Package(
@@ -27,17 +28,13 @@ let package = Package(
     .library(name: "View", targets: ["View"])
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-html", .revision("14d01d1")),
-    .package(url: "https://github.com/pointfreeco/swift-prelude", .revision("7ff9911")),
+    .package(url: "https://github.com/pointfreeco/swift-html", revision: "14d01d1"),
+    .package(url: "https://github.com/pointfreeco/swift-prelude", branch: "async"),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.10.0"),
     .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
-    .package(
-      name: "Cryptor",
-      url: "https://github.com/IBM-Swift/BlueCryptor.git",
-      from: "1.0.0"
-    ),
+    .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", from: "1.0.0"),
   ],
   targets: [
     .target(
@@ -163,7 +160,7 @@ let package = Package(
         .product(name: "NIOHTTP1", package: "swift-nio"),
         .product(name: "NIOHTTPCompression", package: "swift-nio-extras"),
         .product(name: "Crypto", package: "swift-crypto"),
-        .product(name: "Cryptor", package: "Cryptor"),
+        .product(name: "Cryptor", package: "BlueCryptor"),
         .product(name: "Html", package: "swift-html"),
         .product(name: "Optics", package: "swift-prelude"),
         .product(name: "Prelude", package: "swift-prelude"),

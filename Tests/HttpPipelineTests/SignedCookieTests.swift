@@ -11,13 +11,14 @@ import Crypto
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
+@MainActor
 class SignedCookieTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    isRecording=true
   }
 
-  func testSignedCookie() {
+  func testSignedCookie() async {
     let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
     let signedCookieValue = """
 aGVsbG8td29ybGQ=\
@@ -33,7 +34,8 @@ aGVsbG8td29ybGQ=\
         )
         >=> end
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
 
     XCTAssertEqual(
       "hello-world",
@@ -48,7 +50,7 @@ aGVsbG8td29ybGQ=\
     )
   }
 
-  func testSignedCookie_EncodableValue() {
+  func testSignedCookie_EncodableValue() async {
     let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
     let episode = Episode(id: 42, name: "All About Functions")
     let signedCookieValue = """
@@ -66,7 +68,8 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
         >=> end
 
     #if !os(Linux)
-      assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+      let response = await middleware(conn).performAsync()
+      assertSnapshot(matching: response, as: .conn)
     #endif
 
     XCTAssertEqual(
@@ -82,7 +85,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     )
   }
 
-  func testEncryptedCookie() {
+  func testEncryptedCookie() async {
     let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
     let encryptedCookieValue = """
 42486a73fb0573701336550a1bb0e96d\
@@ -99,7 +102,8 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
         )
         >=> end
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
 
     XCTAssertEqual(
       "hello-world",
@@ -117,7 +121,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     )
   }
 
-  func testEncryptedCookie_EncodableValue() {
+  func testEncryptedCookie_EncodableValue() async {
     let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
     let encryptedCookieValue = """
 674d4b73680a254d2b881823a221ac05\
@@ -139,7 +143,8 @@ cb4db8ac9390ac810837809f11bc6803\
         >=> end
 
     #if !os(Linux)
-      assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+      let response = await middleware(conn).performAsync()
+      assertSnapshot(matching: response, as: .conn)
     #endif
 
     XCTAssertEqual(

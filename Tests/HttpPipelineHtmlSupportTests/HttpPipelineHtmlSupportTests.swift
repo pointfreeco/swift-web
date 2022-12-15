@@ -8,14 +8,15 @@ import Prelude
 import View
 import XCTest
 
+@MainActor
 class HttpPipelineHtmlSupportTests: XCTestCase {
-  func testResponse() {
+  func testResponse() async {
     let view = View<Prelude.Unit> { _ in .p(["Hello world!"]) }
     let pipeline = writeStatus(.ok)
       >=> respond(view)
 
     let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
-    let response = (conn |> pipeline).perform()
+    let response = await (conn |> pipeline).performAsync()
 
     XCTAssertEqual(200, response.response.status.rawValue)
     XCTAssertEqual(

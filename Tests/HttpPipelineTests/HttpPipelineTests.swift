@@ -10,42 +10,47 @@ import XCTest
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
+@MainActor
 class HttpPipelineTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    record=true
   }
 
-  func testPipeline() {
+  func testPipeline() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> respond(text: "Hello, world")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testHtmlResponse() {
+  func testHtmlResponse() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testRedirect() {
+  func testRedirect() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> = redirect(to: "/sign-in")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testRedirect_AdditionalHeaders() {
+  func testRedirect_AdditionalHeaders() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testWriteHeaders() {
+  func testWriteHeaders() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeader("Z", "Header should be last")
@@ -54,10 +59,11 @@ class HttpPipelineTests: XCTestCase {
         >=> writeHeader("A", "Header should be first")
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testCookies() {
+  func testCookies() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeader(.setCookie("user_id", "123456"))
@@ -65,10 +71,11 @@ class HttpPipelineTests: XCTestCase {
         >=> writeHeader(.clearCookie("test"))
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testCookieOptions() {
+  func testCookieOptions() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
         >=> writeHeader(.setCookie("foo", "bar", [.domain("www.pointfree.co")]))
@@ -84,6 +91,7 @@ class HttpPipelineTests: XCTestCase {
         )
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 }
