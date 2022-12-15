@@ -95,7 +95,9 @@ private final class Handler: ChannelInboundHandler {
       }
 
       let promise = context.eventLoop.makePromise(of: Conn<ResponseEnded, Data>.self)
-      self.middleware(connection(from: req)).parallel.run(promise.succeed)
+      promise.completeWithTask {
+        await self.middleware(connection(from: req)).performAsync()
+      }
       _ = promise.futureResult.flatMap { conn -> EventLoopFuture<Void> in
         let res = conn.response
 
