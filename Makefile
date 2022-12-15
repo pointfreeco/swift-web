@@ -3,7 +3,7 @@ test-linux:
 		--rm \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
-		swift:5.6 \
+		swift:5.7 \
 		bash -c 'apt-get update && apt-get -y install libssl-dev libz-dev make openssl && make test-swift'
 
 test-swift:
