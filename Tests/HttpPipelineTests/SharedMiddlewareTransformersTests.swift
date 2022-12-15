@@ -229,7 +229,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     )
   }
   
-  func testBasicAuthValidationIsCaseInsensitive() {
+  func testBasicAuthValidationIsCaseInsensitive() async {  // NB: Must be `async` for Linux
     let urlRequestWithUppercaseAuthorizationHeader = URLRequest(url: URL(string: "/")!)
       |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
     XCTAssertTrue(validateBasicAuth(user: "Hello", password: "World", request: urlRequestWithUppercaseAuthorizationHeader))
