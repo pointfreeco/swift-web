@@ -9,13 +9,14 @@ import Prelude
 import SnapshotTesting
 import XCTest
 
+@MainActor
 class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    record=true
   }
 
-  func testRoute() {
+  func testRoute() async {
     let router =
       Route.iso.home <¢> get <% end
         <|> Route.iso.episode <¢> get %> lit("episode") %> .string <% end
@@ -25,26 +26,29 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
         <| writeStatus(.ok)
         >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])).perform(),
-      as: .conn,
-      named: "home"
+    var response = await middleware(
+      connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
     )
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn, named: "home")
 
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!), defaultHeaders: [])).perform(),
-      as: .conn,
-      named: "episode"
+    response = await middleware(
+      connection(
+        from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!),
+        defaultHeaders: []
+      )
     )
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn, named: "episode")
 
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])).perform(),
-      as: .conn,
-      named: "unrecognized"
+    response = await middleware(
+      connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])
     )
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn, named: "unrecognized")
   }
 
-  func testRoute_UnrecognizedWithCustomNotFound() {
+  func testRoute_UnrecognizedWithCustomNotFound() async {
     let router = Route.iso.home <¢> get <% end
 
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
@@ -52,11 +56,11 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
         <| writeStatus(.ok)
         >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])).perform(),
-      as: .conn,
-      named: "unrecognized"
+    let response = await middleware(
+      connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])
     )
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn, named: "unrecognized")
   }
 }
 

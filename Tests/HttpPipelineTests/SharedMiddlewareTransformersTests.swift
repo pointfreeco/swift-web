@@ -10,40 +10,44 @@ import XCTest
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
+@MainActor
 class SharedMiddlewareTransformersTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    record=true
   }
 
-  func testBasicAuth_Unauthorized() {
+  func testBasicAuth_Unauthorized() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testBasicAuth_Unauthorized_ProtectedPredicate() {
+  func testBasicAuth_Unauthorized_ProtectedPredicate() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", protect: const(false))
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testBasicAuth_Unauthorized_Realm() {
+  func testBasicAuth_Unauthorized_Realm() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", realm: "Point-Free")
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testBasicAuth_Unauthorized_CustomFailure() {
+  func testBasicAuth_Unauthorized_CustomFailure() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(
         user: "Hello",
@@ -53,10 +57,11 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         <| writeStatus(.ok)
         >=> respond(html: "<p>Hello, world</p>")
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testBasicAuth_Authorized() {
+  func testBasicAuth_Authorized() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
         <| writeStatus(.ok)
@@ -68,10 +73,11 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       defaultHeaders: []
     )
 
-    assertSnapshot(matching: middleware(conn).perform(), as: .conn)
+    let response = await middleware(conn).performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testRedirectUnrelatedHosts() {
+  func testRedirectUnrelatedHosts() async {
     let allowedHosts = [
       "www.pointfree.co",
       "127.0.0.1",
@@ -88,25 +94,36 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> send(Data("<p>Hello, world</p>".utf8))
         >=> end
 
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform(),
-      as: .conn
+    var response = await middleware(
+      connection(
+        from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: []
+      )
     )
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform(),
-      as: .conn
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
+
+    response = await middleware(
+      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
     )
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [])).perform(),
-      as: .conn
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
+
+    response = await middleware(
+      connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [])
     )
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.point-free.co")!), defaultHeaders: [])).perform(),
-      as: .conn
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
+
+    response = await middleware(
+      connection(
+        from: URLRequest(url: URL(string: "http://www.point-free.co")!), defaultHeaders: []
+      )
     )
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testRequireHerokuHttps() {
+  func testRequireHerokuHttps() async {
     let allowedInsecureHosts = [
       "127.0.0.1",
       "localhost",
@@ -129,21 +146,27 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       return connection(from: result, defaultHeaders: [])
     }
 
-    assertSnapshot(
-      matching: middleware(securedConnection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))).perform(),
-      as: .conn
+    var response = await middleware(
+      securedConnection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))
     )
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform(),
-      as: .conn
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
+
+    response = await middleware(
+      connection(
+        from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])
     )
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform(),
-      as: .conn
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
+
+    response = await middleware(
+      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
     )
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testRequireHttps() {
+  func testRequireHttps() async {
     let allowedInsecureHosts = [
       "127.0.0.1",
       "localhost",
@@ -159,21 +182,30 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> send(Data("<p>Hello, world</p>".utf8))
         >=> end
 
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])).perform(),
-      as: .conn
+    var response = await middleware(
+      connection(
+        from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: []
+      )
     )
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [])).perform(),
-      as: .conn
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
+
+    response = await middleware(
+      connection(
+        from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: []
+      )
     )
-    assertSnapshot(
-      matching: middleware(connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])).perform(),
-      as: .conn
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
+
+    response = await middleware(
+      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
     )
+    .performAsync()
+    assertSnapshot(matching: response, as: .conn)
   }
 
-  func testRequestLogger() {
+  func testRequestLogger() async {
     var log: [String] = []
     let uuid = UUID(uuidString: "DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD")!
     let middleware = requestLogger(logger: { log.append($0) }, uuid: { uuid })
@@ -181,7 +213,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       >=> writeHeader(.contentType(.html))
       >=> respond(html: "<p>Hello, world</p>")
 
-    _ = middleware(conn).perform()
+    _ = await middleware(conn).performAsync()
 
     XCTAssertEqual(2, log.count)
     XCTAssertEqual("DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD [Request] GET /", log[0])
@@ -197,7 +229,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     )
   }
   
-  func testBasicAuthValidationIsCaseInsensitive() {
+  func testBasicAuthValidationIsCaseInsensitive() async {  // NB: Must be `async` for Linux
     let urlRequestWithUppercaseAuthorizationHeader = URLRequest(url: URL(string: "/")!)
       |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
     XCTAssertTrue(validateBasicAuth(user: "Hello", password: "World", request: urlRequestWithUppercaseAuthorizationHeader))
