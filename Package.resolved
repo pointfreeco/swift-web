@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "e855380cb5234e96b760d93e0bfdc403e381e928",
-        "version" : "2.45.0"
+        "revision" : "a16e2f54a25b2af217044e5168997009a505930f",
+        "version" : "2.42.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-prelude",
       "state" : {
-        "branch" : "35ee343",
-        "revision" : "35ee343e31e0ae4ea349d3f556d55a5f4eaf4432"
+        "branch" : "e275a2c",
+        "revision" : "e275a2c1ac387876e5c7e90cae67da7811172420"
       }
     },
     {
