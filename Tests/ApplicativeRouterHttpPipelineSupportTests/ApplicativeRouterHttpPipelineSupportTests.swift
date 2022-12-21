@@ -9,7 +9,6 @@ import Prelude
 import SnapshotTesting
 import XCTest
 
-@MainActor
 class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
   override func setUp() {
     super.setUp()
