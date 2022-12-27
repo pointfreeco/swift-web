@@ -92,6 +92,18 @@ extension Conn where Step == StatusLineOpen {
   public func redirect(
     to location: String,
     status: Status = .found,
+    headersMiddleware: (Conn<HeadersOpen, A>) -> Conn<HeadersOpen, A> = { $0 }
+  ) -> Conn<ResponseEnded, Data> {
+    headersMiddleware(
+      self.writeStatus(status)
+    )
+    .writeHeader(.location(location))
+    .empty()
+  }
+
+  public func redirect(
+    to location: String,
+    status: Status = .found,
     headersMiddleware: (Conn<HeadersOpen, A>) async -> Conn<HeadersOpen, A> = { $0 }
   ) async -> Conn<ResponseEnded, Data> {
     await headersMiddleware(
