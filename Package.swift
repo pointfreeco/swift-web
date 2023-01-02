@@ -29,7 +29,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-html", revision: "14d01d1"),
-    .package(url: "https://github.com/pointfreeco/swift-prelude", revision: "e275a2c"),
+    .package(url: "https://github.com/pointfreeco/swift-prelude", revision: "bef5b7e"),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", branch: "async"),
     .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),

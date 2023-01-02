@@ -10,12 +10,30 @@
       }
     },
     {
+      "identity" : "combine-schedulers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/combine-schedulers",
+      "state" : {
+        "revision" : "882ac01eb7ef9e36d4467eb4b1151e74fcef85ab",
+        "version" : "0.9.1"
+      }
+    },
+    {
       "identity" : "swift-atomics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-atomics.git",
       "state" : {
         "revision" : "919eb1d83e02121cdb434c7bfc1f0c66ef17febe",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swift-clocks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-clocks",
+      "state" : {
+        "revision" : "20b25ca0dd88ebfb9111ec937814ddc5a8880172",
+        "version" : "0.2.0"
       }
     },
     {
@@ -34,6 +52,15 @@
       "state" : {
         "revision" : "ddb07e896a2a8af79512543b1c7eb9797f8898a5",
         "version" : "1.1.7"
+      }
+    },
+    {
+      "identity" : "swift-dependencies",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-dependencies",
+      "state" : {
+        "branch" : "main",
+        "revision" : "405edd4de107c10aa975fe1c55b5686cf863b3d2"
       }
     },
     {
@@ -68,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-prelude",
       "state" : {
-        "branch" : "e275a2c",
-        "revision" : "e275a2c1ac387876e5c7e90cae67da7811172420"
+        "branch" : "bef5b7e",
+        "revision" : "bef5b7ef68edc4bf6fcb396fe0593bdc28bc424a"
       }
     },
     {
@@ -79,6 +106,15 @@
       "state" : {
         "branch" : "async",
         "revision" : "aba8f382b24d4e95f07c72eb70b172671ef116bd"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "a9daebf0bf65981fd159c885d504481a65a75f02",
+        "version" : "0.8.0"
       }
     }
   ],
