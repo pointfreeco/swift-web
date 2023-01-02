@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-prelude",
       "state" : {
-        "branch" : "swift-deps",
-        "revision" : "92e94748cd65c8fbde091f772b92cec066b82461"
+        "branch" : "bef5b7e",
+        "revision" : "bef5b7ef68edc4bf6fcb396fe0593bdc28bc424a"
       }
     },
     {
