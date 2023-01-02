@@ -10,7 +10,7 @@ extension Optional {
     public static var some: PartialIso<Wrapped, Wrapped?> {
       return .init(
         apply: Optional.some,
-        unapply: id
+        unapply: Prelude.id
       )
     }
   }
