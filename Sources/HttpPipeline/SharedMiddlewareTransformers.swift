@@ -137,9 +137,7 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
               && !allowedInsecureHosts.contains(url.host ?? "")
           }
           .flatMap(makeHttps)
-          .map { conn |>
-            redirect(to: $0.absoluteString, status: .movedPermanently)
-          }
+          .map { conn |> redirect(to: $0.absoluteString, status: .movedPermanently) }
           ?? middleware(conn)
       }
     }
