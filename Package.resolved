@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-dependencies",
       "state" : {
-        "branch" : "main",
-        "revision" : "a5ddcb2997a4e3064addc1661f112be425a51315"
+        "revision" : "0deebf4e0aebc72b0d93ff1ffac9558a6785f9f4",
+        "version" : "0.1.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-prelude",
       "state" : {
-        "branch" : "b9db43e",
-        "revision" : "b9db43e41c25e83fcbcc2dccce7721eddf9c7031"
+        "branch" : "55969fa",
+        "revision" : "55969fae1c07a59de3747b71eb26d2f50bcbf98b"
       }
     },
     {

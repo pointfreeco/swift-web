@@ -14,16 +14,6 @@ jobs:
     runs-on: macOS-12
     steps:
     - uses: actions/checkout@v3
-    - uses: extractions/netrc@v1
-      with:
-        machine: github.com
-        username: user
-        password: ${{ secrets.GH_PAT }}
-    - uses: extractions/netrc@v1
-      with:
-        machine: api.github.com
-        username: user
-        password: ${{ secrets.GH_PAT }}
     - name: Select Xcode
       run: sudo xcode-select -s /Applications/Xcode_14.1.app
     - name: Run tests
@@ -34,15 +24,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: extractions/netrc@v1
-      with:
-        machine: github.com
-        username: user
-        password: ${{ secrets.GH_PAT }}
-    - uses: extractions/netrc@v1
-      with:
-        machine: api.github.com
-        username: user
-        password: ${{ secrets.GH_PAT }}
     - name: Run tests
       run: make test-linux

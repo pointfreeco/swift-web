@@ -1,8 +1,10 @@
-test-linux: 
-	cp ~/.netrc ./.netrc
-	docker build --tag swift-web-test . \
-		&& docker run --rm swift-web-test
-	rm ./.netrc
+test-linux:
+	docker run \
+		--rm \
+		-v "$(PWD):$(PWD)" \
+		-w "$(PWD)" \
+		swift:5.7 \
+		bash -c 'apt-get update && apt-get -y install libssl-dev libz-dev make openssl && make test-swift'
 
 test-swift:
 	swift test \
