@@ -16,14 +16,10 @@ extension Application {
 }
 
 extension Snapshotting where Value == Conn<ResponseEnded, Data>, Format == String {
-  public static let conn = SimplySnapshotting.lines.asyncPullback { (conn: Conn<ResponseEnded, Data>) in
-    Async { callback in
-      Snapshotting<URLRequest, String>.raw.snapshot(conn.request).run { request in
-        Snapshotting<Response, String>.response.snapshot(conn.response).run { response in
-          callback(request + "\n\n" + response)
-        }
-      }
-    }
+  public static let conn = SimplySnapshotting.lines.pullback { (conn: Conn<ResponseEnded, Data>) in
+    let request = try await Snapshotting<URLRequest, String>.raw.snapshot { conn.request }
+    let response = try await Snapshotting<Response, String>.response.snapshot { conn.response }
+    return request + "\n\n" + response
   } |> \.pathExtension .~ "Conn.txt"
 }
 
