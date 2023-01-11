@@ -29,21 +29,21 @@ final class UrlFormDecoderTests: XCTestCase {
     XCTAssertEqual("hello world", try decoder.decode(Foo.self, from: Data("x=hello+world".utf8)).x)
   }
 
-  func testDefaultStrategyAccumulatePairs() throws {
+  func testDefaultStrategyAccumulatePairs() async throws {
     struct Foo: Decodable {
       let x: Int
       let ys: [Int]
     }
 
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: Data("x=1&ys=1".utf8)), as: .dump)
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: Data("x=1&ys=1&ys=2".utf8)), as: .dump)
+    await assertSnapshot(matching: try self.decoder.decode(Foo.self, from: Data("x=1&ys=1".utf8)), as: .dump)
+    await assertSnapshot(matching: try self.decoder.decode(Foo.self, from: Data("x=1&ys=1&ys=2".utf8)), as: .dump)
 
     // FIXME: Make work!
 //    XCTAssertNil(try decoder.decode(Foo?.self, from: Data("ys=1&ys=2".utf8)))
 //    XCTAssertNil(try decoder.decode(Foo?.self, from: Data()))
   }
 
-  func testBrackets() throws {
+  func testBrackets() async throws {
     struct Bar: Decodable {
       let baz: Int
     }
@@ -79,10 +79,10 @@ final class UrlFormDecoderTests: XCTestCase {
 
     decoder.parsingStrategy = .brackets
 
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: data), as: .dump)
+    await assertSnapshot(matching: try self.decoder.decode(Foo.self, from: data), as: .dump)
   }
 
-  func testBracketsWithIndices() throws {
+  func testBracketsWithIndices() async throws {
     struct Bar: Decodable {
       let baz: Int
     }
@@ -109,7 +109,7 @@ final class UrlFormDecoderTests: XCTestCase {
 
     decoder.parsingStrategy = .bracketsWithIndices
 
-    assertSnapshot(matching: try decoder.decode(Foo.self, from: data), as: .dump)
+    await assertSnapshot(matching: try self.decoder.decode(Foo.self, from: data), as: .dump)
   }
 
   func testDataDecodingWithBase64() throws {
@@ -125,7 +125,7 @@ final class UrlFormDecoderTests: XCTestCase {
     )
   }
 
-  func testDateDecodingWithSecondsSince1970() throws {
+  func testDateDecodingWithSecondsSince1970() async throws {
     struct MyDate: Decodable {
       let date: Date
     }
@@ -133,10 +133,10 @@ final class UrlFormDecoderTests: XCTestCase {
     decoder.dateDecodingStrategy = .secondsSince1970
     let interval = Int(Date(timeIntervalSinceReferenceDate: 0).timeIntervalSince1970)
 
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)), as: .dump)
+    await assertSnapshot(matching: try self.decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)), as: .dump)
   }
 
-  func testDateDecodingWithMillisecondsSince1970() throws {
+  func testDateDecodingWithMillisecondsSince1970() async throws {
     struct MyDate: Decodable {
       let date: Date
     }
@@ -144,21 +144,21 @@ final class UrlFormDecoderTests: XCTestCase {
     decoder.dateDecodingStrategy = .millisecondsSince1970
     let interval = "\(Int(Date(timeIntervalSinceReferenceDate: 0).timeIntervalSince1970))000"
 
-    assertSnapshot(matching: try decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)), as: .dump)
+    await assertSnapshot(matching: try self.decoder.decode(MyDate.self, from: Data("date=\(interval)".utf8)), as: .dump)
   }
 
-  func testDateDecodingWithIso8601() throws {
+  func testDateDecodingWithIso8601() async throws {
     struct MyDate: Decodable {
       let date: Date
     }
     decoder.dateDecodingStrategy = .iso8601
 
-    assertSnapshot(
-      matching: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00.000-00:00".utf8)),
+    await assertSnapshot(
+      matching: try self.decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00.000-00:00".utf8)),
       as: .dump
     )
-    assertSnapshot(
-      matching: try decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00-00:00".utf8)),
+    await assertSnapshot(
+      matching: try self.decoder.decode(MyDate.self, from: Data("date=2001-01-01T00:00:00-00:00".utf8)),
       as: .dump
     )
   }

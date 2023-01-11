@@ -24,7 +24,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testBasicAuth_Unauthorized_ProtectedPredicate() async {
@@ -34,7 +34,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testBasicAuth_Unauthorized_Realm() async {
@@ -44,7 +44,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testBasicAuth_Unauthorized_CustomFailure() async {
@@ -58,7 +58,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testBasicAuth_Authorized() async {
@@ -74,7 +74,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     )
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testRedirectUnrelatedHosts() async {
@@ -100,19 +100,19 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       )
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [])
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(
@@ -120,7 +120,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       )
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testRequireHerokuHttps() async {
@@ -150,20 +150,20 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       securedConnection(from: URLRequest(url: URL(string: "https://www.pointfree.co")!))
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(
         from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testRequireHttps() async {
@@ -188,7 +188,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       )
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(
@@ -196,13 +196,13 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       )
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
     )
     .performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testRequestLogger() async {

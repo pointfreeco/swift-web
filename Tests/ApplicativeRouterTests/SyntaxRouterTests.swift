@@ -39,12 +39,12 @@ class SyntaxRouterTests: XCTestCase {
     XCTAssertEqual("/", router.absoluteString(for: .root))
   }
 
-  func testRequest_WithBaseUrl() {
+  func testRequest_WithBaseUrl() async {
     // BUG: https://bugs.swift.org/browse/SR-6407
     // NB: Previously we did `XCTAssertEqual` on a left/right side to check that the requests match, but
     //     due to a weird Swift bug (https://bugs.swift.org/browse/SR-6407) we are switching to a snapshot
     //     test.
-    assertSnapshot(
+    await assertSnapshot(
       matching: router.request(for: .home, base: URL(string: "http://www.pointfree.co/"))!
         // NB: necessary for linux tests: https://bugs.swift.org/browse/SR-6405
         |> \.httpMethod .~ "GET",
@@ -182,7 +182,7 @@ class SyntaxRouterTests: XCTestCase {
 //    XCTAssertEqual(request, router.request(for: route))
 //  }
 
-  func testCodableFormDataPostBody() {
+  func testCodableFormDataPostBody() async {
     var request = URLRequest(url: URL(string: "subscribe")!)
     request.httpMethod = "post"
     request.httpBody = Data("plan=1&quantity=2".utf8)
@@ -194,7 +194,7 @@ class SyntaxRouterTests: XCTestCase {
       "subscribe",
       router.templateUrl(for: route)?.absoluteString
     )
-    assertSnapshot(
+    await assertSnapshot(
       matching: router.request(for: .postBodyFormData(SubscribeData(plan: 2, quantity: 3)))!,
       as: .raw
     )

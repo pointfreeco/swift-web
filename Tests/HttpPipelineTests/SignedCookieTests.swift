@@ -35,7 +35,7 @@ aGVsbG8td29ybGQ=\
         >=> end
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     XCTAssertEqual(
       "hello-world",
@@ -69,7 +69,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 
     #if !os(Linux)
       let response = await middleware(conn).performAsync()
-      assertSnapshot(matching: response, as: .conn)
+      await assertSnapshot(matching: response, as: .conn)
     #endif
 
     XCTAssertEqual(
@@ -103,7 +103,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
         >=> end
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
 
     XCTAssertEqual(
       "hello-world",
@@ -144,7 +144,7 @@ cb4db8ac9390ac810837809f11bc6803\
 
     #if !os(Linux)
       let response = await middleware(conn).performAsync()
-      assertSnapshot(matching: response, as: .conn)
+      await assertSnapshot(matching: response, as: .conn)
     #endif
 
     XCTAssertEqual(

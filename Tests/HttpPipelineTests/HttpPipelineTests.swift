@@ -23,7 +23,7 @@ class HttpPipelineTests: XCTestCase {
         >=> respond(text: "Hello, world")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testHtmlResponse() async {
@@ -32,14 +32,14 @@ class HttpPipelineTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testRedirect() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> = redirect(to: "/sign-in")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testRedirect_AdditionalHeaders() async {
@@ -47,7 +47,7 @@ class HttpPipelineTests: XCTestCase {
       redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testWriteHeaders() async {
@@ -60,7 +60,7 @@ class HttpPipelineTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testCookies() async {
@@ -72,7 +72,7 @@ class HttpPipelineTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 
   func testCookieOptions() async {
@@ -92,6 +92,6 @@ class HttpPipelineTests: XCTestCase {
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()
-    assertSnapshot(matching: response, as: .conn)
+    await assertSnapshot(matching: response, as: .conn)
   }
 }

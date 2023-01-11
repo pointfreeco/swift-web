@@ -102,7 +102,11 @@ let package = Package(
     ),
     .testTarget(
       name: "CssResetTests",
-      dependencies: ["CssReset", "CssTestSupport"],
+      dependencies: [
+        "CssReset",
+        "CssTestSupport",
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+      ],
       exclude: [
         "__Snapshots__",
       ]
@@ -129,6 +133,7 @@ let package = Package(
         "CssTestSupport",
         "HtmlCssSupport",
         .product(name: "HtmlSnapshotTesting", package: "swift-html"),
+        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
       ]
     ),
 
