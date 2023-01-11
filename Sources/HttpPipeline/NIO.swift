@@ -9,7 +9,7 @@ import Optics
 import Prelude
 
 public func run(
-  _ middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>,
+  _ middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>,
   on port: Int = 8080,
   eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount),
   gzip: Bool = false,
@@ -48,9 +48,12 @@ private final class Handler: ChannelInboundHandler {
 
   let baseUrl: URL
   var request: URLRequest?
-  let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>
+  let middleware: (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>
 
-  init(baseUrl: URL, middleware: @escaping Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data>) {
+  init(
+    baseUrl: URL,
+    middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>
+  ) {
     self.baseUrl = baseUrl
     self.middleware = middleware
   }
@@ -96,7 +99,7 @@ private final class Handler: ChannelInboundHandler {
 
       let promise = context.eventLoop.makePromise(of: Conn<ResponseEnded, Data>.self)
       promise.completeWithTask {
-        await self.middleware(connection(from: req)).performAsync()
+        await self.middleware(connection(from: req))
       }
       _ = promise.futureResult.flatMap { conn -> EventLoopFuture<Void> in
         let res = conn.response
