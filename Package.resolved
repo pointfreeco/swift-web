@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/combine-schedulers",
       "state" : {
-        "revision" : "882ac01eb7ef9e36d4467eb4b1151e74fcef85ab",
-        "version" : "0.9.1"
+        "revision" : "9dc9cbe4bc45c65164fa653a563d8d8db61b09bb",
+        "version" : "1.0.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-clocks",
       "state" : {
-        "revision" : "20b25ca0dd88ebfb9111ec937814ddc5a8880172",
-        "version" : "0.2.0"
+        "revision" : "d1fd837326aa719bee979bdde1f53cd5797443eb",
+        "version" : "1.0.0"
       }
     },
     {
@@ -43,6 +43,15 @@
       "state" : {
         "revision" : "f504716c27d2e5d4144fa4794b12129301d17729",
         "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "swift-concurrency-extras",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
+      "state" : {
+        "revision" : "ea631ce892687f5432a833312292b80db238186a",
+        "version" : "1.0.0"
       }
     },
     {
@@ -59,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-dependencies",
       "state" : {
-        "revision" : "0deebf4e0aebc72b0d93ff1ffac9558a6785f9f4",
-        "version" : "0.1.0"
+        "revision" : "4e1eb6e28afe723286d8cc60611237ffbddba7c5",
+        "version" : "1.0.0"
       }
     },
     {
@@ -95,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-prelude",
       "state" : {
-        "branch" : "55969fa",
-        "revision" : "55969fae1c07a59de3747b71eb26d2f50bcbf98b"
+        "branch" : "da5ead2",
+        "revision" : "da5ead261fbfa57b9d0e993e9f9405c1734a1a1c"
       }
     },
     {
@@ -113,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "a9daebf0bf65981fd159c885d504481a65a75f02",
-        "version" : "0.8.0"
+        "revision" : "23cbf2294e350076ea4dbd7d5d047c1e76b03631",
+        "version" : "1.0.2"
       }
     }
   ],
