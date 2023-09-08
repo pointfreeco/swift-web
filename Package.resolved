@@ -113,8 +113,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "branch" : "async",
-        "revision" : "28c1ed939b86e878f09b8b2203f5e4da91fb738d"
+        "branch" : "async-swift-syntax",
+        "revision" : "4b16ef634a62c6ddd9013810f43f7344470b20de"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "7bb5231dad28c6dceabf7a439867f39d2c105e4f",
+        "version" : "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-09-05-a"
       }
     },
     {
