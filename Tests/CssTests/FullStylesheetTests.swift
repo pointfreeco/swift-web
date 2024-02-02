@@ -6,7 +6,7 @@ import SnapshotTesting
 
 class FullStylesheetTests: XCTestCase {
 
-  func testABigStyleSheet() async {
+  func testABigStyleSheet() {
     let css: Stylesheet =
       body % (
         background(Color.red)
@@ -30,6 +30,6 @@ class FullStylesheetTests: XCTestCase {
         <> appearance(.button)
     )
 
-    await assertSnapshot(matching: css, as: .css)
+    assertSnapshot(matching: css, as: .css)
   }
 }

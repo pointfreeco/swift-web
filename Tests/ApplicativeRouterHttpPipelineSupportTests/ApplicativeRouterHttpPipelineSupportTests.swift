@@ -29,7 +29,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
       connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
     )
     .performAsync()
-    await assertSnapshot(matching: response, as: .conn, named: "home")
+    assertSnapshot(matching: response, as: .conn, named: "home")
 
     response = await middleware(
       connection(
@@ -38,13 +38,13 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
       )
     )
     .performAsync()
-    await assertSnapshot(matching: response, as: .conn, named: "episode")
+    assertSnapshot(matching: response, as: .conn, named: "episode")
 
     response = await middleware(
       connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])
     )
     .performAsync()
-    await assertSnapshot(matching: response, as: .conn, named: "unrecognized")
+    assertSnapshot(matching: response, as: .conn, named: "unrecognized")
   }
 
   func testRoute_UnrecognizedWithCustomNotFound() async {
@@ -59,7 +59,9 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
       connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])
     )
     .performAsync()
-    await assertSnapshot(matching: response, as: .conn, named: "unrecognized")
+    await MainActor.run {
+        assertSnapshot(matching: response, as: .conn, named: "unrecognized")
+    }
   }
 }
 

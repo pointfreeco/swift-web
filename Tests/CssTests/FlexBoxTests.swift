@@ -6,7 +6,7 @@ import SnapshotTesting
 
 class FlexBoxTests: XCTestCase {
 
-  func testFlexBox() async {
+  func testFlexBox() {
     let css: Stylesheet =
       ".wrapper" % (
         display(.flex)
@@ -25,6 +25,6 @@ class FlexBoxTests: XCTestCase {
         <> ".aside-2" % order(2)
         <> ".aside-3" % order(3)
 
-    await assertSnapshot(matching: css, as: .css)
+    assertSnapshot(matching: css, as: .css)
   }
 }

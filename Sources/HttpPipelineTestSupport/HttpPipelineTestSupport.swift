@@ -15,11 +15,46 @@ extension Application {
   }
 }
 
+extension Async {
+    func runAsync() async -> Value {
+        await withCheckedContinuation { continuation in
+            run { value in
+                continuation.resume(returning: value)
+            }
+        }
+    }
+
+    static func withAsyncRun(_ run: @escaping () async -> Value) -> Self {
+        return Async { callback in
+            Task {
+                let value = await run()
+                callback(value)
+            }
+        }
+    }
+}
+
+extension Snapshotting {
+    func swiftAsyncPullback<NewValue>(
+        _ transform: @escaping (_ otherValue: NewValue) async -> Value
+    ) -> Snapshotting<NewValue, Format> {
+        Snapshotting<NewValue, Format>(
+            pathExtension: self.pathExtension,
+            diffing: self.diffing
+        ) { newValue in
+            return .withAsyncRun { [self] in
+                let value = await transform(newValue)
+                return await self.snapshot(value).runAsync()
+            }
+        }
+    }
+}
+
 extension Snapshotting where Value == Conn<ResponseEnded, Data>, Format == String {
-  public static let conn = SimplySnapshotting.lines.pullback { (conn: Conn<ResponseEnded, Data>) in
-    let request = try await Snapshotting<URLRequest, String>.raw.snapshot { conn.request }
-    let response = try await Snapshotting<Response, String>.response.snapshot { conn.response }
-    return request + "\n\n" + response
+  public static let conn = SimplySnapshotting.lines.swiftAsyncPullback { (conn: Conn<ResponseEnded, Data>) in
+      async let request = Snapshotting<URLRequest, String>.raw.snapshot(conn.request).runAsync()
+      async let response = Snapshotting<Response, String>.response.snapshot(conn.response).runAsync()
+      return await request + "\n\n" + response
   } |> \.pathExtension .~ "Conn.txt"
 }
 
