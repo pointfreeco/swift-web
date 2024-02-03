@@ -4,8 +4,8 @@ import UrlFormEncoding
 import XCTest
 
 final class UrlFormEncoderTests: XCTestCase {
-  func testEncoding_DeepObject() async {
-    await assertSnapshot(
+  func testEncoding_DeepObject() {
+    assertSnapshot(
       matching: urlFormEncode(
         value: [
           "id": 42,
@@ -27,8 +27,8 @@ final class UrlFormEncoderTests: XCTestCase {
     )
   }
 
-  func testEncoding_Emtpy() async {
-    await assertSnapshot(
+  func testEncoding_Emtpy() {
+    assertSnapshot(
       matching: urlFormEncode(
         value: [
           "id": 42,
@@ -42,8 +42,8 @@ final class UrlFormEncoderTests: XCTestCase {
     )
   }
 
-  func testEncoding_RootArray_SimpleObjects() async {
-    await assertSnapshot(
+  func testEncoding_RootArray_SimpleObjects() {
+    assertSnapshot(
       matching: urlFormEncode(
         values: ["Functions & Purity", "Monoids", "Applicatives"],
         rootKey: "episodes"
@@ -53,8 +53,8 @@ final class UrlFormEncoderTests: XCTestCase {
     )
   }
 
-  func testEncoding_DoubleArray() async {
-    await assertSnapshot(
+  func testEncoding_DoubleArray() {
+    assertSnapshot(
       matching: urlFormEncode(
         values: [
           ["Functions", "Purity"],
@@ -68,14 +68,14 @@ final class UrlFormEncoderTests: XCTestCase {
     )
   }
 
-  func testEncodingCodable() async {
+  func testEncodingCodable() {
     let episode = EpisodeModel(
       id: 100, title: "Introduction to Functions",
       blurb: "Everything you wanted to know about functions.",
       categories: ["Functions", "Composition", "Curry"]
     )
 
-    await assertSnapshot(
+    assertSnapshot(
       matching: urlFormEncode(value: episode)
         .sortedByFormEncodedKey(),
       as: .lines

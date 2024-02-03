@@ -4,7 +4,7 @@ import SnapshotTesting
 import HtmlPlainTextPrint
 
 class PlainTextTests: XCTestCase {
-  func testPlainText() async {
+  func testPlainText() {
     let doc = Node.html(
       .head(
         .title("Hello!"),
@@ -48,6 +48,6 @@ class PlainTextTests: XCTestCase {
       )
     )
 
-    await assertSnapshot(matching: HtmlPlainTextPrint.plainText(for: doc), as: .lines)
+    assertSnapshot(matching: HtmlPlainTextPrint.plainText(for: doc), as: .lines)
   }
 }

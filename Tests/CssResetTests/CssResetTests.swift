@@ -6,11 +6,11 @@ import XCTest
 import SnapshotTesting
 
 class ResetTests: XCTestCase {
-  func testResetPretty() async {
-    await assertSnapshot(matching: reset, as: .css)
+  func testResetPretty() {
+    assertSnapshot(matching: reset, as: .css)
   }
 
-  func testResetCompact() async {
-    await assertSnapshot(matching: reset, as: .css(.compact))
+  func testResetCompact()  {
+    assertSnapshot(matching: reset, as: .css(.compact))
   }
 }
