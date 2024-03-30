@@ -27,7 +27,7 @@ public func writeHeaders<A>(_ headers: [Response.Header]) -> Middleware<HeadersO
   return pure <<< (\.response.headers %~ { $0 + headers })
 }
 
-public func writeHeader<A>(_ name: String, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
+public func writeHeader<A>(_ name: HTTPField.Name, _ value: String) -> Middleware<HeadersOpen, HeadersOpen, A, A> {
   return writeHeader(.init(name, value))
 }
 

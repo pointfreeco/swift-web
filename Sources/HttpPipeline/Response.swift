@@ -1,5 +1,6 @@
 import Foundation
 import Html
+import HTTPTypes
 import Optics
 import Prelude
 
@@ -9,28 +10,28 @@ public struct Response {
   public var body: Data
 
   public struct Header {
-    public let name: String
-    public let value: String
+    private let _httpField: HTTPField
+    public var name: String { _httpField.name.rawName }
+    public var value: String { _httpField.value }
 
-    public init(_ name: String, _ value: String) {
-      self.name = name
-      self.value = value
+    public init(_ name: HTTPField.Name, _ value: String) {
+      _httpField = .init(name: name, value: value)
     }
 
     public static func allow(_ methods: [Method]) -> Header {
-      return .init("Allow", methods.map(^\.description).joined(separator: ", "))
+      return .init(.allow, methods.map(^\.description).joined(separator: ", "))
     }
 
     public static func contentLength(_ length: Int) -> Header {
-      return .init("Content-Length", String(length))
+      return .init(.contentLength, String(length))
     }
 
     public static func contentType(_ type: MediaType) -> Header {
-      return .init("Content-Type", type.description)
+      return .init(.contentType, type.description)
     }
 
     public static func location(_ location: String) -> Header {
-      return .init("Location", location)
+      return .init(.location, location)
     }
 
     public static func setCookie(_ name: String, _ value: String, _ options: Set<CookieOption> = [])
@@ -39,14 +40,14 @@ public struct Response {
         let stringValue = ([name + "=" + value] + options.map(^\.description).sorted())
           .joined(separator: "; ")
 
-        return .init("Set-Cookie", stringValue)
+        return .init(.setCookie, stringValue)
     }
 
     public static func wwwAuthenticate(_ authenticate: Authenticate) -> Header {
       switch authenticate {
       case let .basic(realm):
         let realmString = realm.map { " realm=\"" + $0 + "\"" } ?? ""
-        return .init("WWW-Authenticate", "Basic" + realmString)
+        return .init(.wwwAuthenticate, "Basic" + realmString)
       }
     }
 
@@ -137,7 +138,7 @@ public struct Response {
     }
 
     public var description: String {
-      return self.name + ": " + self.value
+      return _httpField.description
     }
   }
 }

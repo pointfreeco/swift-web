@@ -47,7 +47,7 @@ class HttpPipelineTests: XCTestCase {
   @MainActor
   func testRedirect_AdditionalHeaders() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
-      redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
+    redirect(to: "/sign-in", headersMiddleware: writeHeader(.init("Pass-through")!, "hello!"))
 
     let response = await middleware(conn).performAsync()
     assertSnapshot(matching: response, as: .conn)
@@ -57,10 +57,10 @@ class HttpPipelineTests: XCTestCase {
   func testWriteHeaders() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
-        >=> writeHeader("Z", "Header should be last")
-        >=> writeHeader("Hello", "World")
-        >=> writeHeader("Goodbye", "World")
-        >=> writeHeader("A", "Header should be first")
+    >=> writeHeader(.init("Z")!, "Header should be last")
+    >=> writeHeader(.init("Hello")!, "World")
+    >=> writeHeader(.init("Goodbye")!, "World")
+    >=> writeHeader(.init("A")!, "Header should be first")
         >=> respond(html: "<p>Hello, world</p>")
 
     let response = await middleware(conn).performAsync()

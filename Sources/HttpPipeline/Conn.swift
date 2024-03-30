@@ -21,12 +21,12 @@ public func connection(
   from request: URLRequest,
   defaultHeaders headers: [Response.Header] = [
 //  .init("Content-Security-Policy", "script-src 'unsafe-inline'; style-src 'unsafe-inline'"),
-  .init("Referrer-Policy", "strict-origin-when-cross-origin"),
-  .init("X-Content-Type-Options", "nosniff"),
-  .init("X-Download-Options", "noopen"),
-  .init("X-Frame-Options", "SAMEORIGIN"),
-  .init("X-Permitted-Cross-Domain-Policies", "none"),
-  .init("X-XSS-Protection", "1; mode=block"),
+    .init(.init("Referrer-Policy")!, "strict-origin-when-cross-origin"),
+    .init(.xContentTypeOptions, "nosniff"),
+    .init(.init("X-Download-Options")!, "noopen"),
+    .init(.init("X-Frame-Options")!, "SAMEORIGIN"),
+    .init(.init("X-Permitted-Cross-Domain-Policies")!, "none"),
+    .init(.init("X-XSS-Protection")!, "1; mode=block"),
   ]
   )
   -> Conn<StatusLineOpen, Prelude.Unit> {
@@ -128,7 +128,7 @@ extension Conn where Step == HeadersOpen {
     return conn
   }
 
-  public func writeHeader(_ name: String, _ value: String) -> Self {
+  public func writeHeader(_ name: HTTPField.Name, _ value: String) -> Self {
     self.writeHeader(.init(name, value))
   }
 
