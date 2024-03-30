@@ -2,6 +2,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import HTTPTypes
 import NIO
 import NIOHTTP1
 import NIOHTTPCompression
@@ -13,7 +14,8 @@ public func run(
   on port: Int = 8080,
   eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount),
   gzip: Bool = false,
-  baseUrl: URL
+  baseUrl: URL,
+  defaultHeaders: HTTPFields = [:]
   ) {
 
   do {
@@ -24,8 +26,8 @@ public func run(
       .childChannelInitializer { channel in
         channel.pipeline.configureHTTPServerPipeline().flatMap {
           let handlers: [ChannelHandler] = gzip
-            ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware)]
-            : [Handler(baseUrl: baseUrl, middleware: middleware)]
+            ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware, defaultHeaders: defaultHeaders)]
+            : [Handler(baseUrl: baseUrl, middleware: middleware, defaultHeaders: defaultHeaders)]
           return channel.pipeline.addHandlers(handlers, position: .last)
         }
       }
@@ -49,13 +51,16 @@ private final class Handler: ChannelInboundHandler {
   let baseUrl: URL
   var request: URLRequest?
   let middleware: (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>
+  let defaultHeaders: HTTPFields
 
   init(
     baseUrl: URL,
-    middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>
+    middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>,
+    defaultHeaders: HTTPFields
   ) {
     self.baseUrl = baseUrl
     self.middleware = middleware
+    self.defaultHeaders = defaultHeaders
   }
 
   func channelRead(context: ChannelHandlerContext, data: NIOAny) {
