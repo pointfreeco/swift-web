@@ -21,12 +21,12 @@ public func connection(
   from request: URLRequest,
   defaultHeaders headers: [Response.Header] = [
 //  .init("Content-Security-Policy", "script-src 'unsafe-inline'; style-src 'unsafe-inline'"),
-    .init(.init("Referrer-Policy")!, "strict-origin-when-cross-origin"),
+    .init(.referrerPolicy, "strict-origin-when-cross-origin"),
     .init(.xContentTypeOptions, "nosniff"),
-    .init(.init("X-Download-Options")!, "noopen"),
-    .init(.init("X-Frame-Options")!, "SAMEORIGIN"),
-    .init(.init("X-Permitted-Cross-Domain-Policies")!, "none"),
-    .init(.init("X-XSS-Protection")!, "1; mode=block"),
+    .init(.xDownloadOptions, "noopen"),
+    .init(.xFrameOptions, "SAMEORIGIN"),
+    .init(.xPermittedCrossDomainPolicies, "none"),
+    .init(.xXssProtection, "1; mode=block"),
   ]
   )
   -> Conn<StatusLineOpen, Prelude.Unit> {
