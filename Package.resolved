@@ -1,4 +1,5 @@
 {
+  "originHash" : "0062157c0563b9e6e0c4489fb4829f90b545efe3cd83854d3d6232adb81faf2f",
   "pins" : [
     {
       "identity" : "bluecryptor",
@@ -16,6 +17,15 @@
       "state" : {
         "revision" : "9dc9cbe4bc45c65164fa653a563d8d8db61b09bb",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "openssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kitura/OpenSSL.git",
+      "state" : {
+        "revision" : "5dc8cb4f971135c17343e3c6df4f28904a0600e2",
+        "version" : "2.3.1"
       }
     },
     {
@@ -136,5 +146,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

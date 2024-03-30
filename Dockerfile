@@ -1,4 +1,4 @@
-FROM swift:5.7 as build
+FROM swift:5.10 as build
 
 RUN apt-get update
 RUN apt-get install -y libpq-dev libssl-dev libz-dev openssl
