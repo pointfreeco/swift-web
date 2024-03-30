@@ -8,8 +8,8 @@ import Prelude
 import View
 import XCTest
 
-@MainActor
 class HttpPipelineHtmlSupportTests: XCTestCase {
+  @MainActor
   func testResponse() async {
     let view = View<Prelude.Unit> { _ in .p(["Hello world!"]) }
     let pipeline = writeStatus(.ok)
