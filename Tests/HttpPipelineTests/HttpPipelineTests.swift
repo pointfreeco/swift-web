@@ -10,13 +10,13 @@ import XCTest
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
-@MainActor
 class HttpPipelineTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    record=true
   }
 
+  @MainActor
   func testPipeline() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
@@ -26,6 +26,7 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testHtmlResponse() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
@@ -35,6 +36,7 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testRedirect() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> = redirect(to: "/sign-in")
 
@@ -42,6 +44,7 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testRedirect_AdditionalHeaders() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       redirect(to: "/sign-in", headersMiddleware: writeHeader("Pass-through", "hello!"))
@@ -50,6 +53,7 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testWriteHeaders() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
@@ -63,6 +67,7 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testCookies() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)
@@ -75,6 +80,7 @@ class HttpPipelineTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testCookieOptions() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       writeStatus(.ok)

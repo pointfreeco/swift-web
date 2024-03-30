@@ -11,13 +11,13 @@ import Crypto
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
-@MainActor
 class SignedCookieTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    isRecording=true
   }
 
+  @MainActor
   func testSignedCookie() async {
     let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
     let signedCookieValue = """
@@ -57,6 +57,7 @@ aGVsbG8td29ybGQ=\
     )
   }
 
+  @MainActor
   func testSignedCookie_EncodableValue() async {
     let secret = "cce35c66b1c158d0fdbe93284ab0d2e2003daa0033c4d49753ea8147bdb5a29e30b35d46d5bbad89a6916b9a"
     let episode = Episode(id: 42, name: "All About Functions")
@@ -99,6 +100,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     )
   }
 
+  @MainActor
   func testEncryptedCookie() async {
     let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
     let encryptedCookieValue = """
@@ -142,6 +144,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     )
   }
 
+  @MainActor
   func testEncryptedCookie_EncodableValue() async {
     let secret = "deadbeefdeadbeefdeadbeefdeadbeef"
     let encryptedCookieValue = """

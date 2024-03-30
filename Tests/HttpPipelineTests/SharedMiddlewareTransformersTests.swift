@@ -10,13 +10,13 @@ import XCTest
 
 private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
 
-@MainActor
 class SharedMiddlewareTransformersTests: XCTestCase {
   override func setUp() {
     super.setUp()
 //    record=true
   }
 
+  @MainActor
   func testBasicAuth_Unauthorized() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
@@ -27,6 +27,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testBasicAuth_Unauthorized_ProtectedPredicate() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", protect: const(false))
@@ -37,6 +38,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testBasicAuth_Unauthorized_Realm() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World", realm: "Point-Free")
@@ -47,6 +49,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testBasicAuth_Unauthorized_CustomFailure() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(
@@ -61,6 +64,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testBasicAuth_Authorized() async {
     let middleware: Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> =
       basicAuth(user: "Hello", password: "World")
@@ -77,6 +81,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testRedirectUnrelatedHosts() async {
     let allowedHosts = [
       "www.pointfree.co",
@@ -123,6 +128,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testRequireHerokuHttps() async {
     let allowedInsecureHosts = [
       "127.0.0.1",
@@ -166,6 +172,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testRequireHttps() async {
     let allowedInsecureHosts = [
       "127.0.0.1",
@@ -205,6 +212,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     assertSnapshot(matching: response, as: .conn)
   }
 
+  @MainActor
   func testRequestLogger() async {
     var log: [String] = []
     let uuid = UUID(uuidString: "DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD")!
@@ -229,6 +237,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     )
   }
   
+  @MainActor
   func testBasicAuthValidationIsCaseInsensitive() async {  // NB: Must be `async` for Linux
     let urlRequestWithUppercaseAuthorizationHeader = URLRequest(url: URL(string: "/")!)
       |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="]
