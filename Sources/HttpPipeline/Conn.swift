@@ -3,6 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 import Html
+import HTTPTypes
 import Prelude
 
 public enum StatusLineOpen {}

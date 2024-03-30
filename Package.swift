@@ -178,6 +178,7 @@ let package = Package(
       dependencies: [
         "HttpPipeline",
         "HttpPipelineTestSupport",
+        .product(name: "HTTPTypes", package: "swift-http-types"),
         .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
         .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
       ],

@@ -106,7 +106,7 @@ private final class Handler: ChannelInboundHandler {
 
         let head = HTTPResponseHead(
           version: .init(major: 1, minor: 1),
-          status: .init(statusCode: res.status.rawValue),
+          status: .init(statusCode: res.status.code),
           headers: .init(res.headers.map { ($0.name, $0.value) })
         )
         context.channel.write(HTTPServerResponsePart.head(head), promise: nil)

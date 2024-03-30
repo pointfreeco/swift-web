@@ -18,7 +18,7 @@ class HttpPipelineHtmlSupportTests: XCTestCase {
     let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
     let response = await (conn |> pipeline).performAsync()
 
-    XCTAssertEqual(200, response.response.status.rawValue)
+    XCTAssertEqual(200, response.response.status.code)
     XCTAssertEqual(
       ["Content-Type: text/html; charset=utf-8", "Content-Length: 19"],
       response.response.headers.map(^\.description)

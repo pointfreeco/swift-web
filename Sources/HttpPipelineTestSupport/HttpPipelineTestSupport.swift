@@ -60,7 +60,7 @@ extension Snapshotting where Value == Conn<ResponseEnded, Data>, Format == Strin
 
 extension Snapshotting where Value == Response, Format == String {
   public static let response = SimplySnapshotting.lines.pullback { (response: Response) in
-    let lines = ["\(response.status.rawValue) \(response.status.description)"]
+    let lines = ["\(response.status.description)"]
       + response.headers.map { $0.description }.sorted()
     let top = lines.joined(separator: "\n")
 

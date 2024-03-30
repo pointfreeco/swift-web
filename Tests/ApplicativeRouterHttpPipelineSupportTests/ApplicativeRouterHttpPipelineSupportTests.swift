@@ -15,6 +15,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
 //    record=true
   }
 
+  @MainActor
   func testRoute() async {
     let router =
       Route.iso.home <¢> get <% end
