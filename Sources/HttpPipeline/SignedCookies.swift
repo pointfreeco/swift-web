@@ -1,7 +1,8 @@
 import Crypto
 import Foundation
+import HTTPTypes
 
-extension Response.Header {
+extension HTTPField {
   /// Computes a signed cookie.
   ///
   /// - Parameters:
@@ -19,7 +20,7 @@ extension Response.Header {
     encrypt: Bool = false,
     nonce: [UInt8]? = nil
     )
-    -> Response.Header? {
+    -> Self? {
 
       let encodedValue = data.base64EncodedString()
       guard let computedDigest = digest(value: encodedValue, secret: secret) else { return nil }
@@ -41,7 +42,7 @@ extension Response.Header {
     encrypt: Bool = false,
     nonce: [UInt8]? = nil
     )
-    -> Response.Header? {
+    -> Self? {
 
       return setSignedCookie(
         key: key, data: Data(value.utf8), options: options, secret: secret, encrypt: encrypt, nonce: nonce
@@ -58,7 +59,7 @@ extension Response.Header {
     encrypt: Bool = false,
     nonce: [UInt8]? = nil
     )
-    -> Response.Header? {
+    -> Self? {
 
       return (try? JSONEncoder().encode(value))
         .flatMap { setSignedCookie(key: key, data: $0, options: options, secret: secret, encrypt: encrypt, nonce: nonce) }

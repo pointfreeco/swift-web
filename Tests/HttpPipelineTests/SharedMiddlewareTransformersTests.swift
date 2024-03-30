@@ -8,7 +8,7 @@ import Prelude
 import SnapshotTesting
 import XCTest
 
-private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
+private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [:])
 
 class SharedMiddlewareTransformersTests: XCTestCase {
   override func setUp() {
@@ -74,7 +74,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
     let conn = connection(
       from: URLRequest(url: URL(string: "/")!)
         |> \.allHTTPHeaderFields .~ ["Authorization": "Basic SGVsbG86V29ybGQ="],
-      defaultHeaders: []
+      defaultHeaders: [:]
     )
 
     let response = await middleware(conn).performAsync()
@@ -101,27 +101,27 @@ class SharedMiddlewareTransformersTests: XCTestCase {
 
     var response = await middleware(
       connection(
-        from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: []
+        from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [:]
       )
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
-      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
+      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [:])
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
-      connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [])
+      connection(from: URLRequest(url: URL(string: "http://pointfree.co")!), defaultHeaders: [:])
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
       connection(
-        from: URLRequest(url: URL(string: "http://www.point-free.co")!), defaultHeaders: []
+        from: URLRequest(url: URL(string: "http://www.point-free.co")!), defaultHeaders: [:]
       )
     )
     .performAsync()
@@ -149,7 +149,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
       var result = request
       result.allHTTPHeaderFields = result.allHTTPHeaderFields ?? [:]
       result.allHTTPHeaderFields?["X-Forwarded-Proto"] = "https"
-      return connection(from: result, defaultHeaders: [])
+      return connection(from: result, defaultHeaders: [:])
     }
 
     var response = await middleware(
@@ -160,13 +160,13 @@ class SharedMiddlewareTransformersTests: XCTestCase {
 
     response = await middleware(
       connection(
-        from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [])
+        from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [:])
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
-      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
+      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [:])
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn)
@@ -191,7 +191,7 @@ class SharedMiddlewareTransformersTests: XCTestCase {
 
     var response = await middleware(
       connection(
-        from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: []
+        from: URLRequest(url: URL(string: "https://www.pointfree.co")!), defaultHeaders: [:]
       )
     )
     .performAsync()
@@ -199,14 +199,14 @@ class SharedMiddlewareTransformersTests: XCTestCase {
 
     response = await middleware(
       connection(
-        from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: []
+        from: URLRequest(url: URL(string: "http://www.pointfree.co")!), defaultHeaders: [:]
       )
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn)
 
     response = await middleware(
-      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [])
+      connection(from: URLRequest(url: URL(string: "http://0.0.0.0:8080")!), defaultHeaders: [:])
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn)

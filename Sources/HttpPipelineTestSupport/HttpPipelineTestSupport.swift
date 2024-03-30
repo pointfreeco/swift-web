@@ -65,7 +65,7 @@ extension Snapshotting where Value == Response, Format == String {
     let top = lines.joined(separator: "\n")
 
     let isApplicationOrText = response.headers
-      .first(where: { $0.name == "Content-Type" })
+      .first(where: { $0.name.canonicalName == "content-type" })
       .map { $0.value.hasPrefix("application/") || $0.value.hasPrefix("text/") }
       ?? false
 

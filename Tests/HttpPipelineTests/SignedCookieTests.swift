@@ -3,13 +3,14 @@ import FoundationNetworking
 #endif
 import HttpPipeline
 import HttpPipelineTestSupport
+import HTTPTypes
 import Optics
 import Prelude
 import InlineSnapshotTesting
 import XCTest
 import Crypto
 
-private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
+private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [:])
 
 class SignedCookieTests: XCTestCase {
   override func setUp() {
@@ -46,13 +47,13 @@ aGVsbG8td29ybGQ=\
 
     XCTAssertEqual(
       "hello-world",
-      Response.Header.verifiedString(signedCookieValue: signedCookieValue, secret: secret),
+      HTTPField.verifiedString(signedCookieValue: signedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       nil,
-      Response.Header.verifiedString(signedCookieValue: signedCookieValue, secret: "deadbeef"),
+      HTTPField.verifiedString(signedCookieValue: signedCookieValue, secret: "deadbeef"),
       "Reading signed cookie with wrong credentials returns nil."
     )
   }
@@ -89,13 +90,13 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 
     XCTAssertEqual(
       episode,
-      Response.Header.verifiedValue(signedCookieValue: signedCookieValue, secret: secret),
+      HTTPField.verifiedValue(signedCookieValue: signedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       Episode?.none,
-      Response.Header.verifiedValue(signedCookieValue: signedCookieValue, secret: "deadbeef"),
+      HTTPField.verifiedValue(signedCookieValue: signedCookieValue, secret: "deadbeef"),
       "Reading signed cookie with wrong credentials returns nil."
     )
   }
@@ -130,13 +131,13 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
 
     XCTAssertEqual(
       "hello-world",
-      Response.Header.verifiedString(signedCookieValue: encryptedCookieValue, secret: secret),
+      HTTPField.verifiedString(signedCookieValue: encryptedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       nil,
-      Response.Header.verifiedString(
+      HTTPField.verifiedString(
         signedCookieValue: encryptedCookieValue,
         secret: "deadbeefdeadbeefdeadbeefdead1234"
       ),
@@ -180,13 +181,13 @@ cb4db8ac9390ac810837809f11bc6803\
 
     XCTAssertEqual(
       episode,
-      Response.Header.verifiedValue(signedCookieValue: encryptedCookieValue, secret: secret),
+      HTTPField.verifiedValue(signedCookieValue: encryptedCookieValue, secret: secret),
       "Reading signed cookie with proper credentials recovers the value."
     )
 
     XCTAssertEqual(
       Episode?.none,
-      Response.Header.verifiedValue(
+      HTTPField.verifiedValue(
         signedCookieValue: encryptedCookieValue,
         secret: "deadbeefdeadbeefdeadbeefdead1234"
       ),

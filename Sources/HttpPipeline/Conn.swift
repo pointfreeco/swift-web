@@ -19,14 +19,14 @@ public struct Conn<Step, A> {
 
 public func connection(
   from request: URLRequest,
-  defaultHeaders headers: [Response.Header] = [
+  defaultHeaders headers: HTTPFields = [
 //  .init("Content-Security-Policy", "script-src 'unsafe-inline'; style-src 'unsafe-inline'"),
-    .init(.referrerPolicy, "strict-origin-when-cross-origin"),
-    .init(.xContentTypeOptions, "nosniff"),
-    .init(.xDownloadOptions, "noopen"),
-    .init(.xFrameOptions, "SAMEORIGIN"),
-    .init(.xPermittedCrossDomainPolicies, "none"),
-    .init(.xXssProtection, "1; mode=block"),
+    .referrerPolicy: "strict-origin-when-cross-origin",
+    .xContentTypeOptions: "nosniff",
+    .xDownloadOptions: "noopen",
+    .xFrameOptions: "SAMEORIGIN",
+    .xPermittedCrossDomainPolicies: "none",
+    .xXssProtection: "1; mode=block",
   ]
   )
   -> Conn<StatusLineOpen, Prelude.Unit> {
@@ -116,20 +116,20 @@ extension Conn where Step == StatusLineOpen {
 }
 
 extension Conn where Step == HeadersOpen {
-  public func writeHeader(_ header: Response.Header) -> Self {
+  public func writeHeader(_ header: HTTPField) -> Self {
     var conn = self
     conn.response.headers.append(header)
     return conn
   }
 
-  public func writeHeaders(_ header: [Response.Header]) -> Self {
+  public func writeHeaders(_ header: HTTPFields) -> Self {
     var conn = self
     conn.response.headers.append(contentsOf: header)
     return conn
   }
 
   public func writeHeader(_ name: HTTPField.Name, _ value: String) -> Self {
-    self.writeHeader(.init(name, value))
+    self.writeHeader(.init(name: name, value: value))
   }
 
   public func closeHeaders() -> Conn<BodyOpen, A> {

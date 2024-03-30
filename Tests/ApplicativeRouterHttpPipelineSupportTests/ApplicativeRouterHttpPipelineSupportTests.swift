@@ -27,7 +27,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
         >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     var response = await middleware(
-      connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [])
+      connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [:])
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn, named: "home")
@@ -35,14 +35,14 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
     response = await middleware(
       connection(
         from: URLRequest(url: URL(string: "/episode/ep1-hello-world")!),
-        defaultHeaders: []
+        defaultHeaders: [:]
       )
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn, named: "episode")
 
     response = await middleware(
-      connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])
+      connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [:])
     )
     .performAsync()
     assertSnapshot(matching: response, as: .conn, named: "unrecognized")
@@ -57,7 +57,7 @@ class ApplicativeRouterHttpPipelineSupportTests: XCTestCase {
         >=> { $0 |> respond(text: "Recognized route: \($0.data)") }
 
     let response = await middleware(
-      connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [])
+      connection(from: URLRequest(url: URL(string: "/does/not/exist")!), defaultHeaders: [:])
     )
     .performAsync()
     await MainActor.run {
