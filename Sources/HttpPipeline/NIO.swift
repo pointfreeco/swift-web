@@ -15,8 +15,7 @@ public func run(
   _ middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>,
   on port: Int = 8080,
   eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount),
-  baseUrl: URL,
-  defaultHeaders: HTTPFields = [:]
+  baseUrl: URL
   ) {
   let secure = baseUrl.scheme == "https"
   do {
@@ -28,7 +27,7 @@ public func run(
         channel.pipeline.configureHTTPServerPipeline().flatMap {
           channel.pipeline.addHandlers([
             HTTP1ToHTTPServerCodec(secure: secure),
-            Handler(baseUrl: baseUrl, middleware: middleware, defaultHeaders: defaultHeaders),
+            Handler(baseUrl: baseUrl, middleware: middleware),
           ], position: .last)
         }
       }
@@ -53,16 +52,13 @@ private final class Handler: ChannelInboundHandler {
   let baseUrl: URL
   var request: URLRequest?
   let middleware: (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>
-  let defaultHeaders: HTTPFields
 
   init(
     baseUrl: URL,
-    middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>,
-    defaultHeaders: HTTPFields
+    middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>
   ) {
     self.baseUrl = baseUrl
     self.middleware = middleware
-    self.defaultHeaders = defaultHeaders
   }
 
   func channelRead(context: ChannelHandlerContext, data: NIOAny) {

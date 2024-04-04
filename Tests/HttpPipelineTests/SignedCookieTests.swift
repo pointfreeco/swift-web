@@ -10,7 +10,7 @@ import InlineSnapshotTesting
 import XCTest
 import Crypto
 
-private let conn = connection(from: URLRequest(url: URL(string: "/")!), defaultHeaders: [:])
+private let conn = connection(from: URLRequest(url: URL(string: "/")!))
 
 class SignedCookieTests: XCTestCase {
   override func setUp() {

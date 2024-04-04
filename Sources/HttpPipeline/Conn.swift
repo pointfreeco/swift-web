@@ -18,16 +18,7 @@ public struct Conn<Step, A> {
 }
 
 public func connection(
-  from request: URLRequest,
-  defaultHeaders headers: HTTPFields = [
-//  .init("Content-Security-Policy", "script-src 'unsafe-inline'; style-src 'unsafe-inline'"),
-    .referrerPolicy: "strict-origin-when-cross-origin",
-    .xContentTypeOptions: "nosniff",
-    .xDownloadOptions: "noopen",
-    .xFrameOptions: "SAMEORIGIN",
-    .xPermittedCrossDomainPolicies: "none",
-    .xXssProtection: "1; mode=block",
-  ]
+  from request: URLRequest
   )
   -> Conn<StatusLineOpen, Prelude.Unit> {
   return .init(
@@ -35,7 +26,7 @@ public func connection(
     request: request,
     response: Response(
       status: .ok,
-      headers: headers,
+      headers: [:],
       body: Data()
     )
   )
