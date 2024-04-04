@@ -11,11 +11,6 @@ let package = Package(
     .tvOS(.v13),
   ],
   products: [
-    .library(name: "Css", targets: ["Css"]),
-    .library(name: "CssReset", targets: ["CssReset"]),
-    .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
-    .library(name: "HtmlCssSupport", targets: ["HtmlCssSupport"]),
-    .library(name: "HtmlPlainTextPrint", targets: ["HtmlPlainTextPrint"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
@@ -33,86 +28,6 @@ let package = Package(
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", from: "1.0.0"),
   ],
   targets: [
-    .target(
-      name: "Css",
-      dependencies: [
-        .product(name: "Either", package: "swift-prelude"),
-        .product(name: "Prelude", package: "swift-prelude"),
-      ]
-    ),
-    .testTarget(
-      name: "CssTests",
-      dependencies: [
-        "Css",
-        "CssTestSupport",
-      ],
-      exclude: [
-        "__Snapshots__",
-      ]
-    ),
-
-    .target(
-      name: "CssReset",
-      dependencies: ["Css"]
-    ),
-    .testTarget(
-      name: "CssResetTests",
-      dependencies: [
-        "CssReset",
-        "CssTestSupport",
-        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-      ],
-      exclude: [
-        "__Snapshots__",
-      ]
-    ),
-
-    .target(
-      name: "CssTestSupport",
-      dependencies: [
-        "Css",
-        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-      ]
-    ),
-
-    .target(
-      name: "HtmlCssSupport",
-      dependencies: [
-        "Css",
-        .product(name: "Html", package: "swift-html"),
-      ]
-    ),
-    .testTarget(
-      name: "HtmlCssSupportTests",
-      dependencies: [
-        "CssTestSupport",
-        "HtmlCssSupport",
-        .product(name: "HtmlSnapshotTesting", package: "swift-html"),
-        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-      ]
-    ),
-
-    .target(
-      name: "HtmlPlainTextPrint",
-      dependencies: [
-        .product(name: "Html", package: "swift-html"),
-        .product(name: "Prelude", package: "swift-prelude"),
-      ]
-    ),
-    .testTarget(
-      name: "HtmlPlainTextPrintTests",
-      dependencies: [
-        "Css",
-        "HtmlPlainTextPrint",
-        "HtmlCssSupport",
-        .product(name: "Html", package: "swift-html"),
-        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-      ],
-      exclude: [
-        "__Snapshots__",
-      ]
-    ),
-
     .target(
       name: "HttpPipeline",
       dependencies: [
