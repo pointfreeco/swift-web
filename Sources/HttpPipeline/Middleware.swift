@@ -55,8 +55,7 @@ public func end(conn: Conn<BodyOpen, Data>) -> IO<Conn<ResponseEnded, Data>> {
   )
 }
 
-// TODO: rename to ignoreBody
-public func end<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> {
+public func ignoreBody<A>(conn: Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> {
   return conn
     |> closeHeaders
     >=> map(const(Data())) >>> pure
@@ -67,7 +66,7 @@ public func head<A>(_ status: HttpPipeline.Status)
   -> (Conn<StatusLineOpen, A>)
   -> IO<Conn<ResponseEnded, Data>> {
 
-    return writeStatus(status) >=> end
+    return writeStatus(status) >=> ignoreBody
 }
 
 public func redirect<A>(
@@ -81,7 +80,7 @@ public func redirect<A>(
     return writeStatus(status)
       >=> headersMiddleware
       >=> writeHeader(.location(location))
-      >=> end
+      >=> ignoreBody
 }
 
 public func send(_ data: Data) -> Middleware<BodyOpen, BodyOpen, Data, Data> {

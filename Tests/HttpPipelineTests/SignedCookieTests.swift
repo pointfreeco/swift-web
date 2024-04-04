@@ -33,7 +33,7 @@ aGVsbG8td29ybGQ=\
           [.setSignedCookie(key: "session", value: "hello-world", secret: secret)]
             |> catOptionals
         )
-        >=> end
+        >=> ignoreBody
 
     let response = await middleware(conn).performAsync()
     assertInlineSnapshot(of: response, as: .conn) {
@@ -74,7 +74,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
           [.setSignedCookie(key: "session", value: episode, secret: secret)]
             |> catOptionals
         )
-        >=> end
+        >=> ignoreBody
 
     #if !os(Linux)
       let response = await middleware(conn).performAsync()
@@ -117,7 +117,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
           [.setSignedCookie(key: "session", value: "hello-world", secret: secret, encrypt: true, nonce: .init(repeating: 0, count: 12))]
             |> catOptionals
         )
-        >=> end
+        >=> ignoreBody
 
     let response = await middleware(conn).performAsync()
     assertInlineSnapshot(of: response, as: .conn) {
@@ -165,7 +165,7 @@ cb4db8ac9390ac810837809f11bc6803\
           [.setSignedCookie(key: "session", value: episode, secret: secret, encrypt: true, nonce: .init(repeating: 0, count: 12))]
             |> catOptionals
         )
-        >=> end
+        >=> ignoreBody
 
     #if !os(Linux)
       let response = await middleware(conn).performAsync()
