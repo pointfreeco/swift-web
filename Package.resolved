@@ -1,5 +1,5 @@
 {
-  "originHash" : "8298e9d7d55dd540c9ce99fccc45131acb8b544d0b09573bfc42280ab137dc04",
+  "originHash" : "03c2bca4025045adba228174dae72529daa69734e30ae81c4cd1784ff9ed7b11",
   "pins" : [
     {
       "identity" : "bluecryptor",
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "ddb07e896a2a8af79512543b1c7eb9797f8898a5",
-        "version" : "1.1.7"
+        "revision" : "60f13f60c4d093691934dc6cfdf5f508ada1f894",
+        "version" : "2.6.0"
       }
     },
     {
