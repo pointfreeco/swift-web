@@ -11,11 +11,6 @@ let package = Package(
     .tvOS(.v13),
   ],
   products: [
-    .library(name: "ApplicativeRouter", targets: ["ApplicativeRouter"]),
-    .library(
-      name: "ApplicativeRouterHttpPipelineSupport",
-      targets: ["ApplicativeRouterHttpPipelineSupport"]
-    ),
     .library(name: "Css", targets: ["Css"]),
     .library(name: "CssReset", targets: ["CssReset"]),
     .library(name: "CssTestSupport", targets: ["CssTestSupport"]),
@@ -38,47 +33,6 @@ let package = Package(
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", from: "1.0.0"),
   ],
   targets: [
-    .target(
-      name: "ApplicativeRouter",
-      dependencies: [
-        "UrlFormEncoding",
-        .product(name: "Either", package: "swift-prelude"),
-        .product(name: "Optics", package: "swift-prelude"),
-        .product(name: "Prelude", package: "swift-prelude"),
-      ]
-    ),
-    .testTarget(
-      name: "ApplicativeRouterTests",
-      dependencies: [
-        "ApplicativeRouter",
-        "HttpPipelineTestSupport",
-        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-      ],
-      exclude: [
-        "__Snapshots__",
-      ]
-    ),
-
-    .target(
-      name: "ApplicativeRouterHttpPipelineSupport",
-      dependencies: [
-        "ApplicativeRouter",
-        "HttpPipeline",
-        .product(name: "Prelude", package: "swift-prelude"),
-      ]
-    ),
-    .testTarget(
-      name: "ApplicativeRouterHttpPipelineSupportTests",
-      dependencies: [
-        "ApplicativeRouterHttpPipelineSupport",
-        "HttpPipelineTestSupport",
-        .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-      ],
-      exclude: [
-        "__Snapshots__",
-      ]
-    ),
-
     .target(
       name: "Css",
       dependencies: [

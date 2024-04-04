@@ -1,7 +1,0 @@
-GET /
-
-200 OK
-Content-Length: 22
-Content-Type: text/plain
-
-Recognized route: home
