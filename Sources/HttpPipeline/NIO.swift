@@ -3,9 +3,11 @@ import Foundation
 import FoundationNetworking
 #endif
 import HTTPTypes
+import HTTPTypesFoundation
 import NIO
+import NIOHTTPTypes
+import NIOHTTPTypesHTTP1
 import NIOHTTP1
-import NIOHTTPCompression
 import Optics
 import Prelude
 
@@ -13,11 +15,10 @@ public func run(
   _ middleware: @escaping (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>,
   on port: Int = 8080,
   eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount),
-  gzip: Bool = false,
   baseUrl: URL,
   defaultHeaders: HTTPFields = [:]
   ) {
-
+  let secure = baseUrl.scheme == "https"
   do {
     let reuseAddrOpt = ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR)
     let bootstrap = ServerBootstrap(group: eventLoopGroup)
@@ -25,10 +26,10 @@ public func run(
       .serverChannelOption(reuseAddrOpt, value: 1)
       .childChannelInitializer { channel in
         channel.pipeline.configureHTTPServerPipeline().flatMap {
-          let handlers: [ChannelHandler] = gzip
-            ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware, defaultHeaders: defaultHeaders)]
-            : [Handler(baseUrl: baseUrl, middleware: middleware, defaultHeaders: defaultHeaders)]
-          return channel.pipeline.addHandlers(handlers, position: .last)
+          channel.pipeline.addHandlers([
+            HTTP1ToHTTPServerCodec(secure: secure),
+            Handler(baseUrl: baseUrl, middleware: middleware, defaultHeaders: defaultHeaders),
+          ], position: .last)
         }
       }
       .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
@@ -46,7 +47,8 @@ public func run(
 }
 
 private final class Handler: ChannelInboundHandler {
-  typealias InboundIn = HTTPServerRequestPart
+  typealias InboundIn = HTTP1ToHTTPServerCodec.InboundOut
+  typealias OutboundOut = HTTP1ToHTTPServerCodec.OutboundIn
 
   let baseUrl: URL
   var request: URLRequest?
@@ -68,16 +70,7 @@ private final class Handler: ChannelInboundHandler {
 
     switch reqPart {
     case let .head(header):
-      self.request = URL(string: header.uri).map {
-        var req = URLRequest(url: $0)
-        req.httpMethod = method(from: header.method)
-        req.allHTTPHeaderFields = header.headers.reduce(into: [:]) { $0[$1.name] = $1.value }
-        let proto = req.value(forHTTPHeaderField: "X-Forwarded-Proto") ?? "http"
-        req.url = req.value(forHTTPHeaderField: "Host").flatMap {
-          URL(string: proto + "://" + $0 + header.uri)
-        }
-        return req
-      }
+      self.request = URLRequest(httpRequest: header)
     case var .body(bodyPart):
       self.request = self.request |> map <<< \.httpBody %~ {
         var data = $0 ?? .init()
@@ -86,17 +79,8 @@ private final class Handler: ChannelInboundHandler {
       }
     case .end:
       guard let req = self.request else {
-        context.channel.write(
-          HTTPServerResponsePart.head(
-            HTTPResponseHead(
-              version: .init(major: 1, minor: 1),
-              status: .init(statusCode: 307),
-              headers: .init([("location", self.baseUrl.absoluteString)])
-            )
-          ),
-          promise: nil
-        )
-        _ = context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
+        context.write(wrapOutboundOut(.head(.init(status: .internalServerError))), promise: nil)
+        _ = context.writeAndFlush(wrapOutboundOut(.end(nil))).flatMap {
           context.channel.close()
         }
         return
