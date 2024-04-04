@@ -11,6 +11,7 @@ let package = Package(
     .tvOS(.v13),
   ],
   products: [
+    .executable(name: "HttpPipelineExample", targets: ["HttpPipelineExample"]),
     .library(name: "HttpPipeline", targets: ["HttpPipeline"]),
     .library(name: "HttpPipelineHtmlSupport", targets: ["HttpPipelineHtmlSupport"]),
     .library(name: "HttpPipelineTestSupport", targets: ["HttpPipelineTestSupport"]),
@@ -44,6 +45,15 @@ let package = Package(
         .product(name: "Prelude", package: "swift-prelude"),
       ]
     ),
+    .target(
+      name: "HttpPipelineExample",
+      dependencies: [
+      "HttpPipeline", 
+      "View",
+      .product(name: "Html", package: "swift-html"),
+      .product(name: "Prelude", package: "swift-prelude"),
+      .product(name: "Optics", package: "swift-prelude"),
+    ]),
     .testTarget(
       name: "HttpPipelineTests",
       dependencies: [
