@@ -1,4 +1,4 @@
-GET /
+GET https://example.com/
 
 200 OK
 A: Header should be first

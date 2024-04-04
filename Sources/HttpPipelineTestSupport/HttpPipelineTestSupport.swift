@@ -52,9 +52,9 @@ extension Snapshotting {
 
 extension Snapshotting where Value == Conn<ResponseEnded, Data>, Format == String {
   public static let conn = SimplySnapshotting.lines.swiftAsyncPullback { (conn: Conn<ResponseEnded, Data>) in
-      async let request = Snapshotting<URLRequest, String>.raw.snapshot(conn.request).runAsync()
+    async let request = Snapshotting<URLRequest, String>.raw.snapshot(conn.request.toURLRequest()!).runAsync()
       async let response = Snapshotting<Response, String>.response.snapshot(conn.response).runAsync()
-      return await request + "\n\n" + response
+      return await request + response
   } |> \.pathExtension .~ "Conn.txt"
 }
 

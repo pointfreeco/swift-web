@@ -1,4 +1,4 @@
-GET /
+GET https://example.com/
 
 302 Found
 Location: /sign-in

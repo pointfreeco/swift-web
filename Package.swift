@@ -80,6 +80,7 @@ let package = Package(
         "HttpPipeline",
         .product(name: "Html", package: "swift-html"),
         .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+        .product(name: "HTTPTypesFoundation", package: "swift-http-types")
       ]
     ),
 

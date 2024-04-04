@@ -50,7 +50,7 @@ private final class Handler: ChannelInboundHandler {
   typealias OutboundOut = HTTP1ToHTTPServerCodec.OutboundIn
 
   let baseUrl: URL
-  var request: URLRequest?
+  var request: Request?
   let middleware: (Conn<StatusLineOpen, Prelude.Unit>) async -> Conn<ResponseEnded, Data>
 
   init(
@@ -65,19 +65,15 @@ private final class Handler: ChannelInboundHandler {
     let reqPart = self.unwrapInboundIn(data)
 
     switch reqPart {
-    case let .head(header):
-      self.request = URLRequest(httpRequest: header)
-    case var .body(bodyPart):
-      self.request = self.request |> map <<< \.httpBody %~ {
-        var data = $0 ?? .init()
-        bodyPart.readBytes(length: bodyPart.readableBytes).do { data.append(Data($0)) }
-        return data
-      }
+    case let .head(head):
+      self.request = .init(head: head, body: .init())
+    case var .body(body):
+      self.request?.body.writeBuffer(&body)
     case .end:
       guard let req = self.request else {
         context.write(wrapOutboundOut(.head(.init(status: .internalServerError))), promise: nil)
         _ = context.writeAndFlush(wrapOutboundOut(.end(nil))).flatMap {
-          context.channel.close()
+          context.close()
         }
         return
       }
@@ -89,19 +85,15 @@ private final class Handler: ChannelInboundHandler {
       _ = promise.futureResult.flatMap { conn -> EventLoopFuture<Void> in
         let res = conn.response
 
-        let head = HTTPResponseHead(
-          version: .init(major: 1, minor: 1),
-          status: .init(statusCode: res.status.code),
-          headers: .init(res.headers.map { ($0.name.rawName, $0.value) })
-        )
-        context.channel.write(HTTPServerResponsePart.head(head), promise: nil)
+        let head = HTTPResponse(status: res.status, headerFields: res.headers)
+        context.write(self.wrapOutboundOut(.head(head)), promise: nil)
 
         var buffer = context.channel.allocator.buffer(capacity: res.body.count)
         buffer.writeBytes(res.body)
-        context.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
+        context.write(self.wrapOutboundOut(.body(buffer)), promise: nil)
 
-        return context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
-          context.channel.close()
+        return context.writeAndFlush(self.wrapOutboundOut(.end(nil))).flatMap {
+          context.close()
         }
       }
     }

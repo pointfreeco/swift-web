@@ -8,12 +8,12 @@ import Prelude
 import SnapshotTesting
 import XCTest
 
-private let conn = connection(from: URLRequest(url: URL(string: "/")!))
+private let conn = connection(from: .init(url: URL(string: "https://example.com")!))
 
 class HttpPipelineTests: XCTestCase {
   override func setUp() {
     super.setUp()
-//    record=true
+//    isRecording = true
   }
 
   @MainActor

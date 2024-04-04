@@ -10,7 +10,7 @@ import InlineSnapshotTesting
 import XCTest
 import Crypto
 
-private let conn = connection(from: URLRequest(url: URL(string: "/")!))
+private let conn = connection(from: Request(url: URL(string: "https://example.com")!))
 
 class SignedCookieTests: XCTestCase {
   override func setUp() {
@@ -38,7 +38,7 @@ aGVsbG8td29ybGQ=\
     let response = await middleware(conn).performAsync()
     assertInlineSnapshot(of: response, as: .conn) {
       """
-      GET /
+      GET https://example.com/
 
       200 OK
       Set-Cookie: session=aGVsbG8td29ybGQ=--4wgeyWTkB2EKsLHYK7Ao1VzjFMXeTLZHXX76XTTOBCw=; HttpOnly
@@ -80,7 +80,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
       let response = await middleware(conn).performAsync()
       assertInlineSnapshot(of: response, as: .conn) {
           """
-          GET /
+          GET https://example.com/
 
           200 OK
           Set-Cookie: session=eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=--6nCh0Of4anIuD8+6EgYj+g6hOf4wvwiZr6lDodIc+z0=; HttpOnly
@@ -122,7 +122,7 @@ eyJpZCI6NDIsIm5hbWUiOiJBbGwgQWJvdXQgRnVuY3Rpb25zIn0=\
     let response = await middleware(conn).performAsync()
     assertInlineSnapshot(of: response, as: .conn) {
       """
-      GET /
+      GET https://example.com/
 
       200 OK
       Set-Cookie: session=000000000000000000000000650a48c1711ffad3738b69c529d9642a152fc39bbae504afbb93aabdd579587a9a2f5ebe5ecc88f1f00d329d22f97a451a9bf7505267ce3a607d2fe0cd07b3c5490abf89709726a9069814e0cfeb; HttpOnly
@@ -171,7 +171,7 @@ cb4db8ac9390ac810837809f11bc6803\
       let response = await middleware(conn).performAsync()
       assertInlineSnapshot(of: response, as: .conn) {
           """
-          GET /
+          GET https://example.com/
 
           200 OK
           Set-Cookie: session=000000000000000000000000613454c2491b8b9159fd19cf02f3007f5a55c58ba4e72fb5ee9aec80f66473278f2041ba56cd9fceff4b01802e9822146bda865f1d3ac434257200e7fc023e15228b8035b58453afbb02e865076e6c7698c5af99bcb8510164533e43e19e9f7df43eacab743676040536b4d2e45c9b3b7094; HttpOnly

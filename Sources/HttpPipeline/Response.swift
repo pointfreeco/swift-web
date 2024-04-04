@@ -1,8 +1,5 @@
 import Foundation
-import Html
 import HTTPTypes
-import Optics
-import Prelude
 
 public struct Response {
   public var status: Status

@@ -1,4 +1,4 @@
-GET /
+GET https://example.com/
 Authorization: Basic SGVsbG86V29ybGQ=
 
 200 OK

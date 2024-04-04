@@ -1,4 +1,4 @@
-GET /
+GET https://example.com/
 
 401 Unauthorized
 Content-Length: 20

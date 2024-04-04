@@ -1,4 +1,4 @@
-GET https://www.pointfree.co
+GET https://www.pointfree.co/
 
 301 Moved Permanently
-Location: https://www.pointfree.co
+Location: https://www.pointfree.co/

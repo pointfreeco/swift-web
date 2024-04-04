@@ -15,7 +15,7 @@ class HttpPipelineHtmlSupportTests: XCTestCase {
     let pipeline = writeStatus(.ok)
       >=> respond(view)
 
-    let conn = connection(from: URLRequest(url: URL(string: "/")!))
+    let conn = connection(from: .init(url: URL(string: "https://example.com")!))
     let response = await (conn |> pipeline).performAsync()
 
     XCTAssertEqual(200, response.response.status.code)

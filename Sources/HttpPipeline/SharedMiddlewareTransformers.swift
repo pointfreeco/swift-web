@@ -2,6 +2,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import HTTPTypesFoundation
 import Optics
 import Prelude
 
@@ -133,7 +134,7 @@ public func requireHerokuHttps<A>(allowedInsecureHosts: [String])
           .filter { url in
             // `url.scheme` cannot be trusted on Heroku, instead we need to look at the `X-Forwarded-Proto`
             // header to determine if we are on https or not.
-            conn.request.allHTTPHeaderFields?["X-Forwarded-Proto"] != .some("https")
+            conn.request.headers[.init("X-Forwarded-Proto")!] != .some("https")
               && !allowedInsecureHosts.contains(url.host ?? "")
           }
           .flatMap(makeHttps)
@@ -161,9 +162,9 @@ public func requireHttps<A>(allowedInsecureHosts: [String])
     }
 }
 
-public func validateBasicAuth(user: String, password: String, request: URLRequest) -> Bool {
+public func validateBasicAuth(user: String, password: String, request: Request) -> Bool {
 
-  let auth = request.value(forHTTPHeaderField: "Authorization") ?? ""
+  let auth = request.headers[.authorization] ?? ""
 
   let parts = Foundation.Data(base64Encoded: String(auth.dropFirst(6)))
     .map { String(decoding: $0, as: UTF8.self) }
@@ -190,7 +191,7 @@ public func requestLogger(logger: @escaping (String) -> Void, uuid: @escaping ()
       return { conn in
         let id = uuid().uuidString
         let startTime = Date().timeIntervalSince1970
-        logger("\(id) [Request] \(conn.request.httpMethod ?? "GET") \(conn.request.url?.relativePath ?? "")")
+        logger("\(id) [Request] \(conn.request.method) \(conn.request.url?.relativePath ?? "")")
         return middleware(conn).flatMap { b in
           IO {
             let endTime = Date().timeIntervalSince1970

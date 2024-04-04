@@ -13,12 +13,12 @@ public enum ResponseEnded {}
 
 public struct Conn<Step, A> {
   public var data: A
-  public var request: URLRequest
+  public var request: Request
   public var response: Response
 }
 
 public func connection(
-  from request: URLRequest
+  from request: Request
   )
   -> Conn<StatusLineOpen, Prelude.Unit> {
   return .init(

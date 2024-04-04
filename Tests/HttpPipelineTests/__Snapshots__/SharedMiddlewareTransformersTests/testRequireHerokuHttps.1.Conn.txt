@@ -1,4 +1,4 @@
-GET https://www.pointfree.co
+GET https://www.pointfree.co/
 X-Forwarded-Proto: https
 
 200 OK
