@@ -31,7 +31,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-html", revision: "14d01d1"),
     .package(url: "https://github.com/pointfreeco/swift-prelude", revision: "da5ead2"),
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", branch: "async"),
-    .package(url: "https://github.com/apple/swift-crypto.git", from: "1.0.0"),
+    .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/apple/swift-nio-extras.git", from: "1.0.0"),
     .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", from: "1.0.0"),

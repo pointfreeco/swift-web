@@ -425,7 +425,7 @@ func mediaType(_ type: MediaType) -> String {
 
 func render(feature: Feature) -> String {
   switch feature.value {
-  case .none:
+  case nil, .some(.none):
     return feature.key
   case let .some(v):
     return "(" + feature.key + ": " + plain(v.unValue) + ")"
