@@ -148,16 +148,14 @@ public func encrypted(text plainText: String, secret: String, nonce nonceBytes: 
 }
 
 public func decrypted(text encryptedText: String, secret: String) -> String? {
-  do {
-    let secretBytes = [UInt8](hex: secret)
-    let key = SymmetricKey(data: secretBytes)
-    let encryptedBytes = [UInt8](hex: encryptedText)
-    let box = try AES.GCM.SealedBox(combined: encryptedBytes)
-    let data = try AES.GCM.open(box, using: key)
-    return String(decoding: data, as: UTF8.self)
-  } catch {
-    return _decrypted(text: encryptedText, secret: secret)
-  }
+  let secretBytes = [UInt8](hex: secret)
+  let key = SymmetricKey(data: secretBytes)
+  let encryptedBytes = [UInt8](hex: encryptedText)
+  guard
+    let box = try? AES.GCM.SealedBox(combined: encryptedBytes),
+    let data = try? AES.GCM.open(box, using: key)
+  else { return nil }
+  return String(decoding: data, as: UTF8.self)
 }
 
 private func base64DecodedData(string: String) -> Data? {
