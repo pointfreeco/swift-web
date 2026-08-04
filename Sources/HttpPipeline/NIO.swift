@@ -24,8 +24,12 @@ public func run(
       .childChannelInitializer { channel in
         channel.pipeline.configureHTTPServerPipeline().flatMap {
           let handlers: [ChannelHandler] = gzip
-            ? [HTTPResponseCompressor(), Handler(baseUrl: baseUrl, middleware: middleware)]
-            : [Handler(baseUrl: baseUrl, middleware: middleware)]
+            ? [
+              CloseOnResponseEndHandler(),
+              HTTPResponseCompressor(),
+              Handler(baseUrl: baseUrl, middleware: middleware),
+            ]
+            : [CloseOnResponseEndHandler(), Handler(baseUrl: baseUrl, middleware: middleware)]
           return channel.pipeline.addHandlers(handlers, position: .last)
         }
       }
@@ -91,9 +95,7 @@ private final class Handler: ChannelInboundHandler {
           ),
           promise: nil
         )
-        _ = context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
-          context.channel.close()
-        }
+        context.channel.writeAndFlush(HTTPServerResponsePart.end(nil), promise: nil)
         return
       }
 
@@ -101,7 +103,7 @@ private final class Handler: ChannelInboundHandler {
       promise.completeWithTask {
         await self.middleware(connection(from: req))
       }
-      _ = promise.futureResult.flatMap { conn -> EventLoopFuture<Void> in
+      promise.futureResult.whenSuccess { conn in
         let res = conn.response
 
         let head = HTTPResponseHead(
@@ -115,15 +117,30 @@ private final class Handler: ChannelInboundHandler {
         buffer.writeBytes(res.body)
         context.channel.write(HTTPServerResponsePart.body(.byteBuffer(buffer)), promise: nil)
 
-        return context.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).flatMap {
-          context.channel.close()
-        }
+        context.channel.writeAndFlush(HTTPServerResponsePart.end(nil), promise: nil)
       }
     }
   }
 
   func errorCaught(context: ChannelHandlerContext, error: Error) {
     context.close(promise: nil)
+  }
+}
+
+private final class CloseOnResponseEndHandler: ChannelOutboundHandler {
+  typealias OutboundIn = HTTPServerResponsePart
+  typealias OutboundOut = HTTPServerResponsePart
+
+  func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
+    guard case .end = self.unwrapOutboundIn(data) else {
+      context.write(data, promise: promise)
+      return
+    }
+    let writePromise = promise ?? context.eventLoop.makePromise()
+    writePromise.futureResult.whenComplete { _ in
+      context.close(promise: nil)
+    }
+    context.write(data, promise: writePromise)
   }
 }
 
